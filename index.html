@@ -6,7 +6,7 @@
 <title>MatSafe — La certification qui protège vos pratiquants</title>
 <meta name="description" content="MatSafe Label — Le label qui garantit un environnement sain dans les sports de contact. Réduisez les risques de contamination et structurez l'hygiène de votre club."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Kanit:ital,wght@1,700;1,800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
 <style>
 :root {
   --black: #0A0A0A;
@@ -1163,6 +1163,32 @@ footer{
   .showcase-word{padding:0 1.25rem;font-size:clamp(2.4rem,13.5vw,5rem)}
 }
 
+/* ══════════════════════════════════════════
+   LOGO MATSAFE — WORDMARK RACING (CSS)
+   « Mat » jaune + « Safe » blanc, contour noir + ombre
+   ══════════════════════════════════════════ */
+.ms-logo{
+  font-family:'Kanit',sans-serif;font-weight:800;font-style:italic;
+  text-transform:none;letter-spacing:-.015em;line-height:1;
+  display:inline-block;white-space:nowrap;
+  -webkit-text-stroke:.055em #0A0A0A;
+  paint-order:stroke fill;
+  text-shadow:.018em .04em 0 rgba(0,0,0,.4);
+}
+.ms-logo .ms-mat{color:#F4ED21}
+.ms-logo .ms-safe{color:#FFFFFF}
+
+/* Version nav */
+.nav-logo.ms-logo{font-size:1.55rem;letter-spacing:-.015em}
+nav.solid .nav-logo.ms-logo{color:inherit}   /* neutralise l'override de couleur : les spans gèrent la couleur */
+
+/* Version géante (vitrine / hero éventuel) */
+.ms-logo--giant{
+  font-size:clamp(3.2rem,13vw,11rem);
+  -webkit-text-stroke:.045em #0A0A0A;
+  text-shadow:.012em .03em 0 rgba(0,0,0,.35);
+}
+
 </style>
 </head>
 <body>
@@ -1189,7 +1215,7 @@ footer{
 
 <!-- NAV -->
 <nav id="nav">
-  <div class="nav-logo">MatSafe</div>
+  <div class="nav-logo ms-logo"><span class="ms-mat">Mat</span><span class="ms-safe">Safe</span></div>
   <div class="nav-links">
     <a href="#s-livrables">Nos Services</a>
     <a href="#s-pourquoi">Le Label</a>
