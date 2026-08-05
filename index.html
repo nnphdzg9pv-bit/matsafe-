@@ -505,32 +505,88 @@ footer{
 }
 .pourquoi-text p:last-child{margin-bottom:0}
 
-/* ── POUR QUI GRID ── */
-.pourqui-grid{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:0;border:1px solid var(--border);border-radius:2px;
+/* ══════════════════════════════════════════
+   POUR QUI — ÉDITORIAL + ZONE VISUELLE RÉSERVÉE
+   ══════════════════════════════════════════ */
+.pq2{background:var(--off)}
+.pq2-head{max-width:780px;margin-bottom:clamp(2.5rem,5vw,4rem)}
+.pq2-title{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
+  font-size:clamp(2.4rem,5.2vw,4.7rem);line-height:.94;letter-spacing:-.01em;
+  color:var(--black);margin:.6rem 0 1.4rem;
 }
-.pq-item{
-  display:flex;align-items:center;gap:.85rem;
-  padding:1.25rem 1.5rem;
-  border-right:1px solid var(--border);
+.pq2-title em{
+  font-family:'Fraunces',serif;font-style:italic;font-weight:400;
+  text-transform:none;color:var(--green);letter-spacing:0;
+}
+.pq2-lead{font-size:.98rem;line-height:1.7;color:#555;max-width:580px}
+.pq2-lead strong{color:var(--black);font-weight:600}
+
+.pq2-body{
+  display:grid;grid-template-columns:1.05fr .95fr;
+  gap:clamp(1.5rem,3.5vw,3.5rem);align-items:stretch;
+}
+
+/* Zone libre réservée (typographie & images à venir) */
+.pq2-stage{
+  position:relative;border-radius:20px;overflow:hidden;
+  background:var(--light);border:1.5px dashed var(--border);
+  min-height:clamp(340px,42vw,540px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:.75rem;text-align:center;padding:2.5rem;
+}
+.pq2-crop{position:absolute;width:16px;height:16px;border:2px solid var(--green);opacity:.55}
+.pq2-crop.tl{top:16px;left:16px;border-right:0;border-bottom:0}
+.pq2-crop.tr{top:16px;right:16px;border-left:0;border-bottom:0}
+.pq2-crop.bl{bottom:16px;left:16px;border-right:0;border-top:0}
+.pq2-crop.br{bottom:16px;right:16px;border-left:0;border-top:0}
+.pq2-stage-eyebrow{
+  font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--green);
+}
+.pq2-stage-ico{font-size:2rem;color:var(--border);line-height:1}
+.pq2-stage-label{
+  font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;
+  font-size:1.25rem;letter-spacing:.03em;color:var(--gray);
+}
+.pq2-stage-note{font-size:.78rem;color:#9a988f;max-width:280px;line-height:1.55}
+
+/* Liste des sports */
+.pq2-sports{list-style:none;border-top:1px solid var(--border)}
+.pq2-sport{
+  display:flex;align-items:center;gap:1rem;
+  padding:clamp(.85rem,1.5vw,1.3rem) 0;
   border-bottom:1px solid var(--border);
-  transition:background .18s;
+  transition:padding-left .3s cubic-bezier(.2,.7,.2,1);
 }
-.pq-item:nth-child(2n){border-right:none}
-.pq-item:nth-last-child(-n+2){border-bottom:none}
-.pq-item:last-child:nth-child(odd){border-bottom:none;grid-column:1/-1;border-right:none}
-.pq-item:hover{background:var(--off)}
-.pq-tag{font-size:1.3rem;flex-shrink:0}
-.pq-name{
-  font-family:'Barlow Condensed',sans-serif;
-  font-weight:800;font-size:1.05rem;text-transform:uppercase;
-  letter-spacing:.04em;color:var(--black);
+.pq2-sport:hover{padding-left:.7rem}
+.pq2-sport-idx{
+  font-family:'Space Mono',monospace;font-size:.72rem;font-weight:700;
+  color:var(--green);min-width:2.1rem;
 }
-@media(max-width:768px){
-  .pourqui-grid{grid-template-columns:1fr}
-  .pq-item{border-right:none !important;border-bottom:1px solid var(--border) !important}
-  .pq-item:last-child{border-bottom:none !important}
+.pq2-sport-name{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
+  font-size:clamp(1.35rem,2.5vw,2.2rem);line-height:1;letter-spacing:.01em;color:var(--black);
+}
+.pq2-sport-arrow{
+  margin-left:auto;color:var(--border);font-size:1.1rem;
+  transition:color .3s,transform .3s;
+}
+.pq2-sport:hover .pq2-sport-arrow{color:var(--green);transform:translateX(5px)}
+.pq2-sports-note{
+  margin-top:1.4rem;font-size:.85rem;line-height:1.6;color:#666;
+  display:flex;align-items:flex-start;gap:.7rem;
+}
+.pq2-sports-note::before{
+  content:'';margin-top:.5rem;width:20px;height:2px;background:var(--green);
+  display:block;flex-shrink:0;
+}
+.pq2-sports-note strong{color:var(--black);font-weight:600}
+
+@media(max-width:820px){
+  .pq2-body{grid-template-columns:1fr}
+  .pq2-stage{min-height:280px;order:2}
+  .pq2-sports-wrap{order:1}
 }
 
 /* ── RESULTS & BEFORE/AFTER ── */
@@ -1264,46 +1320,38 @@ footer{
 </section>
 
 <!-- ── POUR QUI ── -->
-<section class="section section--border" id="s-pourqui">
-  <div class="split">
-    <div>
-      <div class="eyebrow reveal">Pour qui ?</div>
-      <h2 class="sec-title reveal">Un label conçu<br>pour les sports<br>de contact</h2>
-      <p class="sec-body reveal d1">
-        MatSafe Certified s'adresse aux clubs souhaitant structurer
-        leur hygiène et protéger leurs pratiquants.
-      </p>
-      <p class="sec-body reveal d2" style="margin-top:1.5rem;font-weight:500;color:var(--black)">
-        Particulièrement adapté aux clubs avec compétiteurs.
-      </p>
+<section class="section section--border pq2" id="s-pourqui">
+  <div class="pq2-head">
+    <div class="eyebrow reveal">Pour qui ?</div>
+    <h2 class="pq2-title reveal">Un label conçu pour les <em>sports de contact</em></h2>
+    <p class="pq2-lead reveal d1">
+      MatSafe Certified s'adresse aux clubs souhaitant structurer leur hygiène
+      et protéger leurs pratiquants. <strong>Particulièrement adapté aux clubs avec compétiteurs.</strong>
+    </p>
+  </div>
+
+  <div class="pq2-body">
+    <!-- Zone libre réservée : typographie & images à venir -->
+    <div class="pq2-stage reveal d1" aria-label="Zone réservée pour un visuel à venir">
+      <span class="pq2-crop tl"></span><span class="pq2-crop tr"></span>
+      <span class="pq2-crop bl"></span><span class="pq2-crop br"></span>
+      <span class="pq2-stage-eyebrow">Zone réservée</span>
+      <span class="pq2-stage-ico">▦</span>
+      <span class="pq2-stage-label">Typographie &amp; Images</span>
+      <span class="pq2-stage-note">Espace laissé libre pour une composition visuelle à intégrer ultérieurement.</span>
     </div>
-    <div>
-      <div class="pourqui-grid reveal d2">
-        <div class="pq-item">
-          <span class="pq-tag">🥋</span>
-          <span class="pq-name">Jiu-Jitsu Brésilien</span>
-        </div>
-        <div class="pq-item">
-          <span class="pq-tag">🥊</span>
-          <span class="pq-name">MMA</span>
-        </div>
-        <div class="pq-item">
-          <span class="pq-tag">🤼</span>
-          <span class="pq-name">Grappling</span>
-        </div>
-        <div class="pq-item">
-          <span class="pq-tag">🥋</span>
-          <span class="pq-name">Judo</span>
-        </div>
-        <div class="pq-item">
-          <span class="pq-tag">💪</span>
-          <span class="pq-name">Lutte</span>
-        </div>
-        <div class="pq-item">
-          <span class="pq-tag">⚔️</span>
-          <span class="pq-name">Sports de combat en général</span>
-        </div>
-      </div>
+
+    <!-- Sports -->
+    <div class="pq2-sports-wrap reveal d2">
+      <ol class="pq2-sports">
+        <li class="pq2-sport"><span class="pq2-sport-idx">01</span><span class="pq2-sport-name">Jiu-Jitsu Brésilien</span><span class="pq2-sport-arrow">↗</span></li>
+        <li class="pq2-sport"><span class="pq2-sport-idx">02</span><span class="pq2-sport-name">MMA</span><span class="pq2-sport-arrow">↗</span></li>
+        <li class="pq2-sport"><span class="pq2-sport-idx">03</span><span class="pq2-sport-name">Grappling</span><span class="pq2-sport-arrow">↗</span></li>
+        <li class="pq2-sport"><span class="pq2-sport-idx">04</span><span class="pq2-sport-name">Judo</span><span class="pq2-sport-arrow">↗</span></li>
+        <li class="pq2-sport"><span class="pq2-sport-idx">05</span><span class="pq2-sport-name">Lutte</span><span class="pq2-sport-arrow">↗</span></li>
+        <li class="pq2-sport"><span class="pq2-sport-idx">06</span><span class="pq2-sport-name">Sports de combat en général</span><span class="pq2-sport-arrow">↗</span></li>
+      </ol>
+      <p class="pq2-sports-note"><span><strong>Vous n'êtes pas dans la liste ?</strong> Tout club où le contact peau-à-peau est fréquent est concerné.</span></p>
     </div>
   </div>
 </section>
