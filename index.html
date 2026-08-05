@@ -807,34 +807,80 @@ footer{
   letter-spacing:.04em;color:var(--white);
 }
 
-/* ── PROBLEM SECTION ── */
-.problem-consequences{
-  background:var(--black);padding:2.25rem 2rem;border-radius:2px;
+/* ══════════════════════════════════════════
+   PROBLÈME — TITRE GÉANT + CARTE CRÈME
+   ══════════════════════════════════════════ */
+.prob2{
+  background:#38352F;          /* charcoal chaud, plus clair pour le contraste du titre */
+  overflow:hidden;
 }
-.pb-head{
+/* padding-top du stage = hauteur de débordement du titre (évite le margin-collapse) */
+.prob2-stage{position:relative;padding:clamp(7.5rem,13vw,11.5rem) clamp(.9rem,2vw,2.25rem) 0}
+.prob2-giant{
+  position:absolute;left:0;right:0;top:clamp(3rem,4.5vw,4rem);
+  text-align:center;white-space:nowrap;
   font-family:'Barlow Condensed',sans-serif;
-  font-weight:700;font-size:.65rem;letter-spacing:.22em;text-transform:uppercase;
-  color:#444;margin-bottom:1.5rem;
-  display:flex;align-items:center;gap:.6rem;
+  font-weight:900;text-transform:uppercase;
+  font-size:clamp(4.5rem,21vw,18rem);
+  line-height:.8;letter-spacing:-.03em;
+  color:#0B0A09;              /* quasi-noir qui tranche sur le charcoal */
+  z-index:0;pointer-events:none;
 }
-.pb-head::before{content:'';width:22px;height:1.5px;background:#444;display:block}
-.pb-list{display:flex;flex-direction:column;gap:0}
-.pb-item{
+.prob2-card{
+  position:relative;z-index:1;width:100%;
+  margin:0 auto;
+  max-width:1360px;
+  background:var(--off);
+  border-radius:clamp(20px,3vw,34px);
+  padding:clamp(2.75rem,5vw,4.75rem) clamp(1.75rem,4.5vw,4.25rem) clamp(2.5rem,4vw,3.5rem);
+  box-shadow:0 -20px 60px rgba(0,0,0,.25);
+}
+.prob2-dot{
+  position:absolute;top:clamp(22px,2.4vw,30px);
+  width:clamp(12px,1.3vw,16px);height:clamp(12px,1.3vw,16px);
+  border-radius:50%;background:#201F1C;
+}
+.prob2-dot--l{left:clamp(24px,2.6vw,34px)}
+.prob2-dot--r{right:clamp(24px,2.6vw,34px)}
+.prob2-eyebrow{
+  text-align:center;
+  font-family:'Space Mono',monospace;
+  font-size:.66rem;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--green);margin-bottom:clamp(1.9rem,3.6vw,2.9rem);
+}
+.prob2-cols{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:clamp(1.75rem,4vw,3.5rem);
+  align-items:start;
+}
+.prob2-col--right{text-align:right}
+.prob2-h{
   font-family:'Barlow Condensed',sans-serif;
-  font-weight:800;font-size:1.05rem;text-transform:uppercase;
-  letter-spacing:.04em;color:var(--white);
-  padding:.72rem 0;
-  border-bottom:1px solid rgba(255,255,255,.06);
-  display:flex;align-items:center;gap:.85rem;
+  font-weight:900;text-transform:uppercase;
+  font-size:clamp(1.9rem,4.6vw,3.7rem);
+  line-height:.9;letter-spacing:-.005em;color:var(--black);
+  margin-bottom:clamp(1.1rem,2vw,1.6rem);
 }
-.pb-item:last-child{border-bottom:none}
-.pb-dash{
-  width:14px;height:2px;background:var(--green);display:block;flex-shrink:0;
+.prob2-h span{color:var(--green)}
+.prob2-list{list-style:none;display:flex;flex-direction:column;gap:.5rem}
+.prob2-col--right .prob2-list{align-items:flex-end}
+.prob2-list li{
+  font-family:'Barlow',sans-serif;font-weight:500;
+  font-size:clamp(.9rem,1.35vw,1.08rem);
+  color:#3b3a37;line-height:1.4;
 }
-.pb-footer{
-  margin-top:1.5rem;padding-top:1.5rem;
-  border-top:1px solid rgba(255,255,255,.08);
-  font-size:.85rem;line-height:1.65;color:#555;
+.prob2-note{
+  margin-top:clamp(2rem,4vw,3rem);
+  border-top:1px solid var(--border);padding-top:1.5rem;
+  font-size:clamp(.85rem,1.2vw,.95rem);line-height:1.65;
+  color:#6a6862;max-width:680px;
+}
+.prob2-note strong{color:var(--black);font-weight:600}
+
+@media(max-width:640px){
+  .prob2-cols{grid-template-columns:1fr;gap:2.25rem}
+  .prob2-col--right{text-align:left}
+  .prob2-col--right .prob2-list{align-items:flex-start}
 }
 
 /* ── REVEAL ── */
@@ -1068,33 +1114,39 @@ footer{
   </div>
 </div>
 
-<!-- ── LE PROBLÈME ── -->
-<section class="section section--alt section--border" id="s-probleme">
-  <div class="split">
-    <div>
-      <div class="eyebrow reveal">Le Problème</div>
-      <h2 class="sec-title reveal">Un problème<br>invisible qui impacte<br>directement votre club</h2>
-      <p class="sec-body reveal d1">
-        Dans les sports de contact, la promiscuité, le contact peau-à-peau et
-        l'utilisation des tatamis favorisent la propagation rapide des bactéries,
-        virus et infections cutanées.<br><br>
-        <strong style="color:var(--black)">Un seul cas peut contaminer plusieurs pratiquants en quelques jours.</strong>
-      </p>
-    </div>
-    <div>
-      <div class="problem-consequences reveal d2">
-        <div class="pb-head">Conséquences concrètes</div>
-        <div class="pb-list">
-          <div class="pb-item"><span class="pb-dash"></span>Athlètes contraints d'arrêter l'entraînement</div>
-          <div class="pb-item"><span class="pb-dash"></span>Forfaits en compétition</div>
-          <div class="pb-item"><span class="pb-dash"></span>Perte de performance</div>
-          <div class="pb-item"><span class="pb-dash"></span>Image du club dégradée</div>
-          <div class="pb-item"><span class="pb-dash"></span>Perte de confiance des adhérents</div>
+<!-- ── LE PROBLÈME — TITRE GÉANT + CARTE ── -->
+<section class="prob2" id="s-probleme">
+  <div class="prob2-stage">
+    <h2 class="prob2-giant" aria-hidden="true">Problème</h2>
+    <div class="prob2-card reveal">
+      <span class="prob2-dot prob2-dot--l"></span>
+      <span class="prob2-dot prob2-dot--r"></span>
+      <div class="prob2-eyebrow">Le Problème</div>
+      <div class="prob2-cols">
+        <div class="prob2-col">
+          <h3 class="prob2-h">Contagion<br><span>express</span></h3>
+          <ul class="prob2-list">
+            <li>Contact peau-à-peau permanent</li>
+            <li>Promiscuité sur les tatamis</li>
+            <li>Bactéries, virus &amp; mycoses</li>
+            <li>Un cas contamine en quelques jours</li>
+          </ul>
         </div>
-        <div class="pb-footer reveal d3">
-          Aujourd'hui, la majorité des clubs n'ont pas de structure claire pour gérer ce risque.
+        <div class="prob2-col prob2-col--right">
+          <h3 class="prob2-h">Conséquences<br><span>concrètes</span></h3>
+          <ul class="prob2-list">
+            <li>Arrêt forcé de l'entraînement</li>
+            <li>Forfaits en compétition</li>
+            <li>Perte de performance</li>
+            <li>Image du club dégradée</li>
+            <li>Confiance des adhérents entamée</li>
+          </ul>
         </div>
       </div>
+      <p class="prob2-note">
+        <strong>Un seul cas peut contaminer plusieurs pratiquants en quelques jours.</strong>
+        Et aujourd'hui, la majorité des clubs n'ont aucune structure claire pour gérer ce risque.
+      </p>
     </div>
   </div>
 </section>
