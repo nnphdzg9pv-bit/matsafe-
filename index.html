@@ -17,7 +17,7 @@
 <meta name="twitter:title" content="MatSafe — La certification qui protège vos pratiquants"/>
 <meta name="twitter:description" content="Le label hygiène des sports de contact."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Kanit:ital,wght@1,700;1,800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Barlow+Condensed:wght@700;800;900&family=Barlow:ital,wght@0,400;0,500;1,400;1,500&family=Kanit:ital,wght@1,700;1,800&display=swap" rel="stylesheet"/>
 <style>
 :root {
   --black: #0A0A0A;
@@ -527,8 +527,7 @@ footer{
   color:var(--black);margin:.6rem 0 1.4rem;
 }
 .pq2-title em{
-  font-family:'Fraunces',serif;font-style:italic;font-weight:400;
-  text-transform:none;color:var(--green);letter-spacing:0;
+  font-style:normal;color:var(--green);
 }
 .pq2-lead{font-size:.98rem;line-height:1.7;color:#555;max-width:580px}
 .pq2-lead strong{color:var(--black);font-weight:600}
@@ -552,7 +551,7 @@ footer{
 .pq2-crop.bl{bottom:16px;left:16px;border-right:0;border-top:0}
 .pq2-crop.br{bottom:16px;right:16px;border-left:0;border-top:0}
 .pq2-stage-eyebrow{
-  font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.24em;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.75rem;letter-spacing:.2em;
   text-transform:uppercase;color:var(--green);
 }
 .pq2-stage-ico{font-size:2rem;color:var(--border);line-height:1}
@@ -572,7 +571,7 @@ footer{
 }
 .pq2-sport:hover{padding-left:.7rem}
 .pq2-sport-idx{
-  font-family:'Space Mono',monospace;font-size:.72rem;font-weight:700;
+  font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:800;letter-spacing:.06em;
   color:var(--green);min-width:2.1rem;
 }
 .pq2-sport-name{
@@ -737,9 +736,8 @@ footer{
   margin:.25rem 0 0 -.06em;
 }
 .svc-giant em{
-  font-family:'Fraunces',serif;
-  font-style:italic;font-weight:400;
-  color:var(--green);letter-spacing:0;
+  font-style:normal;font-weight:inherit;
+  color:var(--green);letter-spacing:inherit;
 }
 .svc-manifesto{
   font-size:.92rem;line-height:1.7;color:#555;
@@ -771,31 +769,31 @@ footer{
 .svc-row:hover{padding-left:1.5rem;padding-right:1.5rem}
 
 .svc-index{
-  font-family:'Space Mono',monospace;
-  font-size:.82rem;font-weight:700;letter-spacing:.05em;
-  color:var(--green);padding-top:.55rem;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:1rem;font-weight:800;letter-spacing:.06em;
+  color:var(--green);padding-top:.4rem;
 }
 .svc-name{
-  font-family:'Fraunces',serif;
-  font-weight:400;font-size:clamp(1.9rem,3.4vw,3.1rem);
-  line-height:1.02;letter-spacing:-.01em;color:var(--black);
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:900;text-transform:uppercase;font-size:clamp(1.9rem,3.6vw,3.2rem);
+  line-height:.98;letter-spacing:.01em;color:var(--black);
 }
-.svc-name b{font-weight:500}
+.svc-name b{font-weight:900;color:var(--green)}
 
 .svc-mid{display:flex;flex-direction:column;gap:1.15rem}
 .svc-tags{display:flex;flex-wrap:wrap;gap:.4rem .5rem}
 .svc-tags span{
-  font-family:'Space Mono',monospace;
-  font-size:.66rem;font-weight:400;letter-spacing:.02em;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:.82rem;font-weight:700;letter-spacing:.08em;
   text-transform:uppercase;
   color:var(--green);
   border:1px solid rgba(45,90,61,.35);
-  border-radius:2px;padding:.28rem .55rem;
+  border-radius:2px;padding:.18rem .6rem;
 }
 .svc-hook{
-  font-size:.95rem;font-style:italic;font-weight:500;
+  font-size:1rem;font-style:italic;font-weight:500;
   color:var(--black);line-height:1.45;
-  font-family:'Fraunces',serif;
+  font-family:'Barlow',sans-serif;
 }
 .svc-desc{font-size:.83rem;line-height:1.72;color:#666;max-width:560px}
 .svc-benefits{
@@ -803,8 +801,8 @@ footer{
   border-top:1px solid var(--border);padding-top:1.1rem;margin-top:.35rem;
 }
 .svc-b-label{
-  font-family:'Space Mono',monospace;
-  font-weight:700;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
   color:var(--green);margin-bottom:.4rem;display:block;
 }
 .svc-b-text{font-size:.75rem;line-height:1.55;color:#777}
@@ -821,8 +819,8 @@ footer{
   transition:transform .5s cubic-bezier(.2,.7,.2,1)}
 .svc-row:hover .svc-media img{transform:scale(1.05)}
 .svc-media-ph{
-  font-family:'Space Mono',monospace;
-  font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
   color:var(--gray);text-align:center;padding:.5rem;
 }
 .svc-media-ph::before{
@@ -911,8 +909,8 @@ footer{
 .prob2-dot--r{right:clamp(24px,2.6vw,34px)}
 .prob2-eyebrow{
   text-align:center;
-  font-family:'Space Mono',monospace;
-  font-size:.66rem;letter-spacing:.28em;text-transform:uppercase;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:.78rem;letter-spacing:.24em;text-transform:uppercase;
   color:var(--green);margin-bottom:clamp(1.9rem,3.6vw,2.9rem);
 }
 .prob2-cols{
@@ -1121,7 +1119,7 @@ footer{
 }
 .showcase-photo-note{
   position:absolute;top:1rem;left:1rem;z-index:1;
-  font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.18em;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.68rem;letter-spacing:.16em;
   text-transform:uppercase;color:rgba(255,255,255,.65);
 }
 .showcase-word{
@@ -1270,6 +1268,31 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
 .hero-video-wrap{
   background:radial-gradient(120% 100% at 70% 20%, #2b2b28 0%, #141412 70%);
 }
+
+/* ── POUR QUI : photo dans la zone réservée ── */
+.pq2-stage-img{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center 30%;z-index:1;display:block;
+}
+.pq2-stage-img.is-missing{display:none}
+.pq2-stage-ph{
+  position:absolute;inset:0;z-index:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:.75rem;text-align:center;padding:2.5rem;
+}
+.pq2-stage-caption{
+  position:absolute;left:0;right:0;bottom:0;z-index:2;display:none;
+  padding:2.2rem 1.5rem 1.2rem;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.72rem;letter-spacing:.16em;
+  text-transform:uppercase;color:rgba(255,255,255,.9);text-align:center;
+  background:linear-gradient(to top,rgba(0,0,0,.6),transparent);
+}
+/* Quand une vraie photo est chargée : on masque le placeholder, on affiche la légende */
+.pq2-stage:has(.pq2-stage-img:not(.is-missing)){
+  border-style:solid;border-color:var(--border);background:#111;
+}
+.pq2-stage:has(.pq2-stage-img:not(.is-missing)) .pq2-stage-ph{display:none}
+.pq2-stage:has(.pq2-stage-img:not(.is-missing)) .pq2-stage-caption{display:block}
 
 </style>
 </head>
@@ -1540,13 +1563,20 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
 
   <div class="pq2-body">
     <!-- Zone libre réservée : typographie & images à venir -->
-    <div class="pq2-stage reveal d1" aria-label="Zone réservée pour un visuel à venir">
-      <span class="pq2-crop tl"></span><span class="pq2-crop tr"></span>
-      <span class="pq2-crop bl"></span><span class="pq2-crop br"></span>
-      <span class="pq2-stage-eyebrow">Zone réservée</span>
-      <span class="pq2-stage-ico">▦</span>
-      <span class="pq2-stage-label">Typographie &amp; Images</span>
-      <span class="pq2-stage-note">Espace laissé libre pour une composition visuelle à intégrer ultérieurement.</span>
+    <div class="pq2-stage reveal d1">
+      <!-- Photo : déposer le fichier à ce chemin (ou je l'embarque en base64) -->
+      <img class="pq2-stage-img" src="assets/pourqui-sport.jpg"
+           alt="Compétiteur de sport de contact, main bandée avant un combat"
+           onerror="this.classList.add('is-missing')" loading="lazy">
+      <div class="pq2-stage-ph">
+        <span class="pq2-crop tl"></span><span class="pq2-crop tr"></span>
+        <span class="pq2-crop bl"></span><span class="pq2-crop br"></span>
+        <span class="pq2-stage-eyebrow">Zone réservée</span>
+        <span class="pq2-stage-ico">▦</span>
+        <span class="pq2-stage-label">Photo à intégrer</span>
+        <span class="pq2-stage-note">Dépose ton image ici — la zone est prête à l'accueillir.</span>
+      </div>
+      <span class="pq2-stage-caption">Sports de contact · Compétition</span>
     </div>
 
     <!-- Sports -->
