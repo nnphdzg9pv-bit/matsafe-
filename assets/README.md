@@ -10,6 +10,24 @@ Tous les médias du site. Ils sont référencés en chemin relatif depuis
 | `club-cube-1.jpg` | Section « Cube Fight Club », grande photo de gauche | 4/3 — 1400 × 1050 px |
 | `club-cube-2.jpg` | Section « Cube Fight Club », photo de droite | 4/3 — 1400 × 1050 px |
 | `medecindirect.png` | Section « Services », ligne 03 — carte partenaire | PNG 322 × 128 px, fond transparent |
+| `logo-matsafe.png` | Logo officiel dans la navigation | PNG 1186 × 405 px, **fond détouré (transparent)** |
+
+## Logo officiel
+
+`logo-matsafe.png` est le logo officiel MatSafe (ovale « MatSafe » gris/blanc,
+« SINCE 2026 »). Il a été dérivé du fichier fourni, qui était une image
+rectangulaire **à fond noir opaque** : le fond noir *autour* de l'ovale a été
+rendu transparent, le noir *à l'intérieur* de l'ovale conservé (sinon les
+lettres blanches deviendraient illisibles), puis l'image recadrée au plus près.
+
+Résultat : une pastille autonome, lisible **sur fond clair comme sur fond
+sombre** — indispensable puisque la barre de navigation est transparente sur le
+hero (sombre) et devient blanche au défilement.
+
+Pour remplacer le logo : fournir de préférence un PNG **à fond déjà
+transparent** (ou un SVG), en gardant le remplissage noir de l'ovale. Conserver
+le nom `logo-matsafe.png`, ou mettre à jour la référence dans `index.html`
+(`.nav-logo-img`). Si le fichier manque, le badge CSS reprend automatiquement.
 
 ## Pourquoi des fichiers séparés
 
