@@ -828,6 +828,23 @@ footer{
 .ms-badge--nav{font-size:.86rem}   /* ≈ 43px de haut dans une nav de 58px */
 @media(max-width:520px){ .ms-badge--nav{font-size:.72rem} }
 
+/* ── LOGO OFFICIEL (image) ──
+   L'image et le badge de repli cohabitent dans le même lien. Dès que
+   l'image est chargée, `:has()` masque le badge ; si l'image manque, son
+   onerror la retire et le badge redevient seul visible. */
+.nav-logo{display:inline-flex;align-items:center;line-height:0}
+.nav-logo-img{
+  height:44px;width:auto;display:block;   /* cadré sur la hauteur de nav (58px) */
+}
+@media(max-width:520px){ .nav-logo-img{height:36px} }
+.nav-logo:has(.nav-logo-img) .ms-badge--fallback{display:none}
+/* Repli sans :has() (navigateurs anciens) : le badge reste visible sous
+   l'image, mais l'image le recouvre — donc aucun doublon perçu. */
+@supports not selector(:has(*)){
+  .nav-logo{position:relative}
+  .nav-logo .ms-badge--fallback{position:absolute;left:0;top:50%;transform:translateY(-50%);z-index:-1}
+}
+
 /* Version géante (hero / vitrine éventuelle) */
 .ms-badge--giant{font-size:clamp(1.9rem,6.5vw,4.4rem)}
 
@@ -935,9 +952,15 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
 
 <!-- NAV -->
 <nav id="nav">
-  <a href="#" class="ms-badge ms-badge--nav" aria-label="MatSafe — retour en haut">
-    <span class="ms-logo"><span class="ms-mat">Mat</span><span class="ms-safe">Safe</span></span>
-    <span class="ms-since">Since 2026</span>
+  <!-- Logo officiel. Déposer le fichier « assets/logo-matsafe.png » et il
+       s'affiche ; s'il manque, l'<img> se retire (onerror) et le badge CSS
+       ci-dessous reprend le relais — la nav n'est jamais vide. -->
+  <a href="#" class="nav-logo" aria-label="MatSafe — retour en haut">
+    <img class="nav-logo-img" src="assets/logo-matsafe.png" alt="MatSafe" onerror="this.remove()">
+    <span class="ms-badge ms-badge--nav ms-badge--fallback" aria-hidden="true">
+      <span class="ms-logo"><span class="ms-mat">Mat</span><span class="ms-safe">Safe</span></span>
+      <span class="ms-since">Since 2026</span>
+    </span>
   </a>
   <div class="nav-links">
     <a href="#s-livrables">Nos Services</a>
