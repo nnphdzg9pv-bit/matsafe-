@@ -471,6 +471,8 @@ footer{
   font-family:'Barlow',sans-serif;
 }
 .ed-desc{font-size:.83rem;line-height:1.72;color:var(--black);max-width:560px}
+.ed-link{color:var(--black);font-weight:600;text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
+.ed-link:hover{text-decoration-thickness:2px}
 .ed-benefits{
   display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;
   border-top:1px solid var(--border);padding-top:1.1rem;margin-top:.35rem;
@@ -490,18 +492,53 @@ footer{
   overflow:hidden;position:relative;
   display:flex;align-items:center;justify-content:center;
 }
-.ed-media img{width:100%;height:100%;object-fit:cover;display:block;
+.ed-media > img{width:100%;height:100%;object-fit:cover;display:block;
   transition:transform .5s cubic-bezier(.2,.7,.2,1)}
-.ed-row:hover .ed-media img{transform:scale(1.05)}
+.ed-row:hover .ed-media > img{transform:scale(1.05)}
 /* Le repère « Photo à venir » est le calque du dessous : l'image, en absolu,
    le recouvre une fois chargée. Il reste donc visible pendant le chargement
    comme si le fichier manque (onerror retire alors l'<img>). */
-.ed-media img{position:absolute;inset:0}
+.ed-media > img{position:absolute;inset:0}
+/* ── CARTE PARTENAIRE (MédecinDirect) ──
+   Occupe la colonne média d'une ligne, à la place d'une photo. */
+.ed-media--partner{
+  aspect-ratio:auto;background:var(--white);
+  border:1.5px solid var(--black);
+}
+.partner-card{
+  display:flex;flex-direction:column;align-items:flex-start;gap:.9rem;
+  padding:1.4rem 1.3rem;width:100%;
+  color:var(--black);text-decoration:none;
+}
+.partner-eyebrow{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;
+  display:flex;align-items:center;gap:.5rem;
+}
+.partner-eyebrow::before{content:'';width:16px;height:1.5px;background:currentColor}
+.partner-logo{max-width:100%;height:auto;max-height:46px;display:block}
+/* Repli tant que le fichier du logo n'est pas déposé : le nom en toutes
+   lettres, sans chercher à imiter leur marque. */
+.partner-name{
+  font-family:'Barlow',sans-serif;font-weight:500;
+  font-size:1.35rem;line-height:1.1;letter-spacing:-.01em;
+}
+.partner-card:has(.partner-logo) .partner-name{display:none}
+.partner-note{font-size:.75rem;line-height:1.5;color:var(--black)}
+.partner-cta{
+  margin-top:.2rem;font-family:'Barlow Condensed',sans-serif;font-weight:800;
+  font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;
+  padding:.6rem 1rem;background:var(--black);color:var(--white);
+  border-radius:2px;width:100%;text-align:center;
+  transition:background .2s;
+}
+.partner-card:hover .partner-cta{background:#333}
+
 /* Emplacement portrait — cadre calé sur le 2/3 de la photo, pour l'afficher
    entière. object-position garde le haut du cadrage si un autre format y
    passe un jour (le visage plutôt que le sol). */
 .ed-media--portrait{aspect-ratio:2/3}
-.ed-media--portrait img{object-position:50% 28%}
+.ed-media--portrait > img{object-position:50% 28%}
 @media(max-width:1080px){
   .ed-media--portrait{aspect-ratio:3/4}
 }
@@ -1037,14 +1074,25 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
           <span>Avis médical</span><span>Infection cutanée</span><span>Accès rapide</span>
         </div>
         <p class="ed-hook">Un doute sur la peau d'un adhérent ? Un avis médical en quelques minutes.</p>
-        <p class="ed-desc">En cas de suspicion d'infection cutanée — un risque réel et récurrent dans les sports de contact — les adhérents des clubs certifiés pourront accéder rapidement à un professionnel de santé via une plateforme de téléconsultation partenaire. MatSafe ne pose aucun diagnostic : MatSafe facilite l'accès et aide le club à appliquer les mesures prévues par son référentiel en attendant l'avis médical.</p>
+        <p class="ed-desc">En cas de suspicion d'infection cutanée — un risque réel et récurrent dans les sports de contact — les adhérents des clubs certifiés accèdent rapidement à un professionnel de santé grâce à notre partenariat avec <a class="ed-link" href="https://www.medecindirect.fr/" target="_blank" rel="noopener">MédecinDirect</a>, plateforme française de téléconsultation. MatSafe ne pose aucun diagnostic : MatSafe facilite l'accès et aide le club à appliquer les mesures prévues par son référentiel en attendant l'avis médical.</p>
         <div class="ed-benefits">
           <div><span class="ed-b-label">Dirigeant</span><span class="ed-b-text">Une réponse concrète, sans engager sa responsabilité médicale.</span></div>
           <div><span class="ed-b-label">Coachs</span><span class="ed-b-text">Ils orientent, ils ne tranchent plus seuls.</span></div>
           <div><span class="ed-b-label">Adhérents</span><span class="ed-b-text">Une prise en charge rapide, sans attendre trois jours.</span></div>
         </div>
       </div>
-      <div class="ed-media"><span class="ed-media-ph">Photo à venir</span></div>
+      <div class="ed-media ed-media--partner">
+        <a class="partner-card" href="https://www.medecindirect.fr/" target="_blank" rel="noopener">
+          <span class="partner-eyebrow">Partenaire</span>
+          <!-- Logo : déposer le fichier fourni par MédecinDirect sous ce nom.
+               Tant qu'il est absent, le nom en toutes lettres prend le relais. -->
+          <img class="partner-logo" src="assets/medecindirect.svg"
+               alt="MédecinDirect" onerror="this.remove()">
+          <span class="partner-name">médecin direct</span>
+          <span class="partner-note">Téléconsultation avec un médecin français, 7j/7.</span>
+          <span class="partner-cta">Consulter un médecin ↗</span>
+        </a>
+      </div>
     </article>
 
     <!-- 04 — ASSISTANCE CONTINUE -->
@@ -1377,9 +1425,10 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
       <a href="#s-process">Certification</a>
     </div>
     <div class="footer-col">
-      <div class="fc-head">Clubs</div>
+      <div class="fc-head">Adhérents</div>
       <a href="#s-carte">Trouver un club</a>
       <a href="#s-contact">Candidater</a>
+      <a href="https://www.medecindirect.fr/" target="_blank" rel="noopener">Téléconsultation MédecinDirect ↗</a>
     </div>
     <div class="footer-col">
       <div class="fc-head">Légal</div>

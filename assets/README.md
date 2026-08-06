@@ -20,3 +20,18 @@ disparaît automatiquement.
 
 Si le fichier est absent ou mal nommé, l'`<img>` se retire toute seule et le
 repère réapparaît — la page ne casse jamais et n'affiche pas d'image brisée.
+
+---
+
+## Logo partenaire
+
+| Fichier | Emplacement sur le site | Format |
+|---|---|---|
+| `medecindirect.svg` | Section « Services », ligne 03 — carte partenaire | **SVG de préférence** (net à toute taille), sinon PNG à fond transparent, hauteur ≥ 92 px |
+
+Ce logo appartient à MédecinDirect : utiliser le fichier officiel qu'ils
+fournissent, pas une reconstitution. Tant qu'il est absent, la carte affiche
+leur nom en toutes lettres — le site ne montre jamais d'image cassée.
+
+Un PNG fonctionne aussi : remplacer alors l'extension dans `index.html`
+(`assets/medecindirect.svg` → `.png`).
