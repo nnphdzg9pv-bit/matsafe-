@@ -503,6 +503,12 @@ footer{
    Si le fichier manque, onerror retire l'<img> et le repère réapparaît. */
 .ed-media:has(img) .ed-media-ph{display:none}
 .ed-media img{position:absolute;inset:0}
+/* Emplacement portrait — pour les photos verticales, qu'un cadre 4/3
+   amputerait de la tête et des jambes. */
+.ed-media--portrait{aspect-ratio:3/4}
+@media(max-width:1080px){
+  .ed-media--portrait{aspect-ratio:4/5}
+}
 .ed-media-ph{
   font-family:'Barlow Condensed',sans-serif;font-weight:700;
   font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
@@ -1112,10 +1118,10 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
         <p class="ed-hook">Là où le contact est la discipline, l'hygiène est une exigence sportive.</p>
         <p class="ed-desc">Six familles de pratique, un même dénominateur : un contact peau-à-peau prolongé, répété, avec des partenaires différents à chaque séance. Le label est calibré pour ces conditions-là — pas transposé depuis un référentiel générique de salle de sport.</p>
       </div>
-      <div class="ed-media">
+      <div class="ed-media ed-media--portrait">
         <img src="assets/pourqui-sport.jpg"
-             alt="Compétiteur de sport de contact, main bandée avant un combat"
-             onerror="this.closest('.ed-media').classList.add('is-empty');this.remove()" loading="lazy">
+             alt="Pratiquant de jiu-jitsu brésilien en kimono blanc, contrôlant la jambe de son partenaire au sol"
+             onerror="this.remove()" loading="lazy">
         <span class="ed-media-ph">Photo à venir</span>
       </div>
     </article>
