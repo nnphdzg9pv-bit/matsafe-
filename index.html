@@ -6,7 +6,7 @@
 <title>MatSafe — La certification qui protège vos pratiquants</title>
 <meta name="description" content="MatSafe Label — Le label qui garantit un environnement sain dans les sports de contact. Réduisez les risques de contamination et structurez l'hygiène de votre club."/>
 <meta name="theme-color" content="#0A0A0A"/>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232D5A3D'/%3E%3Ctext x='16' y='23' font-size='20' font-family='Arial,sans-serif' font-weight='bold' fill='%23F4ED21' text-anchor='middle'%3EM%3C/text%3E%3C/svg%3E"/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230A0A0A'/%3E%3Cellipse cx='16' cy='16' rx='14' ry='9' fill='none' stroke='%23FFFFFF' stroke-width='1.4'/%3E%3Ctext x='16' y='22' font-size='15' font-family='Arial,sans-serif' font-style='italic' font-weight='bold' fill='%23FFFFFF' text-anchor='middle'%3EM%3C/text%3E%3C/svg%3E"/>
 <!-- Open Graph / partage social -->
 <meta property="og:type" content="website"/>
 <meta property="og:locale" content="fr_FR"/>
@@ -41,12 +41,6 @@ nav{
   transition:background .3s,border-color .3s;
 }
 nav.solid{background:rgba(255,255,255,.97);border-bottom:1px solid var(--border)}
-.nav-logo{
-  font-family:'Barlow Condensed',sans-serif;
-  font-weight:900;font-size:1.05rem;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--white);transition:color .3s;
-}
-nav.solid .nav-logo{color:var(--black)}
 .nav-links{display:flex;align-items:center;gap:2.5rem}
 .nav-links a{
   font-family:'Barlow Condensed',sans-serif;
@@ -1105,30 +1099,51 @@ footer{
 }
 
 /* ══════════════════════════════════════════
-   LOGO MATSAFE — WORDMARK RACING (CSS)
-   « Mat » jaune + « Safe » blanc, contour noir + ombre
+   LOGO MATSAFE — BADGE OVALE (CSS)
+   « Mat » gris + « Safe » blanc, double contour
+   (noir intérieur + blanc extérieur), ovale + SINCE 2026
+   Tout est en em : régler .ms-badge{font-size} pour redimensionner.
    ══════════════════════════════════════════ */
+.ms-badge{
+  display:inline-flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:.18em;
+  font-size:1rem;                     /* échelle maîtresse */
+  padding:.44em 2.05em .5em;
+  background:#0A0A0A;
+  border:.13em solid #FFFFFF;
+  border-radius:50%;                  /* ellipse */
+  line-height:1;white-space:nowrap;
+  text-decoration:none;
+}
 .ms-logo{
   font-family:'Kanit',sans-serif;font-weight:800;font-style:italic;
+  font-size:1.35em;
   text-transform:none;letter-spacing:-.015em;line-height:1;
   display:inline-block;white-space:nowrap;
+  /* contour noir intérieur */
   -webkit-text-stroke:.055em #0A0A0A;
   paint-order:stroke fill;
-  text-shadow:.018em .04em 0 rgba(0,0,0,.4);
+  /* contour blanc extérieur (anneau simulé par 8 ombres portées) */
+  text-shadow:
+     .05em 0 0 #FFF, -.05em 0 0 #FFF,
+     0 .05em 0 #FFF, 0 -.05em 0 #FFF,
+     .035em .035em 0 #FFF, -.035em .035em 0 #FFF,
+     .035em -.035em 0 #FFF, -.035em -.035em 0 #FFF;
 }
-.ms-logo .ms-mat{color:#F4ED21}
+.ms-logo .ms-mat{color:#8C8C8C}
 .ms-logo .ms-safe{color:#FFFFFF}
+.ms-since{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:.44em;letter-spacing:.28em;text-transform:uppercase;
+  color:#FFFFFF;text-indent:.28em;   /* recentre malgré l'interlettrage */
+}
 
 /* Version nav */
-.nav-logo.ms-logo{font-size:1.55rem;letter-spacing:-.015em}
-nav.solid .nav-logo.ms-logo{color:inherit}   /* neutralise l'override de couleur : les spans gèrent la couleur */
+.ms-badge--nav{font-size:.86rem}   /* ≈ 43px de haut dans une nav de 58px */
+@media(max-width:520px){ .ms-badge--nav{font-size:.72rem} }
 
-/* Version géante (vitrine / hero éventuel) */
-.ms-logo--giant{
-  font-size:clamp(3.2rem,13vw,11rem);
-  -webkit-text-stroke:.045em #0A0A0A;
-  text-shadow:.012em .03em 0 rgba(0,0,0,.35);
-}
+/* Version géante (hero / vitrine éventuelle) */
+.ms-badge--giant{font-size:clamp(1.9rem,6.5vw,4.4rem)}
 
 /* ══════════════════════════════════════════
    NAVIGATION MOBILE — BURGER + PANNEAU
@@ -1251,7 +1266,10 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
 
 <!-- NAV -->
 <nav id="nav">
-  <div class="nav-logo ms-logo"><span class="ms-mat">Mat</span><span class="ms-safe">Safe</span></div>
+  <a href="#" class="ms-badge ms-badge--nav" aria-label="MatSafe — retour en haut">
+    <span class="ms-logo"><span class="ms-mat">Mat</span><span class="ms-safe">Safe</span></span>
+    <span class="ms-since">Since 2026</span>
+  </a>
   <div class="nav-links">
     <a href="#s-livrables">Nos Services</a>
     <a href="#s-pourquoi">Le Label</a>
