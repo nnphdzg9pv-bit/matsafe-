@@ -636,15 +636,29 @@ footer{
 }
 /* Repli quand Leaflet n'a pas pu être chargé */
 .map-offline{
-  height:100%;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:.6rem;
-  padding:2rem;text-align:center;background:var(--light);
-  font-size:.85rem;line-height:1.6;color:var(--black);
+  display:flex;flex-direction:column;gap:.4rem;
+  padding:1.1rem 1.25rem;background:var(--light);
+  border-bottom:1px solid var(--border);
+  font-size:.82rem;line-height:1.55;color:var(--black);
 }
 .map-offline strong{
   font-family:'Barlow Condensed',sans-serif;font-weight:900;
   font-size:1.1rem;letter-spacing:.06em;text-transform:uppercase;
 }
+/* Sans carte, on n'affiche pas un panneau vide à côté d'une colonne :
+   la carte disparaît et l'annuaire s'étale en grille sur toute la largeur. */
+.map-layout--nomap{grid-template-columns:1fr}
+.map-layout--nomap #shl-map{display:none}
+.map-layout--nomap .map-sidebar{height:auto;max-height:none;border-top:1px solid var(--border)}
+.map-layout--nomap #map-list{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  border-left:1px solid var(--border);
+}
+.map-layout--nomap .map-club-item{
+  border-right:1px solid var(--border);
+  border-left:0;
+}
+.map-layout--nomap .map-club-item.active{border-left:0}
 .map-sidebar {
   height: 580px;
   overflow-y: auto;
@@ -1729,14 +1743,17 @@ function initMap() {
   // bloqueur de pub, et `L` n'existe pas. Plutôt qu'un carré vide et une
   // exception, la liste des clubs prend toute la place et reste utilisable.
   if (typeof L === 'undefined') {
-    const pane = document.getElementById('shl-map');
-    if (pane) pane.innerHTML =
-      '<div class="map-offline">' +
-      '<strong>Carte indisponible</strong>' +
-      'Le fond cartographique n\'a pas pu être chargé. La liste des clubs ' +
-      'reste consultable et fonctionne normalement.' +
-      '</div>';
     document.querySelector('.map-layout')?.classList.add('map-layout--nomap');
+    const sidebar = document.getElementById('map-sidebar');
+    if (sidebar && !sidebar.querySelector('.map-offline')) {
+      const notice = document.createElement('div');
+      notice.className = 'map-offline';
+      notice.innerHTML =
+        '<strong>Annuaire des clubs</strong>' +
+        'Le fond cartographique interactif se charge une fois le site en ligne. ' +
+        'La liste ci-dessous est complète et fonctionne dès maintenant.';
+      sidebar.insertBefore(notice, sidebar.firstChild);
+    }
     renderMapList(CLUBS);
     return;
   }
