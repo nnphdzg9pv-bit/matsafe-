@@ -587,6 +587,95 @@ footer{
   .ed-manifesto{max-width:none}
 }
 
+/* ══════════════════════════════════════════
+   SERVICES — ACCORDÉON
+   Chaque service est replié sur son numéro + nom + accroche ; le détail
+   (tags, description, bénéfices, visuel) se déploie au clic. La section
+   n'affiche donc plus tout d'un coup : elle reste courte et lisible.
+   Portée limitée à .ed-list--acc pour ne pas toucher les autres sections.
+   ══════════════════════════════════════════ */
+.ed-list--acc .ed-row--acc{
+  display:block;padding:0;                 /* on abandonne la grille 4 colonnes */
+}
+.ed-list--acc .ed-row--acc::before{content:none}   /* pas de fond au survol ici */
+.ed-list--acc .ed-row--acc:hover{padding:0}
+/* Les .ed-row responsive assignent grid-area:index/name/mid/media (utile pour
+   les AUTRES sections). Ici la mise en page est différente : on annule ces
+   affectations pour qu'elles ne déplacent pas le contenu de l'accordéon. */
+.ed-list--acc .ed-index,
+.ed-list--acc .ed-name,
+.ed-list--acc .ed-mid,
+.ed-list--acc .ed-media,
+.ed-list--acc .ed-media--partner{grid-area:auto}
+
+/* En-tête cliquable : un vrai <button> pour le clavier et les lecteurs d'écran */
+.ed-acc-head{
+  width:100%;background:none;border:none;cursor:pointer;
+  display:grid;grid-template-columns:6rem 1fr auto;gap:2rem;align-items:baseline;
+  padding:2.1rem 0;text-align:left;color:var(--black);
+  font:inherit;
+  transition:padding .3s cubic-bezier(.2,.7,.2,1);
+}
+.ed-acc-head:hover{padding-left:1.2rem;padding-right:1.2rem}
+.ed-acc-head .ed-index{padding-top:.15rem}
+.ed-acc-title{display:flex;flex-direction:column;gap:.5rem;min-width:0}
+.ed-acc-title .ed-name{font-size:clamp(1.7rem,3.2vw,2.8rem)}
+/* L'accroche sert de teaser sous le nom quand c'est replié */
+.ed-acc-title .ed-hook{margin:0}
+
+/* Icône +/− dessinée en CSS (deux traits ; l'un pivote à l'ouverture) */
+.ed-acc-icon{
+  position:relative;width:22px;height:22px;flex-shrink:0;align-self:center;
+  margin-top:.2rem;
+}
+.ed-acc-icon::before,.ed-acc-icon::after{
+  content:'';position:absolute;top:50%;left:50%;
+  width:18px;height:2px;background:var(--black);
+  transform:translate(-50%,-50%);
+  transition:transform .3s cubic-bezier(.2,.7,.2,1);
+}
+.ed-acc-icon::after{transform:translate(-50%,-50%) rotate(90deg)}
+.ed-acc-head[aria-expanded="true"] .ed-acc-icon::after{transform:translate(-50%,-50%) rotate(0deg)}
+.ed-acc-head[aria-expanded="true"]{padding-left:1.2rem;padding-right:1.2rem}
+
+/* Panneau déroulant : grille 0fr→1fr, la seule façon d'animer « hauteur auto » */
+.ed-acc-panel{
+  display:grid;grid-template-rows:0fr;
+  transition:grid-template-rows .38s cubic-bezier(.2,.7,.2,1);
+}
+.ed-acc-panel.open{grid-template-rows:1fr}
+.ed-acc-panel > .ed-acc-inner{
+  overflow:hidden;min-height:0;
+}
+.ed-acc-body{
+  display:grid;grid-template-columns:6rem 1fr 15rem;gap:2rem;align-items:start;
+  padding:0 0 2.4rem;
+}
+.ed-acc-body > .ed-acc-spacer{grid-column:1}   /* aligne le texte sous le nom */
+.ed-acc-body .ed-mid{grid-column:2}
+.ed-acc-body .ed-media,.ed-acc-body .ed-media--partner{grid-column:3;margin-top:.2rem}
+/* Léger fondu du contenu à l'ouverture */
+.ed-acc-panel .ed-acc-body{opacity:0;transition:opacity .3s ease .05s}
+.ed-acc-panel.open .ed-acc-body{opacity:1}
+
+@media(max-width:1080px){
+  .ed-acc-head{grid-template-columns:4rem 1fr auto}
+  .ed-acc-body{grid-template-columns:4rem 1fr;}
+  .ed-acc-body .ed-media,.ed-acc-body .ed-media--partner{grid-column:2;max-width:340px}
+}
+@media(max-width:720px){
+  .ed-acc-head{grid-template-columns:3rem 1fr auto;gap:1rem;padding:1.6rem 0}
+  .ed-acc-head:hover,.ed-acc-head[aria-expanded="true"]{padding-left:0;padding-right:0}
+  .ed-acc-title .ed-name{font-size:1.5rem}
+  .ed-acc-body{grid-template-columns:1fr;gap:1.1rem;padding-bottom:1.8rem}
+  .ed-acc-body > .ed-acc-spacer{display:none}
+  .ed-acc-body .ed-mid,.ed-acc-body .ed-media,.ed-acc-body .ed-media--partner{grid-column:1}
+}
+/* Sans animation demandée : ouverture instantanée, pas de saccade */
+@media(prefers-reduced-motion:reduce){
+  .ed-acc-panel,.ed-acc-head,.ed-acc-icon::before,.ed-acc-icon::after,.ed-acc-body{transition:none !important}
+}
+
 /* ── REVEAL ── */
 .reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
 .reveal.in{opacity:1;transform:translateY(0)}
@@ -1085,121 +1174,163 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
     </p>
   </div>
 
-  <div class="ed-list">
+  <div class="ed-list ed-list--acc">
 
-    <!-- 01 — DIAGNOSTIC -->
-    <article class="ed-row reveal">
-      <div class="ed-index">01</div>
-      <h3 class="ed-name">Diagnostic <b>&amp;</b> Feuille de Route</h3>
-      <div class="ed-mid">
-        <div class="ed-tags">
-          <span>Audit terrain</span><span>Grille de critères</span><span>Feuille de route</span>
-        </div>
-        <p class="ed-hook">Vous ne savez pas où vous en êtes vraiment. Nous, si.</p>
-        <p class="ed-desc">Un audit terrain indépendant, mené sur une grille de critères propre aux sports de contact — tatamis, vestiaires, protocole sang, gestion des suspicions d'infection. Il ne s'arrête pas à un rapport qu'on classe : il se termine par une feuille de route priorisée, qui indique ce qui doit être corrigé en premier, et pourquoi. Le dirigeant sait enfin, avec certitude, où se situe réellement son club.</p>
+    <!-- 01 — DIAGNOSTIC <B>&AMP;</B> FEUILLE DE ROUTE -->
+    <article class="ed-row ed-row--acc reveal">
+      <button class="ed-acc-head" id="acc-head-1" aria-expanded="true" aria-controls="svc-panel-1">
+        <span class="ed-index">01</span>
+        <span class="ed-acc-title">
+          <span class="ed-name">Diagnostic <b>&amp;</b> Feuille de Route</span>
+          <span class="ed-hook">Vous ne savez pas où vous en êtes vraiment. Nous, si.</span>
+        </span>
+        <span class="ed-acc-icon" aria-hidden="true"></span>
+      </button>
+      <div class="ed-acc-panel open" id="svc-panel-1" role="region" aria-labelledby="acc-head-1">
+        <div class="ed-acc-inner">
+          <div class="ed-acc-body">
+            <span class="ed-acc-spacer" aria-hidden="true"></span>
+            <div class="ed-mid">
+              <div class="ed-tags"><span>Audit terrain</span><span>Grille de critères</span><span>Feuille de route</span></div>
+              <p class="ed-desc">Un audit terrain indépendant, mené sur une grille de critères propre aux sports de contact — tatamis, vestiaires, protocole sang, gestion des suspicions d'infection. Il ne s'arrête pas à un rapport qu'on classe : il se termine par une feuille de route priorisée, qui indique ce qui doit être corrigé en premier, et pourquoi. Le dirigeant sait enfin, avec certitude, où se situe réellement son club.</p>
         <div class="ed-benefits">
           <div><span class="ed-b-label">Dirigeant</span><span class="ed-b-text">Fin de l'incertitude, priorités claires, budget justifié.</span></div>
           <div><span class="ed-b-label">Coachs</span><span class="ed-b-text">Des standards objectivés, plus un simple ressenti.</span></div>
           <div><span class="ed-b-label">Adhérents</span><span class="ed-b-text">Un diagnostic indépendant, pas une auto-évaluation.</span></div>
         </div>
+            </div>
+        <!-- Emplacement photo. Pour l'activer : <div class="ed-media"><img src="assets/…" alt="…" loading="lazy" onerror="this.remove()"></div> -->
+          </div>
+        </div>
       </div>
-      <!-- Emplacement photo. Pour l'activer, remplacer cette ligne par :
-           <div class="ed-media"><img src="assets/…" alt="…" loading="lazy" onerror="this.remove()"></div>
-           La colonne reste réservée en attendant : les lignes restent alignées. -->
     </article>
 
-    <!-- 02 — SYSTÈME OPÉRATIONNEL -->
-    <article class="ed-row reveal">
-      <div class="ed-index">02</div>
-      <h3 class="ed-name">Le Système <b>Opérationnel</b></h3>
-      <div class="ed-mid">
-        <div class="ed-tags">
-          <span>Procédures</span><span>Kit physique</span><span>Prêt à l'emploi</span>
-        </div>
-        <p class="ed-hook">Vos coachs n'ont plus rien à improviser.</p>
-        <p class="ed-desc">Un référentiel complet de procédures prêtes à l'emploi — nettoyage des tatamis, gestion des vestiaires, protocole en cas de sang, protocole en cas de suspicion d'infection — accompagné du kit physique correspondant : affiches, chartes, check-lists, documents coachs. Rien à écrire, rien à inventer. Le club applique un système déjà pensé, testé et validé sur d'autres clubs certifiés.</p>
+    <!-- 02 — LE SYSTÈME <B>OPÉRATIONNEL</B> -->
+    <article class="ed-row ed-row--acc reveal">
+      <button class="ed-acc-head" id="acc-head-2" aria-expanded="false" aria-controls="svc-panel-2">
+        <span class="ed-index">02</span>
+        <span class="ed-acc-title">
+          <span class="ed-name">Le Système <b>Opérationnel</b></span>
+          <span class="ed-hook">Vos coachs n'ont plus rien à improviser.</span>
+        </span>
+        <span class="ed-acc-icon" aria-hidden="true"></span>
+      </button>
+      <div class="ed-acc-panel" id="svc-panel-2" role="region" aria-labelledby="acc-head-2">
+        <div class="ed-acc-inner">
+          <div class="ed-acc-body">
+            <span class="ed-acc-spacer" aria-hidden="true"></span>
+            <div class="ed-mid">
+              <div class="ed-tags"><span>Procédures</span><span>Kit physique</span><span>Prêt à l'emploi</span></div>
+              <p class="ed-desc">Un référentiel complet de procédures prêtes à l'emploi — nettoyage des tatamis, gestion des vestiaires, protocole en cas de sang, protocole en cas de suspicion d'infection — accompagné du kit physique correspondant : affiches, chartes, check-lists, documents coachs. Rien à écrire, rien à inventer. Le club applique un système déjà pensé, testé et validé sur d'autres clubs certifiés.</p>
         <div class="ed-benefits">
           <div><span class="ed-b-label">Dirigeant</span><span class="ed-b-text">Un système qui survit au turnover des coachs.</span></div>
           <div><span class="ed-b-label">Coachs</span><span class="ed-b-text">Une réponse immédiate face à une situation ambiguë.</span></div>
           <div><span class="ed-b-label">Adhérents</span><span class="ed-b-text">Une expérience cohérente, quel que soit le coach présent.</span></div>
         </div>
+            </div>
+        <!-- Emplacement photo. Pour l'activer : <div class="ed-media"><img src="assets/…" alt="…" loading="lazy" onerror="this.remove()"></div> -->
+          </div>
+        </div>
       </div>
-      <!-- Emplacement photo. Pour l'activer, remplacer cette ligne par :
-           <div class="ed-media"><img src="assets/…" alt="…" loading="lazy" onerror="this.remove()"></div>
-           La colonne reste réservée en attendant : les lignes restent alignées. -->
     </article>
 
-    <!-- 03 — TÉLÉCONSULTATION -->
-    <article class="ed-row reveal">
-      <div class="ed-index">03</div>
-      <h3 class="ed-name">Téléconsultation <b>Partenaire</b></h3>
-      <div class="ed-mid">
-        <div class="ed-tags">
-          <span>Avis médical</span><span>Infection cutanée</span><span>Accès rapide</span>
-        </div>
-        <p class="ed-hook">Un doute sur la peau d'un adhérent ? Un avis médical en quelques minutes.</p>
-        <p class="ed-desc">En cas de suspicion d'infection cutanée — un risque réel et récurrent dans les sports de contact — les adhérents des clubs certifiés accèdent rapidement à un professionnel de santé grâce à notre partenariat avec <a class="ed-link" href="https://www.medecindirect.fr/" target="_blank" rel="noopener">MédecinDirect</a>, plateforme française de téléconsultation. MatSafe ne pose aucun diagnostic : MatSafe facilite l'accès et aide le club à appliquer les mesures prévues par son référentiel en attendant l'avis médical.</p>
+    <!-- 03 — TÉLÉCONSULTATION <B>PARTENAIRE</B> -->
+    <article class="ed-row ed-row--acc reveal">
+      <button class="ed-acc-head" id="acc-head-3" aria-expanded="false" aria-controls="svc-panel-3">
+        <span class="ed-index">03</span>
+        <span class="ed-acc-title">
+          <span class="ed-name">Téléconsultation <b>Partenaire</b></span>
+          <span class="ed-hook">Un doute sur la peau d'un adhérent ? Un avis médical en quelques minutes.</span>
+        </span>
+        <span class="ed-acc-icon" aria-hidden="true"></span>
+      </button>
+      <div class="ed-acc-panel" id="svc-panel-3" role="region" aria-labelledby="acc-head-3">
+        <div class="ed-acc-inner">
+          <div class="ed-acc-body">
+            <span class="ed-acc-spacer" aria-hidden="true"></span>
+            <div class="ed-mid">
+              <div class="ed-tags"><span>Avis médical</span><span>Infection cutanée</span><span>Accès rapide</span></div>
+              <p class="ed-desc">En cas de suspicion d'infection cutanée — un risque réel et récurrent dans les sports de contact — les adhérents des clubs certifiés accèdent rapidement à un professionnel de santé grâce à notre partenariat avec <a class="ed-link" href="https://www.medecindirect.fr/" target="_blank" rel="noopener">MédecinDirect</a>, plateforme française de téléconsultation. MatSafe ne pose aucun diagnostic : MatSafe facilite l'accès et aide le club à appliquer les mesures prévues par son référentiel en attendant l'avis médical.</p>
         <div class="ed-benefits">
           <div><span class="ed-b-label">Dirigeant</span><span class="ed-b-text">Une réponse concrète, sans engager sa responsabilité médicale.</span></div>
           <div><span class="ed-b-label">Coachs</span><span class="ed-b-text">Ils orientent, ils ne tranchent plus seuls.</span></div>
           <div><span class="ed-b-label">Adhérents</span><span class="ed-b-text">Une prise en charge rapide, sans attendre trois jours.</span></div>
         </div>
-      </div>
-      <div class="ed-media ed-media--partner">
-        <a class="partner-card" href="https://www.medecindirect.fr/" target="_blank" rel="noopener">
-          <span class="partner-eyebrow">Partenaire</span>
-          <!-- Logo fourni par MédecinDirect. Si le fichier disparaît,
-               le nom en toutes lettres prend le relais. -->
-          <img class="partner-logo" src="assets/medecindirect.png"
-               alt="MédecinDirect" width="322" height="128" onerror="this.remove()">
-          <span class="partner-name">médecin direct</span>
-          <span class="partner-note">Téléconsultation avec un médecin français, 7j/7.</span>
-          <span class="partner-cta">Consulter un médecin ↗</span>
-        </a>
+            </div>
+        <div class="ed-media ed-media--partner">
+          <a class="partner-card" href="https://www.medecindirect.fr/" target="_blank" rel="noopener">
+            <span class="partner-eyebrow">Partenaire</span>
+            <img class="partner-logo" src="assets/medecindirect.png"
+                 alt="MédecinDirect" width="322" height="128" onerror="this.remove()">
+            <span class="partner-name">médecin direct</span>
+            <span class="partner-note">Téléconsultation avec un médecin français, 7j/7.</span>
+            <span class="partner-cta">Consulter un médecin ↗</span>
+          </a>
+        </div>
+          </div>
+        </div>
       </div>
     </article>
 
-    <!-- 04 — ASSISTANCE CONTINUE -->
-    <article class="ed-row reveal">
-      <div class="ed-index">04</div>
-      <h3 class="ed-name">Assistance <b>Continue</b></h3>
-      <div class="ed-mid">
-        <div class="ed-tags">
-          <span>Interlocuteur dédié</span><span>Toute l'année</span><span>Cas terrain</span>
-        </div>
-        <p class="ed-hook">Une question ? Un interlocuteur, toute l'année.</p>
-        <p class="ed-desc">Le dirigeant n'est jamais seul face à l'application du référentiel. Il peut poser ses questions sur les procédures, les bonnes pratiques ou un cas terrain précis, et obtenir une réponse d'un interlocuteur qui connaît son club et son historique — pas un support générique qui redécouvre le dossier à chaque appel.</p>
+    <!-- 04 — ASSISTANCE <B>CONTINUE</B> -->
+    <article class="ed-row ed-row--acc reveal">
+      <button class="ed-acc-head" id="acc-head-4" aria-expanded="false" aria-controls="svc-panel-4">
+        <span class="ed-index">04</span>
+        <span class="ed-acc-title">
+          <span class="ed-name">Assistance <b>Continue</b></span>
+          <span class="ed-hook">Une question ? Un interlocuteur, toute l'année.</span>
+        </span>
+        <span class="ed-acc-icon" aria-hidden="true"></span>
+      </button>
+      <div class="ed-acc-panel" id="svc-panel-4" role="region" aria-labelledby="acc-head-4">
+        <div class="ed-acc-inner">
+          <div class="ed-acc-body">
+            <span class="ed-acc-spacer" aria-hidden="true"></span>
+            <div class="ed-mid">
+              <div class="ed-tags"><span>Interlocuteur dédié</span><span>Toute l'année</span><span>Cas terrain</span></div>
+              <p class="ed-desc">Le dirigeant n'est jamais seul face à l'application du référentiel. Il peut poser ses questions sur les procédures, les bonnes pratiques ou un cas terrain précis, et obtenir une réponse d'un interlocuteur qui connaît son club et son historique — pas un support générique qui redécouvre le dossier à chaque appel.</p>
         <div class="ed-benefits">
           <div><span class="ed-b-label">Dirigeant</span><span class="ed-b-text">Un accompagnement continu, pas seulement à l'audit annuel.</span></div>
           <div><span class="ed-b-label">Coachs</span><span class="ed-b-text">Un relais direct face à une situation inédite.</span></div>
           <div><span class="ed-b-label">Adhérents</span><span class="ed-b-text">Un club plus réactif face aux imprévus.</span></div>
         </div>
+            </div>
+        <!-- Emplacement photo. Pour l'activer : <div class="ed-media"><img src="assets/…" alt="…" loading="lazy" onerror="this.remove()"></div> -->
+          </div>
+        </div>
       </div>
-      <!-- Emplacement photo. Pour l'activer, remplacer cette ligne par :
-           <div class="ed-media"><img src="assets/…" alt="…" loading="lazy" onerror="this.remove()"></div>
-           La colonne reste réservée en attendant : les lignes restent alignées. -->
     </article>
 
-    <!-- 05 — FORMATIONS -->
-    <article class="ed-row reveal">
-      <div class="ed-index">05</div>
-      <h3 class="ed-name">Formations <b>MatSafe</b></h3>
-      <div class="ed-mid">
-        <div class="ed-tags">
-          <span>Micro-formations</span><span>Réflexe terrain</span><span>Culture partagée</span>
-        </div>
-        <p class="ed-hook">Le référentiel affiché ne sert à rien si personne ne sait pourquoi il existe.</p>
-        <p class="ed-desc">Des micro-formations courtes et ciblées — dirigeants, coachs, bénévoles, nouveaux adhérents — qui transforment le référentiel en réflexe plutôt qu'en affiche ignorée. Chacun comprend non seulement quoi faire, mais pourquoi, ce qui réduit les écarts d'application sur le terrain et ancre l'hygiène comme une culture partagée.</p>
+    <!-- 05 — FORMATIONS <B>MATSAFE</B> -->
+    <article class="ed-row ed-row--acc reveal">
+      <button class="ed-acc-head" id="acc-head-5" aria-expanded="false" aria-controls="svc-panel-5">
+        <span class="ed-index">05</span>
+        <span class="ed-acc-title">
+          <span class="ed-name">Formations <b>MatSafe</b></span>
+          <span class="ed-hook">Le référentiel affiché ne sert à rien si personne ne sait pourquoi il existe.</span>
+        </span>
+        <span class="ed-acc-icon" aria-hidden="true"></span>
+      </button>
+      <div class="ed-acc-panel" id="svc-panel-5" role="region" aria-labelledby="acc-head-5">
+        <div class="ed-acc-inner">
+          <div class="ed-acc-body">
+            <span class="ed-acc-spacer" aria-hidden="true"></span>
+            <div class="ed-mid">
+              <div class="ed-tags"><span>Micro-formations</span><span>Réflexe terrain</span><span>Culture partagée</span></div>
+              <p class="ed-desc">Des micro-formations courtes et ciblées — dirigeants, coachs, bénévoles, nouveaux adhérents — qui transforment le référentiel en réflexe plutôt qu'en affiche ignorée. Chacun comprend non seulement quoi faire, mais pourquoi, ce qui réduit les écarts d'application sur le terrain et ancre l'hygiène comme une culture partagée.</p>
         <div class="ed-benefits">
           <div><span class="ed-b-label">Dirigeant</span><span class="ed-b-text">Une équipe alignée, pas un règlement subi.</span></div>
           <div><span class="ed-b-label">Coachs</span><span class="ed-b-text">Une montée en compétence reconnue.</span></div>
           <div><span class="ed-b-label">Adhérents</span><span class="ed-b-text">Une culture d'hygiène partagée, pas imposée.</span></div>
         </div>
+            </div>
+        <!-- Emplacement photo. Pour l'activer : <div class="ed-media"><img src="assets/…" alt="…" loading="lazy" onerror="this.remove()"></div> -->
+          </div>
+        </div>
       </div>
-      <!-- Emplacement photo. Pour l'activer, remplacer cette ligne par :
-           <div class="ed-media"><img src="assets/…" alt="…" loading="lazy" onerror="this.remove()"></div>
-           La colonne reste réservée en attendant : les lignes restent alignées. -->
     </article>
+
+    <p class="ed-note reveal"><span>Cliquez sur un service pour en déployer le détail.</span></p>
 
   </div>
 </section>
@@ -1626,6 +1757,31 @@ const sObs=new IntersectionObserver(entries=>{
   entries.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('[data-t]').forEach(animNum);sObs.unobserve(e.target);}});
 },{threshold:.4});
 document.querySelector('.stats-bar')&&sObs.observe(document.querySelector('.stats-bar'));
+
+// ── ACCORDÉON SERVICES ──
+// Un seul service ouvert à la fois : ouvrir l'un referme les autres, ce qui
+// garde la section courte. Le <button> gère déjà clavier et focus ; on ne
+// pilote ici que aria-expanded et la classe qui déclenche l'animation.
+(function(){
+  const heads=[...document.querySelectorAll('.ed-list--acc .ed-acc-head')];
+  if(!heads.length)return;
+  const panelOf=h=>document.getElementById(h.getAttribute('aria-controls'));
+  heads.forEach(head=>{
+    head.addEventListener('click',()=>{
+      const open=head.getAttribute('aria-expanded')==='true';
+      if(open){
+        head.setAttribute('aria-expanded','false');
+        panelOf(head).classList.remove('open');
+      }else{
+        heads.forEach(h=>{
+          if(h!==head){h.setAttribute('aria-expanded','false');panelOf(h).classList.remove('open');}
+        });
+        head.setAttribute('aria-expanded','true');
+        panelOf(head).classList.add('open');
+      }
+    });
+  });
+})();
 
 // Reveal
 const rObs=new IntersectionObserver(entries=>{
