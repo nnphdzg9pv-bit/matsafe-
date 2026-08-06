@@ -27,11 +27,13 @@ repère réapparaît — la page ne casse jamais et n'affiche pas d'image brisé
 
 | Fichier | Emplacement sur le site | Format |
 |---|---|---|
-| `medecindirect.svg` | Section « Services », ligne 03 — carte partenaire | **SVG de préférence** (net à toute taille), sinon PNG à fond transparent, hauteur ≥ 92 px |
+| `medecindirect.png` | Section « Services », ligne 03 — carte partenaire | PNG 322 × 128 px, fond transparent — **en place** |
 
 Ce logo appartient à MédecinDirect : utiliser le fichier officiel qu'ils
-fournissent, pas une reconstitution. Tant qu'il est absent, la carte affiche
+fournissent, pas une reconstitution. S'il venait à manquer, la carte affiche
 leur nom en toutes lettres — le site ne montre jamais d'image cassée.
 
-Un PNG fonctionne aussi : remplacer alors l'extension dans `index.html`
-(`assets/medecindirect.svg` → `.png`).
+Le fichier en place vient d'une capture d'écran : son fond blanc a été rendu
+transparent. **Si MédecinDirect fournit un SVG, le préférer** — il restera net
+sur les écrans à haute densité, ce qu'un PNG de 322 px de large ne garantit
+pas. Remplacer alors l'extension dans `index.html`.
