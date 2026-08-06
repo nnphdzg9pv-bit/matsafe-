@@ -511,8 +511,6 @@ footer{
   color:var(--black);text-align:center;padding:.5rem;
 }
 /* Variantes de ligne : sans colonne média, ou nom seul */
-.ed-row--nomedia{grid-template-columns:6rem minmax(240px,1.1fr) 1.4fr}
-.ed-row--wide{grid-template-columns:6rem minmax(240px,1fr) 2fr}
 /* Ligne compacte : index + grand nom + flèche (listes type sports) */
 .ed-row--link{
   grid-template-columns:6rem 1fr auto;
@@ -547,9 +545,6 @@ footer{
   .ed-name{grid-area:name}
   .ed-mid{grid-area:mid}
   .ed-media{grid-area:media;align-self:start}
-  .ed-row--nomedia,.ed-row--wide{grid-template-columns:4rem 1fr;grid-template-areas:
-    "index name"
-    "index mid";}
   .ed-row--link{grid-template-columns:4rem 1fr auto;grid-template-areas:none}
 }
 @media(max-width:720px){
@@ -562,10 +557,6 @@ footer{
   .ed-row:hover{padding-left:0;padding-right:0}
   .ed-media{max-width:100%}
   .ed-benefits{grid-template-columns:1fr;gap:.9rem}
-  .ed-row--nomedia,.ed-row--wide{grid-template-areas:
-    "index"
-    "name"
-    "mid";}
   .ed-row--link{grid-template-columns:3rem 1fr auto;row-gap:0;padding:1.2rem 0}
   .ed-header{flex-direction:column;align-items:flex-start;gap:1.2rem}
   .ed-manifesto{max-width:none}
@@ -953,7 +944,7 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
 
   <div class="ed-list">
 
-    <article class="ed-row ed-row--nomedia reveal">
+    <article class="ed-row reveal">
       <div class="ed-index">01</div>
       <h3 class="ed-name">Contagion <b>express</b></h3>
       <div class="ed-mid">
@@ -965,7 +956,7 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
       </div>
     </article>
 
-    <article class="ed-row ed-row--nomedia reveal">
+    <article class="ed-row reveal">
       <div class="ed-index">02</div>
       <h3 class="ed-name">Conséquences <b>concrètes</b></h3>
       <div class="ed-mid">
@@ -1158,7 +1149,7 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
 
   <div class="ed-list">
 
-    <article class="ed-row ed-row--nomedia reveal">
+    <article class="ed-row reveal">
       <div class="ed-index">01</div>
       <h3 class="ed-name">Le <b>vide</b></h3>
       <div class="ed-mid">
@@ -1168,7 +1159,7 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
       </div>
     </article>
 
-    <article class="ed-row ed-row--nomedia reveal">
+    <article class="ed-row reveal">
       <div class="ed-index">02</div>
       <h3 class="ed-name">L'<b>écart</b></h3>
       <div class="ed-mid">
@@ -1178,7 +1169,7 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
       </div>
     </article>
 
-    <article class="ed-row ed-row--nomedia reveal">
+    <article class="ed-row reveal">
       <div class="ed-index">03</div>
       <h3 class="ed-name">Le <b>standard</b></h3>
       <div class="ed-mid">
@@ -1211,7 +1202,7 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
 
   <div class="ed-list">
 
-    <article class="ed-row ed-row--nomedia reveal">
+    <article class="ed-row reveal">
       <div class="ed-index">01</div>
       <h3 class="ed-name">Audit de votre <b>club</b></h3>
       <div class="ed-mid">
@@ -1220,7 +1211,7 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
       </div>
     </article>
 
-    <article class="ed-row ed-row--nomedia reveal">
+    <article class="ed-row reveal">
       <div class="ed-index">02</div>
       <h3 class="ed-name">Mise en <b>conformité</b></h3>
       <div class="ed-mid">
@@ -1229,7 +1220,7 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
       </div>
     </article>
 
-    <article class="ed-row ed-row--nomedia reveal">
+    <article class="ed-row reveal">
       <div class="ed-index">03</div>
       <h3 class="ed-name">Vali<b>dation</b></h3>
       <div class="ed-mid">
@@ -1238,7 +1229,7 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
       </div>
     </article>
 
-    <article class="ed-row ed-row--nomedia reveal">
+    <article class="ed-row reveal">
       <div class="ed-index">04</div>
       <h3 class="ed-name">Certifi<b>cation</b></h3>
       <div class="ed-mid">
@@ -1264,7 +1255,7 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
   </div>
 
   <div class="ed-list">
-    <article class="ed-row ed-row--nomedia reveal">
+    <article class="ed-row reveal">
       <div class="ed-index">—</div>
       <h3 class="ed-name">Le club <b>référence</b></h3>
       <div class="ed-mid">
