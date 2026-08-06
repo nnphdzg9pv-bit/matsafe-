@@ -4,9 +4,13 @@ Fichiers image du site, référencés en chemin relatif depuis `index.html`.
 
 ## Photos attendues
 
-| Fichier | Emplacement sur le site | Format conseillé |
+| Fichier | Emplacement sur le site | Format |
 |---|---|---|
-| `pourqui-sport.jpg` | Section « Pour qui », colonne média de la première ligne | **portrait**, ratio proche de 3/4 (ex. 900 × 1200 px) |
+| `pourqui-sport.jpg` | Section « Pour qui », colonne média de la première ligne | **portrait 2/3** — en place : 736 × 1104 px |
+
+Le cadre CSS (`.ed-media--portrait`) est calé sur le 2/3 pour afficher la
+photo entière. Un fichier d'un autre ratio serait recadré en `cover`, en
+gardant le haut de l'image (`object-position: 50% 28%`).
 
 ## Comment ça marche
 

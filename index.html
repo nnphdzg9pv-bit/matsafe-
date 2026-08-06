@@ -498,11 +498,13 @@ footer{
    le recouvre une fois chargée. Il reste donc visible pendant le chargement
    comme si le fichier manque (onerror retire alors l'<img>). */
 .ed-media img{position:absolute;inset:0}
-/* Emplacement portrait — pour les photos verticales, qu'un cadre 4/3
-   amputerait de la tête et des jambes. */
-.ed-media--portrait{aspect-ratio:3/4}
+/* Emplacement portrait — cadre calé sur le 2/3 de la photo, pour l'afficher
+   entière. object-position garde le haut du cadrage si un autre format y
+   passe un jour (le visage plutôt que le sol). */
+.ed-media--portrait{aspect-ratio:2/3}
+.ed-media--portrait img{object-position:50% 28%}
 @media(max-width:1080px){
-  .ed-media--portrait{aspect-ratio:4/5}
+  .ed-media--portrait{aspect-ratio:3/4}
 }
 .ed-media-ph{
   font-family:'Barlow Condensed',sans-serif;font-weight:700;
