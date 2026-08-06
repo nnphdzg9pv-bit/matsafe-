@@ -796,8 +796,20 @@ footer{
   -webkit-text-stroke:.085em #0A0A0A;
   paint-order:stroke fill;
 }
-.ms-logo .ms-mat{color:#8C8C8C}
-.ms-logo .ms-safe{color:#FFFFFF}
+/* Dégradé métallique du logo d'origine : le remplissage passe par
+   background-clip:text, le contour noir reste peint par text-stroke. */
+.ms-logo .ms-mat{
+  color:#8C8C8C;                                   /* repli si non supporté */
+  background:linear-gradient(180deg,#F2F2F2 0%,#C6C6C6 34%,#6F6F6F 56%,#A8A8A8 82%,#8A8A8A 100%);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.ms-logo .ms-safe{
+  color:#FFFFFF;
+  background:linear-gradient(180deg,#FFFFFF 0%,#FFFFFF 46%,#D5D5D5 72%,#FFFFFF 100%);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
 .ms-since{
   font-family:'Barlow Condensed',sans-serif;font-weight:700;
   font-size:.44em;letter-spacing:.28em;text-transform:uppercase;
