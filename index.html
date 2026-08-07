@@ -170,46 +170,42 @@ nav.solid .nav-cta:hover{background:var(--black) !important;color:var(--white) !
 .marquee-item::after{content:'·';color:var(--white);font-size:1.4rem}
 
 /* ══════════════════════════════════════════
-   BANDE FIGHTERS — galerie photo qui défile (section « Pour qui »)
-   Même mécanique que le bandeau texte : deux jeux d'images identiques,
-   la piste glisse de -50%, la boucle est donc invisible. Les photos
-   gardent leurs couleurs (comme celles du Cube Fight Club).
+   CARROUSEL FIGHTERS — les photos avancent l'une après l'autre
+   (section « Pour qui »). Diapos de largeur fixe : le pas de translation
+   est donc constant. L'avance est pilotée en JS (transform + transition).
+   Les photos gardent leurs couleurs (comme celles du Cube Fight Club).
    ══════════════════════════════════════════ */
 .fighters-band{
   margin:2.75rem -2.5rem 0;              /* pleine largeur : annule le padding de section */
   padding:1.6rem 0;
   border-top:1.5px solid var(--black);
   border-bottom:1.5px solid var(--black);
-  overflow:hidden;
-  -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
-          mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
 }
-.fighters-track{
-  display:flex;width:max-content;
-  animation:fighters-scroll 48s linear infinite;
-}
-.fighters-band:hover .fighters-track{animation-play-state:paused}
-@keyframes fighters-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.fighters-viewport{overflow:hidden}
+.fighters-track{display:flex;will-change:transform}
+.fighters-slide{flex:0 0 auto;margin-right:16px;margin-left:0}
+.fighters-slide figure{margin:0}
 .fighters-photo{
-  height:340px;width:auto;flex:0 0 auto;display:block;
-  margin-right:14px;object-fit:cover;border-radius:3px;
-  background:var(--light);
+  width:300px;height:400px;display:block;object-fit:cover;
+  border-radius:3px;background:var(--light);
 }
-.fighters-band .fighters-cap{
-  display:flex;align-items:center;padding:0 2rem;flex:0 0 auto;margin-right:14px;
-}
-.fighters-cap span{
-  font-family:'Barlow Condensed',sans-serif;font-weight:900;
-  font-size:clamp(2.2rem,4vw,3.6rem);letter-spacing:.02em;text-transform:uppercase;
-  line-height:.9;color:var(--black);white-space:nowrap;
-}
+/* Léger fondu-zoom d'entrée sur la diapo qui vient d'apparaître à droite :
+   c'est « l'animation autour de l'extrait ». Classe posée/retirée en JS. */
+.fighters-slide{transition:opacity .6s ease}
+.fighters-photo{transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+.fighters-slide.is-entering .fighters-photo{transform:scale(1.06)}
+
 @media(max-width:720px){
   .fighters-band{margin-left:-1.4rem;margin-right:-1.4rem;padding:1.1rem 0}
-  .fighters-photo{height:230px;margin-right:10px}
-  .fighters-cap{padding:0 1.2rem;margin-right:10px}
+  .fighters-slide{margin-right:12px}
+  .fighters-photo{width:220px;height:300px}
 }
+/* Réduire les animations : carrousel immobile, aucune transformation. */
 @media(prefers-reduced-motion:reduce){
-  .fighters-track{animation:none !important}
+  .fighters-photo{transition:none}
+  .fighters-slide.is-entering .fighters-photo{transform:none}
 }
 
 /* ── GENERIC SECTIONS ── */
@@ -1392,44 +1388,25 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
     </p>
   </div>
 
-  <!-- ── BANDE FIGHTERS : photos d'action qui défilent en boucle ──
-       Deux jeux d'images identiques : le second (aria-hidden) n'est là que
-       pour rendre la boucle continue. Les alt ne sont donc portés que par
-       le premier jeu. -->
-  <div class="fighters-band reveal" aria-label="Photos de pratiquants en action">
-    <div class="fighters-track">
-      <!-- JEU 1 (accessible) -->
-      <div class="fighters-cap" aria-hidden="true"><span>Fait pour<br>les fighters</span></div>
-      <img class="fighters-photo" src="assets/fighter-2.jpg" alt="Boxeur décochant un direct sur le ring, sous les projecteurs" loading="lazy" decoding="async">
-      <img class="fighters-photo" src="assets/fighter-4.jpg" alt="Combattant de jiu-jitsu en position montée, dominant son adversaire au sol" loading="lazy" decoding="async">
-      <img class="fighters-photo" src="assets/pourqui-sport.jpg" alt="Pratiquant de jiu-jitsu brésilien contrôlant la jambe de son partenaire au sol" loading="lazy" decoding="async">
-      <img class="fighters-photo" src="assets/fighter-1.jpg" alt="Lutteur exécutant une projection à l'entraînement, en plein mouvement" loading="lazy" decoding="async">
-      <img class="fighters-photo" src="assets/fighter-3.jpg" alt="Judoka projetant son partenaire lors d'un randori en dojo" loading="lazy" decoding="async">
-      <!-- JEU 2 (décoratif, dupliqué pour la boucle) -->
-      <div class="fighters-cap" aria-hidden="true"><span>Fait pour<br>les fighters</span></div>
-      <img class="fighters-photo" src="assets/fighter-2.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
-      <img class="fighters-photo" src="assets/fighter-4.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
-      <img class="fighters-photo" src="assets/pourqui-sport.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
-      <img class="fighters-photo" src="assets/fighter-1.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
-      <img class="fighters-photo" src="assets/fighter-3.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+  <!-- ── CARROUSEL FIGHTERS : les photos avancent l'une après l'autre ──
+       Les diapos sont clonées en JS pour une boucle continue ; le carrousel
+       avance d'une photo à intervalle régulier, se met en pause au survol et
+       reste immobile si l'utilisateur demande à réduire les animations. -->
+  <div class="fighters-band reveal" aria-roledescription="carrousel" aria-label="Photos de pratiquants en action">
+    <div class="fighters-viewport">
+      <div class="fighters-track" id="fighters-track">
+        <figure class="fighters-slide"><img class="fighters-photo" src="assets/fighter-2.jpg" alt="Boxeur décochant un direct sur le ring, sous les projecteurs" loading="lazy" decoding="async"></figure>
+        <figure class="fighters-slide"><img class="fighters-photo" src="assets/fighter-4.jpg" alt="Combattant de jiu-jitsu en position montée, dominant son adversaire au sol" loading="lazy" decoding="async"></figure>
+        <figure class="fighters-slide"><img class="fighters-photo" src="assets/pourqui-sport.jpg" alt="Pratiquant de jiu-jitsu brésilien contrôlant la jambe de son partenaire au sol" loading="lazy" decoding="async"></figure>
+        <figure class="fighters-slide"><img class="fighters-photo" src="assets/fighter-1.jpg" alt="Lutteur exécutant une projection à l'entraînement, en plein mouvement" loading="lazy" decoding="async"></figure>
+        <figure class="fighters-slide"><img class="fighters-photo" src="assets/fighter-3.jpg" alt="Judoka projetant son partenaire lors d'un randori en dojo" loading="lazy" decoding="async"></figure>
+      </div>
     </div>
   </div>
 
   <div class="ed-list">
 
-    <!-- Ligne d'ouverture : la photo occupe la colonne média -->
-    <article class="ed-row reveal">
-      <div class="ed-index">—</div>
-      <h3 class="ed-name">Sports de <b>contact</b></h3>
-      <div class="ed-mid">
-        <div class="ed-tags">
-          <span>Préhension</span><span>Percussion</span><span>Compétition</span>
-        </div>
-        <p class="ed-hook">Là où le contact est la discipline, l'hygiène est une exigence sportive.</p>
-        <p class="ed-desc">Six familles de pratique, un même dénominateur : un contact peau-à-peau prolongé, répété, avec des partenaires différents à chaque séance. Le label est calibré pour ces conditions-là — pas transposé depuis un référentiel générique de salle de sport.</p>
-      </div>
-    </article>
-
+    <article class="ed-row ed-row--link reveal"><div class="ed-index">—</div><h3 class="ed-name">Sports de <b>contact</b></h3><span class="ed-arrow">↗</span></article>
     <article class="ed-row ed-row--link reveal"><div class="ed-index">01</div><h3 class="ed-name">Jiu-Jitsu Brésilien</h3><span class="ed-arrow">↗</span></article>
     <article class="ed-row ed-row--link reveal"><div class="ed-index">02</div><h3 class="ed-name">MMA</h3><span class="ed-arrow">↗</span></article>
     <article class="ed-row ed-row--link reveal"><div class="ed-index">03</div><h3 class="ed-name">Grappling</h3><span class="ed-arrow">↗</span></article>
@@ -1842,6 +1819,82 @@ document.querySelector('.stats-bar')&&sObs.observe(document.querySelector('.stat
       }
     });
   });
+})();
+
+// ── CARROUSEL FIGHTERS ──
+// Les photos avancent l'une après l'autre. Les diapos sont clonées pour une
+// boucle sans couture ; à chaque pas, la diapo qui entre par la droite reçoit
+// un léger zoom-fondu (« l'animation autour de l'extrait »). Pause au survol,
+// immobile si l'utilisateur a demandé a réduire les animations.
+(function(){
+  const track=document.getElementById('fighters-track');
+  if(!track)return;
+  const band=track.closest('.fighters-band');
+  const viewport=track.parentElement;
+  const calm=window.matchMedia('(prefers-reduced-motion: reduce)');
+  const HOLD=2600;      // durée d'affichage d'une photo (ms)
+  const SLIDE=700;      // durée du glissement (ms)
+
+  const originals=[...track.children];
+  const N=originals.length;
+  // Clones pour la continuité (décoratifs : masqués aux lecteurs d'écran)
+  originals.forEach(s=>{
+    const c=s.cloneNode(true);
+    c.setAttribute('aria-hidden','true');
+    c.querySelectorAll('img').forEach(i=>i.alt='');
+    track.appendChild(c);
+  });
+
+  let index=0, step=0, timer=null;
+
+  function measure(){
+    const first=track.children[0];
+    const st=getComputedStyle(first);
+    step=first.getBoundingClientRect().width + parseFloat(st.marginRight||0);
+  }
+  function enterZoom(i){
+    if(calm.matches)return;
+    const slide=track.children[i];
+    if(!slide)return;
+    const img=slide.querySelector('.fighters-photo');
+    img.style.transition='none';
+    img.style.transform='scale(1.06)';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      img.style.transition=''; img.style.transform='';
+    }));
+  }
+  function advance(){
+    index++;
+    track.style.transition=`transform ${SLIDE}ms cubic-bezier(.4,0,.2,1)`;
+    track.style.transform=`translateX(${-index*step}px)`;
+    const visible=Math.max(1,Math.ceil(viewport.clientWidth/step));
+    enterZoom(index+visible-1);
+  }
+  track.addEventListener('transitionend',e=>{
+    if(e.target!==track||e.propertyName!=='transform')return;
+    if(index>=N){                    // arrivé sur le jeu cloné : on revient au début
+      track.style.transition='none';
+      index=0;
+      track.style.transform='translateX(0)';
+      void track.offsetWidth;        // force le reflow pour figer le saut
+    }
+  });
+
+  function start(){ if(timer||calm.matches)return; timer=setInterval(advance,HOLD); }
+  function stop(){ clearInterval(timer); timer=null; }
+
+  measure();
+  window.addEventListener('resize',()=>{
+    measure();
+    track.style.transition='none';
+    track.style.transform=`translateX(${-index*step}px)`;
+  });
+  band.addEventListener('mouseenter',stop);
+  band.addEventListener('mouseleave',start);
+  band.addEventListener('focusin',stop);      // pause si on tabule dedans
+  band.addEventListener('focusout',start);
+  calm.addEventListener('change',()=>{ calm.matches?stop():start(); });
+  start();
 })();
 
 // Reveal
