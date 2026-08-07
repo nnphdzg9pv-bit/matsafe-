@@ -169,6 +169,49 @@ nav.solid .nav-cta:hover{background:var(--black) !important;color:var(--white) !
 }
 .marquee-item::after{content:'·';color:var(--white);font-size:1.4rem}
 
+/* ══════════════════════════════════════════
+   BANDE FIGHTERS — galerie photo qui défile (section « Pour qui »)
+   Même mécanique que le bandeau texte : deux jeux d'images identiques,
+   la piste glisse de -50%, la boucle est donc invisible. Les photos
+   gardent leurs couleurs (comme celles du Cube Fight Club).
+   ══════════════════════════════════════════ */
+.fighters-band{
+  margin:2.75rem -2.5rem 0;              /* pleine largeur : annule le padding de section */
+  padding:1.6rem 0;
+  border-top:1.5px solid var(--black);
+  border-bottom:1.5px solid var(--black);
+  overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+}
+.fighters-track{
+  display:flex;width:max-content;
+  animation:fighters-scroll 48s linear infinite;
+}
+.fighters-band:hover .fighters-track{animation-play-state:paused}
+@keyframes fighters-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.fighters-photo{
+  height:340px;width:auto;flex:0 0 auto;display:block;
+  margin-right:14px;object-fit:cover;border-radius:3px;
+  background:var(--light);
+}
+.fighters-band .fighters-cap{
+  display:flex;align-items:center;padding:0 2rem;flex:0 0 auto;margin-right:14px;
+}
+.fighters-cap span{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  font-size:clamp(2.2rem,4vw,3.6rem);letter-spacing:.02em;text-transform:uppercase;
+  line-height:.9;color:var(--black);white-space:nowrap;
+}
+@media(max-width:720px){
+  .fighters-band{margin-left:-1.4rem;margin-right:-1.4rem;padding:1.1rem 0}
+  .fighters-photo{height:230px;margin-right:10px}
+  .fighters-cap{padding:0 1.2rem;margin-right:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  .fighters-track{animation:none !important}
+}
+
 /* ── GENERIC SECTIONS ── */
 .section{padding:5.5rem 2.5rem}
 
@@ -1343,9 +1386,33 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
       <h2 class="ed-giant reveal">Pour <em>qui</em></h2>
     </div>
     <p class="ed-manifesto reveal">
-      MatSafe s'adresse aux clubs souhaitant structurer leur hygiène
-      et protéger leurs pratiquants. <strong>Particulièrement adapté aux clubs avec compétiteurs.</strong>
+      MatSafe protège ceux qui combattent. Le label s'adresse aux clubs
+      de sports de contact qui veulent structurer leur hygiène et protéger
+      leurs fighters. <strong>Particulièrement adapté aux clubs avec compétiteurs.</strong>
     </p>
+  </div>
+
+  <!-- ── BANDE FIGHTERS : photos d'action qui défilent en boucle ──
+       Deux jeux d'images identiques : le second (aria-hidden) n'est là que
+       pour rendre la boucle continue. Les alt ne sont donc portés que par
+       le premier jeu. -->
+  <div class="fighters-band reveal" aria-label="Photos de pratiquants en action">
+    <div class="fighters-track">
+      <!-- JEU 1 (accessible) -->
+      <div class="fighters-cap" aria-hidden="true"><span>Fait pour<br>les fighters</span></div>
+      <img class="fighters-photo" src="assets/fighter-2.jpg" alt="Boxeur décochant un direct sur le ring, sous les projecteurs" loading="lazy" decoding="async">
+      <img class="fighters-photo" src="assets/fighter-4.jpg" alt="Combattant de jiu-jitsu en position montée, dominant son adversaire au sol" loading="lazy" decoding="async">
+      <img class="fighters-photo" src="assets/pourqui-sport.jpg" alt="Pratiquant de jiu-jitsu brésilien contrôlant la jambe de son partenaire au sol" loading="lazy" decoding="async">
+      <img class="fighters-photo" src="assets/fighter-1.jpg" alt="Lutteur exécutant une projection à l'entraînement, en plein mouvement" loading="lazy" decoding="async">
+      <img class="fighters-photo" src="assets/fighter-3.jpg" alt="Judoka projetant son partenaire lors d'un randori en dojo" loading="lazy" decoding="async">
+      <!-- JEU 2 (décoratif, dupliqué pour la boucle) -->
+      <div class="fighters-cap" aria-hidden="true"><span>Fait pour<br>les fighters</span></div>
+      <img class="fighters-photo" src="assets/fighter-2.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+      <img class="fighters-photo" src="assets/fighter-4.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+      <img class="fighters-photo" src="assets/pourqui-sport.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+      <img class="fighters-photo" src="assets/fighter-1.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+      <img class="fighters-photo" src="assets/fighter-3.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+    </div>
   </div>
 
   <div class="ed-list">
@@ -1360,12 +1427,6 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
         </div>
         <p class="ed-hook">Là où le contact est la discipline, l'hygiène est une exigence sportive.</p>
         <p class="ed-desc">Six familles de pratique, un même dénominateur : un contact peau-à-peau prolongé, répété, avec des partenaires différents à chaque séance. Le label est calibré pour ces conditions-là — pas transposé depuis un référentiel générique de salle de sport.</p>
-      </div>
-      <div class="ed-media ed-media--portrait">
-        <span class="ed-media-ph">Photo à venir</span>
-        <img src="assets/pourqui-sport.jpg"
-             alt="Pratiquant de jiu-jitsu brésilien en kimono blanc, contrôlant la jambe de son partenaire au sol"
-             onerror="this.remove()" loading="lazy">
       </div>
     </article>
 

@@ -11,6 +11,17 @@ Tous les médias du site. Ils sont référencés en chemin relatif depuis
 | `club-cube-2.jpg` | Section « Cube Fight Club », photo de droite | 4/3 — 1400 × 1050 px |
 | `medecindirect.png` | Section « Services », ligne 03 — carte partenaire | PNG 322 × 128 px, fond transparent |
 | `logo-matsafe.png` | Logo officiel dans la navigation | PNG 1186 × 405 px, **fond détouré (transparent)** |
+| `fighter-1.jpg` … `fighter-4.jpg` | Bande défilante « fighters », section « Pour qui » | JPEG portrait, ~1000 px de haut max |
+
+## Bande « fighters » (section « Pour qui »)
+
+`fighter-1..4.jpg` + `pourqui-sport.jpg` alimentent la galerie photo qui défile
+en boucle dans la section « Pour qui ». Chaque image apparaît **deux fois** dans
+le balisage : le second jeu (`aria-hidden`, `alt=""`) ne sert qu'à rendre la
+boucle continue. Pour ajouter une photo : la déposer ici, puis l'insérer dans
+les **deux** jeux de `.fighters-track` (avec `alt` sur le premier, vide sur le
+second). Les photos gardent leurs couleurs — le noir et blanc ne concerne que
+l'interface.
 
 ## Logo officiel
 
