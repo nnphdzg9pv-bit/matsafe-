@@ -178,9 +178,10 @@ nav.solid .nav-cta:hover{background:var(--black) !important;color:var(--white) !
 .fighters-band{
   --fighters-speed:14s;                  /* durée d'un cycle : plus court = plus rapide */
   margin:2.75rem -2.5rem 0;              /* pleine largeur : annule le padding de section */
-  padding:1.6rem 0;
+  padding:1.6rem 0 .4rem;
   border-top:1.5px solid var(--black);
-  border-bottom:1.5px solid var(--black);
+  /* Pas de bord bas : le filet haut de la liste (au-dessus du 1er sport) fait
+     déjà la séparation. Deux filets rapprochés donnaient une « double barre ». */
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
           mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
 }
