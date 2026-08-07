@@ -11,7 +11,7 @@ Tous les médias du site. Ils sont référencés en chemin relatif depuis
 | `club-cube-2.jpg` | Section « Cube Fight Club », photo de droite | 4/3 — 1400 × 1050 px |
 | `medecindirect.png` | Section « Services », ligne 03 — carte partenaire | PNG 322 × 128 px, fond transparent |
 | `logo-matsafe.png` | Logo officiel dans la navigation | PNG 1186 × 405 px, **fond détouré (transparent)** |
-| `fighter-1.jpg` … `fighter-4.jpg` | Bande défilante « fighters », section « Pour qui » | JPEG portrait, ~1000 px de haut max |
+| `fighter-1.jpg` … `fighter-5.jpg` | Bande défilante « fighters », section « Pour qui » | JPEG (portrait ou carré) |
 
 ## Bande « fighters » (section « Pour qui »)
 
