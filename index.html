@@ -715,6 +715,33 @@ footer{
   .ed-acc-panel,.ed-acc-head,.ed-acc-icon::before,.ed-acc-icon::after,.ed-acc-body{transition:none !important}
 }
 
+/* ══════════════════════════════════════════
+   SECTION LABEL — bloc unique (texte de mission)
+   Un seul compartiment, pas de numérotation : le texte est présenté en
+   continu, dans la typographie du site (filet noir en haut, comme .ed-list).
+   ══════════════════════════════════════════ */
+.label-block{
+  border-top:1.5px solid var(--black);
+  margin-top:3.5rem;padding-top:2.8rem;
+  max-width:840px;
+}
+.label-block > * + *{margin-top:1.25rem}
+.label-lead{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
+  font-size:clamp(1.7rem,3.4vw,2.8rem);line-height:1.02;letter-spacing:.01em;
+  color:var(--black);margin-bottom:1.7rem;
+}
+.label-block p{font-size:.98rem;line-height:1.78;color:var(--black)}
+.label-accent{
+  font-family:'Barlow',sans-serif;font-style:italic;font-weight:500;
+  font-size:1.14rem !important;line-height:1.5;color:var(--black);
+}
+.label-close strong{font-weight:600}
+@media(max-width:720px){
+  .label-block{padding-top:2.1rem;margin-top:2.6rem}
+  .label-block p{font-size:.92rem}
+}
+
 /* ── REVEAL ── */
 .reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
 .reveal.in{opacity:1;transform:translateY(0)}
@@ -1435,53 +1462,18 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
       <div class="eyebrow reveal">Notre mission</div>
       <h2 class="ed-giant reveal">Le <em>label</em></h2>
     </div>
-    <p class="ed-manifesto reveal">
-      <strong>L'hygiène doit évoluer avec la pratique.</strong>
-    </p>
   </div>
 
-  <div class="ed-list">
-
-    <article class="ed-row reveal">
-      <div class="ed-index">01</div>
-      <h3 class="ed-name">Une pratique en <b>croissance</b></h3>
-      <div class="ed-mid">
-        <div class="ed-tags"><span>Enfants</span><span>Familles</span><span>Débutants &amp; compétiteurs</span></div>
-        <p class="ed-desc">Les sports de combat connaissent une croissance importante en France et accueillent aujourd'hui un public toujours plus large : enfants, adultes, parents, débutants comme compétiteurs. Cette évolution doit s'accompagner d'une même exigence en matière d'hygiène et de prévention.</p>
-      </div>
-    </article>
-
-    <article class="ed-row reveal">
-      <div class="ed-index">02</div>
-      <h3 class="ed-name">Des conditions <b>à risque</b></h3>
-      <div class="ed-mid">
-        <div class="ed-tags"><span>Peau à peau</span><span>Tatamis partagés</span><span>Vestiaires collectifs</span></div>
-        <p class="ed-desc">Contacts peau à peau répétés, transpiration, tatamis et équipements partagés, vestiaires collectifs, petites plaies… ces disciplines réunissent naturellement des conditions pouvant favoriser la transmission de certaines infections. Dans la majorité des cas, elles restent prises en charge sans conséquence majeure, mais des complications plus sérieuses peuvent également survenir, ce qui rend la prévention essentielle.</p>
-      </div>
-    </article>
-
-    <article class="ed-row reveal">
-      <div class="ed-index">03</div>
-      <h3 class="ed-name">Un standard <b>attendu</b></h3>
-      <div class="ed-mid">
-        <div class="ed-tags"><span>Professionnalisation</span><span>Environnement rassurant</span></div>
-        <p class="ed-desc">À mesure que les clubs se professionnalisent et que le nombre de pratiquants augmente, les pratiques insuffisantes en matière d'hygiène ont de moins en moins leur place. Un club doit pouvoir offrir un environnement propre, organisé et rassurant, quelle que soit la personne qui franchit ses portes.</p>
-      </div>
-    </article>
-
-    <article class="ed-row reveal">
-      <div class="ed-index">04</div>
-      <h3 class="ed-name">MatSafe <b>accompagne</b></h3>
-      <div class="ed-mid">
-        <div class="ed-tags"><span>Cadre clair</span><span>Outils concrets</span><span>Standards adaptés</span></div>
-        <p class="ed-hook">MatSafe veut accompagner cette évolution.</p>
-        <p class="ed-desc">En donnant aux clubs un cadre clair, des outils concrets et des standards adaptés aux réalités des sports de combat, notre objectif est simple : réduire les risques évitables et permettre à chacun de pratiquer dans les meilleures conditions possibles.</p>
-      </div>
-    </article>
-
+  <!-- Bloc unique : le texte de mission, tel quel, sans numérotation. -->
+  <div class="label-block reveal">
+    <h3 class="label-lead">L'hygiène doit évoluer avec la pratique</h3>
+    <p>Les sports de combat connaissent une croissance importante en France et accueillent aujourd'hui un public toujours plus large : enfants, adultes, parents, débutants comme compétiteurs. Cette évolution doit s'accompagner d'une même exigence en matière d'hygiène et de prévention.</p>
+    <p>Contacts peau à peau répétés, transpiration, tatamis et équipements partagés, vestiaires collectifs, petites plaies… ces disciplines réunissent naturellement des conditions pouvant favoriser la transmission de certaines infections. Dans la majorité des cas, elles restent prises en charge sans conséquence majeure, mais des complications plus sérieuses peuvent également survenir, ce qui rend la prévention essentielle.</p>
+    <p>À mesure que les clubs se professionnalisent et que le nombre de pratiquants augmente, les pratiques insuffisantes en matière d'hygiène ont de moins en moins leur place. Un club doit pouvoir offrir un environnement propre, organisé et rassurant, quelle que soit la personne qui franchit ses portes.</p>
+    <p class="label-accent">MatSafe veut accompagner cette évolution.</p>
+    <p>En donnant aux clubs un cadre clair, des outils concrets et des standards adaptés aux réalités des sports de combat, notre objectif est simple : réduire les risques évitables et permettre à chacun de pratiquer dans les meilleures conditions possibles.</p>
+    <p class="label-close">Enfants, familles, pratiquants loisirs ou compétiteurs : nous partageons les mêmes espaces. <strong>Élevons ensemble les standards d'hygiène de nos disciplines.</strong></p>
   </div>
-
-  <p class="ed-note reveal"><span>Enfants, familles, pratiquants loisirs ou compétiteurs : nous partageons les mêmes espaces. <strong>Élevons ensemble les standards d'hygiène de nos disciplines.</strong></span></p>
 </section>
 
 <!-- ── PROCESS — ÉDITORIAL ── -->
