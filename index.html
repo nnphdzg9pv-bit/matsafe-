@@ -781,6 +781,36 @@ footer{
   .poster-box{padding:1.4cqw 1.6cqw}
 }
 
+/* ══════════════════════════════════════════
+   SECTION 4 ÉTAPES — l'affiche (feuille tenue) + les 4 étapes posées dessus
+   La feuille est légèrement inclinée : les 4 étapes sont placées une à une,
+   décalées vers la droite pour suivre la feuille. Tailles en cqw.
+   ══════════════════════════════════════════ */
+.sheet-wrap{
+  position:relative;container-type:inline-size;
+  max-width:660px;margin:3.2rem auto 0;
+}
+.sheet-wrap > img{width:100%;display:block;border-radius:2px}
+.sheet-step{
+  position:absolute;color:#1a1712;
+  display:flex;gap:2.4cqw;align-items:flex-start;
+}
+.ss-num{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  font-size:6cqw;line-height:.82;flex:0 0 auto;
+}
+.ss-body{display:flex;flex-direction:column;min-width:0}
+.ss-title{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
+  font-size:3.3cqw;line-height:1;letter-spacing:.01em;margin-bottom:.9cqw;
+}
+.ss-text{font-size:2cqw;line-height:1.32}
+@media(max-width:520px){
+  .ss-text{display:none}
+  .ss-title{font-size:3.8cqw}
+  .ss-num{font-size:7cqw}
+}
+
 /* ── Fenêtre détail d'un enjeu ── */
 .prob-modal{
   position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.72);
@@ -1578,44 +1608,26 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
     </p>
   </div>
 
-  <div class="ed-list">
-
-    <article class="ed-row reveal">
-      <div class="ed-index">01</div>
-      <h3 class="ed-name">Audit de votre <b>club</b></h3>
-      <div class="ed-mid">
-        <div class="ed-tags"><span>Terrain</span><span>Grille de critères</span></div>
-        <p class="ed-desc">Analyse de vos pratiques actuelles et identification des points critiques, sur une grille propre aux sports de contact.</p>
-      </div>
-    </article>
-
-    <article class="ed-row reveal">
-      <div class="ed-index">02</div>
-      <h3 class="ed-name">Mise en <b>conformité</b></h3>
-      <div class="ed-mid">
-        <div class="ed-tags"><span>Actions priorisées</span><span>Accompagnement</span></div>
-        <p class="ed-desc">Mise en place d'actions simples et efficaces, adaptées à la taille et aux moyens réels de votre structure.</p>
-      </div>
-    </article>
-
-    <article class="ed-row reveal">
-      <div class="ed-index">03</div>
-      <h3 class="ed-name">Vali<b>dation</b></h3>
-      <div class="ed-mid">
-        <div class="ed-tags"><span>Contrôle</span><span>Exigences fondamentales</span></div>
-        <p class="ed-desc">Vérification du respect des exigences fondamentales du référentiel, sur site et sur pièces.</p>
-      </div>
-    </article>
-
-    <article class="ed-row reveal">
-      <div class="ed-index">04</div>
-      <h3 class="ed-name">Certifi<b>cation</b></h3>
-      <div class="ed-mid">
-        <div class="ed-tags"><span>Label</span><span>Communication</span></div>
-        <p class="ed-desc">Obtention du label MatSafe, avec les supports permettant de l'afficher et de l'expliquer à vos adhérents.</p>
-      </div>
-    </article>
-
+  <!-- L'affiche fournie (feuille tenue) avec les 4 étapes posées dessus.
+       Chaque étape est placée en % et décalée pour suivre l'inclinaison. -->
+  <div class="sheet-wrap reveal">
+    <img src="assets/etapes-poster.jpg" alt="Les quatre étapes de la démarche MatSafe, présentées sur une feuille" loading="lazy">
+    <div class="sheet-step" style="top:19%;left:22%;width:40%">
+      <span class="ss-num">01</span>
+      <span class="ss-body"><span class="ss-title">Audit de votre club</span><span class="ss-text">Analyse de vos pratiques et des points critiques, sur une grille dédiée aux sports de contact.</span></span>
+    </div>
+    <div class="sheet-step" style="top:37%;left:28%;width:40%">
+      <span class="ss-num">02</span>
+      <span class="ss-body"><span class="ss-title">Mise en conformité</span><span class="ss-text">Des actions simples et priorisées, adaptées à la taille et aux moyens réels de votre structure.</span></span>
+    </div>
+    <div class="sheet-step" style="top:55%;left:34%;width:40%">
+      <span class="ss-num">03</span>
+      <span class="ss-body"><span class="ss-title">Validation</span><span class="ss-text">Contrôle du respect des exigences fondamentales du référentiel, sur site et sur pièces.</span></span>
+    </div>
+    <div class="sheet-step" style="top:72%;left:40%;width:40%">
+      <span class="ss-num">04</span>
+      <span class="ss-body"><span class="ss-title">Certification</span><span class="ss-text">Le label MatSafe, avec les supports pour l'afficher et l'expliquer à vos adhérents.</span></span>
+    </div>
   </div>
 </section>
 
