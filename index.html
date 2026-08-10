@@ -742,6 +742,47 @@ footer{
   .label-block p{font-size:.92rem}
 }
 
+/* ══════════════════════════════════════════
+   SECTION PROBLÈME — grille de 6 cartes
+   Reprend la structure du poster (6 cartes) mais en thème clair, cohérent
+   avec le reste du site. Survol : la carte s'inverse en noir, comme les
+   lignes éditoriales et les boutons.
+   ══════════════════════════════════════════ */
+.prob-grid{
+  margin-top:3.5rem;
+  border-top:1.5px solid var(--black);
+  border-left:1px solid var(--border);
+  display:grid;grid-template-columns:repeat(3,1fr);
+}
+.prob-card{
+  border-right:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  padding:2.1rem 1.9rem 2.3rem;
+  min-height:230px;
+  display:flex;flex-direction:column;
+  background:var(--off);
+  transition:background .25s ease,color .25s ease;
+}
+.prob-num{
+  font-family:'Barlow Condensed',sans-serif;font-weight:800;
+  font-size:.92rem;letter-spacing:.06em;color:var(--black);
+  margin-bottom:1.5rem;
+}
+.prob-title{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
+  font-size:clamp(1.4rem,2vw,1.9rem);line-height:1.02;letter-spacing:.01em;
+  color:var(--black);margin-bottom:.85rem;
+}
+.prob-text{
+  font-size:.86rem;line-height:1.6;color:var(--black);margin-top:auto;
+}
+.prob-card:hover{background:var(--black)}
+.prob-card:hover .prob-num,
+.prob-card:hover .prob-title,
+.prob-card:hover .prob-text{color:var(--white)}
+@media(max-width:900px){ .prob-grid{grid-template-columns:repeat(2,1fr)} }
+@media(max-width:560px){ .prob-grid{grid-template-columns:1fr} .prob-card{min-height:0} }
+
 /* ── REVEAL ── */
 .reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
 .reveal.in{opacity:1;transform:translateY(0)}
@@ -1194,37 +1235,40 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
     </p>
   </div>
 
-  <div class="ed-list">
-
-    <article class="ed-row reveal">
-      <div class="ed-index">01</div>
-      <h3 class="ed-name">Contagion <b>express</b></h3>
-      <div class="ed-mid">
-        <div class="ed-tags">
-          <span>Peau à peau</span><span>Promiscuité</span><span>Bactéries · Virus · Mycoses</span>
-        </div>
-        <p class="ed-hook">Le contact est le sport. C'est aussi le vecteur.</p>
-        <p class="ed-desc">Contact peau-à-peau permanent, promiscuité sur les tatamis, transpiration et matériel partagé : les sports de préhension réunissent toutes les conditions d'une transmission rapide. Bactéries, virus et mycoses n'ont besoin que d'un entraînement pour circuler dans tout un effectif.</p>
-      </div>
+  <!-- Grille de 6 cartes (structure du poster), thème clair.
+       Les 6 cartes reprennent le contenu existant : les 3 facteurs de
+       contagion + les 3 conséquences concrètes. -->
+  <div class="prob-grid reveal">
+    <article class="prob-card">
+      <span class="prob-num">01</span>
+      <h3 class="prob-title">Peau à peau</h3>
+      <p class="prob-text">Le contact est le sport. C'est aussi le vecteur.</p>
     </article>
-
-    <article class="ed-row reveal">
-      <div class="ed-index">02</div>
-      <h3 class="ed-name">Conséquences <b>concrètes</b></h3>
-      <div class="ed-mid">
-        <div class="ed-tags">
-          <span>Arrêt d'entraînement</span><span>Forfaits</span><span>Image du club</span>
-        </div>
-        <p class="ed-hook">Ce n'est pas un problème sanitaire. C'est un problème sportif.</p>
-        <p class="ed-desc">Arrêt forcé de l'entraînement, forfaits en compétition, perte de performance au pire moment de la saison. Puis l'effet différé : une image de club dégradée et une confiance des adhérents entamée, bien plus longue à reconstruire que l'infection ne l'a été à se propager.</p>
-        <div class="ed-benefits">
-          <div><span class="ed-b-label">Court terme</span><span class="ed-b-text">Effectif diminué, préparation cassée.</span></div>
-          <div><span class="ed-b-label">Saison</span><span class="ed-b-text">Forfaits, résultats manqués, objectifs repoussés.</span></div>
-          <div><span class="ed-b-label">Durable</span><span class="ed-b-text">Réputation et fidélisation des adhérents.</span></div>
-        </div>
-      </div>
+    <article class="prob-card">
+      <span class="prob-num">02</span>
+      <h3 class="prob-title">Promiscuité</h3>
+      <p class="prob-text">Transpiration et proximité permanente sur les tatamis.</p>
     </article>
-
+    <article class="prob-card">
+      <span class="prob-num">03</span>
+      <h3 class="prob-title">Bactéries · virus · mycoses</h3>
+      <p class="prob-text">Un entraînement suffit pour circuler dans tout un effectif.</p>
+    </article>
+    <article class="prob-card">
+      <span class="prob-num">04</span>
+      <h3 class="prob-title">Arrêt d'entraînement</h3>
+      <p class="prob-text">Effectif diminué, préparation cassée.</p>
+    </article>
+    <article class="prob-card">
+      <span class="prob-num">05</span>
+      <h3 class="prob-title">Forfaits</h3>
+      <p class="prob-text">Résultats manqués, objectifs repoussés au pire moment.</p>
+    </article>
+    <article class="prob-card">
+      <span class="prob-num">06</span>
+      <h3 class="prob-title">Image du club</h3>
+      <p class="prob-text">Réputation et confiance des adhérents entamées.</p>
+    </article>
   </div>
 </section>
 
