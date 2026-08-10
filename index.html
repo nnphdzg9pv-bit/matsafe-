@@ -743,45 +743,89 @@ footer{
 }
 
 /* ══════════════════════════════════════════
-   SECTION PROBLÈME — grille de 6 cartes
-   Reprend la structure du poster (6 cartes) mais en thème clair, cohérent
-   avec le reste du site. Survol : la carte s'inverse en noir, comme les
-   lignes éditoriales et les boutons.
+   SECTION PROBLÈME — le poster fourni + contenu dans les 6 cases
+   L'image du poster est affichée telle quelle ; les six blocs de texte
+   sont positionnés en pourcentage, exactement sur les six cases blanches.
+   Les tailles sont en « cqw » (1% de la largeur du poster) : le texte
+   suit donc la taille de l'image, quel que soit l'écran.
    ══════════════════════════════════════════ */
-.prob-grid{
-  margin-top:3.5rem;
-  border-top:1.5px solid var(--black);
-  border-left:1px solid var(--border);
-  display:grid;grid-template-columns:repeat(3,1fr);
+.poster-wrap{
+  position:relative;container-type:inline-size;
+  max-width:680px;margin:3.2rem auto 0;
 }
-.prob-card{
-  border-right:1px solid var(--border);
-  border-bottom:1px solid var(--border);
-  padding:2.1rem 1.9rem 2.3rem;
-  min-height:230px;
-  display:flex;flex-direction:column;
-  background:var(--off);
-  transition:background .25s ease,color .25s ease;
+.poster-wrap > img{width:100%;display:block;border-radius:2px}
+.poster-box{
+  position:absolute;display:flex;flex-direction:column;
+  color:#0A0A0A;padding:1.7cqw 1.9cqw;overflow:hidden;
+  background:transparent;border:none;text-align:left;cursor:pointer;font:inherit;
 }
-.prob-num{
+.pb-num{
   font-family:'Barlow Condensed',sans-serif;font-weight:800;
-  font-size:.92rem;letter-spacing:.06em;color:var(--black);
-  margin-bottom:1.5rem;
+  font-size:2cqw;letter-spacing:.06em;margin-bottom:.4cqw;
 }
-.prob-title{
+.pb-title{
   font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
-  font-size:clamp(1.4rem,2vw,1.9rem);line-height:1.02;letter-spacing:.01em;
-  color:var(--black);margin-bottom:.85rem;
+  font-size:2.8cqw;line-height:1.02;letter-spacing:0;margin-bottom:1cqw;
+  overflow-wrap:break-word;hyphens:none;
 }
-.prob-text{
-  font-size:.86rem;line-height:1.6;color:var(--black);margin-top:auto;
+.pb-more{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;
+  font-size:2cqw;letter-spacing:.1em;margin-top:auto;opacity:.5;transition:opacity .2s;
 }
-.prob-card:hover{background:var(--black)}
-.prob-card:hover .prob-num,
-.prob-card:hover .prob-title,
-.prob-card:hover .prob-text{color:var(--white)}
-@media(max-width:900px){ .prob-grid{grid-template-columns:repeat(2,1fr)} }
-@media(max-width:560px){ .prob-grid{grid-template-columns:1fr} .prob-card{min-height:0} }
+.poster-box:hover .pb-more,.poster-box:focus-visible .pb-more{opacity:1}
+.poster-box:hover .pb-title{text-decoration:underline;text-underline-offset:.15em;text-decoration-thickness:.06em}
+@media(max-width:520px){
+  /* Poster étroit : on masque l'invite, on garde numéro + titre lisibles */
+  .pb-more{display:none}
+  .pb-title{font-size:3.1cqw}
+  .poster-box{padding:1.4cqw 1.6cqw}
+}
+
+/* ── Fenêtre détail d'un enjeu ── */
+.prob-modal{
+  position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.72);
+  display:flex;align-items:center;justify-content:center;padding:1.5rem;
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.prob-modal.open{opacity:1;pointer-events:auto}
+.prob-modal-box{
+  background:var(--off);max-width:560px;width:100%;border-radius:3px;
+  border:1.5px solid var(--black);position:relative;
+  padding:2.5rem 2.2rem 2.2rem;
+  transform:translateY(16px);transition:transform .25s;
+  max-height:88vh;overflow-y:auto;
+}
+.prob-modal.open .prob-modal-box{transform:translateY(0)}
+.prob-modal-x{
+  position:absolute;top:.8rem;right:1rem;background:none;border:none;
+  font-size:1.8rem;line-height:1;cursor:pointer;color:var(--black);
+}
+.prob-modal-x:hover{opacity:.6}
+.pm-kicker{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--black);
+  margin-bottom:1rem;display:flex;align-items:center;gap:.6rem;
+}
+.pm-kicker::before{content:'';width:22px;height:1.5px;background:var(--black)}
+.pm-head{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
+  font-size:clamp(1.5rem,3.4vw,2.1rem);line-height:1.03;letter-spacing:.01em;
+  color:var(--black);margin-bottom:1rem;
+}
+.pm-body{font-size:.94rem;line-height:1.7;color:var(--black);margin-bottom:1.3rem}
+.pm-bullets{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:0 0 1.5rem;padding:0}
+.pm-bullets li{
+  position:relative;padding-left:1.4rem;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+  font-size:.86rem;line-height:1.4;color:var(--black);
+}
+.pm-bullets li::before{content:'';position:absolute;left:0;top:.45em;width:7px;height:7px;background:var(--black)}
+.pm-close{
+  border-top:1.5px solid var(--black);padding-top:1.1rem;
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
+  font-size:1rem;line-height:1.15;letter-spacing:.02em;color:var(--black);
+}
+body.pm-open{overflow:hidden}
 
 /* ── REVEAL ── */
 .reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
@@ -1235,42 +1279,43 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
     </p>
   </div>
 
-  <!-- Grille de 6 cartes (structure du poster), thème clair.
-       Les 6 cartes reprennent le contenu existant : les 3 facteurs de
-       contagion + les 3 conséquences concrètes. -->
-  <div class="prob-grid reveal">
-    <article class="prob-card">
-      <span class="prob-num">01</span>
-      <h3 class="prob-title">Peau à peau</h3>
-      <p class="prob-text">Le contact est le sport. C'est aussi le vecteur.</p>
-    </article>
-    <article class="prob-card">
-      <span class="prob-num">02</span>
-      <h3 class="prob-title">Promiscuité</h3>
-      <p class="prob-text">Transpiration et proximité permanente sur les tatamis.</p>
-    </article>
-    <article class="prob-card">
-      <span class="prob-num">03</span>
-      <h3 class="prob-title">Bactéries · virus · mycoses</h3>
-      <p class="prob-text">Un entraînement suffit pour circuler dans tout un effectif.</p>
-    </article>
-    <article class="prob-card">
-      <span class="prob-num">04</span>
-      <h3 class="prob-title">Arrêt d'entraînement</h3>
-      <p class="prob-text">Effectif diminué, préparation cassée.</p>
-    </article>
-    <article class="prob-card">
-      <span class="prob-num">05</span>
-      <h3 class="prob-title">Forfaits</h3>
-      <p class="prob-text">Résultats manqués, objectifs repoussés au pire moment.</p>
-    </article>
-    <article class="prob-card">
-      <span class="prob-num">06</span>
-      <h3 class="prob-title">Image du club</h3>
-      <p class="prob-text">Réputation et confiance des adhérents entamées.</p>
-    </article>
+  <!-- Le poster fourni, affiché tel quel. Chaque case est un bouton calé en %
+       sur une case blanche de l'image : au clic, une fenêtre affiche tout le
+       détail (le contenu est trop riche pour tenir dans la case). -->
+  <div class="poster-wrap reveal">
+    <img src="assets/probleme-poster.jpg" alt="MatSafe — les six enjeux du problème d'hygiène dans les sports de combat" loading="lazy">
+    <button class="poster-box" style="left:9.9%;top:20.4%;width:25.5%;height:32.9%" onclick="openProb(0)" aria-label="Transmission rapide — voir le détail">
+      <span class="pb-num">01</span><span class="pb-title">Transmission rapide</span><span class="pb-more">Détail +</span>
+    </button>
+    <button class="poster-box" style="left:38.3%;top:20.4%;width:24.3%;height:32.9%" onclick="openProb(1)" aria-label="Surfaces partagées — voir le détail">
+      <span class="pb-num">02</span><span class="pb-title">Surfaces partagées</span><span class="pb-more">Détail +</span>
+    </button>
+    <button class="poster-box" style="left:66.3%;top:20.4%;width:24.3%;height:32.9%" onclick="openProb(2)" aria-label="Peau fragilisée — voir le détail">
+      <span class="pb-num">03</span><span class="pb-title">Peau fragilisée</span><span class="pb-more">Détail +</span>
+    </button>
+    <button class="poster-box" style="left:9.9%;top:56.6%;width:25.5%;height:32.8%" onclick="openProb(3)" aria-label="Réaction improvisée — voir le détail">
+      <span class="pb-num">04</span><span class="pb-title">Réaction improvisée</span><span class="pb-more">Détail +</span>
+    </button>
+    <button class="poster-box" style="left:38.3%;top:56.6%;width:24.3%;height:32.8%" onclick="openProb(4)" aria-label="Impact sur la pratique — voir le détail">
+      <span class="pb-num">05</span><span class="pb-title">Impact sur la pratique</span><span class="pb-more">Détail +</span>
+    </button>
+    <button class="poster-box" style="left:66.3%;top:56.6%;width:24.3%;height:32.8%" onclick="openProb(5)" aria-label="Confiance du club — voir le détail">
+      <span class="pb-num">06</span><span class="pb-title">Confiance du club</span><span class="pb-more">Détail +</span>
+    </button>
   </div>
 </section>
+
+<!-- Fenêtre détail d'un enjeu (section « Le problème ») -->
+<div class="prob-modal" id="probmodal" role="dialog" aria-modal="true" aria-labelledby="pm-head" aria-hidden="true" onclick="if(event.target===this)closeProb()">
+  <div class="prob-modal-box">
+    <button class="prob-modal-x" onclick="closeProb()" aria-label="Fermer">×</button>
+    <div class="pm-kicker" id="pm-kicker"></div>
+    <h3 class="pm-head" id="pm-head"></h3>
+    <p class="pm-body" id="pm-body"></p>
+    <ul class="pm-bullets" id="pm-bullets"></ul>
+    <p class="pm-close" id="pm-close"></p>
+  </div>
+</div>
 
 <!-- ── POUR QUI — ÉDITORIAL ── -->
 <section class="ed-section" id="s-pourqui">
@@ -1793,6 +1838,62 @@ function hideMod(){
 // Clic sur le fond seulement — pas sur la boîte elle-même.
 function closeMod(e){if(e.target===document.getElementById('mbg'))hideMod();}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')hideMod();});
+
+// ── SECTION PROBLÈME : détail d'un enjeu (fenêtre) ──
+const PROB=[
+  {n:'01',t:'Transmission rapide',
+   h:"Un risque qui peut se propager plus vite qu'on ne le pense.",
+   b:"Contacts peau à peau, transpiration et espaces partagés créent un environnement favorable à la transmission de certaines infections.",
+   l:['Contacts rapprochés','Équipements partagés','Risque collectif'],
+   c:"Un seul cas peut perturber tout un groupe."},
+  {n:'02',t:'Surfaces partagées',
+   h:"Plus de passages, plus d'exigence.",
+   b:"Tatamis, vestiaires, sanitaires et équipements sont utilisés quotidiennement par de nombreux pratiquants. Sans méthode claire, les pratiques peuvent rapidement devenir irrégulières.",
+   l:['Nettoyage insuffisant','Fréquences mal définies','Procédures absentes'],
+   c:"L'hygiène doit être organisée, pas improvisée."},
+  {n:'03',t:'Peau fragilisée',
+   h:"Dans les sports de combat, la peau est en première ligne.",
+   b:"Frottements, abrasions, irritations et petites coupures font partie de la pratique et renforcent l'importance de la prévention.",
+   l:['Micro-lésions','Frottements répétés','Vigilance nécessaire'],
+   c:"Une bonne prévention commence avant l'incident."},
+  {n:'04',t:'Réaction improvisée',
+   h:"Quand un problème apparaît, il est déjà trop tard pour inventer une procédure.",
+   b:"Lésion suspecte, saignement ou signalement : sans protocole précis, entraîneurs et dirigeants doivent prendre des décisions dans l'urgence.",
+   l:['Pas de procédure claire','Temps perdu','Décisions incertaines'],
+   c:"Un cadre clair permet d'agir plus sereinement."},
+  {n:'05',t:'Impact sur la pratique',
+   h:"Un problème sanitaire peut rapidement devenir un problème sportif.",
+   b:"Une interruption d'entraînement peut perturber la progression, une préparation ou une échéance importante pour le pratiquant.",
+   l:['Entraînements interrompus','Préparation perturbée','Compétitions compromises'],
+   c:"La continuité de la pratique fait aussi partie de la performance."},
+  {n:'06',t:'Confiance du club',
+   h:"L'hygiène participe directement à l'image de votre structure.",
+   b:"Parents, enfants, adhérents et nouveaux pratiquants attendent aujourd'hui un environnement propre, organisé et professionnel.",
+   l:['Confiance des familles','Fidélisation des adhérents','Image du club'],
+   c:"Un club qui prend soin de son environnement prend soin de ses pratiquants."},
+];
+let probLast=null;
+function openProb(i){
+  const d=PROB[i];if(!d)return;
+  probLast=document.activeElement;
+  document.getElementById('pm-kicker').textContent=d.n+' — '+d.t;
+  document.getElementById('pm-head').textContent=d.h;
+  document.getElementById('pm-body').textContent=d.b;
+  document.getElementById('pm-bullets').innerHTML=d.l.map(x=>`<li>${x}</li>`).join('');
+  document.getElementById('pm-close').textContent=d.c;
+  const m=document.getElementById('probmodal');
+  m.classList.add('open');m.setAttribute('aria-hidden','false');
+  document.body.classList.add('pm-open');
+  m.querySelector('.prob-modal-x').focus();
+}
+function closeProb(){
+  const m=document.getElementById('probmodal');
+  if(!m.classList.contains('open'))return;
+  m.classList.remove('open');m.setAttribute('aria-hidden','true');
+  document.body.classList.remove('pm-open');
+  if(probLast&&probLast.focus)probLast.focus();
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeProb();});
 
 // Nav scroll
 window.addEventListener('scroll',()=>{
