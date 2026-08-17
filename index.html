@@ -758,8 +758,14 @@ footer{
   position:absolute;display:flex;flex-direction:column;
   align-items:center;justify-content:center;text-align:center;
   color:#0A0A0A;padding:1cqw;overflow:hidden;
-  background:transparent;border:none;cursor:pointer;font:inherit;
+  /* Case semi-transparente : la foule (le « ring ») reste visible derrière,
+     tout en gardant le texte lisible. */
+  background:rgba(244,241,235,.56);
+  -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);
+  border:1px solid rgba(255,255,255,.4);border-radius:2px;
+  cursor:pointer;font:inherit;transition:background .2s;
 }
+.poster-box:hover{background:rgba(244,241,235,.72)}
 /* Chiffre calé en haut de la case ; le titre reste centré au milieu. */
 .pb-num{
   position:absolute;top:1.6cqw;left:0;right:0;text-align:center;
@@ -1307,7 +1313,7 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
        sur une case blanche de l'image : au clic, une fenêtre affiche tout le
        détail (le contenu est trop riche pour tenir dans la case). -->
   <div class="poster-wrap reveal">
-    <img src="assets/probleme-poster.jpg" alt="MatSafe — les six enjeux du problème d'hygiène dans les sports de combat" loading="lazy">
+    <img src="assets/probleme-bg.jpg" alt="MatSafe — les six enjeux du problème d'hygiène dans les sports de combat" loading="lazy">
     <button class="poster-box" style="left:9.9%;top:20.4%;width:25.5%;height:32.9%" onclick="openProb(0)" aria-label="Santé des pratiquants — voir le détail">
       <span class="pb-num">01</span><span class="pb-title">Santé des pratiquants</span>
     </button>
