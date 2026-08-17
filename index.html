@@ -80,13 +80,14 @@ nav.solid{box-shadow:0 2px 16px rgba(0,0,0,.06)}
 }
 .hero-video-wrap{position:absolute;inset:0;z-index:0}
 .hero-video-wrap video{width:100%;height:100%;object-fit:cover}
+/* Voile beige clair : la vidéo reste une texture de fond, le texte noir
+   est lisible et le hero s'accorde au reste du site (fond clair). */
 .hero-overlay{
   position:absolute;inset:0;z-index:1;
   background:linear-gradient(to bottom,
-    rgba(0,0,0,.35) 0%,
-    rgba(0,0,0,.2)  40%,
-    rgba(0,0,0,.3)  70%,
-    rgba(0,0,0,.55) 100%
+    rgba(242,240,236,.80) 0%,
+    rgba(242,240,236,.70) 45%,
+    rgba(242,240,236,.78) 100%
   );
 }
 .hero-content{position:relative;z-index:2;max-width:720px}
@@ -94,32 +95,32 @@ nav.solid{box-shadow:0 2px 16px rgba(0,0,0,.06)}
   font-family:'Barlow Condensed',sans-serif;
   font-weight:900;font-size:clamp(3.2rem,7vw,6.5rem);
   line-height:.94;letter-spacing:-.01em;text-transform:uppercase;
-  color:var(--white);margin-bottom:1.35rem;
-  text-shadow:0 2px 30px rgba(0,0,0,.3);
+  color:var(--black);margin-bottom:1.35rem;
 }
 .hero-body{
   font-size:1rem;line-height:1.65;
-  color:rgba(255,255,255,.82);max-width:540px;margin-bottom:2.25rem;
-  text-shadow:0 1px 12px rgba(0,0,0,.2);
+  color:var(--black);max-width:540px;margin-bottom:2.25rem;
 }
 .hero-actions{display:flex;gap:1rem;flex-wrap:wrap}
+/* Bouton principal noir, comme les CTA du site */
 .btn-white{
   font-family:'Barlow Condensed',sans-serif;
   font-weight:800;font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;
-  padding:.78rem 2rem;background:var(--white);color:var(--black);
+  padding:.78rem 2rem;background:var(--black);color:var(--white);
   border:none;cursor:pointer;border-radius:2px;
   display:inline-flex;align-items:center;gap:.5rem;
   transition:all .2s;
 }
-.btn-white:hover{background:var(--off);transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.btn-white:hover{background:#333;transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.2)}
+/* Bouton secondaire : contour noir */
 .btn-ghost{
   font-family:'Barlow Condensed',sans-serif;
   font-weight:800;font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;
-  padding:.76rem 2rem;background:transparent;color:var(--white);
-  border:1.5px solid rgba(255,255,255,.4);cursor:pointer;border-radius:2px;
+  padding:.76rem 2rem;background:transparent;color:var(--black);
+  border:1.5px solid var(--black);cursor:pointer;border-radius:2px;
   display:inline-flex;align-items:center;gap:.5rem;transition:all .2s;
 }
-.btn-ghost:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.75)}
+.btn-ghost:hover{background:var(--black);color:var(--white)}
 
 /* ── STATS BAR ── */
 /* Aligné sur le système éditorial : fond clair, filets noirs, chiffres géants. */
@@ -1188,9 +1189,9 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
   .reveal{opacity:1 !important;transform:none !important}
 }
 
-/* ── HERO : fond de repli (évite le flash gris si la vidéo ne charge pas) ── */
+/* ── HERO : fond de repli clair (si la vidéo ne charge pas) ── */
 .hero-video-wrap{
-  background:radial-gradient(120% 100% at 70% 20%, #2b2b28 0%, #141412 70%);
+  background:radial-gradient(120% 100% at 70% 20%, #F2F0EC 0%, #E4E1DA 70%);
 }
 
 </style>
