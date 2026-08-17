@@ -292,6 +292,77 @@ textarea.f-input{min-height:100px;resize:vertical}
 }
 .f-submit:hover{background:#333;transform:translateY(-1px)}
 
+/* ══════════════════════════════════════════
+   CONTACT — mise en page éditoriale (champs soulignés + coordonnées géantes)
+   Adapté à la DA MatSafe : noir + crème, Barlow Condensed.
+   ══════════════════════════════════════════ */
+.contact2{
+  display:grid;grid-template-columns:.85fr 1.6fr;gap:3.5rem;
+  margin-top:3.5rem;padding-top:2.6rem;border-top:1.5px solid var(--black);
+}
+.contact2-info{display:flex;flex-direction:column;gap:1.8rem}
+.c2-label{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--black);display:block;margin-bottom:.4rem;
+}
+.c2-block p{font-size:.92rem;line-height:1.55;color:var(--black)}
+
+.contact2-form{display:flex;flex-direction:column;gap:1.7rem}
+.c2-row{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem}
+.c2-field{display:flex;flex-direction:column}
+.c2-flabel{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--black);margin-bottom:.5rem;
+}
+.c2-input{
+  width:100%;background:transparent;border:none;border-radius:0;
+  border-bottom:1.5px solid var(--border);
+  padding:.5rem 0;font-family:'Barlow',sans-serif;font-size:1rem;color:var(--black);
+  outline:none;transition:border-color .2s;
+}
+.c2-input::placeholder{color:#9a968f}
+.c2-input:focus{border-bottom-color:var(--black)}
+.c2-input[aria-invalid="true"]{border-bottom-color:var(--black);border-bottom-width:2px}
+.c2-textarea{resize:vertical;min-height:56px;line-height:1.5}
+.c2-select{
+  appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:1.8rem;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5l5-5' fill='none' stroke='%230A0A0A' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right .1rem center;background-size:12px 8px;
+}
+.c2-submit{
+  align-self:flex-start;margin-top:.4rem;
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  font-size:.85rem;letter-spacing:.18em;text-transform:uppercase;
+  padding:.9rem 2.3rem;background:var(--black);color:var(--off);
+  border:none;cursor:pointer;border-radius:2px;transition:background .2s;
+}
+.c2-submit:hover{background:#333}
+.c2-field .f-error{margin-top:.45rem}
+
+/* Coordonnées en très grand, comme la référence */
+.contact2-big{
+  display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;
+  gap:1.2rem 2.5rem;margin-top:4rem;padding-top:2.4rem;
+  border-top:1.5px solid var(--black);
+}
+.c2-huge{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  font-size:clamp(1.7rem,4.6vw,3.6rem);line-height:1;letter-spacing:-.01em;
+  color:var(--black);text-decoration:none;transition:opacity .2s;
+}
+.c2-huge:hover{opacity:.55}
+
+@media(max-width:820px){
+  .contact2{grid-template-columns:1fr;gap:2.4rem}
+  .contact2-big{margin-top:3rem}
+}
+@media(max-width:520px){
+  .c2-row{grid-template-columns:1fr}
+  .contact2-big{flex-direction:column;align-items:flex-start;gap:.7rem}
+}
+
 /* ── FOOTER ── */
 footer{
   background:var(--black);color:var(--white);
@@ -1713,53 +1784,54 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
     </p>
   </div>
 
-  <div class="contact-wrap">
-  <div class="contact-left">
-    <div class="ed-index">—</div>
-    <h3 class="ed-name">Parlons de votre <b>club</b></h3>
-    <p class="ed-hook" style="margin-top:1.1rem">Dites-nous où vous en êtes. On vous dit ce qu'il manque.</p>
-    <div class="contact-coords reveal d2">
-      <div class="cx-row"><span class="cx-label">Email</span><a class="ed-link" href="mailto:contact@matsafe.fr">contact@matsafe.fr</a></div>
-      <div class="cx-row"><span class="cx-label">Tél.</span><a class="ed-link" href="tel:+33633188502">06 33 18 85 02</a></div>
-      <div class="cx-row"><span class="cx-label">Horaires</span>Lun–Ven · 9h–18h</div>
+  <div class="contact2 reveal">
+    <!-- Colonne gauche : infos courtes -->
+    <div class="contact2-info">
+      <div class="c2-block"><span class="c2-label">Zone</span><p>France entière</p></div>
+      <div class="c2-block"><span class="c2-label">Horaires</span><p>Lun – Ven<br>9h – 18h</p></div>
+      <div class="c2-block"><span class="c2-label">Réponse</span><p>Sous 48h ouvrées</p></div>
     </div>
-  </div>
-  <div class="contact-right">
-    <form id="contact-form" novalidate>
-    <div class="form-row">
-      <div class="form-grp">
-        <label class="f-label" for="fp">Prénom <span aria-hidden="true">*</span></label>
-        <input type="text" class="f-input" id="fp" name="prenom" autocomplete="given-name" required/>
+
+    <!-- Formulaire : champs soulignés -->
+    <form class="contact2-form" id="contact-form" novalidate>
+      <div class="c2-row">
+        <div class="c2-field">
+          <label class="c2-flabel" for="fp">Prénom <span aria-hidden="true">*</span></label>
+          <input type="text" class="c2-input" id="fp" name="prenom" autocomplete="given-name" placeholder="Prénom" required/>
+        </div>
+        <div class="c2-field">
+          <label class="c2-flabel" for="fn">Nom <span aria-hidden="true">*</span></label>
+          <input type="text" class="c2-input" id="fn" name="nom" autocomplete="family-name" placeholder="Nom de famille" required/>
+        </div>
       </div>
-      <div class="form-grp">
-        <label class="f-label" for="fn">Nom de famille <span aria-hidden="true">*</span></label>
-        <input type="text" class="f-input" id="fn" name="nom" autocomplete="family-name" required/>
+      <div class="c2-field">
+        <label class="c2-flabel" for="fc">Nom du club</label>
+        <input type="text" class="c2-input" id="fc" name="club" autocomplete="organization" placeholder="Votre club"/>
       </div>
-    </div>
-    <div class="form-grp">
-      <label class="f-label" for="fe">E-mail <span aria-hidden="true">*</span></label>
-      <input type="email" class="f-input" id="fe" name="email" autocomplete="email" required/>
-    </div>
-    <div class="form-grp">
-      <label class="f-label" for="fc">Nom du club</label>
-      <input type="text" class="f-input" id="fc" name="club" autocomplete="organization"/>
-    </div>
-    <div class="form-grp">
-      <label class="f-label" for="fd">Discipline principale</label>
-      <select class="f-input f-select" id="fd" name="discipline">
-        <option>BJJ / Grappling</option><option>MMA</option><option>Judo</option>
-        <option>Boxe</option><option>Muay Thaï</option><option>Lutte / Wrestling</option>
-        <option>Sambo</option><option>Autre</option>
-      </select>
-    </div>
-    <div class="form-grp">
-      <label class="f-label" for="fm">Message</label>
-      <textarea class="f-input" id="fm" name="message" rows="4"></textarea>
-    </div>
-    <p class="f-required">Les champs marqués d'une <span aria-hidden="true">*</span><span class="sr-only">astérisque</span> sont obligatoires.</p>
-    <button type="submit" class="f-submit">Envoyer la demande →</button>
+      <div class="c2-field">
+        <label class="c2-flabel" for="fd">Discipline principale</label>
+        <select class="c2-input c2-select" id="fd" name="discipline">
+          <option>BJJ / Grappling</option><option>MMA</option><option>Judo</option>
+          <option>Boxe</option><option>Muay Thaï</option><option>Lutte / Wrestling</option>
+          <option>Sambo</option><option>Autre</option>
+        </select>
+      </div>
+      <div class="c2-field">
+        <label class="c2-flabel" for="fe">E-mail <span aria-hidden="true">*</span></label>
+        <input type="email" class="c2-input" id="fe" name="email" autocomplete="email" placeholder="vous@club.fr" required/>
+      </div>
+      <div class="c2-field">
+        <label class="c2-flabel" for="fm">Votre message</label>
+        <textarea class="c2-input c2-textarea" id="fm" name="message" rows="3" placeholder="Dites-nous où vous en êtes. On vous dit ce qu'il manque."></textarea>
+      </div>
+      <button type="submit" class="c2-submit">Envoyer la demande →</button>
     </form>
   </div>
+
+  <!-- Coordonnées en grand -->
+  <div class="contact2-big reveal">
+    <a class="c2-huge" href="mailto:contact@matsafe.fr">contact@matsafe.fr</a>
+    <a class="c2-huge" href="tel:+33633188502">06 33 18 85 02</a>
   </div>
 </section>
 
@@ -2037,7 +2109,7 @@ const CONTACT_EMAIL = 'contact@matsafe.fr';
                                           {flag(f.email,'E-mail invalide');first=first||f.email;}
     if(first){first.focus();return;}
 
-    const btn=form.querySelector('.f-submit');
+    const btn=form.querySelector('.c2-submit');
     btn.disabled=true;
 
     const payload={
