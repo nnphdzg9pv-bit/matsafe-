@@ -757,23 +757,21 @@ footer{
 .poster-box{
   position:absolute;display:flex;flex-direction:column;
   align-items:center;justify-content:center;text-align:center;
-  color:#0A0A0A;padding:1.7cqw 1.9cqw;overflow:hidden;
+  color:#0A0A0A;padding:1cqw;overflow:hidden;
   background:transparent;border:none;cursor:pointer;font:inherit;
 }
 .pb-num{
   font-family:'Barlow Condensed',sans-serif;font-weight:800;
   font-size:2cqw;letter-spacing:.1em;margin-bottom:.9cqw;opacity:.75;
 }
+/* Taille en cqw : même ratio texte/case sur tous les écrans. 3.1cqw = la
+   plus grande taille où « CONTAMINATION » (le mot le plus long) tient. */
 .pb-title{
   font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
-  font-size:2.5cqw;line-height:1.06;letter-spacing:0;
+  font-size:3.1cqw;line-height:1.02;letter-spacing:-.01em;
   overflow-wrap:break-word;hyphens:auto;
 }
 .poster-box:hover .pb-title{text-decoration:underline;text-underline-offset:.15em;text-decoration-thickness:.06em}
-@media(max-width:520px){
-  .pb-title{font-size:2.6cqw}
-  .poster-box{padding:1.4cqw 1.6cqw}
-}
 
 /* ══════════════════════════════════════════
    SECTION 4 ÉTAPES — l'affiche (feuille tenue) + les 4 étapes posées dessus
