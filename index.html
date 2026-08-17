@@ -756,28 +756,22 @@ footer{
 .poster-wrap > img{width:100%;display:block;border-radius:2px}
 .poster-box{
   position:absolute;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
   color:#0A0A0A;padding:1.7cqw 1.9cqw;overflow:hidden;
-  background:transparent;border:none;text-align:left;cursor:pointer;font:inherit;
+  background:transparent;border:none;cursor:pointer;font:inherit;
 }
 .pb-num{
   font-family:'Barlow Condensed',sans-serif;font-weight:800;
-  font-size:2cqw;letter-spacing:.06em;margin-bottom:.4cqw;
+  font-size:2cqw;letter-spacing:.1em;margin-bottom:.9cqw;opacity:.75;
 }
 .pb-title{
   font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
-  font-size:2.4cqw;line-height:1.05;letter-spacing:0;margin-bottom:1cqw;
+  font-size:2.5cqw;line-height:1.06;letter-spacing:0;
   overflow-wrap:break-word;hyphens:auto;
 }
-.pb-more{
-  font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;
-  font-size:2cqw;letter-spacing:.1em;margin-top:auto;opacity:.5;transition:opacity .2s;
-}
-.poster-box:hover .pb-more,.poster-box:focus-visible .pb-more{opacity:1}
 .poster-box:hover .pb-title{text-decoration:underline;text-underline-offset:.15em;text-decoration-thickness:.06em}
 @media(max-width:520px){
-  /* Poster étroit : on masque l'invite, on garde numéro + titre lisibles */
-  .pb-more{display:none}
-  .pb-title{font-size:2.5cqw}
+  .pb-title{font-size:2.6cqw}
   .poster-box{padding:1.4cqw 1.6cqw}
 }
 
@@ -1315,22 +1309,22 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
   <div class="poster-wrap reveal">
     <img src="assets/probleme-poster.jpg" alt="MatSafe — les six enjeux du problème d'hygiène dans les sports de combat" loading="lazy">
     <button class="poster-box" style="left:9.9%;top:20.4%;width:25.5%;height:32.9%" onclick="openProb(0)" aria-label="Santé des pratiquants — voir le détail">
-      <span class="pb-num">01</span><span class="pb-title">Santé des pratiquants</span><span class="pb-more">Détail +</span>
+      <span class="pb-num">01</span><span class="pb-title">Santé des pratiquants</span>
     </button>
     <button class="poster-box" style="left:38.3%;top:20.4%;width:24.3%;height:32.9%" onclick="openProb(1)" aria-label="Risque de contamination — voir le détail">
-      <span class="pb-num">02</span><span class="pb-title">Risque de contamination</span><span class="pb-more">Détail +</span>
+      <span class="pb-num">02</span><span class="pb-title">Risque de contamination</span>
     </button>
     <button class="poster-box" style="left:66.3%;top:20.4%;width:24.3%;height:32.9%" onclick="openProb(2)" aria-label="Performance impactée — voir le détail">
-      <span class="pb-num">03</span><span class="pb-title">Performance impactée</span><span class="pb-more">Détail +</span>
+      <span class="pb-num">03</span><span class="pb-title">Performance impactée</span>
     </button>
     <button class="poster-box" style="left:9.9%;top:56.6%;width:25.5%;height:32.8%" onclick="openProb(3)" aria-label="Hygiène des espaces — voir le détail">
-      <span class="pb-num">04</span><span class="pb-title">Hygiène des espaces</span><span class="pb-more">Détail +</span>
+      <span class="pb-num">04</span><span class="pb-title">Hygiène des espaces</span>
     </button>
     <button class="poster-box" style="left:38.3%;top:56.6%;width:24.3%;height:32.8%" onclick="openProb(4)" aria-label="Arrêt de la pratique — voir le détail">
-      <span class="pb-num">05</span><span class="pb-title">Arrêt de la pratique</span><span class="pb-more">Détail +</span>
+      <span class="pb-num">05</span><span class="pb-title">Arrêt de la pratique</span>
     </button>
     <button class="poster-box" style="left:66.3%;top:56.6%;width:24.3%;height:32.8%" onclick="openProb(5)" aria-label="Infections récurrentes — voir le détail">
-      <span class="pb-num">06</span><span class="pb-title">Infections récurrentes</span><span class="pb-more">Détail +</span>
+      <span class="pb-num">06</span><span class="pb-title">Infections récurrentes</span>
     </button>
   </div>
 </section>
