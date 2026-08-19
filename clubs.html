@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Clubs certifiés — MatSafe</title>
+<meta name="description" content="La carte nationale des clubs engagés dans la démarche MatSafe, par niveau de certification."/>
+<meta name="theme-color" content="#0A0A0A"/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230A0A0A'/%3E%3Cellipse cx='16' cy='16' rx='14' ry='9' fill='none' stroke='%23FFFFFF' stroke-width='1.4'/%3E%3Ctext x='16' y='22' font-size='15' font-family='Arial,sans-serif' font-style='italic' font-weight='bold' fill='%23FFFFFF' text-anchor='middle'%3EM%3C/text%3E%3C/svg%3E"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:ital,wght@0,400;0,500;1,400;1,500&family=Kanit:ital,wght@1,700;1,800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" media="print" onload="this.media='all'"/>
+<noscript><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/></noscript>
+<link rel="stylesheet" href="styles.css"/>
+</head>
+
+<body>
+
+<a class="skip-link" href="#contenu">Aller au contenu</a>
+
+<nav id="nav">
+  <a href="index.html" class="nav-logo" aria-label="MatSafe — accueil">
+    <img class="nav-logo-img" src="assets/logo-matsafe.png" alt="MatSafe" onerror="this.remove()">
+    <span class="ms-badge ms-badge--nav ms-badge--fallback" aria-hidden="true">
+      <span class="ms-logo"><span class="ms-mat">Mat</span><span class="ms-safe">Safe</span></span>
+      <span class="ms-since">Since 2026</span>
+    </span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Accueil</a>
+    <a href="services.html">Nos Services</a>
+    <a href="label.html">Le Label</a>
+    <a href="clubs.html" class="is-active" aria-current="page">Clubs</a>
+    <a href="certification.html">Certification</a>
+    <a href="index.html#s-contact" class="nav-cta">Candidater</a>
+  </div>
+  <button class="nav-burger" id="nav-burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobile-menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+  <a href="index.html">Accueil</a>
+  <a href="services.html">Nos Services</a>
+  <a href="label.html">Le Label</a>
+  <a href="clubs.html" class="is-active" aria-current="page">Clubs</a>
+  <a href="certification.html">Certification</a>
+  <a href="index.html#s-contact" class="mm-cta">Candidater</a>
+</div>
+
+<div class="modal-bg" id="mbg" onclick="closeMod(event)" role="dialog" aria-modal="true" aria-labelledby="mnm" aria-hidden="true">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <button class="modal-x" onclick="hideMod()" aria-label="Fermer la fiche du club">×</button>
+      <div class="modal-lvl" id="mlvl"></div>
+      <div class="modal-nm" id="mnm"></div>
+      <div class="modal-ct" id="mct"></div>
+    </div>
+    <div class="modal-bd">
+      <p class="modal-desc" id="mdesc"></p>
+      <div class="modal-rows" id="mrows"></div>
+    </div>
+  </div>
+</div>
+
+<main id="contenu">
+
+<section class="ed-section page-hero">
+  <div class="ed-header">
+    <div>
+      <div class="eyebrow reveal">Carte nationale</div>
+      <h1 class="ed-giant reveal">Cl<em>u</em>bs</h1>
+    </div>
+    <p class="ed-manifesto reveal">Les clubs déjà engagés dans la démarche, par niveau de certification. <strong>Cherchez une ville, un nom, une discipline.</strong></p>
+  </div>
+</section>
+
+<section class="ed-section map-section" id="s-carte">
+  <div class="map-legend">
+    <span class="map-lg"><i class="map-lg-dot map-lg-dot--exc"></i>Excellence</span>
+    <span class="map-lg"><i class="map-lg-dot map-lg-dot--pre"></i>Premium</span>
+    <span class="map-lg"><i class="map-lg-dot map-lg-dot--std"></i>Standard</span>
+  </div>
+
+  <div class="map-layout">
+    <div id="shl-map"></div>
+    <div class="map-sidebar" id="map-sidebar">
+      <div class="map-search-wrap">
+        <input type="text" class="map-search" id="map-search" placeholder="Rechercher un club, une ville…" oninput="mapSearch()"/>
+      </div>
+      <!-- Valeur de départ : le script la recalcule dès le rendu de la liste. -->
+      <span class="map-count" id="map-count">12 clubs</span>
+      <div id="map-list"></div>
+    </div>
+  </div>
+</section>
+
+<section class="ed-section">
+  <div class="ed-header">
+    <div>
+      <div class="eyebrow reveal">Club client</div>
+      <h2 class="ed-giant ed-giant--md reveal">Cube Fight <em>Club</em></h2>
+    </div>
+    <p class="ed-manifesto reveal">Le premier club labellisé MatSafe. <strong>Un exemple concret de ce que la certification change au quotidien.</strong></p>
+  </div>
+  <p class="reveal cta-row"><a class="cta" href="club-client.html">Voir le Club Client →</a></p>
+</section>
+
+<section class="ed-section">
+  <div class="ed-header">
+    <div>
+      <div class="eyebrow reveal">Contact</div>
+      <h2 class="ed-giant ed-giant--md reveal">Une <em>question</em> ?</h2>
+    </div>
+    <p class="ed-manifesto reveal">Candidature gratuite et sans engagement. <strong>Un conseiller vous répond sous 48h ouvrées.</strong></p>
+  </div>
+  <p class="reveal cta-row"><a class="cta" href="index.html#s-contact">Candidater →</a> <a class="cta cta--ghost" href="tel:+33633188502">06 33 18 85 02</a></p>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="fb-name">MatSafe Label</div>
+      <p class="fb-body">Le label national de certification des pratiques d'hygiène dans les clubs de sport de combat en France.</p>
+    </div>
+    <div class="footer-col">
+      <div class="fc-head">Label</div>
+      <a href="label.html">Le Label</a>
+      <a href="services.html">Nos Services</a>
+      <a href="certification.html">Certification</a>
+    </div>
+    <div class="footer-col">
+      <div class="fc-head">Adhérents</div>
+      <a href="clubs.html">Trouver un club</a>
+      <a href="index.html#s-contact">Candidater</a>
+      <a href="https://www.medecindirect.fr/" target="_blank" rel="noopener">Téléconsultation MédecinDirect ↗</a>
+    </div>
+    <div class="footer-col">
+      <div class="fc-head">Légal</div>
+      <a href="#">Mentions légales</a>
+      <a href="#">Confidentialité</a>
+      <a href="#">Presse</a>
+    </div>
+  </div>
+  <div class="footer-bot">
+    <span>© 2026 MatSafe Label · Tous droits réservés</span>
+    <span>Certification nationale indépendante</span>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="map.js"></script>
+
+</body>
+</html>

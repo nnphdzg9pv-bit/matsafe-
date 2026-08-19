@@ -1,0 +1,1354 @@
+:root {
+  --black: #0A0A0A;
+  --white: #FFFFFF;
+  --off:   #F2F0EC;
+  /* #888 tombait à 3,5:1 sur le fond crème — sous le minimum WCAG AA (4,5:1)
+     pour le petit texte de la carte. #6B6B6B donne 4,7:1 sur crème, 5,3:1
+     sur blanc, sans changer la valeur perçue du gris. */
+  --gray:  #6B6B6B;
+  --light: #E8E6E1;
+  --border:#D8D5CF;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+/* La nav est fixe : sans cette marge, une ancre dépose son titre dessous. */
+section[id]{scroll-margin-top:70px}
+body{font-family:'Barlow',sans-serif;background:var(--off);color:var(--black);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+
+/* ── NAV ── */
+/* z-index 130 : au-dessus du panneau mobile (110). `nav` étant positionnée,
+   elle crée son propre contexte d'empilement — le burger qu'elle contient
+   ne peut pas passer devant le panneau tout seul, c'est la nav entière qui
+   doit être au-dessus, sinon le bouton de fermeture devient intouchable. */
+/* Bandeau beige permanent en haut : la nav est toujours sur une bande
+   claire (couleur --off du site), texte en noir. */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:130;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 2.5rem;height:58px;
+  background:var(--off);border-bottom:1px solid var(--border);
+  transition:box-shadow .3s;
+}
+nav.solid{box-shadow:0 2px 16px rgba(0,0,0,.06)}
+.nav-links{display:flex;align-items:center;gap:2.5rem}
+.nav-links a{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:.78rem;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--black);transition:opacity .2s;
+}
+.nav-links a:hover{opacity:.55}
+.nav-cta{
+  padding:.42rem 1.1rem !important;
+  border:1.5px solid var(--black) !important;
+  border-radius:2px;
+  color:var(--black) !important;
+}
+.nav-cta:hover{background:var(--black) !important;color:var(--white) !important}
+
+/* ── HERO ── */
+.hero{
+  position:relative;height:100vh;height:100svh;min-height:600px;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:0 2.5rem;
+}
+.hero-video-wrap{position:absolute;inset:0;z-index:0}
+.hero-video-wrap video{width:100%;height:100%;object-fit:cover}
+.hero-overlay{
+  position:absolute;inset:0;z-index:1;
+  background:linear-gradient(to bottom,
+    rgba(0,0,0,.35) 0%,
+    rgba(0,0,0,.2)  40%,
+    rgba(0,0,0,.3)  70%,
+    rgba(0,0,0,.55) 100%
+  );
+}
+.hero-content{position:relative;z-index:2;max-width:720px}
+/* Texte du hero dans le crème du site (--off), pas un blanc pur. */
+.hero-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:900;font-size:clamp(3.2rem,7vw,6.5rem);
+  line-height:.94;letter-spacing:-.01em;text-transform:uppercase;
+  color:var(--off);margin-bottom:1.35rem;
+  text-shadow:0 2px 30px rgba(0,0,0,.3);
+}
+.hero-body{
+  font-size:1rem;line-height:1.65;
+  color:var(--off);max-width:540px;margin-bottom:2.25rem;
+  text-shadow:0 1px 12px rgba(0,0,0,.2);
+}
+.hero-actions{display:flex;gap:1rem;flex-wrap:wrap}
+.btn-white{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:800;font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;
+  padding:.78rem 2rem;background:var(--off);color:var(--black);
+  border:none;cursor:pointer;border-radius:2px;
+  display:inline-flex;align-items:center;gap:.5rem;
+  transition:all .2s;
+}
+.btn-white:hover{background:#fff;transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.btn-ghost{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:800;font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;
+  padding:.76rem 2rem;background:transparent;color:var(--off);
+  border:1.5px solid rgba(242,240,236,.45);cursor:pointer;border-radius:2px;
+  display:inline-flex;align-items:center;gap:.5rem;transition:all .2s;
+}
+.btn-ghost:hover{background:rgba(242,240,236,.12);border-color:rgba(242,240,236,.8)}
+
+/* ── STATS BAR ── */
+/* Aligné sur le système éditorial : fond clair, filets noirs, chiffres géants. */
+.stats-bar{
+  background:var(--off);color:var(--black);padding:2.75rem 2.5rem;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:0;
+  border-top:3px solid var(--black);
+}
+.stat-item{
+  text-align:left;padding:0 2rem;
+  border-right:1px solid var(--border);
+}
+.stat-item:first-child{padding-left:0}
+.stat-item:last-child{border-right:none}
+.stat-num{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:900;font-size:clamp(3rem,6vw,5rem);line-height:.9;letter-spacing:-.02em;
+  color:var(--black);display:inline-block;
+}
+.stat-suf{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:1.9rem;color:var(--black);vertical-align:super;
+}
+.stat-lbl{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--black);display:block;margin-top:.6rem;
+}
+
+/* ── MARQUEE ── */
+/* Bandeau noir : seule respiration sombre entre le hero et le footer. */
+.marquee-section{
+  background:var(--black);overflow:hidden;padding:1.25rem 0;
+  border-top:3px solid var(--black);
+}
+.marquee-track{
+  display:flex;animation:marquee 24s linear infinite;white-space:nowrap;
+}
+.marquee-track:hover{animation-play-state:paused}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.marquee-item{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:900;font-size:1rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--white);padding:0 2.5rem;
+  display:flex;align-items:center;gap:2.5rem;
+}
+.marquee-item::after{content:'·';color:var(--white);font-size:1.4rem}
+
+/* ══════════════════════════════════════════
+   BANDE FIGHTERS — défilement continu (section « Pour qui »)
+   Deux jeux d'images identiques : la piste glisse de -50% en boucle, la
+   couture est invisible. Régler --fighters-speed pour la vitesse.
+   Les photos gardent leurs couleurs (comme celles du Cube Fight Club).
+   ══════════════════════════════════════════ */
+.fighters-band{
+  --fighters-speed:14s;                  /* durée d'un cycle : plus court = plus rapide */
+  margin:2.75rem -2.5rem 0;              /* pleine largeur : annule le padding de section */
+  padding:1.6rem 0 .4rem;
+  border-top:1.5px solid var(--black);
+  /* Pas de bord bas : le filet haut de la liste (au-dessus du 1er sport) fait
+     déjà la séparation. Deux filets rapprochés donnaient une « double barre ». */
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
+}
+.fighters-viewport{overflow:hidden}
+.fighters-track{
+  display:flex;width:max-content;
+  animation:fighters-scroll var(--fighters-speed) linear infinite;
+}
+@keyframes fighters-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.fighters-slide{flex:0 0 auto;margin:0;margin-right:16px}
+.fighters-photo{
+  width:300px;height:400px;display:block;object-fit:cover;
+  border-radius:3px;background:var(--light);
+}
+
+@media(max-width:720px){
+  .fighters-band{margin-left:-1.4rem;margin-right:-1.4rem;padding:1.1rem 0}
+  .fighters-slide{margin-right:12px}
+  .fighters-photo{width:220px;height:300px}
+}
+/* Réduire les animations : bande immobile. */
+@media(prefers-reduced-motion:reduce){
+  .fighters-track{animation:none}
+}
+
+/* ── GENERIC SECTIONS ── */
+.section{padding:5.5rem 2.5rem}
+
+.eyebrow{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--black);margin-bottom:1rem;
+  display:flex;align-items:center;gap:.6rem;
+}
+.eyebrow::before{content:'';width:22px;height:1.5px;background:currentColor;display:block}
+.section--dark .eyebrow{color:rgba(255,255,255,.6)}
+
+/* ── PASTILLE DISCIPLINE ──
+   Seul rescapé de l'ancienne grille de clubs : la carte s'en sert encore
+   dans ses popups et dans la liste latérale. */
+.cc-disc{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:.18rem .5rem;background:var(--light);border-radius:1px;color:var(--black);
+}
+
+/* ── CONTACT ── */
+/* Même grille éditoriale que .ed-row : filet noir en haut, deux colonnes. */
+.contact-wrap{
+  display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;
+  margin-top:3.5rem;padding-top:2.6rem;
+  border-top:1.5px solid var(--black);
+}
+.contact-left{display:flex;flex-direction:column}
+.contact-right{display:flex;flex-direction:column}
+.contact-coords{
+  margin-top:2.2rem;padding-top:1.4rem;
+  border-top:1px solid var(--border);
+  display:flex;flex-direction:column;gap:.7rem;
+}
+.cx-row{font-size:.85rem;color:var(--black)}
+.cx-label{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;
+  margin-right:.75rem;
+}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.form-grp{margin-bottom:1rem}
+.f-label{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--black);display:block;margin-bottom:.4rem;
+}
+.f-input{
+  width:100%;padding:.75rem 1rem;
+  border:1px solid var(--border);border-radius:2px;
+  font-family:'Barlow',sans-serif;font-size:.9rem;
+  background:var(--off);color:var(--black);
+  transition:border-color .2s;outline:none;
+}
+.f-input:focus{border-color:var(--black);background:var(--white)}
+textarea.f-input{min-height:100px;resize:vertical}
+/* Le select perd sa flèche native avec appearance:none — on la redessine. */
+.f-select{
+  cursor:pointer;appearance:none;-webkit-appearance:none;
+  padding-right:2.4rem;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5l5-5' fill='none' stroke='%230A0A0A' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 1rem center;background-size:12px 8px;
+}
+/* Champ en erreur après tentative d'envoi */
+.f-input[aria-invalid="true"]{border-color:var(--black);border-width:1.5px;background:var(--white)}
+.f-error{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;
+  margin-top:.35rem;display:block;
+}
+.f-required{font-size:.75rem;color:var(--black);margin:.2rem 0 .9rem}
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+.f-submit{
+  width:100%;margin-top:.5rem;
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:900;font-size:.85rem;letter-spacing:.18em;text-transform:uppercase;
+  padding:.92rem;background:var(--black);color:var(--white);
+  border:none;cursor:pointer;border-radius:2px;transition:all .2s;
+}
+.f-submit:hover{background:#333;transform:translateY(-1px)}
+
+/* ══════════════════════════════════════════
+   CONTACT — mise en page éditoriale (champs soulignés + coordonnées géantes)
+   Adapté à la DA MatSafe : noir + crème, Barlow Condensed.
+   ══════════════════════════════════════════ */
+.contact2{
+  display:grid;grid-template-columns:.85fr 1.6fr;gap:3.5rem;
+  margin-top:3.5rem;padding-top:2.6rem;border-top:1.5px solid var(--black);
+}
+.contact2-info{display:flex;flex-direction:column;gap:1.8rem}
+.c2-label{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--black);display:block;margin-bottom:.4rem;
+}
+.c2-block p{font-size:.92rem;line-height:1.55;color:var(--black)}
+
+.contact2-form{display:flex;flex-direction:column;gap:1.7rem}
+.c2-row{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem}
+.c2-field{display:flex;flex-direction:column}
+.c2-flabel{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--black);margin-bottom:.5rem;
+}
+.c2-input{
+  width:100%;background:transparent;border:none;border-radius:0;
+  border-bottom:1.5px solid var(--border);
+  padding:.5rem 0;font-family:'Barlow',sans-serif;font-size:1rem;color:var(--black);
+  outline:none;transition:border-color .2s;
+}
+.c2-input::placeholder{color:#9a968f}
+.c2-input:focus{border-bottom-color:var(--black)}
+.c2-input[aria-invalid="true"]{border-bottom-color:var(--black);border-bottom-width:2px}
+.c2-textarea{resize:vertical;min-height:56px;line-height:1.5}
+.c2-select{
+  appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:1.8rem;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5l5-5' fill='none' stroke='%230A0A0A' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right .1rem center;background-size:12px 8px;
+}
+.c2-submit{
+  align-self:flex-start;margin-top:.4rem;
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  font-size:.85rem;letter-spacing:.18em;text-transform:uppercase;
+  padding:.9rem 2.3rem;background:var(--black);color:var(--off);
+  border:none;cursor:pointer;border-radius:2px;transition:background .2s;
+}
+.c2-submit:hover{background:#333}
+.c2-field .f-error{margin-top:.45rem}
+
+/* Coordonnées en très grand, comme la référence */
+.contact2-big{
+  display:flex;align-items:center;flex-wrap:wrap;
+  gap:.6rem 2.5rem;margin-top:2.6rem;padding-top:1.6rem;
+  border-top:1px solid var(--border);
+}
+.c2-huge{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:1.15rem;line-height:1.2;letter-spacing:.01em;
+  color:var(--black);text-decoration:none;
+  display:inline-flex;align-items:center;gap:.5rem;transition:opacity .2s;
+}
+.c2-huge::before{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gray);
+}
+.c2-mail::before{content:'Email'}
+.c2-tel::before{content:'Tél.'}
+.c2-huge:hover{opacity:.55}
+
+@media(max-width:820px){
+  .contact2{grid-template-columns:1fr;gap:2.4rem}
+  .contact2-big{margin-top:3rem}
+}
+@media(max-width:520px){
+  .c2-row{grid-template-columns:1fr}
+  .contact2-big{flex-direction:column;align-items:flex-start;gap:.7rem}
+}
+
+/* ── FOOTER ── */
+footer{
+  background:var(--black);color:var(--white);
+  border-top:1px solid #1a1a1a;padding:4rem 2.5rem 2.5rem;
+}
+.footer-grid{
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:3rem;margin-bottom:3rem;
+}
+.fb-name{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:900;font-size:1.15rem;letter-spacing:.1em;text-transform:uppercase;
+  margin-bottom:.7rem;
+}
+.fb-body{font-size:.82rem;color:rgba(255,255,255,.7);line-height:1.72;max-width:250px}
+.fc-head{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:.63rem;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(255,255,255,.8);margin-bottom:.85rem;
+}
+.footer-col a{display:block;font-size:.82rem;color:rgba(255,255,255,.7);margin-bottom:.5rem;transition:color .2s}
+.footer-col a:hover{color:var(--white)}
+.footer-bot{
+  border-top:1px solid #1a1a1a;padding-top:1.75rem;
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.75rem;
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.6);
+}
+
+/* ── MODAL ── */
+.modal-bg{
+  position:fixed;inset:0;z-index:800;
+  background:rgba(0,0,0,.7);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .25s;padding:2rem;
+}
+.modal-bg.open{opacity:1;pointer-events:auto}
+.modal-box{
+  background:var(--white);max-width:560px;width:100%;border-radius:2px;overflow:hidden;
+  transform:translateY(20px);transition:transform .25s;
+}
+.modal-bg.open .modal-box{transform:translateY(0)}
+.modal-hdr{
+  background:var(--black);color:var(--white);
+  padding:2rem;position:relative;
+}
+/* L'en-tête du modal est sur fond noir : son contenu se peint en blanc.
+   (Le corps, lui, reste noir sur blanc.) */
+.modal-x{
+  position:absolute;top:1rem;right:1rem;
+  background:none;border:none;color:rgba(255,255,255,.7);font-size:1.5rem;
+  cursor:pointer;line-height:1;transition:color .2s;
+}
+.modal-x:hover{color:var(--white)}
+.modal-lvl{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(255,255,255,.7);margin-bottom:.5rem;
+}
+.modal-nm{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:900;font-size:2rem;text-transform:uppercase;line-height:1;margin-bottom:.45rem;
+  color:var(--white);
+}
+.modal-ct{font-size:.88rem;color:rgba(255,255,255,.75)}
+.modal-bd{padding:2rem}
+.modal-desc{font-size:.87rem;color:var(--black);line-height:1.75;margin-bottom:1.4rem}
+.modal-rows{display:flex;flex-direction:column;gap:.55rem;margin-bottom:1.4rem}
+.modal-row{display:flex;gap:.75rem;align-items:flex-start;font-size:.84rem}
+.modal-row b{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--black);min-width:75px;margin-top:.1rem;
+}
+.modal-row a{
+  color:var(--black);font-weight:600;
+  text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px;
+}
+.modal-row a:hover{text-decoration-thickness:2px}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:2rem;right:2rem;z-index:9999;
+  background:var(--black);color:var(--white);
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:800;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:.9rem 1.5rem;border-radius:2px;box-shadow:0 8px 32px rgba(0,0,0,.3);
+  transform:translateY(80px);opacity:0;transition:all .3s ease;
+}
+.toast.show{transform:translateY(0);opacity:1}
+
+
+/* ── SPOTLIGHT CLUB — bandeau photos ── */
+.spotlight-photos {
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  gap: 4px;
+  height: 440px;
+  margin-top: 2.5rem;
+}
+.spotlight-photos img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  /* photos du club laissées telles quelles : aucun filtre, aucune désaturation */
+}
+@media(max-width:720px){
+  .spotlight-photos{grid-template-columns:1fr;height:auto}
+  .spotlight-photos img{height:220px}
+}
+.pq2-crop.tl{top:16px;left:16px;border-right:0;border-bottom:0}
+.pq2-crop.tr{top:16px;right:16px;border-left:0;border-bottom:0}
+.pq2-crop.bl{bottom:16px;left:16px;border-right:0;border-top:0}
+.pq2-crop.br{bottom:16px;right:16px;border-left:0;border-top:0}
+.dlv-section .eyebrow{color:rgba(255,255,255,.6)}
+
+/* ══════════════════════════════════════════
+   SERVICES — ÉDITORIAL (light, bold, asymétrique)
+   ══════════════════════════════════════════ */
+/* Le système « éditorial » ci-dessous est partagé par TOUTES les sections
+   de contenu du site. Une section type =
+     .ed-section > .ed-header (eyebrow + .ed-giant + .ed-manifesto)
+                 > .ed-list   (suite de .ed-row)                        */
+.ed-section{
+  background:var(--off);color:var(--black);
+  padding:5rem 2.5rem 6rem;
+  border-top:3px solid var(--black);
+  overflow:hidden;
+}
+.ed-section .eyebrow{color:var(--black)}
+
+/* En-tête : titre géant */
+.ed-header{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  gap:2rem;flex-wrap:wrap;margin-bottom:1.5rem;
+}
+.ed-giant{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:900;text-transform:uppercase;
+  font-size:clamp(3rem,10vw,8.5rem);
+  line-height:.86;letter-spacing:-.02em;
+  color:var(--black);
+  margin:.25rem 0 0 -.06em;
+}
+.ed-giant em{
+  font-style:normal;font-weight:inherit;
+  color:var(--black);letter-spacing:inherit;
+}
+/* Titres géants pour libellés plus longs (2–3 mots) */
+.ed-giant--md{font-size:clamp(2.6rem,7.5vw,6rem);line-height:.9}
+.ed-manifesto{
+  font-size:.92rem;line-height:1.7;color:var(--black);
+  max-width:400px;padding-bottom:.75rem;
+}
+.ed-manifesto strong{color:var(--black);font-weight:600}
+
+/* Liste de lignes */
+.ed-list{
+  margin-top:3.5rem;
+  border-top:1.5px solid var(--black);
+}
+.ed-row{
+  display:grid;
+  grid-template-columns:6rem minmax(240px,1.1fr) 1.4fr 15rem;
+  gap:2rem;align-items:start;
+  padding:2.4rem 0;position:relative;
+  border-bottom:1px solid var(--border);
+  transition:padding .35s cubic-bezier(.2,.7,.2,1);
+}
+.ed-row::before{
+  content:'';position:absolute;inset:0;z-index:0;
+  background:var(--white);
+  transform:scaleY(0);transform-origin:bottom;
+  transition:transform .4s cubic-bezier(.2,.7,.2,1);
+}
+.ed-row:hover::before{transform:scaleY(1)}
+.ed-row > *{position:relative;z-index:1}
+.ed-row:hover{padding-left:1.5rem;padding-right:1.5rem}
+
+.ed-index{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:1rem;font-weight:800;letter-spacing:.06em;
+  color:var(--black);padding-top:.4rem;
+}
+.ed-name{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:900;text-transform:uppercase;font-size:clamp(1.9rem,3.6vw,3.2rem);
+  line-height:.98;letter-spacing:.01em;color:var(--black);
+}
+.ed-name b{font-weight:900;color:var(--black)}
+
+.ed-mid{display:flex;flex-direction:column;gap:1.15rem}
+.ed-tags{display:flex;flex-wrap:wrap;gap:.4rem .5rem}
+.ed-tags span{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:.82rem;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--black);
+  border:1px solid rgba(10,10,10,.2);
+  border-radius:2px;padding:.18rem .6rem;
+}
+.ed-hook{
+  font-size:1rem;font-style:italic;font-weight:500;
+  color:var(--black);line-height:1.45;
+  font-family:'Barlow',sans-serif;
+}
+.ed-desc{font-size:.83rem;line-height:1.72;color:var(--black);max-width:560px}
+.ed-link{color:var(--black);font-weight:600;text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
+.ed-link:hover{text-decoration-thickness:2px}
+.ed-benefits{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;
+  border-top:1px solid var(--border);padding-top:1.1rem;margin-top:.35rem;
+}
+.ed-b-label{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--black);margin-bottom:.4rem;display:block;
+}
+.ed-b-text{font-size:.75rem;line-height:1.55;color:var(--black)}
+
+/* Média (placeholder photo) */
+.ed-media{
+  aspect-ratio:4/3;width:100%;
+  background:var(--light);
+  border:1px solid var(--border);border-radius:3px;
+  overflow:hidden;position:relative;
+  display:flex;align-items:center;justify-content:center;
+}
+.ed-media > img{width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.ed-row:hover .ed-media > img{transform:scale(1.05)}
+/* Le repère « Photo à venir » est le calque du dessous : l'image, en absolu,
+   le recouvre une fois chargée. Il reste donc visible pendant le chargement
+   comme si le fichier manque (onerror retire alors l'<img>). */
+.ed-media > img{position:absolute;inset:0}
+/* ── CARTE PARTENAIRE (MédecinDirect) ──
+   Occupe la colonne média d'une ligne, à la place d'une photo. */
+.ed-media--partner{
+  aspect-ratio:auto;background:var(--white);
+  border:1.5px solid var(--black);
+}
+.partner-card{
+  display:flex;flex-direction:column;align-items:flex-start;gap:.9rem;
+  padding:1.4rem 1.3rem;width:100%;
+  color:var(--black);text-decoration:none;
+}
+.partner-eyebrow{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;
+  display:flex;align-items:center;gap:.5rem;
+}
+.partner-eyebrow::before{content:'';width:16px;height:1.5px;background:currentColor}
+.partner-logo{max-width:100%;height:auto;max-height:46px;display:block}
+/* Repli tant que le fichier du logo n'est pas déposé : le nom en toutes
+   lettres, sans chercher à imiter leur marque. */
+.partner-name{
+  font-family:'Barlow',sans-serif;font-weight:500;
+  font-size:1.35rem;line-height:1.1;letter-spacing:-.01em;
+}
+.partner-card:has(.partner-logo) .partner-name{display:none}
+.partner-note{font-size:.75rem;line-height:1.5;color:var(--black)}
+.partner-cta{
+  margin-top:.2rem;font-family:'Barlow Condensed',sans-serif;font-weight:800;
+  font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;
+  padding:.6rem 1rem;background:var(--black);color:var(--white);
+  border-radius:2px;width:100%;text-align:center;
+  transition:background .2s;
+}
+.partner-card:hover .partner-cta{background:#333}
+
+/* Emplacement portrait — cadre calé sur le 2/3 de la photo, pour l'afficher
+   entière. object-position garde le haut du cadrage si un autre format y
+   passe un jour (le visage plutôt que le sol). */
+.ed-media--portrait{aspect-ratio:2/3}
+.ed-media--portrait > img{object-position:50% 28%}
+@media(max-width:1080px){
+  .ed-media--portrait{aspect-ratio:3/4}
+}
+.ed-media-ph{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--black);text-align:center;padding:.5rem;
+}
+/* Variantes de ligne : sans colonne média, ou nom seul */
+/* Ligne compacte : index + grand nom + flèche (listes type sports) */
+.ed-row--link{
+  grid-template-columns:6rem 1fr;
+  align-items:center;padding:1.5rem 0;
+  cursor:default;
+}
+/* liste statique : pas d'effet de survol qui suggère le clic */
+.ed-row--link::before{content:none}
+.ed-row--link:hover{padding-left:0;padding-right:0}
+.ed-row--link .ed-name{font-size:clamp(1.5rem,3vw,2.6rem)}
+/* Note de bas de liste */
+.ed-note{
+  margin-top:1.6rem;font-size:.85rem;line-height:1.65;color:var(--black);
+  display:flex;align-items:flex-start;gap:.75rem;max-width:680px;
+}
+.ed-note::before{
+  content:'';margin-top:.55rem;width:22px;height:2px;background:var(--black);
+  display:block;flex-shrink:0;
+}
+.ed-note strong{font-weight:600}
+.ed-media-ph::before{
+  content:'▦';display:block;font-size:1.6rem;margin-bottom:.4rem;color:var(--border);
+}
+
+@media(max-width:1080px){
+  .ed-row{grid-template-columns:4rem 1fr 12rem;grid-template-areas:
+    "index name media"
+    "index mid  media";
+    row-gap:1.4rem;}
+  .ed-index{grid-area:index}
+  .ed-name{grid-area:name}
+  .ed-mid{grid-area:mid}
+  .ed-media{grid-area:media;align-self:start}
+  .ed-row--link{grid-template-columns:4rem 1fr auto;grid-template-areas:none}
+}
+@media(max-width:720px){
+  .ed-section{padding:3.5rem 1.4rem 4rem}
+  .ed-row{grid-template-columns:1fr;grid-template-areas:
+    "index"
+    "name"
+    "media"
+    "mid";row-gap:1.1rem;padding:2rem 0}
+  .ed-row:hover{padding-left:0;padding-right:0}
+  .ed-media{max-width:100%}
+  .ed-benefits{grid-template-columns:1fr;gap:.9rem}
+  .ed-row--link{grid-template-columns:3rem 1fr auto;row-gap:0;padding:1.2rem 0}
+  .ed-header{flex-direction:column;align-items:flex-start;gap:1.2rem}
+  .ed-manifesto{max-width:none}
+}
+
+/* ══════════════════════════════════════════
+   SERVICES — ACCORDÉON
+   Chaque service est replié sur son numéro + nom + accroche ; le détail
+   (tags, description, bénéfices, visuel) se déploie au clic. La section
+   n'affiche donc plus tout d'un coup : elle reste courte et lisible.
+   Portée limitée à .ed-list--acc pour ne pas toucher les autres sections.
+   ══════════════════════════════════════════ */
+.ed-list--acc .ed-row--acc{
+  display:block;padding:0;                 /* on abandonne la grille 4 colonnes */
+}
+.ed-list--acc .ed-row--acc::before{content:none}   /* pas de fond au survol ici */
+.ed-list--acc .ed-row--acc:hover{padding:0}
+/* Les .ed-row responsive assignent grid-area:index/name/mid/media (utile pour
+   les AUTRES sections). Ici la mise en page est différente : on annule ces
+   affectations pour qu'elles ne déplacent pas le contenu de l'accordéon. */
+.ed-list--acc .ed-index,
+.ed-list--acc .ed-name,
+.ed-list--acc .ed-mid,
+.ed-list--acc .ed-media,
+.ed-list--acc .ed-media--partner{grid-area:auto}
+
+/* En-tête cliquable : un vrai <button> pour le clavier et les lecteurs d'écran */
+.ed-acc-head{
+  width:100%;background:none;border:none;cursor:pointer;
+  display:grid;grid-template-columns:6rem 1fr auto;gap:2rem;align-items:baseline;
+  padding:2.1rem 0;text-align:left;color:var(--black);
+  font:inherit;
+  transition:padding .3s cubic-bezier(.2,.7,.2,1);
+}
+.ed-acc-head:hover{padding-left:1.2rem;padding-right:1.2rem}
+.ed-acc-head .ed-index{padding-top:.15rem}
+.ed-acc-title{display:flex;flex-direction:column;gap:.5rem;min-width:0}
+.ed-acc-title .ed-name{font-size:clamp(1.7rem,3.2vw,2.8rem)}
+/* L'accroche sert de teaser sous le nom quand c'est replié */
+.ed-acc-title .ed-hook{margin:0}
+
+/* Icône +/− dessinée en CSS (deux traits ; l'un pivote à l'ouverture) */
+.ed-acc-icon{
+  position:relative;width:22px;height:22px;flex-shrink:0;align-self:center;
+  margin-top:.2rem;
+}
+.ed-acc-icon::before,.ed-acc-icon::after{
+  content:'';position:absolute;top:50%;left:50%;
+  width:18px;height:2px;background:var(--black);
+  transform:translate(-50%,-50%);
+  transition:transform .3s cubic-bezier(.2,.7,.2,1);
+}
+.ed-acc-icon::after{transform:translate(-50%,-50%) rotate(90deg)}
+.ed-acc-head[aria-expanded="true"] .ed-acc-icon::after{transform:translate(-50%,-50%) rotate(0deg)}
+.ed-acc-head[aria-expanded="true"]{padding-left:1.2rem;padding-right:1.2rem}
+
+/* Panneau déroulant : grille 0fr→1fr, la seule façon d'animer « hauteur auto » */
+.ed-acc-panel{
+  display:grid;grid-template-rows:0fr;
+  transition:grid-template-rows .38s cubic-bezier(.2,.7,.2,1);
+}
+.ed-acc-panel.open{grid-template-rows:1fr}
+.ed-acc-panel > .ed-acc-inner{
+  overflow:hidden;min-height:0;
+}
+.ed-acc-body{
+  display:grid;grid-template-columns:6rem 1fr 15rem;gap:2rem;align-items:start;
+  padding:0 0 2.4rem;
+}
+.ed-acc-body > .ed-acc-spacer{grid-column:1}   /* aligne le texte sous le nom */
+.ed-acc-body .ed-mid{grid-column:2}
+.ed-acc-body .ed-media,.ed-acc-body .ed-media--partner{grid-column:3;margin-top:.2rem}
+/* Léger fondu du contenu à l'ouverture */
+.ed-acc-panel .ed-acc-body{opacity:0;transition:opacity .3s ease .05s}
+.ed-acc-panel.open .ed-acc-body{opacity:1}
+
+@media(max-width:1080px){
+  .ed-acc-head{grid-template-columns:4rem 1fr auto}
+  .ed-acc-body{grid-template-columns:4rem 1fr;}
+  .ed-acc-body .ed-media,.ed-acc-body .ed-media--partner{grid-column:2;max-width:340px}
+}
+@media(max-width:720px){
+  .ed-acc-head{grid-template-columns:3rem 1fr auto;gap:1rem;padding:1.6rem 0}
+  .ed-acc-head:hover,.ed-acc-head[aria-expanded="true"]{padding-left:0;padding-right:0}
+  .ed-acc-title .ed-name{font-size:1.5rem}
+  .ed-acc-body{grid-template-columns:1fr;gap:1.1rem;padding-bottom:1.8rem}
+  .ed-acc-body > .ed-acc-spacer{display:none}
+  .ed-acc-body .ed-mid,.ed-acc-body .ed-media,.ed-acc-body .ed-media--partner{grid-column:1}
+}
+/* Sans animation demandée : ouverture instantanée, pas de saccade */
+@media(prefers-reduced-motion:reduce){
+  .ed-acc-panel,.ed-acc-head,.ed-acc-icon::before,.ed-acc-icon::after,.ed-acc-body{transition:none !important}
+}
+
+/* ══════════════════════════════════════════
+   SECTION LABEL — bloc unique (texte de mission)
+   Un seul compartiment, pas de numérotation : le texte est présenté en
+   continu, dans la typographie du site (filet noir en haut, comme .ed-list).
+   ══════════════════════════════════════════ */
+.label-block{
+  border-top:1.5px solid var(--black);
+  margin-top:3.5rem;padding-top:2.8rem;
+  max-width:840px;
+}
+.label-block > * + *{margin-top:1.25rem}
+.label-lead{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
+  font-size:clamp(1.7rem,3.4vw,2.8rem);line-height:1.02;letter-spacing:.01em;
+  color:var(--black);margin-bottom:1.7rem;
+}
+.label-block p{font-size:.98rem;line-height:1.78;color:var(--black)}
+.label-accent{
+  font-family:'Barlow',sans-serif;font-style:italic;font-weight:500;
+  font-size:1.14rem !important;line-height:1.5;color:var(--black);
+}
+.label-close strong{font-weight:600}
+@media(max-width:720px){
+  .label-block{padding-top:2.1rem;margin-top:2.6rem}
+  .label-block p{font-size:.92rem}
+}
+
+/* ══════════════════════════════════════════
+   SECTION PROBLÈME — le poster fourni + contenu dans les 6 cases
+   L'image du poster est affichée telle quelle ; les six blocs de texte
+   sont positionnés en pourcentage, exactement sur les six cases blanches.
+   Les tailles sont en « cqw » (1% de la largeur du poster) : le texte
+   suit donc la taille de l'image, quel que soit l'écran.
+   ══════════════════════════════════════════ */
+.poster-wrap{
+  position:relative;container-type:inline-size;
+  max-width:680px;margin:3.2rem auto 0;
+}
+.poster-wrap > img{width:100%;display:block;border-radius:2px}
+.poster-box{
+  position:absolute;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  color:#0A0A0A;padding:1cqw;overflow:hidden;
+  /* Case semi-transparente : la foule (le « ring ») reste visible derrière,
+     tout en gardant le texte lisible. */
+  background:rgba(244,241,235,.56);
+  -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);
+  border:1px solid rgba(255,255,255,.4);border-radius:2px;
+  cursor:pointer;font:inherit;transition:background .2s;
+}
+.poster-box:hover{background:rgba(244,241,235,.72)}
+/* Chiffre calé en haut de la case ; le titre reste centré au milieu. */
+.pb-num{
+  position:absolute;top:1.6cqw;left:0;right:0;text-align:center;
+  font-family:'Barlow Condensed',sans-serif;font-weight:800;
+  font-size:2cqw;letter-spacing:.1em;opacity:.75;
+}
+/* Taille en cqw : même ratio texte/case sur tous les écrans. 3.1cqw = la
+   plus grande taille où « CONTAMINATION » (le mot le plus long) tient. */
+.pb-title{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
+  font-size:3.1cqw;line-height:1.02;letter-spacing:-.01em;
+  overflow-wrap:break-word;hyphens:auto;
+}
+.poster-box:hover .pb-title{text-decoration:underline;text-underline-offset:.15em;text-decoration-thickness:.06em}
+
+/* ══════════════════════════════════════════
+   SECTION 4 ÉTAPES — l'affiche (feuille tenue) + les 4 étapes posées dessus
+   La feuille est légèrement inclinée : les 4 étapes sont placées une à une,
+   décalées vers la droite pour suivre la feuille. Tailles en cqw.
+   ══════════════════════════════════════════ */
+.sheet-wrap{
+  position:relative;container-type:inline-size;
+  max-width:660px;margin:3.2rem auto 0;
+}
+.sheet-wrap > img{width:100%;display:block;border-radius:2px}
+.sheet-step{
+  position:absolute;color:#1a1712;
+  display:flex;gap:2.4cqw;align-items:flex-start;
+}
+.ss-num{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  font-size:6cqw;line-height:.82;flex:0 0 auto;
+}
+.ss-body{display:flex;flex-direction:column;min-width:0}
+.ss-title{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
+  font-size:3.3cqw;line-height:1;letter-spacing:.01em;margin-bottom:.9cqw;
+}
+.ss-text{font-size:2cqw;line-height:1.32}
+@media(max-width:520px){
+  .ss-text{display:none}
+  .ss-title{font-size:3.8cqw}
+  .ss-num{font-size:7cqw}
+}
+
+/* ── Fenêtre détail d'un enjeu ── */
+.prob-modal{
+  position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.72);
+  display:flex;align-items:center;justify-content:center;padding:1.5rem;
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.prob-modal.open{opacity:1;pointer-events:auto}
+.prob-modal-box{
+  background:var(--off);max-width:560px;width:100%;border-radius:3px;
+  border:1.5px solid var(--black);position:relative;
+  padding:2.5rem 2.2rem 2.2rem;
+  transform:translateY(16px);transition:transform .25s;
+  max-height:88vh;overflow-y:auto;
+}
+.prob-modal.open .prob-modal-box{transform:translateY(0)}
+.prob-modal-x{
+  position:absolute;top:.8rem;right:1rem;background:none;border:none;
+  font-size:1.8rem;line-height:1;cursor:pointer;color:var(--black);
+}
+.prob-modal-x:hover{opacity:.6}
+.pm-kicker{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--black);
+  margin-bottom:1rem;display:flex;align-items:center;gap:.6rem;
+}
+.pm-kicker::before{content:'';width:22px;height:1.5px;background:var(--black)}
+.pm-head{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
+  font-size:clamp(1.5rem,3.4vw,2.1rem);line-height:1.03;letter-spacing:.01em;
+  color:var(--black);margin-bottom:1rem;
+}
+.pm-body{font-size:.94rem;line-height:1.7;color:var(--black);margin-bottom:1.3rem}
+.pm-bullets{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:0 0 1.5rem;padding:0}
+.pm-bullets li{
+  position:relative;padding-left:1.4rem;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+  font-size:.86rem;line-height:1.4;color:var(--black);
+}
+.pm-bullets li::before{content:'';position:absolute;left:0;top:.45em;width:7px;height:7px;background:var(--black)}
+.pm-close{
+  border-top:1.5px solid var(--black);padding-top:1.1rem;
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
+  font-size:1rem;line-height:1.15;letter-spacing:.02em;color:var(--black);
+}
+body.pm-open{overflow:hidden}
+
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:translateY(0)}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  .contact-wrap{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr;gap:2rem}
+  .stats-bar{grid-template-columns:1fr}
+  nav{padding:0 1.25rem}
+  .nav-links{gap:1.25rem}
+  .hero-title{font-size:3rem}
+}
+
+/* ── MAP SECTION ── */
+/* La carte hérite de .ed-section : on neutralise juste le padding bas
+   pour que le bloc carte + panneau vienne au ras du bord. */
+.map-section{padding-bottom:0}
+.map-legend{
+  display:flex;gap:1.75rem;align-items:center;flex-wrap:wrap;
+  margin-top:2.5rem;padding-bottom:1.1rem;
+  border-bottom:1.5px solid var(--black);
+}
+.map-lg{
+  display:flex;align-items:center;gap:.5rem;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--black);
+}
+.map-lg-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.map-lg-dot--exc{background:#0A0A0A}
+.map-lg-dot--pre{background:#767676}
+.map-lg-dot--std{background:#C9C6C0}
+.map-layout {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 0;
+  min-height: 580px;
+}
+#shl-map {
+  width: 100%; height: 580px;
+  border-right: 1px solid var(--border);
+}
+/* Repli quand Leaflet n'a pas pu être chargé */
+.map-offline{
+  display:flex;flex-direction:column;gap:.4rem;
+  padding:1.1rem 1.25rem;background:var(--light);
+  border-bottom:1px solid var(--border);
+  font-size:.82rem;line-height:1.55;color:var(--black);
+}
+.map-offline strong{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  font-size:1.1rem;letter-spacing:.06em;text-transform:uppercase;
+}
+/* Sans carte, on n'affiche pas un panneau vide à côté d'une colonne :
+   la carte disparaît et l'annuaire s'étale en grille sur toute la largeur. */
+.map-layout--nomap{grid-template-columns:1fr}
+.map-layout--nomap #shl-map{display:none}
+.map-layout--nomap .map-sidebar{height:auto;max-height:none;border-top:1px solid var(--border)}
+.map-layout--nomap #map-list{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  border-left:1px solid var(--border);
+}
+.map-layout--nomap .map-club-item{
+  border-right:1px solid var(--border);
+  border-left:0;
+}
+.map-layout--nomap .map-club-item.active{border-left:0}
+.map-sidebar {
+  height: 580px;
+  overflow-y: auto;
+  background: var(--off);
+}
+.map-sidebar::-webkit-scrollbar { width: 4px; }
+.map-sidebar::-webkit-scrollbar-track { background: transparent; }
+.map-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.map-search-wrap {
+  padding: 1.25rem 1.25rem .75rem;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0;
+  background: var(--off); z-index: 10;
+}
+.map-search {
+  width: 100%; padding: .6rem .9rem;
+  border: 1px solid var(--border); border-radius: 2px;
+  font-family: 'Barlow', sans-serif; font-size: .82rem;
+  background: var(--white); color: var(--black);
+  outline: none; transition: border-color .2s;
+}
+.map-search:focus { border-color: var(--black); }
+.map-count {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: .62rem;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--gray); padding: .6rem 1.25rem .4rem;
+  display: block;
+}
+
+.map-club-item {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background .15s;
+}
+.map-club-item:hover, .map-club-item.active {
+  background: var(--white);
+}
+.map-club-item.active { border-left: 3px solid var(--black); }
+.mci-level {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: .58rem;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--gray); margin-bottom: .3rem;
+  display: flex; align-items: center; gap: .35rem;
+}
+.mci-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 1rem;
+  text-transform: uppercase; letter-spacing: .02em;
+  line-height: 1.1; margin-bottom: .2rem;
+}
+.mci-city {
+  font-size: .72rem; color: var(--gray);
+  margin-bottom: .5rem;
+}
+.mci-discs {
+  display: flex; flex-wrap: wrap; gap: .25rem;
+}
+
+/* Leaflet popup custom */
+.leaflet-popup-content-wrapper {
+  border-radius: 2px !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,.15) !important;
+  padding: 0 !important; border: 1px solid var(--border) !important;
+}
+.leaflet-popup-content { margin: 0 !important; }
+.leaflet-popup-tip-container { display: none; }
+.map-popup {
+  font-family: 'Barlow', sans-serif;
+  padding: 1.1rem 1.25rem; min-width: 220px;
+}
+.mp-level {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: .6rem;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--gray); margin-bottom: .3rem;
+  display: flex; align-items: center; gap: .35rem;
+}
+.mp-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 1.15rem;
+  text-transform: uppercase; line-height: 1.1; margin-bottom: .25rem;
+}
+.mp-city { font-size: .78rem; color: var(--gray); margin-bottom: .7rem; }
+.mp-discs { display: flex; flex-wrap: wrap; gap: .25rem; margin-bottom: .85rem; }
+.mp-btn {
+  display: block; width: 100%; text-align: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800; font-size: .72rem;
+  letter-spacing: .12em; text-transform: uppercase;
+  padding: .55rem; background: var(--black); color: var(--white);
+  border: none; cursor: pointer; border-radius: 2px;
+  transition: background .2s;
+}
+.mp-btn:hover { background: #333; }
+
+@media (max-width: 900px) {
+  .map-layout { grid-template-columns: 1fr; }
+  #shl-map { height: 380px; border-right: none; border-bottom: 1px solid var(--border); }
+  .map-sidebar { height: 320px; }
+}
+
+/* ══════════════════════════════════════════
+   LOGO MATSAFE — BADGE OVALE (CSS)
+   « Mat » gris + « Safe » blanc, double contour
+   (noir intérieur + blanc extérieur), ovale + SINCE 2026
+   Tout est en em : régler .ms-badge{font-size} pour redimensionner.
+   ══════════════════════════════════════════ */
+.ms-badge{
+  display:inline-flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:.18em;
+  font-size:1rem;                     /* échelle maîtresse */
+  padding:.44em 2.05em .5em;
+  background:#0A0A0A;
+  border:.13em solid #FFFFFF;
+  border-radius:50%;                  /* ellipse */
+  line-height:1;white-space:nowrap;
+  text-decoration:none;
+}
+/* Double contour obtenu par DEUX tracés superposés, pas par des ombres :
+   une ombre portée déborde entre les lettres et les soude ; un tracé suit
+   la forme du glyphe et reste net.
+     - ::before  = calque arrière, gros tracé blanc  → filet extérieur
+     - les spans = calque avant,  tracé noir + fond  → contour intérieur   */
+.ms-logo{
+  position:relative;isolation:isolate;
+  font-family:'Kanit',sans-serif;font-weight:800;font-style:italic;
+  font-size:1.35em;
+  text-transform:none;letter-spacing:-.015em;line-height:1;
+  display:inline-block;white-space:nowrap;
+}
+.ms-logo::before{
+  content:'MatSafe';
+  position:absolute;left:0;top:0;z-index:-1;
+  color:#FFFFFF;
+  -webkit-text-stroke:.17em #FFFFFF;
+  paint-order:stroke fill;
+}
+.ms-logo .ms-mat,
+.ms-logo .ms-safe{
+  -webkit-text-stroke:.085em #0A0A0A;
+  paint-order:stroke fill;
+}
+/* Dégradé métallique du logo d'origine : le remplissage passe par
+   background-clip:text, le contour noir reste peint par text-stroke. */
+.ms-logo .ms-mat{
+  color:#8C8C8C;                                   /* repli si non supporté */
+  background:linear-gradient(180deg,#F2F2F2 0%,#C6C6C6 34%,#6F6F6F 56%,#A8A8A8 82%,#8A8A8A 100%);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.ms-logo .ms-safe{
+  color:#FFFFFF;
+  background:linear-gradient(180deg,#FFFFFF 0%,#FFFFFF 46%,#D5D5D5 72%,#FFFFFF 100%);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.ms-since{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:.44em;letter-spacing:.28em;text-transform:uppercase;
+  color:#FFFFFF;text-indent:.28em;   /* recentre malgré l'interlettrage */
+}
+
+/* Version nav */
+.ms-badge--nav{font-size:.86rem}   /* ≈ 43px de haut dans une nav de 58px */
+@media(max-width:520px){ .ms-badge--nav{font-size:.72rem} }
+
+/* ── LOGO OFFICIEL (image) ──
+   L'image et le badge de repli cohabitent dans le même lien. Dès que
+   l'image est chargée, `:has()` masque le badge ; si l'image manque, son
+   onerror la retire et le badge redevient seul visible. */
+.nav-logo{display:inline-flex;align-items:center;line-height:0}
+.nav-logo-img{
+  height:44px;width:auto;display:block;   /* cadré sur la hauteur de nav (58px) */
+}
+@media(max-width:520px){ .nav-logo-img{height:36px} }
+.nav-logo:has(.nav-logo-img) .ms-badge--fallback{display:none}
+/* Repli sans :has() (navigateurs anciens) : le badge reste visible sous
+   l'image, mais l'image le recouvre — donc aucun doublon perçu. */
+@supports not selector(:has(*)){
+  .nav-logo{position:relative}
+  .nav-logo .ms-badge--fallback{position:absolute;left:0;top:50%;transform:translateY(-50%);z-index:-1}
+}
+
+/* Version géante (hero / vitrine éventuelle) */
+.ms-badge--giant{font-size:clamp(1.9rem,6.5vw,4.4rem)}
+
+/* ══════════════════════════════════════════
+   NAVIGATION MOBILE — BURGER + PANNEAU
+   ══════════════════════════════════════════ */
+.nav-burger{
+  display:none;              /* affiché sous 820px */
+  flex-direction:column;justify-content:center;gap:5px;
+  width:42px;height:42px;padding:0 9px;
+  background:transparent;border:none;cursor:pointer;z-index:120;
+}
+.nav-burger span{
+  display:block;height:2.5px;width:100%;border-radius:2px;
+  background:var(--black);transition:transform .3s,opacity .2s,background .3s;
+}
+/* Menu ouvert : panneau sombre → traits blancs. */
+.nav-burger.open span{background:var(--white)}
+.nav-burger.open span:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
+.nav-burger.open span:nth-child(2){opacity:0}
+.nav-burger.open span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
+
+.mobile-menu{
+  position:fixed;inset:0;z-index:110;
+  background:var(--black);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.4rem;
+  opacity:0;visibility:hidden;transform:translateY(-8px);
+  transition:opacity .3s,transform .3s,visibility .3s;
+}
+.mobile-menu.open{opacity:1;visibility:visible;transform:translateY(0)}
+.mobile-menu a{
+  font-family:'Barlow Condensed',sans-serif;font-weight:800;
+  font-size:1.7rem;letter-spacing:.06em;text-transform:uppercase;
+  color:rgba(255,255,255,.85);transition:color .2s;
+}
+.mobile-menu a:hover{color:var(--white)}
+.mobile-menu .mm-cta{
+  margin-top:1rem;border:1.5px solid var(--white);color:#fff;
+  padding:.7rem 2rem;border-radius:2px;
+}
+.mobile-menu .mm-cta:hover{background:var(--white);color:var(--black)}
+
+@media(max-width:820px){
+  .nav-links{display:none}
+  .nav-burger{display:flex}
+}
+body.menu-open{overflow:hidden}
+
+/* ══════════════════════════════════════════
+   ACCESSIBILITÉ — FOCUS, CONTRASTE, MOTION
+   ══════════════════════════════════════════ */
+:focus-visible{outline:2px solid var(--black);outline-offset:3px;border-radius:2px}
+nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-ghost:focus-visible{outline-color:#fff}
+
+/* Lien d'évitement : hors écran, il vient se poser en haut à la tabulation. */
+.skip-link{
+  position:fixed;top:.6rem;left:.6rem;z-index:200;
+  transform:translateY(-160%);
+  font-family:'Barlow Condensed',sans-serif;font-weight:800;
+  font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+  padding:.7rem 1.2rem;background:var(--black);color:var(--white);
+  border-radius:2px;transition:transform .2s;
+}
+.skip-link:focus{transform:translateY(0)}
+
+/* Respect de « réduire les animations » */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;scroll-behavior:auto !important;
+  }
+  .marquee-track{animation:none !important}
+  .reveal{opacity:1 !important;transform:none !important}
+}
+
+/* ── HERO : fond de repli (évite le flash gris si la vidéo ne charge pas) ── */
+.hero-video-wrap{
+  background:radial-gradient(120% 100% at 70% 20%, #2b2b28 0%, #141412 70%);
+}
+
+/* ── NOS SERVICES — pastilles (DA MatSafe) ── */
+.svc-pills{display:flex;flex-wrap:wrap;gap:.9rem 1rem;max-width:900px;margin-top:3.5rem}
+.svc-pill{
+  cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;
+  font-size:clamp(.95rem,1.5vw,1.2rem);letter-spacing:.04em;color:var(--black);
+  background:transparent;border:1.6px solid var(--black);border-radius:999px;
+  padding:.85rem 1.6rem;line-height:1;display:inline-flex;align-items:center;gap:.7rem;
+  transition:background .2s,color .2s,transform .2s;
+}
+.svc-pill-n{font-size:.68rem;font-weight:700;letter-spacing:.1em;opacity:.55}
+.svc-pill--fill{background:var(--black);color:var(--off);border-color:var(--black)}
+.svc-pill:hover{transform:translateY(-2px)}
+.svc-pill:not(.svc-pill--fill):hover{background:var(--black);color:var(--off)}
+.svc-pill--fill:hover{background:var(--off);color:var(--black)}
+.svc-pill:focus-visible{outline:2px solid var(--black);outline-offset:3px}
+/* léger quinconce (desktop) */
+.svc-pill:nth-child(2){margin-left:1.5rem}
+.svc-pill:nth-child(3){margin-left:2.5rem}
+.svc-pill:nth-child(4){margin-left:.5rem}
+.svc-pill:nth-child(5){margin-left:3rem}
+
+/* variante « une seule ligne » (ex. 4 étapes) */
+.svc-pills--row{flex-wrap:nowrap;gap:.7rem;max-width:none;align-items:center}
+.svc-pills--row .svc-pill{margin-left:0;flex:0 1 auto;white-space:nowrap;
+  padding:.8rem 1.15rem;font-size:clamp(.7rem,1.15vw,1.05rem)}
+@media(max-width:820px){
+  .svc-pills--row{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:.5rem;
+    scrollbar-width:thin}
+  .svc-pills--row .svc-pill{flex:0 0 auto;width:auto}
+}
+
+.svc-hint{
+  margin:1.8rem 0 0;font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gray);
+}
+
+/* modale service : réutilise .prob-modal / .prob-modal-box / .pm-* + champs additionnels */
+.svc-m-tags{display:flex;flex-wrap:wrap;gap:.4rem .5rem;margin:-.4rem 0 1.2rem}
+.svc-m-tags span{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.72rem;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--black);border:1px solid var(--border);border-radius:999px;padding:.28rem .7rem;
+}
+.svc-m-benefits{display:flex;flex-direction:column;gap:.7rem;margin:0 0 1.3rem}
+.svc-m-benefits > div{display:flex;flex-direction:column;gap:.15rem}
+.svc-m-b-label{
+  font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;
+  font-size:.7rem;letter-spacing:.14em;color:var(--gray);
+}
+.svc-m-b-text{font-size:.9rem;line-height:1.45;color:var(--black)}
+.svc-m-partner:not(:empty){margin-top:.3rem}
+.tm-deliv-label{
+  font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;
+  font-size:.72rem;letter-spacing:.16em;color:var(--gray);margin:0 0 .8rem;
+}
+
+@media(max-width:640px){
+  .svc-pill{width:100%;justify-content:flex-start}
+  .svc-pill:nth-child(2),.svc-pill:nth-child(3),.svc-pill:nth-child(4),.svc-pill:nth-child(5){margin-left:0}
+}
+
+/* ══ NOS SERVICES — liste éditoriale (aligné à gauche comme les autres sections) ══ */
+.svcl{background:var(--off);color:var(--black)}
+.svcl-list{max-width:1100px;margin:3rem 0 0;border-top:1px solid var(--border)}
+.svcl-row{display:grid;grid-template-columns:4rem minmax(0,1.15fr) minmax(0,1fr);gap:1.5rem;align-items:baseline;
+  width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--border);
+  padding:clamp(1.15rem,2.6vw,1.7rem) .3rem;cursor:pointer;
+  transition:padding .3s cubic-bezier(.2,.7,.2,1),background .25s ease}
+.svcl-row:hover{padding-left:1.1rem;padding-right:1.1rem;background:var(--white)}
+.svcl-row:focus-visible{outline:2px solid var(--black);outline-offset:-3px}
+.svcl-i{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.9rem;color:var(--gray);letter-spacing:.06em;
+  transition:color .25s ease}
+.svcl-row:hover .svcl-i{color:var(--black)}
+.svcl-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.01em;
+  font-size:clamp(1.55rem,3.2vw,2.6rem);line-height:1;color:var(--black);
+  display:inline-flex;align-items:center;transition:transform .3s cubic-bezier(.2,.7,.2,1)}
+.svcl-name::after{content:'↗';margin-left:.6rem;font-weight:700;
+  opacity:0;transform:translateX(-8px);
+  transition:opacity .3s ease,transform .3s cubic-bezier(.2,.7,.2,1)}
+.svcl-row:hover .svcl-name{transform:translateX(10px)}
+.svcl-row:hover .svcl-name::after{opacity:1;transform:translateX(0)}
+.svcl-desc{font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+  font-size:clamp(.82rem,1.1vw,1rem);line-height:1.3;color:var(--black);align-self:center}
+@media(prefers-reduced-motion:reduce){
+  .svcl-row,.svcl-name,.svcl-name::after,.svcl-i{transition:none}
+  .svcl-row:hover .svcl-name{transform:none}
+}
+
+@media(max-width:640px){
+  .svcl-row{grid-template-columns:2.6rem 1fr;gap:.35rem 1rem;align-items:center}
+  .svcl-i{grid-column:1;grid-row:1}
+  .svcl-name{grid-column:2;grid-row:1}
+  .svcl-desc{grid-column:2;grid-row:2;align-self:start}
+}
+
+
+/* ── Multipage : état actif du menu, CTA, hero de page ── */
+.nav-links a.is-active{opacity:1;text-decoration:underline;text-underline-offset:.35em;text-decoration-thickness:.1em}
+.mobile-menu a.is-active{text-decoration:underline;text-underline-offset:.3em}
+.cta{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;
+  letter-spacing:.08em;font-size:.85rem;line-height:1;background:var(--black);color:var(--off);
+  padding:.95rem 1.7rem;border-radius:2px;text-decoration:none;transition:opacity .2s,transform .2s}
+.cta:hover{opacity:.85;transform:translateY(-2px)}
+.cta--ghost{background:transparent;color:var(--black);border:1.6px solid var(--black)}
+.cta-row{display:flex;flex-wrap:wrap;gap:1rem;margin-top:2.4rem}
+.page-hero{padding-top:6.5rem}
+.page-hero .ed-giant{margin-top:.35rem}
