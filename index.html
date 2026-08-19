@@ -1333,23 +1333,9 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
   .svc-pill:nth-child(2),.svc-pill:nth-child(3),.svc-pill:nth-child(4),.svc-pill:nth-child(5){margin-left:0}
 }
 
-/* ══ NOS SERVICES — liste éditoriale (reproduction réf. client, DA MatSafe) ══ */
+/* ══ NOS SERVICES — liste éditoriale (aligné à gauche comme les autres sections) ══ */
 .svcl{background:var(--off);color:var(--black)}
-.svcl-top{display:flex;align-items:center;justify-content:space-between;gap:1rem;
-  max-width:1000px;margin:0 auto clamp(2.5rem,6vw,4.5rem)}
-.svcl-cta{font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;
-  letter-spacing:.16em;font-size:.82rem;color:var(--black);text-decoration:none;
-  border-bottom:1.5px solid var(--black);padding-bottom:.15rem;transition:opacity .2s}
-.svcl-cta:hover{opacity:.6}
-.svcl-mono{flex:0 0 auto;width:46px;height:46px;border-radius:50%;border:1.5px solid var(--black);
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:.9rem;letter-spacing:.06em}
-
-.svcl-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;text-align:center;
-  font-size:clamp(3.5rem,13vw,9.5rem);line-height:.9;letter-spacing:-.01em;color:var(--black);
-  margin:0 0 clamp(2.5rem,6vw,4.5rem)}
-
-.svcl-list{max-width:1000px;margin:0 auto;border-top:1px solid var(--border)}
+.svcl-list{max-width:1100px;margin:3rem 0 0;border-top:1px solid var(--border)}
 .svcl-row{display:grid;grid-template-columns:4rem minmax(0,1.15fr) minmax(0,1fr);gap:1.5rem;align-items:baseline;
   width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--border);
   padding:clamp(1.15rem,2.6vw,1.7rem) .3rem;cursor:pointer;
@@ -1601,15 +1587,14 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
   <p class="ed-note reveal"><span><strong>Vous n'êtes pas dans la liste ?</strong> Tout club où le contact peau-à-peau est fréquent est concerné.</span></p>
 </section>
 
-<!-- ── NOS SERVICES — ÉDITORIAL ── -->
-<!-- ── NOS SERVICES — liste éditoriale (reproduction réf. client, DA MatSafe) ── -->
+<!-- ── NOS SERVICES — liste éditoriale (aligné à gauche comme les autres sections) ── -->
 <section class="ed-section svcl" id="s-livrables" aria-labelledby="svcl-title">
-  <div class="svcl-top reveal">
-    <a class="svcl-cta" href="#s-contact">Prendre rendez-vous</a>
-    <span class="svcl-mono" aria-hidden="true">MS</span>
+  <div class="ed-header">
+    <div>
+      <div class="eyebrow reveal">Nos services</div>
+      <h2 class="ed-giant reveal" id="svcl-title">Nos <em>Services</em></h2>
+    </div>
   </div>
-
-  <h2 class="svcl-title reveal" id="svcl-title">Services</h2>
 
   <div class="svcl-list reveal" role="list" aria-label="Nos cinq services">
     <button class="svcl-row" role="listitem" onclick="openSvc(0)" aria-haspopup="dialog">
