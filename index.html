@@ -1294,6 +1294,16 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
 .svc-pill:nth-child(4){margin-left:.5rem}
 .svc-pill:nth-child(5){margin-left:3rem}
 
+/* variante « une seule ligne » (ex. 4 étapes) */
+.svc-pills--row{flex-wrap:nowrap;gap:.7rem;max-width:none;align-items:center}
+.svc-pills--row .svc-pill{margin-left:0;flex:0 1 auto;white-space:nowrap;
+  padding:.8rem 1.15rem;font-size:clamp(.7rem,1.15vw,1.05rem)}
+@media(max-width:820px){
+  .svc-pills--row{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:.5rem;
+    scrollbar-width:thin}
+  .svc-pills--row .svc-pill{flex:0 0 auto;width:auto}
+}
+
 .svc-hint{
   margin:1.8rem 0 0;font-family:'Barlow Condensed',sans-serif;font-weight:700;
   font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gray);
@@ -1612,7 +1622,7 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
     </p>
   </div>
 
-  <div class="svc-pills reveal" role="list" aria-label="Les quatre étapes de la démarche">
+  <div class="svc-pills svc-pills--row reveal" role="list" aria-label="Les quatre étapes de la démarche">
     <button class="svc-pill svc-pill--fill" role="listitem" onclick="openStep(0)" aria-haspopup="dialog"><span class="svc-pill-n">01</span>Audit de votre club</button>
     <button class="svc-pill" role="listitem" onclick="openStep(1)" aria-haspopup="dialog"><span class="svc-pill-n">02</span>Mise en conformité</button>
     <button class="svc-pill" role="listitem" onclick="openStep(2)" aria-haspopup="dialog"><span class="svc-pill-n">03</span>Validation</button>
