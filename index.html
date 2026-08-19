@@ -1333,50 +1333,40 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
   .svc-pill:nth-child(2),.svc-pill:nth-child(3),.svc-pill:nth-child(4),.svc-pill:nth-child(5){margin-left:0}
 }
 
-/* ══ NOS SERVICES — affiche adaptée aux autres sections (fond beige, typo noire) ══ */
-.svcp{background:var(--off);color:var(--black);border-top:3px solid var(--black);overflow:hidden}
-.svcp-inner{position:relative;max-width:1180px;margin:0 auto;padding:5rem clamp(1.5rem,4vw,3.5rem) 6rem}
-.svcp-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
-.svcp-brand{font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
-  font-size:1.3rem;line-height:1;letter-spacing:.04em;color:var(--black);display:flex;flex-direction:column;gap:.32rem}
-.svcp-brand span{font-weight:700;font-size:.6rem;letter-spacing:.22em;color:var(--gray)}
-.svcp-arrow{flex:0 0 auto;width:48px;height:48px;border-radius:50%;
-  background:var(--black);color:var(--off);display:flex;align-items:center;justify-content:center;
-  font-size:1.4rem;text-decoration:none;transition:transform .2s}
-.svcp-arrow:hover{transform:translateX(-3px)}
+/* ══ NOS SERVICES — liste éditoriale (reproduction réf. client, DA MatSafe) ══ */
+.svcl{background:var(--off);color:var(--black)}
+.svcl-top{display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  max-width:1000px;margin:0 auto clamp(2.5rem,6vw,4.5rem)}
+.svcl-cta{font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;
+  letter-spacing:.16em;font-size:.82rem;color:var(--black);text-decoration:none;
+  border-bottom:1.5px solid var(--black);padding-bottom:.15rem;transition:opacity .2s}
+.svcl-cta:hover{opacity:.6}
+.svcl-mono{flex:0 0 auto;width:46px;height:46px;border-radius:50%;border:1.5px solid var(--black);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:.9rem;letter-spacing:.06em}
 
-.svcp-headline{position:relative;margin:1.5rem 0 2.5rem}
-.svcp-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
-  font-size:clamp(3rem,10vw,8.5rem);line-height:.86;letter-spacing:-.02em;color:var(--black);margin:0}
-.svcp-aside{position:absolute;right:.1rem;top:.5em;text-align:right;
-  font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;
-  font-size:clamp(.85rem,1.6vw,1.2rem);letter-spacing:.08em;line-height:1.12;color:var(--black);
-  text-decoration:underline;text-underline-offset:.3em;text-decoration-thickness:.09em}
-.svcp-aside:hover{color:var(--gray)}
+.svcl-title{font-family:'Barlow',sans-serif;font-weight:500;text-transform:uppercase;text-align:center;
+  font-size:clamp(3rem,12vw,8.5rem);line-height:1;letter-spacing:.02em;color:var(--black);
+  margin:0 0 clamp(2.5rem,6vw,4.5rem)}
 
-/* Les 5 services alignés à la suite dans la largeur (01 → 05), segments égaux */
-.svcp-pills{display:flex;flex-wrap:nowrap;gap:.7rem;align-items:stretch}
-.svcp-pill{flex:1 1 0;min-width:0;cursor:pointer;
-  font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.03em;
-  display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:.55rem;
-  text-align:left;white-space:normal;
-  border-radius:16px;padding:1rem 1.05rem 1.15rem;line-height:1.08;
-  background:transparent;border:1.7px solid var(--black);color:var(--black);
-  transition:transform .2s,background .2s,color .2s}
-.svcp-n{font-size:.8rem;font-weight:700;letter-spacing:.1em;opacity:.6}
-.svcp-t{font-size:clamp(.82rem,1.02vw,1.02rem)}
-.svcp-pill--fill{background:var(--black);color:var(--off);border-color:var(--black)}
-.svcp-pill:hover{transform:translateY(-3px)}
-.svcp-pill:not(.svcp-pill--fill):hover{background:var(--black);color:var(--off)}
-.svcp-pill--fill:hover{background:transparent;color:var(--black)}
-.svcp-pill:focus-visible{outline:2px solid var(--black);outline-offset:3px}
+.svcl-list{max-width:1000px;margin:0 auto;border-top:1px solid var(--border)}
+.svcl-row{display:grid;grid-template-columns:4rem minmax(0,1.15fr) minmax(0,1fr);gap:1.5rem;align-items:baseline;
+  width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--border);
+  padding:clamp(1.15rem,2.6vw,1.7rem) .3rem;cursor:pointer;
+  transition:padding .28s cubic-bezier(.2,.7,.2,1),background .2s}
+.svcl-row:hover{padding-left:1.1rem;padding-right:1.1rem;background:var(--white)}
+.svcl-i{font-family:'Barlow',sans-serif;font-weight:500;font-size:.85rem;color:var(--gray);letter-spacing:.02em}
+.svcl-name{font-family:'Barlow',sans-serif;font-weight:500;letter-spacing:-.01em;
+  font-size:clamp(1.4rem,3vw,2.3rem);line-height:1.05;color:var(--black)}
+.svcl-row:hover .svcl-name{text-decoration:underline;text-underline-offset:.18em;text-decoration-thickness:.05em}
+.svcl-desc{font-family:'Barlow',sans-serif;font-weight:600;font-size:clamp(.85rem,1.1vw,1rem);
+  line-height:1.35;color:var(--black);align-self:center}
 
-@media(max-width:760px){
-  .svcp-aside{position:static;display:inline-block;text-align:left;margin-top:1rem}
-  .svcp-headline{margin-bottom:1.6rem}
-  .svcp-pills{flex-wrap:wrap}
-  .svcp-pill{flex:1 1 100%;flex-direction:row;align-items:center;gap:.8rem}
-  .svcp-t{font-size:1rem}
+@media(max-width:640px){
+  .svcl-row{grid-template-columns:2.6rem 1fr;gap:.35rem 1rem;align-items:center}
+  .svcl-i{grid-column:1;grid-row:1}
+  .svcl-name{grid-column:2;grid-row:1}
+  .svcl-desc{grid-column:2;grid-row:2;align-self:start}
 }
 
 </style>
@@ -1612,28 +1602,41 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
 </section>
 
 <!-- ── NOS SERVICES — ÉDITORIAL ── -->
-<!-- ── NOS SERVICES — affiche (reproduction fidèle de la réf. client, couleurs MatSafe) ── -->
-<section class="svcp" id="s-livrables" aria-labelledby="svcp-title">
-  <div class="svcp-inner reveal">
+<!-- ── NOS SERVICES — liste éditoriale (reproduction réf. client, DA MatSafe) ── -->
+<section class="ed-section svcl" id="s-livrables" aria-labelledby="svcl-title">
+  <div class="svcl-top reveal">
+    <a class="svcl-cta" href="#s-contact">Prendre rendez-vous</a>
+    <span class="svcl-mono" aria-hidden="true">MS</span>
+  </div>
 
-    <div class="svcp-top">
-      <div class="svcp-brand">MatSafe<span>Since 2026</span></div>
-      <a class="svcp-arrow" href="#s-contact" aria-label="Candidater — aller au formulaire de contact">←</a>
-    </div>
+  <h2 class="svcl-title reveal" id="svcl-title">Services</h2>
 
-    <div class="svcp-headline">
-      <h2 class="svcp-title" id="svcp-title">Nos<br>Services</h2>
-      <a class="svcp-aside" href="#s-contact">Travailler<br>avec nous</a>
-    </div>
-
-    <div class="svcp-pills" role="list" aria-label="Nos cinq services">
-      <button class="svcp-pill svcp-pill--fill" role="listitem" onclick="openSvc(0)" aria-haspopup="dialog"><span class="svcp-n">01</span><span class="svcp-t">Audit d'hygiène spécialisé</span></button>
-      <button class="svcp-pill" role="listitem" onclick="openSvc(1)" aria-haspopup="dialog"><span class="svcp-n">02</span><span class="svcp-t">Plan d'action MatSafe</span></button>
-      <button class="svcp-pill" role="listitem" onclick="openSvc(2)" aria-haspopup="dialog"><span class="svcp-n">03</span><span class="svcp-t">Référentiel opérationnel MatSafe</span></button>
-      <button class="svcp-pill svcp-pill--fill" role="listitem" onclick="openSvc(3)" aria-haspopup="dialog"><span class="svcp-n">04</span><span class="svcp-t">Formation Hygiène &amp; Prévention</span></button>
-      <button class="svcp-pill svcp-pill--fill" role="listitem" onclick="openSvc(4)" aria-haspopup="dialog"><span class="svcp-n">05</span><span class="svcp-t">Téléconsultation médicale 24/7</span></button>
-    </div>
-
+  <div class="svcl-list reveal" role="list" aria-label="Nos cinq services">
+    <button class="svcl-row" role="listitem" onclick="openSvc(0)" aria-haspopup="dialog">
+      <span class="svcl-i">(01)</span>
+      <span class="svcl-name">Audit d'hygiène spécialisé</span>
+      <span class="svcl-desc">Diagnostic terrain indépendant</span>
+    </button>
+    <button class="svcl-row" role="listitem" onclick="openSvc(1)" aria-haspopup="dialog">
+      <span class="svcl-i">(02)</span>
+      <span class="svcl-name">Plan d'action MatSafe</span>
+      <span class="svcl-desc">Feuille de route priorisée</span>
+    </button>
+    <button class="svcl-row" role="listitem" onclick="openSvc(2)" aria-haspopup="dialog">
+      <span class="svcl-i">(03)</span>
+      <span class="svcl-name">Référentiel opérationnel</span>
+      <span class="svcl-desc">Procédures + kit prêt à l'emploi</span>
+    </button>
+    <button class="svcl-row" role="listitem" onclick="openSvc(3)" aria-haspopup="dialog">
+      <span class="svcl-i">(04)</span>
+      <span class="svcl-name">Formation Hygiène &amp; Prévention</span>
+      <span class="svcl-desc">Micro-formations pour vos équipes</span>
+    </button>
+    <button class="svcl-row" role="listitem" onclick="openSvc(4)" aria-haspopup="dialog">
+      <span class="svcl-i">(05)</span>
+      <span class="svcl-name">Téléconsultation médicale 24/7</span>
+      <span class="svcl-desc">Avis médical avec MédecinDirect</span>
+    </button>
   </div>
 </section>
 
