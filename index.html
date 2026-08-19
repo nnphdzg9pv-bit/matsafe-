@@ -1392,23 +1392,23 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
        détail (le contenu est trop riche pour tenir dans la case). -->
   <div class="poster-wrap reveal">
     <img src="assets/probleme-ring.jpg" alt="MatSafe — les six enjeux du problème d'hygiène dans les sports de combat" loading="lazy">
-    <button class="poster-box" style="left:9.9%;top:20.4%;width:25.5%;height:32.9%" onclick="openProb(0)" aria-label="Santé des pratiquants — voir le détail">
-      <span class="pb-num">01</span><span class="pb-title">Santé des pratiquants</span>
+    <button class="poster-box" style="left:9.9%;top:20.4%;width:25.5%;height:32.9%" onclick="openProb(0)" aria-label="Transmission rapide — voir le détail">
+      <span class="pb-num">01</span><span class="pb-title">Transmission rapide</span>
     </button>
-    <button class="poster-box" style="left:38.3%;top:20.4%;width:24.3%;height:32.9%" onclick="openProb(1)" aria-label="Risque de contamination — voir le détail">
-      <span class="pb-num">02</span><span class="pb-title">Risque de contamination</span>
+    <button class="poster-box" style="left:38.3%;top:20.4%;width:24.3%;height:32.9%" onclick="openProb(1)" aria-label="Surfaces partagées — voir le détail">
+      <span class="pb-num">02</span><span class="pb-title">Surfaces partagées</span>
     </button>
-    <button class="poster-box" style="left:66.3%;top:20.4%;width:24.3%;height:32.9%" onclick="openProb(2)" aria-label="Performance impactée — voir le détail">
-      <span class="pb-num">03</span><span class="pb-title">Performance impactée</span>
+    <button class="poster-box" style="left:66.3%;top:20.4%;width:24.3%;height:32.9%" onclick="openProb(2)" aria-label="Peau fragilisée — voir le détail">
+      <span class="pb-num">03</span><span class="pb-title">Peau fragilisée</span>
     </button>
-    <button class="poster-box" style="left:9.9%;top:56.6%;width:25.5%;height:32.8%" onclick="openProb(3)" aria-label="Hygiène des espaces — voir le détail">
-      <span class="pb-num">04</span><span class="pb-title">Hygiène des espaces</span>
+    <button class="poster-box" style="left:9.9%;top:56.6%;width:25.5%;height:32.8%" onclick="openProb(3)" aria-label="Réaction improvisée — voir le détail">
+      <span class="pb-num">04</span><span class="pb-title">Réaction improvisée</span>
     </button>
     <button class="poster-box" style="left:38.3%;top:56.6%;width:24.3%;height:32.8%" onclick="openProb(4)" aria-label="Arrêt de la pratique — voir le détail">
       <span class="pb-num">05</span><span class="pb-title">Arrêt de la pratique</span>
     </button>
-    <button class="poster-box" style="left:66.3%;top:56.6%;width:24.3%;height:32.8%" onclick="openProb(5)" aria-label="Infections récurrentes — voir le détail">
-      <span class="pb-num">06</span><span class="pb-title">Infections récurrentes</span>
+    <button class="poster-box" style="left:66.3%;top:56.6%;width:24.3%;height:32.8%" onclick="openProb(5)" aria-label="Confiance du club — voir le détail">
+      <span class="pb-num">06</span><span class="pb-title">Confiance du club</span>
     </button>
   </div>
 </section>
@@ -1932,22 +1932,22 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')hideMod();});
 
 // ── SECTION PROBLÈME : détail d'un enjeu (fenêtre) ──
 const PROB=[
-  {n:'01',t:'Santé des pratiquants',
+  {n:'01',t:'Transmission rapide',
    h:"Un risque qui peut se propager plus vite qu'on ne le pense.",
    b:"Contacts peau à peau, transpiration et espaces partagés créent un environnement favorable à la transmission de certaines infections.",
    l:['Contacts rapprochés','Équipements partagés','Risque collectif'],
    c:"Un seul cas peut perturber tout un groupe."},
-  {n:'02',t:'Risque de contamination',
+  {n:'02',t:'Surfaces partagées',
    h:"Plus de passages, plus d'exigence.",
    b:"Tatamis, vestiaires, sanitaires et équipements sont utilisés quotidiennement par de nombreux pratiquants. Sans méthode claire, les pratiques peuvent rapidement devenir irrégulières.",
    l:['Nettoyage insuffisant','Fréquences mal définies','Procédures absentes'],
    c:"L'hygiène doit être organisée, pas improvisée."},
-  {n:'03',t:'Performance impactée',
+  {n:'03',t:'Peau fragilisée',
    h:"Dans les sports de combat, la peau est en première ligne.",
    b:"Frottements, abrasions, irritations et petites coupures font partie de la pratique et renforcent l'importance de la prévention.",
    l:['Micro-lésions','Frottements répétés','Vigilance nécessaire'],
    c:"Une bonne prévention commence avant l'incident."},
-  {n:'04',t:'Hygiène des espaces',
+  {n:'04',t:'Réaction improvisée',
    h:"Quand un problème apparaît, il est déjà trop tard pour inventer une procédure.",
    b:"Lésion suspecte, saignement ou signalement : sans protocole précis, entraîneurs et dirigeants doivent prendre des décisions dans l'urgence.",
    l:['Pas de procédure claire','Temps perdu','Décisions incertaines'],
@@ -1957,7 +1957,7 @@ const PROB=[
    b:"Une interruption d'entraînement peut perturber la progression, une préparation ou une échéance importante pour le pratiquant.",
    l:['Entraînements interrompus','Préparation perturbée','Compétitions compromises'],
    c:"La continuité de la pratique fait aussi partie de la performance."},
-  {n:'06',t:'Infections récurrentes',
+  {n:'06',t:'Confiance du club',
    h:"L'hygiène participe directement à l'image de votre structure.",
    b:"Parents, enfants, adhérents et nouveaux pratiquants attendent aujourd'hui un environnement propre, organisé et professionnel.",
    l:['Confiance des familles','Fidélisation des adhérents','Image du club'],
