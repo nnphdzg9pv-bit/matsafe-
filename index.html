@@ -655,17 +655,14 @@ footer{
 /* Variantes de ligne : sans colonne média, ou nom seul */
 /* Ligne compacte : index + grand nom + flèche (listes type sports) */
 .ed-row--link{
-  grid-template-columns:6rem 1fr auto;
+  grid-template-columns:6rem 1fr;
   align-items:center;padding:1.5rem 0;
-  cursor:pointer;text-decoration:none;color:var(--black);
+  cursor:default;
 }
-.ed-row--link:focus-visible{outline:2px solid var(--black);outline-offset:-3px}
+/* liste statique : pas d'effet de survol qui suggère le clic */
+.ed-row--link::before{content:none}
+.ed-row--link:hover{padding-left:0;padding-right:0}
 .ed-row--link .ed-name{font-size:clamp(1.5rem,3vw,2.6rem)}
-.ed-arrow{
-  font-family:'Barlow Condensed',sans-serif;font-size:1.15rem;color:var(--black);
-  transition:transform .3s cubic-bezier(.2,.7,.2,1);
-}
-.ed-row--link:hover .ed-arrow{transform:translate(5px,-5px)}
 /* Note de bas de liste */
 .ed-note{
   margin-top:1.6rem;font-size:.85rem;line-height:1.65;color:var(--black);
@@ -1574,12 +1571,12 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
 
   <div class="ed-list">
 
-    <a class="ed-row ed-row--link reveal" href="#s-contact" aria-label="Jiu-Jitsu Brésilien — candidater"><div class="ed-index">01</div><h3 class="ed-name">Jiu-Jitsu Brésilien</h3><span class="ed-arrow">↗</span></a>
-    <a class="ed-row ed-row--link reveal" href="#s-contact" aria-label="MMA — candidater"><div class="ed-index">02</div><h3 class="ed-name">MMA</h3><span class="ed-arrow">↗</span></a>
-    <a class="ed-row ed-row--link reveal" href="#s-contact" aria-label="Grappling — candidater"><div class="ed-index">03</div><h3 class="ed-name">Grappling</h3><span class="ed-arrow">↗</span></a>
-    <a class="ed-row ed-row--link reveal" href="#s-contact" aria-label="Judo — candidater"><div class="ed-index">04</div><h3 class="ed-name">Judo</h3><span class="ed-arrow">↗</span></a>
-    <a class="ed-row ed-row--link reveal" href="#s-contact" aria-label="Lutte — candidater"><div class="ed-index">05</div><h3 class="ed-name">Lutte</h3><span class="ed-arrow">↗</span></a>
-    <a class="ed-row ed-row--link reveal" href="#s-contact" aria-label="Sports de combat en général — candidater"><div class="ed-index">06</div><h3 class="ed-name">Sports de combat en général</h3><span class="ed-arrow">↗</span></a>
+    <article class="ed-row ed-row--link reveal"><div class="ed-index">01</div><h3 class="ed-name">Jiu-Jitsu Brésilien</h3></article>
+    <article class="ed-row ed-row--link reveal"><div class="ed-index">02</div><h3 class="ed-name">MMA</h3></article>
+    <article class="ed-row ed-row--link reveal"><div class="ed-index">03</div><h3 class="ed-name">Grappling</h3></article>
+    <article class="ed-row ed-row--link reveal"><div class="ed-index">04</div><h3 class="ed-name">Judo</h3></article>
+    <article class="ed-row ed-row--link reveal"><div class="ed-index">05</div><h3 class="ed-name">Lutte</h3></article>
+    <article class="ed-row ed-row--link reveal"><div class="ed-index">06</div><h3 class="ed-name">Sports de combat en général</h3></article>
 
   </div>
 
