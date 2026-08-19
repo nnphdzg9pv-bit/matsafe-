@@ -1333,89 +1333,58 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
   .svc-pill:nth-child(2),.svc-pill:nth-child(3),.svc-pill:nth-child(4),.svc-pill:nth-child(5){margin-left:0}
 }
 
-/* ══ NOS SERVICES v2 — section noire immersive, maître-détail ══ */
-.svc2{background:var(--black);color:var(--off);padding:6rem 2.5rem 6.5rem;overflow:hidden}
-.svc2-inner{max-width:1200px;margin:0 auto}
-.svc2 .eyebrow{color:var(--off)}
-.svc2 .ed-giant,.svc2 .ed-giant em{color:var(--off)}
-.svc2-manifesto{font-size:.95rem;line-height:1.7;color:rgba(242,240,236,.7);max-width:560px;margin:.7rem 0 0}
-.svc2-manifesto strong{color:var(--off);font-weight:600}
-
-.svc2-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:clamp(2rem,5vw,5rem);margin-top:3.5rem;align-items:start}
-
-/* Colonne gauche : onglets */
-.svc2-list{display:flex;flex-direction:column;border-top:1px solid rgba(242,240,236,.18)}
-.svc2-tab{
-  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:1rem;
-  width:100%;text-align:left;background:none;border:none;cursor:pointer;
-  padding:1.35rem .4rem;border-bottom:1px solid rgba(242,240,236,.18);
-  color:rgba(242,240,236,.55);transition:color .25s,padding .25s;
+/* ══ NOS SERVICES — affiche (reproduction réf. client, couleurs MatSafe) ══ */
+.svcp{background:var(--black);color:var(--off);overflow:hidden}
+.svcp-inner{
+  position:relative;max-width:1180px;margin:0 auto;
+  padding:clamp(2.5rem,5vw,4.5rem) clamp(1.5rem,4vw,3.5rem) clamp(2.5rem,4vw,3.5rem);
+  background-image:
+    linear-gradient(rgba(242,240,236,.09) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(242,240,236,.09) 1px,transparent 1px);
+  background-size:64px 64px;background-position:center top;
 }
-.svc2-tab-n{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.1em;opacity:.7}
-.svc2-tab-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
-  font-size:clamp(1.25rem,2.2vw,1.95rem);line-height:1.02;letter-spacing:.01em}
-.svc2-tab-mark{font-family:'Barlow Condensed',sans-serif;font-size:1.15rem;opacity:0;transform:translateX(-8px);transition:opacity .25s,transform .25s}
-.svc2-tab:hover{color:rgba(242,240,236,.9);padding-left:.9rem}
-.svc2-tab[aria-selected="true"]{color:var(--off);padding-left:.9rem}
-.svc2-tab[aria-selected="true"] .svc2-tab-mark{opacity:1;transform:none}
-.svc2-tab:focus-visible{outline:2px solid var(--off);outline-offset:-3px}
+.svcp-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
+.svcp-brand{font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
+  font-size:1.3rem;line-height:1;letter-spacing:.04em;color:var(--off);display:flex;flex-direction:column;gap:.32rem}
+.svcp-brand span{font-weight:700;font-size:.6rem;letter-spacing:.22em;color:rgba(242,240,236,.6)}
+.svcp-arrow{flex:0 0 auto;width:48px;height:48px;border-radius:50%;
+  background:var(--off);color:var(--black);display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;text-decoration:none;transition:transform .2s}
+.svcp-arrow:hover{transform:translateX(-3px)}
 
-/* Colonne droite : détail */
-.svc2-detail{position:relative;min-height:360px}
-.svc2-detail:focus-visible{outline:none}
-.svc2-ghost{position:absolute;top:-3rem;right:0;z-index:0;pointer-events:none;
-  font-family:'Barlow Condensed',sans-serif;font-weight:900;
-  font-size:clamp(7rem,15vw,15rem);line-height:.7;color:rgba(242,240,236,.06);}
-.svc2-detail > *:not(.svc2-ghost){position:relative;z-index:1}
-.svc2-kicker{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.72rem;
-  letter-spacing:.2em;text-transform:uppercase;color:rgba(242,240,236,.6);
-  display:flex;align-items:center;gap:.6rem;margin-bottom:.9rem}
-.svc2-kicker::before{content:'';width:24px;height:1.5px;background:rgba(242,240,236,.6)}
-.svc2-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
-  font-size:clamp(1.9rem,3.6vw,2.7rem);line-height:1.02;letter-spacing:.01em;color:var(--off);margin:0 0 1.1rem}
-.svc2-tags{display:flex;flex-wrap:wrap;gap:.45rem .5rem;margin-bottom:1.3rem}
-.svc2-tags span{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.72rem;
-  letter-spacing:.08em;text-transform:uppercase;color:var(--off);
-  border:1px solid rgba(242,240,236,.3);border-radius:999px;padding:.3rem .78rem}
-.svc2-body{font-size:.96rem;line-height:1.75;color:rgba(242,240,236,.82);margin:0 0 1.6rem;max-width:58ch}
-.svc2-benefits{display:flex;flex-direction:column;gap:.9rem;border-top:1px solid rgba(242,240,236,.18);padding-top:1.35rem}
-.svc2-benefits > div{display:grid;grid-template-columns:7.5rem 1fr;gap:1rem;align-items:baseline}
-.svc2-b-label{font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;
-  font-size:.72rem;letter-spacing:.14em;color:rgba(242,240,236,.55)}
-.svc2-b-text{font-size:.92rem;line-height:1.5;color:var(--off)}
+.svcp-headline{position:relative;margin:clamp(1.5rem,3vw,2.6rem) 0 clamp(2rem,4vw,3rem)}
+.svcp-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
+  font-size:clamp(3.6rem,14vw,11rem);line-height:.82;letter-spacing:-.02em;color:var(--off);margin:0}
+.svcp-aside{position:absolute;right:.1rem;top:.5em;text-align:right;
+  font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;
+  font-size:clamp(.85rem,1.6vw,1.2rem);letter-spacing:.08em;line-height:1.12;color:var(--off);
+  text-decoration:underline;text-underline-offset:.3em;text-decoration-thickness:.09em}
+.svcp-aside:hover{color:rgba(242,240,236,.7)}
 
-/* Bloc partenaire (sur fond noir) */
-.svc2-partner:not(:empty){margin-top:1.5rem}
-.svc2-partner .p2{display:inline-flex;align-items:center;gap:1.1rem;flex-wrap:wrap;
-  border:1px solid rgba(242,240,236,.25);border-radius:4px;padding:.9rem 1.1rem;
-  text-decoration:none;color:var(--off);transition:border-color .2s,background .2s}
-.svc2-partner .p2:hover{border-color:var(--off);background:rgba(242,240,236,.05)}
-.svc2-partner .p2-logo{background:var(--off);border-radius:3px;padding:.45rem .65rem;flex:0 0 auto;
-  font-family:'Barlow Condensed',sans-serif;font-weight:800;color:var(--black);font-size:.8rem}
-.svc2-partner .p2-logo img{display:block;height:30px;width:auto}
-.svc2-partner .p2-txt{display:flex;flex-direction:column;gap:.25rem}
-.svc2-partner .p2-eyebrow{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(242,240,236,.6)}
-.svc2-partner .p2-cta{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:.9rem;letter-spacing:.05em;text-transform:uppercase;color:var(--off)}
+.svcp-pills{display:flex;flex-direction:column;gap:clamp(.7rem,1.5vw,1rem)}
+.svcp-row{display:flex;flex-wrap:wrap;gap:clamp(.7rem,1.5vw,1rem);padding-left:var(--indent,0)}
+.svcp-pill{cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;
+  font-size:clamp(.9rem,1.6vw,1.28rem);letter-spacing:.03em;white-space:nowrap;
+  border-radius:999px;padding:.95rem 1.85rem;line-height:1;
+  background:transparent;border:1.7px solid var(--off);color:var(--off);
+  transition:transform .2s,background .2s,color .2s}
+.svcp-pill--fill{background:var(--off);color:var(--black);border-color:var(--off)}
+.svcp-pill:hover{transform:translateY(-2px)}
+.svcp-pill:not(.svcp-pill--fill):hover{background:var(--off);color:var(--black)}
+.svcp-pill--fill:hover{background:transparent;color:var(--off)}
+.svcp-pill:focus-visible{outline:2px solid var(--off);outline-offset:3px}
 
-/* Transition douce au changement de service */
-.svc2-detail .svc2-kicker,.svc2-detail .svc2-title,.svc2-detail .svc2-tags,
-.svc2-detail .svc2-body,.svc2-detail .svc2-benefits,.svc2-detail .svc2-partner{
-  transition:opacity .3s ease,transform .3s ease}
-.svc2-detail.is-switching .svc2-kicker,.svc2-detail.is-switching .svc2-title,
-.svc2-detail.is-switching .svc2-tags,.svc2-detail.is-switching .svc2-body,
-.svc2-detail.is-switching .svc2-benefits,.svc2-detail.is-switching .svc2-partner{
-  opacity:0;transform:translateY(8px)}
+.svcp-foot{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+  margin-top:clamp(2.5rem,5vw,4rem);padding-top:1.2rem;border-top:1px solid rgba(242,240,236,.28);
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;
+  font-size:.82rem;letter-spacing:.16em;color:var(--off)}
 
-@media(max-width:860px){
-  .svc2{padding:4.5rem 1.5rem 5rem}
-  .svc2-grid{grid-template-columns:1fr;gap:1.8rem}
-  .svc2-ghost{display:none}
-  .svc2-detail{min-height:0;border-left:2px solid rgba(242,240,236,.3);padding-left:1.2rem}
-  .svc2-benefits > div{grid-template-columns:1fr;gap:.15rem}
-  .svc2-b-label{color:rgba(242,240,236,.6)}
-}
-@media(prefers-reduced-motion:reduce){
-  .svc2-detail *{transition:none!important}
+@media(max-width:760px){
+  .svcp-inner{background-size:44px 44px}
+  .svcp-aside{position:static;display:inline-block;text-align:left;margin-top:1rem}
+  .svcp-headline{margin-bottom:1.6rem}
+  .svcp-row{padding-left:0}
+  .svcp-pill{white-space:normal;width:100%;text-align:left}
 }
 
 </style>
@@ -1570,6 +1539,19 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
   </div>
 </div>
 
+<!-- Modale détail d'un service (affiche « Nos services ») -->
+<div class="prob-modal" id="svcmodal" role="dialog" aria-modal="true" aria-labelledby="sm-head" aria-hidden="true" onclick="if(event.target===this)closeSvc()">
+  <div class="prob-modal-box">
+    <button class="prob-modal-x" onclick="closeSvc()" aria-label="Fermer">×</button>
+    <div class="pm-kicker" id="sm-kicker"></div>
+    <h3 class="pm-head" id="sm-head"></h3>
+    <div class="svc-m-tags" id="sm-tags"></div>
+    <p class="pm-body" id="sm-body"></p>
+    <div class="svc-m-benefits" id="sm-benefits"></div>
+    <div class="svc-m-partner" id="sm-partner"></div>
+  </div>
+</div>
+
 <!-- Modale détail d'une étape (démarche « 4 étapes ») -->
 <div class="prob-modal" id="stepmodal" role="dialog" aria-modal="true" aria-labelledby="tm-head" aria-hidden="true" onclick="if(event.target===this)closeStep()">
   <div class="prob-modal-box">
@@ -1638,38 +1620,39 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
 </section>
 
 <!-- ── NOS SERVICES — ÉDITORIAL ── -->
-<!-- ── NOS SERVICES — section noire, maître-détail (pièce maîtresse) ── -->
-<section class="svc2" id="s-livrables" aria-labelledby="svc2-title">
-  <div class="svc2-inner">
-    <div class="svc2-head">
-      <div class="eyebrow reveal">Nos services</div>
-      <h2 class="ed-giant reveal" id="svc2-title">Nos <em>Services</em></h2>
-      <p class="svc2-manifesto reveal">
-        Pas une liste de prestations. <strong>Cinq services pensés pour que votre club n'ait plus jamais besoin d'improviser sur l'hygiène</strong> — même avant de penser à la certification.
-      </p>
+<!-- ── NOS SERVICES — affiche (reproduction fidèle de la réf. client, couleurs MatSafe) ── -->
+<section class="svcp" id="s-livrables" aria-labelledby="svcp-title">
+  <div class="svcp-inner reveal">
+
+    <div class="svcp-top">
+      <div class="svcp-brand">MatSafe<span>Since 2026</span></div>
+      <a class="svcp-arrow" href="#s-contact" aria-label="Candidater — aller au formulaire de contact">←</a>
     </div>
 
-    <div class="svc2-grid reveal">
-      <!-- Colonne gauche : les 5 services (onglets) -->
-      <div class="svc2-list" role="tablist" aria-label="Nos cinq services" aria-orientation="vertical">
-        <button class="svc2-tab" role="tab" id="svc2-tab-0" aria-controls="svc2-panel" aria-selected="true"  tabindex="0"  onclick="selectSvc(0)"><span class="svc2-tab-n">01</span><span class="svc2-tab-name">Audit d'hygiène spécialisé</span><span class="svc2-tab-mark" aria-hidden="true">→</span></button>
-        <button class="svc2-tab" role="tab" id="svc2-tab-1" aria-controls="svc2-panel" aria-selected="false" tabindex="-1" onclick="selectSvc(1)"><span class="svc2-tab-n">02</span><span class="svc2-tab-name">Plan d'action MatSafe</span><span class="svc2-tab-mark" aria-hidden="true">→</span></button>
-        <button class="svc2-tab" role="tab" id="svc2-tab-2" aria-controls="svc2-panel" aria-selected="false" tabindex="-1" onclick="selectSvc(2)"><span class="svc2-tab-n">03</span><span class="svc2-tab-name">Référentiel opérationnel MatSafe</span><span class="svc2-tab-mark" aria-hidden="true">→</span></button>
-        <button class="svc2-tab" role="tab" id="svc2-tab-3" aria-controls="svc2-panel" aria-selected="false" tabindex="-1" onclick="selectSvc(3)"><span class="svc2-tab-n">04</span><span class="svc2-tab-name">Formation Hygiène &amp; Prévention</span><span class="svc2-tab-mark" aria-hidden="true">→</span></button>
-        <button class="svc2-tab" role="tab" id="svc2-tab-4" aria-controls="svc2-panel" aria-selected="false" tabindex="-1" onclick="selectSvc(4)"><span class="svc2-tab-n">05</span><span class="svc2-tab-name">Téléconsultation médicale 24/7</span><span class="svc2-tab-mark" aria-hidden="true">→</span></button>
-      </div>
+    <div class="svcp-headline">
+      <h2 class="svcp-title" id="svcp-title">Nos<br>Services</h2>
+      <a class="svcp-aside" href="#s-contact">Travailler<br>avec nous</a>
+    </div>
 
-      <!-- Colonne droite : le détail, mis à jour en direct -->
-      <div class="svc2-detail" id="svc2-panel" role="tabpanel" aria-labelledby="svc2-tab-0" aria-live="polite" tabindex="0">
-        <span class="svc2-ghost" id="sd-ghost" aria-hidden="true">01</span>
-        <div class="svc2-kicker" id="sd-kicker"></div>
-        <h3 class="svc2-title" id="sd-title"></h3>
-        <div class="svc2-tags" id="sd-tags"></div>
-        <p class="svc2-body" id="sd-body"></p>
-        <div class="svc2-benefits" id="sd-benefits"></div>
-        <div class="svc2-partner" id="sd-partner"></div>
+    <div class="svcp-pills" role="list" aria-label="Nos cinq services">
+      <div class="svcp-row" role="presentation" style="--indent:0">
+        <button class="svcp-pill svcp-pill--fill" role="listitem" onclick="openSvc(0)" aria-haspopup="dialog">Audit d'hygiène spécialisé</button>
+        <button class="svcp-pill" role="listitem" onclick="openSvc(1)" aria-haspopup="dialog">Plan d'action MatSafe</button>
+      </div>
+      <div class="svcp-row" role="presentation" style="--indent:2.5rem">
+        <button class="svcp-pill" role="listitem" onclick="openSvc(2)" aria-haspopup="dialog">Référentiel opérationnel MatSafe</button>
+        <button class="svcp-pill svcp-pill--fill" role="listitem" onclick="openSvc(3)" aria-haspopup="dialog">Formation Hygiène &amp; Prévention</button>
+      </div>
+      <div class="svcp-row" role="presentation" style="--indent:5rem">
+        <button class="svcp-pill svcp-pill--fill" role="listitem" onclick="openSvc(4)" aria-haspopup="dialog">Téléconsultation médicale 24/7</button>
       </div>
     </div>
+
+    <div class="svcp-foot">
+      <span>matsafe.fr</span>
+      <span>contact@matsafe.fr</span>
+    </div>
+
   </div>
 </section>
 
@@ -2018,52 +2001,32 @@ const SVC=[
    ben:[['Dirigeant',"Une réponse concrète, sans engager sa responsabilité médicale."],['Coachs',"Ils orientent, ils ne tranchent plus seuls."],['Adhérents',"Une prise en charge rapide, sans attendre trois jours."]],
    partner:true},
 ];
-// Maître-détail : la liste de gauche pilote le panneau de droite (onglets ARIA).
-(function(){
-  const list=document.querySelector('.svc2-list');
-  if(!list)return;
-  const tabs=[...list.querySelectorAll('.svc2-tab')];
-  const panel=document.getElementById('svc2-panel');
-  const el={ghost:'sd-ghost',kicker:'sd-kicker',title:'sd-title',tags:'sd-tags',body:'sd-body',benefits:'sd-benefits',partner:'sd-partner'};
-  const $=id=>document.getElementById(id);
-  let cur=-1, timer=null;
-
-  function render(i){
-    const d=SVC[i];if(!d)return;
-    $(el.ghost).textContent=d.n;
-    $(el.kicker).textContent=d.n+' — Nos services';
-    $(el.title).textContent=d.t;
-    $(el.tags).innerHTML=d.tags.map(x=>`<span>${x}</span>`).join('');
-    $(el.body).textContent=d.b;
-    $(el.benefits).innerHTML=d.ben.map(x=>`<div><span class="svc2-b-label">${x[0]}</span><span class="svc2-b-text">${x[1]}</span></div>`).join('');
-    $(el.partner).innerHTML=d.partner
-      ? '<a class="p2" href="https://www.medecindirect.fr/" target="_blank" rel="noopener"><span class="p2-logo"><img src="assets/medecindirect.png" alt="MédecinDirect" onerror="this.closest(\'.p2-logo\').textContent=\'MédecinDirect\'"></span><span class="p2-txt"><span class="p2-eyebrow">Partenaire · Téléconsultation</span><span class="p2-cta">Consulter un médecin ↗</span></span></a>'
-      : '';
-  }
-  function selectSvc(i,focusTab){
-    if(i===cur){ if(focusTab)tabs[i].focus(); return; }
-    tabs.forEach((t,idx)=>{const on=idx===i;t.setAttribute('aria-selected',on?'true':'false');t.tabIndex=on?0:-1;});
-    panel.setAttribute('aria-labelledby','svc2-tab-'+i);
-    const swap=()=>{render(i);panel.classList.remove('is-switching');};
-    if(window.matchMedia('(prefers-reduced-motion:reduce)').matches){ render(i); }
-    else { panel.classList.add('is-switching'); clearTimeout(timer); timer=setTimeout(swap,170); }
-    cur=i;
-    if(focusTab)tabs[i].focus();
-    if(window.matchMedia('(max-width:860px)').matches){ panel.scrollIntoView({behavior:'smooth',block:'nearest'}); }
-  }
-  window.selectSvc=selectSvc;
-
-  list.addEventListener('keydown',e=>{
-    let ni=null;
-    if(e.key==='ArrowDown'||e.key==='ArrowRight') ni=(cur+1)%tabs.length;
-    else if(e.key==='ArrowUp'||e.key==='ArrowLeft') ni=(cur-1+tabs.length)%tabs.length;
-    else if(e.key==='Home') ni=0;
-    else if(e.key==='End') ni=tabs.length-1;
-    if(ni!==null){ e.preventDefault(); selectSvc(ni,true); }
-  });
-
-  render(0); cur=0;   // état initial (sans animation)
-})();
+// Clic sur une pastille de l'affiche « Nos services » -> détail en modale.
+let svcLast=null;
+function openSvc(i){
+  const d=SVC[i];if(!d)return;
+  svcLast=document.activeElement;
+  document.getElementById('sm-kicker').textContent=d.n+' — Nos services';
+  document.getElementById('sm-head').textContent=d.t;
+  document.getElementById('sm-tags').innerHTML=d.tags.map(x=>`<span>${x}</span>`).join('');
+  document.getElementById('sm-body').textContent=d.b;
+  document.getElementById('sm-benefits').innerHTML=d.ben.map(x=>`<div><span class="svc-m-b-label">${x[0]}</span><span class="svc-m-b-text">${x[1]}</span></div>`).join('');
+  document.getElementById('sm-partner').innerHTML=d.partner
+    ? '<div class="ed-media ed-media--partner"><a class="partner-card" href="https://www.medecindirect.fr/" target="_blank" rel="noopener"><span class="partner-eyebrow">Partenaire</span><img class="partner-logo" src="assets/medecindirect.png" alt="MédecinDirect" width="322" height="128" onerror="this.remove()"><span class="partner-name">médecin direct</span><span class="partner-note">Téléconsultation avec un médecin français, 7j/7.</span><span class="partner-cta">Consulter un médecin ↗</span></a></div>'
+    : '';
+  const m=document.getElementById('svcmodal');
+  m.classList.add('open');m.setAttribute('aria-hidden','false');
+  document.body.classList.add('pm-open');
+  m.querySelector('.prob-modal-x').focus();
+}
+function closeSvc(){
+  const m=document.getElementById('svcmodal');
+  if(!m.classList.contains('open'))return;
+  m.classList.remove('open');m.setAttribute('aria-hidden','true');
+  document.body.classList.remove('pm-open');
+  if(svcLast&&svcLast.focus)svcLast.focus();
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSvc();});
 
 // ── 4 ÉTAPES : détail au clic sur une pastille ──────────────────
 const STEP=[
