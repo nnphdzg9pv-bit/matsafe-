@@ -4,7 +4,9 @@
 > nouvelle conversation **sans accès à l'historique**.
 > Convention : **[FAIT]** = fait vérifié · **[DÉCISION]** = choix acté ·
 > **[HYPOTHÈSE]** = supposition non confirmée.
-> Dernière mise à jour : commit `ccebff2` (branche à jour avec le distant).
+> Branche de travail : **`claude/adoring-noether-u6dhmo`** (à jour avec le distant).
+> Le commit `77d6469` est celui qui a **ajouté ce document**. Chaque mise à jour du
+> document crée un nouveau commit ; ne pas considérer un hash figé comme le HEAD permanent.
 
 ---
 
@@ -26,10 +28,14 @@
 
 ## 2. État d'avancement exact
 
-- **[FAIT]** Branche de travail : **`claude/site-interface-design-0wqxt4`**.
+- **[FAIT]** Branche de travail : **`claude/adoring-noether-u6dhmo`**.
   Toujours développer et pousser ici (jamais sur un autre branch sans accord).
-- **[FAIT]** `HEAD` local == `origin` (synchronisé). Dernier commit : **`ccebff2`**
-  « Nos services : tous les accordeons replies au depart ».
+  (Ancienne branche `claude/site-interface-design-0wqxt4` abandonnée : la branche
+  actuelle la contient intégralement + le commit `77d6469` qui a ajouté ce document.)
+- **[FAIT]** `HEAD` local == `origin` (synchronisé). Le commit `77d6469`
+  « Ajoute CONTEXTE_MAITRE.md » a introduit ce document par-dessus `ccebff2`
+  « Nos services : tous les accordeons replies au depart ». Le HEAD évolue à chaque
+  mise à jour du document — ne pas figer un hash comme HEAD permanent.
 - **[FAIT]** Dépôt GitHub : **`nnphdzg9pv-bit/matsafe-`** (seul repo en scope).
 - **[FAIT]** `index.html` = **2360 lignes**, ~113 Ko.
 - **[FAIT]** Ordre actuel des sections (dans `index.html`) :
@@ -115,7 +121,7 @@
 
 ## 4. Contraintes, préférences et instructions importantes
 
-- **[FAIT]** Développer/committer/pousser **uniquement** sur `claude/site-interface-design-0wqxt4`.
+- **[FAIT]** Développer/committer/pousser **uniquement** sur `claude/adoring-noether-u6dhmo`.
 - **[FAIT]** Le client **pousse des images sur GitHub** (commits « Add files via
   upload »), souvent **à la racine** avec des noms illisibles (espaces, accents,
   extensions `.com`, noms ChatGPT/Instagram). Workflow : `git fetch` → `git merge --ff-only`
@@ -346,7 +352,7 @@ et les problèmes ouverts. Respecte-le.
 
 Contexte technique :
 - Repo GitHub : nnphdzg9pv-bit/matsafe- . Branche de travail EXCLUSIVE :
-  claude/site-interface-design-0wqxt4 (jamais une autre sans accord).
+  claude/adoring-noether-u6dhmo (jamais une autre sans accord).
 - Livrable = un seul index.html (CSS + JS inline, médias dans assets/ en chemins
   relatifs). Pas de build.
 - Palette STRICTE 2 couleurs : noir #0A0A0A + crème --off #F2F0EC. Ne jamais mettre
