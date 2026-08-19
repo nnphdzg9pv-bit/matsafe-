@@ -1313,6 +1313,10 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
 }
 .svc-m-b-text{font-size:.9rem;line-height:1.45;color:var(--black)}
 .svc-m-partner:not(:empty){margin-top:.3rem}
+.tm-deliv-label{
+  font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;
+  font-size:.72rem;letter-spacing:.16em;color:var(--gray);margin:0 0 .8rem;
+}
 
 @media(max-width:640px){
   .svc-pill{width:100%;justify-content:flex-start}
@@ -1484,6 +1488,19 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
   </div>
 </div>
 
+<!-- Modale détail d'une étape (démarche « 4 étapes ») -->
+<div class="prob-modal" id="stepmodal" role="dialog" aria-modal="true" aria-labelledby="tm-head" aria-hidden="true" onclick="if(event.target===this)closeStep()">
+  <div class="prob-modal-box">
+    <button class="prob-modal-x" onclick="closeStep()" aria-label="Fermer">×</button>
+    <div class="pm-kicker" id="tm-kicker"></div>
+    <h3 class="pm-head" id="tm-head"></h3>
+    <div class="svc-m-tags" id="tm-tags"></div>
+    <p class="pm-body" id="tm-body"></p>
+    <p class="tm-deliv-label">Ce que vous obtenez</p>
+    <ul class="pm-bullets" id="tm-deliv"></ul>
+  </div>
+</div>
+
 <!-- ── POUR QUI — ÉDITORIAL ── -->
 <section class="ed-section" id="s-pourqui">
   <div class="ed-header">
@@ -1595,27 +1612,14 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
     </p>
   </div>
 
-  <!-- L'affiche fournie (feuille tenue) avec les 4 étapes posées dessus.
-       Chaque étape est placée en % et décalée pour suivre l'inclinaison. -->
-  <div class="sheet-wrap reveal">
-    <img src="assets/etapes-poster.jpg" alt="Les quatre étapes de la démarche MatSafe, présentées sur une feuille" loading="lazy">
-    <div class="sheet-step" style="top:19%;left:22%;width:40%">
-      <span class="ss-num">01</span>
-      <span class="ss-body"><span class="ss-title">Audit de votre club</span><span class="ss-text">Analyse de vos pratiques et des points critiques, sur une grille dédiée aux sports de contact.</span></span>
-    </div>
-    <div class="sheet-step" style="top:37%;left:28%;width:40%">
-      <span class="ss-num">02</span>
-      <span class="ss-body"><span class="ss-title">Mise en conformité</span><span class="ss-text">Des actions simples et priorisées, adaptées à la taille et aux moyens réels de votre structure.</span></span>
-    </div>
-    <div class="sheet-step" style="top:55%;left:34%;width:40%">
-      <span class="ss-num">03</span>
-      <span class="ss-body"><span class="ss-title">Validation</span><span class="ss-text">Contrôle du respect des exigences fondamentales du référentiel, sur site et sur pièces.</span></span>
-    </div>
-    <div class="sheet-step" style="top:72%;left:40%;width:40%">
-      <span class="ss-num">04</span>
-      <span class="ss-body"><span class="ss-title">Certification</span><span class="ss-text">Le label MatSafe, avec les supports pour l'afficher et l'expliquer à vos adhérents.</span></span>
-    </div>
+  <div class="svc-pills reveal" role="list" aria-label="Les quatre étapes de la démarche">
+    <button class="svc-pill svc-pill--fill" role="listitem" onclick="openStep(0)" aria-haspopup="dialog"><span class="svc-pill-n">01</span>Audit de votre club</button>
+    <button class="svc-pill" role="listitem" onclick="openStep(1)" aria-haspopup="dialog"><span class="svc-pill-n">02</span>Mise en conformité</button>
+    <button class="svc-pill" role="listitem" onclick="openStep(2)" aria-haspopup="dialog"><span class="svc-pill-n">03</span>Validation</button>
+    <button class="svc-pill svc-pill--fill" role="listitem" onclick="openStep(3)" aria-haspopup="dialog"><span class="svc-pill-n">04</span>Certification</button>
   </div>
+
+  <p class="svc-hint reveal">Cliquez sur une étape pour en déployer le détail.</p>
 </section>
 
 <!-- ── SPOTLIGHT : PREMIER CLUB LABELLISÉ — ÉDITORIAL ── -->
@@ -1944,6 +1948,48 @@ function closeSvc(){
   if(svcLast&&svcLast.focus)svcLast.focus();
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSvc();});
+
+// ── 4 ÉTAPES : détail au clic sur une pastille ──────────────────
+const STEP=[
+  {n:'01',t:"Audit de votre club",
+   tags:['Grille dédiée','Points critiques','État des lieux'],
+   b:"Nous analysons vos pratiques et repérons les points critiques sur une grille dédiée aux sports de contact — tatamis, vestiaires, protocole sang, gestion des suspicions d'infection. Rien n'est laissé au ressenti : chaque zone est évaluée sur des critères objectifs.",
+   d:['Rapport d\'audit complet','Cartographie des points critiques','Score par zone du club']},
+  {n:'02',t:"Mise en conformité",
+   tags:['Actions priorisées','Sur mesure','Accompagnement'],
+   b:"À partir de l'audit, vous recevez des actions simples et priorisées, adaptées à la taille et aux moyens réels de votre structure. Vous avancez étape par étape, sans vous disperser ni engager de dépenses inutiles.",
+   d:['Feuille de route priorisée','Procédures et kit physique',"Points d'étape avec MatSafe"]},
+  {n:'03',t:"Validation",
+   tags:['Sur site','Sur pièces','Référentiel'],
+   b:"Nous contrôlons le respect des exigences fondamentales du référentiel, sur site et sur pièces. L'objectif n'est pas de piéger le club, mais de confirmer que les bons réflexes sont en place et tenus dans la durée.",
+   d:['Contrôle sur site','Vérification documentaire','Avis de conformité']},
+  {n:'04',t:"Certification",
+   tags:['Label officiel','Supports','Visibilité'],
+   b:"Vous obtenez le label MatSafe, accompagné des supports pour l'afficher et l'expliquer à vos adhérents. Votre club rejoint l'annuaire des structures certifiées et démontre son engagement pour l'hygiène et la prévention.",
+   d:['Label MatSafe officiel','Kit de communication',"Présence dans l'annuaire"]},
+];
+let stepLast=null;
+function openStep(i){
+  const d=STEP[i];if(!d)return;
+  stepLast=document.activeElement;
+  document.getElementById('tm-kicker').textContent=d.n+' — La démarche';
+  document.getElementById('tm-head').textContent=d.t;
+  document.getElementById('tm-tags').innerHTML=d.tags.map(x=>`<span>${x}</span>`).join('');
+  document.getElementById('tm-body').textContent=d.b;
+  document.getElementById('tm-deliv').innerHTML=d.d.map(x=>`<li>${x}</li>`).join('');
+  const m=document.getElementById('stepmodal');
+  m.classList.add('open');m.setAttribute('aria-hidden','false');
+  document.body.classList.add('pm-open');
+  m.querySelector('.prob-modal-x').focus();
+}
+function closeStep(){
+  const m=document.getElementById('stepmodal');
+  if(!m.classList.contains('open'))return;
+  m.classList.remove('open');m.setAttribute('aria-hidden','true');
+  document.body.classList.remove('pm-open');
+  if(stepLast&&stepLast.focus)stepLast.focus();
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeStep();});
 
 // Nav scroll
 window.addEventListener('scroll',()=>{
