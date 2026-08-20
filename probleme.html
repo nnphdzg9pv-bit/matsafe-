@@ -3,15 +3,13 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Clubs certifiés — MatSafe</title>
-<meta name="description" content="La carte nationale des clubs engagés dans la démarche MatSafe, par niveau de certification."/>
+<title>Le Problème — MatSafe</title>
+<meta name="description" content="Les risques d'hygiène dans les sports de combat : transmission, surfaces partagées, peau fragilisée…"/>
 <meta name="theme-color" content="#0A0A0A"/>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230A0A0A'/%3E%3Cellipse cx='16' cy='16' rx='14' ry='9' fill='none' stroke='%23FFFFFF' stroke-width='1.4'/%3E%3Ctext x='16' y='22' font-size='15' font-family='Arial,sans-serif' font-style='italic' font-weight='bold' fill='%23FFFFFF' text-anchor='middle'%3EM%3C/text%3E%3C/svg%3E"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:ital,wght@0,400;0,500;1,400;1,500&family=Kanit:ital,wght@1,700;1,800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" media="print" onload="this.media='all'"/>
-<noscript><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/></noscript>
 <link rel="stylesheet" href="styles.css"/>
 </head>
 
@@ -29,12 +27,12 @@
   </a>
   <div class="nav-links">
     <a href="index.html">Accueil</a>
-    <a href="probleme.html">Le Problème</a>
+    <a href="probleme.html" class="is-active" aria-current="page">Le Problème</a>
     <a href="pour-qui.html">Pour qui</a>
     <a href="services.html">Nos Services</a>
     <a href="label.html">Le Label</a>
     <a href="certification.html">Certification</a>
-    <a href="clubs.html" class="is-active" aria-current="page">Clubs</a>
+    <a href="clubs.html">Clubs</a>
     <a href="contact.html">Contact</a>
     <a href="contact.html" class="nav-cta">Candidater</a>
   </div>
@@ -42,28 +40,24 @@
 </nav>
 <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
   <a href="index.html">Accueil</a>
-  <a href="probleme.html">Le Problème</a>
+  <a href="probleme.html" class="is-active" aria-current="page">Le Problème</a>
   <a href="pour-qui.html">Pour qui</a>
   <a href="services.html">Nos Services</a>
   <a href="label.html">Le Label</a>
   <a href="certification.html">Certification</a>
-  <a href="clubs.html" class="is-active" aria-current="page">Clubs</a>
+  <a href="clubs.html">Clubs</a>
   <a href="contact.html">Contact</a>
   <a href="contact.html" class="mm-cta">Candidater</a>
 </div>
 
-<div class="modal-bg" id="mbg" onclick="closeMod(event)" role="dialog" aria-modal="true" aria-labelledby="mnm" aria-hidden="true">
-  <div class="modal-box">
-    <div class="modal-hdr">
-      <button class="modal-x" onclick="hideMod()" aria-label="Fermer la fiche du club">×</button>
-      <div class="modal-lvl" id="mlvl"></div>
-      <div class="modal-nm" id="mnm"></div>
-      <div class="modal-ct" id="mct"></div>
-    </div>
-    <div class="modal-bd">
-      <p class="modal-desc" id="mdesc"></p>
-      <div class="modal-rows" id="mrows"></div>
-    </div>
+<div class="prob-modal" id="probmodal" role="dialog" aria-modal="true" aria-labelledby="pm-head" aria-hidden="true" onclick="if(event.target===this)closeProb()">
+  <div class="prob-modal-box">
+    <button class="prob-modal-x" onclick="closeProb()" aria-label="Fermer">×</button>
+    <div class="pm-kicker" id="pm-kicker"></div>
+    <h3 class="pm-head" id="pm-head"></h3>
+    <p class="pm-body" id="pm-body"></p>
+    <ul class="pm-bullets" id="pm-bullets"></ul>
+    <p class="pm-close" id="pm-close"></p>
   </div>
 </div>
 
@@ -72,37 +66,35 @@
 <section class="ed-section page-hero">
   <div class="ed-header">
     <div>
-      <div class="eyebrow reveal">Carte nationale</div>
-      <h1 class="ed-giant reveal">Cl<em>u</em>bs</h1>
+      <div class="eyebrow reveal">Le problème</div>
+      <h1 class="ed-giant reveal">Le Prob<em>lè</em>me</h1>
     </div>
-    <p class="ed-manifesto reveal">Les clubs déjà engagés dans la démarche, par niveau de certification. <strong>Cherchez une ville, un nom, une discipline.</strong></p>
+    <p class="ed-manifesto reveal"><strong>Un seul cas peut contaminer plusieurs pratiquants en quelques jours.</strong> Et aujourd'hui, la majorité des clubs n'ont aucune structure claire pour gérer ce risque.</p>
   </div>
 </section>
 
-<section class="ed-section map-section" id="s-carte">
-  <div class="map-legend">
-    <span class="map-lg"><i class="map-lg-dot map-lg-dot--exc"></i>Excellence</span>
-    <span class="map-lg"><i class="map-lg-dot map-lg-dot--pre"></i>Premium</span>
-    <span class="map-lg"><i class="map-lg-dot map-lg-dot--std"></i>Standard</span>
+<section class="ed-section" id="s-probleme">
+  <div class="poster-wrap reveal">
+    <img src="assets/probleme-ring.jpg" alt="MatSafe — les six enjeux du problème d'hygiène dans les sports de combat" loading="lazy">
+    <button class="poster-box" style="left:9.9%;top:20.4%;width:25.5%;height:32.9%" onclick="openProb(0)" aria-label="Transmission rapide — voir le détail">
+      <span class="pb-num">01</span><span class="pb-title">Transmission rapide</span>
+    </button>
+    <button class="poster-box" style="left:38.3%;top:20.4%;width:24.3%;height:32.9%" onclick="openProb(1)" aria-label="Surfaces partagées — voir le détail">
+      <span class="pb-num">02</span><span class="pb-title">Surfaces partagées</span>
+    </button>
+    <button class="poster-box" style="left:66.3%;top:20.4%;width:24.3%;height:32.9%" onclick="openProb(2)" aria-label="Peau fragilisée — voir le détail">
+      <span class="pb-num">03</span><span class="pb-title">Peau fragilisée</span>
+    </button>
+    <button class="poster-box" style="left:9.9%;top:56.6%;width:25.5%;height:32.8%" onclick="openProb(3)" aria-label="Réaction improvisée — voir le détail">
+      <span class="pb-num">04</span><span class="pb-title">Réaction improvisée</span>
+    </button>
+    <button class="poster-box" style="left:38.3%;top:56.6%;width:24.3%;height:32.8%" onclick="openProb(4)" aria-label="Arrêt de la pratique — voir le détail">
+      <span class="pb-num">05</span><span class="pb-title">Arrêt de la pratique</span>
+    </button>
+    <button class="poster-box" style="left:66.3%;top:56.6%;width:24.3%;height:32.8%" onclick="openProb(5)" aria-label="Confiance du club — voir le détail">
+      <span class="pb-num">06</span><span class="pb-title">Confiance du club</span>
+    </button>
   </div>
-
-  <div class="map-layout">
-    <div id="shl-map"></div>
-    <div class="map-sidebar" id="map-sidebar">
-      <div class="map-search-wrap">
-        <input type="text" class="map-search" id="map-search" placeholder="Rechercher un club, une ville…" oninput="mapSearch()"/>
-      </div>
-      <!-- Valeur de départ : le script la recalcule dès le rendu de la liste. -->
-      <span class="map-count" id="map-count">12 clubs</span>
-      <div id="map-list"></div>
-    </div>
-  </div>
-</section>
-
-<section class="ed-section">
-  <div class="ed-header"><div><div class="eyebrow reveal">Club client</div><h2 class="ed-giant ed-giant--md reveal">Cube Fight <em>Club</em></h2></div>
-  <p class="ed-manifesto reveal">Le premier club labellisé MatSafe. <strong>Un exemple concret de ce que la certification change au quotidien.</strong></p></div>
-  <p class="reveal cta-row"><a class="cta" href="club-client.html">Voir le Club Client →</a></p>
 </section>
 
 <section class="ed-section">
@@ -147,7 +139,5 @@
 </footer>
 
 <script src="app.js"></script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="map.js"></script>
 </body>
 </html>

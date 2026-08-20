@@ -1341,7 +1341,9 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
 }
 
 
-/* ── Multipage : état actif du menu, CTA, hero de page ── */
+/* ── Multipage : menu (8 entrées), état actif, CTA, hero de page ── */
+.nav-links{gap:1.5rem}
+.nav-links a{font-size:.74rem;letter-spacing:.1em}
 .nav-links a.is-active{opacity:1;text-decoration:underline;text-underline-offset:.35em;text-decoration-thickness:.1em}
 .mobile-menu a.is-active{text-decoration:underline;text-underline-offset:.3em}
 .cta{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;
@@ -1352,3 +1354,5 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
 .cta-row{display:flex;flex-wrap:wrap;gap:1rem;margin-top:2.4rem}
 .page-hero{padding-top:6.5rem}
 .page-hero .ed-giant{margin-top:.35rem}
+/* liens de la liste d'exploration (accueil) : réutilisent .svcl-row */
+a.svcl-row{color:var(--black)}

@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Le Label — MatSafe</title>
-<meta name="description" content="Pourquoi le label MatSafe existe : les risques d'hygiène dans les sports de combat et la mission du label."/>
+<meta name="description" content="La mission du label MatSafe : faire évoluer l'hygiène avec la pratique dans les sports de combat."/>
 <meta name="theme-color" content="#0A0A0A"/>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230A0A0A'/%3E%3Cellipse cx='16' cy='16' rx='14' ry='9' fill='none' stroke='%23FFFFFF' stroke-width='1.4'/%3E%3Ctext x='16' y='22' font-size='15' font-family='Arial,sans-serif' font-style='italic' font-weight='bold' fill='%23FFFFFF' text-anchor='middle'%3EM%3C/text%3E%3C/svg%3E"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -27,34 +27,27 @@
   </a>
   <div class="nav-links">
     <a href="index.html">Accueil</a>
+    <a href="probleme.html">Le Problème</a>
+    <a href="pour-qui.html">Pour qui</a>
     <a href="services.html">Nos Services</a>
     <a href="label.html" class="is-active" aria-current="page">Le Label</a>
-    <a href="clubs.html">Clubs</a>
     <a href="certification.html">Certification</a>
-    <a href="index.html#s-contact" class="nav-cta">Candidater</a>
+    <a href="clubs.html">Clubs</a>
+    <a href="contact.html">Contact</a>
+    <a href="contact.html" class="nav-cta">Candidater</a>
   </div>
-  <button class="nav-burger" id="nav-burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobile-menu">
-    <span></span><span></span><span></span>
-  </button>
+  <button class="nav-burger" id="nav-burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button>
 </nav>
 <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
   <a href="index.html">Accueil</a>
+  <a href="probleme.html">Le Problème</a>
+  <a href="pour-qui.html">Pour qui</a>
   <a href="services.html">Nos Services</a>
   <a href="label.html" class="is-active" aria-current="page">Le Label</a>
-  <a href="clubs.html">Clubs</a>
   <a href="certification.html">Certification</a>
-  <a href="index.html#s-contact" class="mm-cta">Candidater</a>
-</div>
-
-<div class="prob-modal" id="probmodal" role="dialog" aria-modal="true" aria-labelledby="pm-head" aria-hidden="true" onclick="if(event.target===this)closeProb()">
-  <div class="prob-modal-box">
-    <button class="prob-modal-x" onclick="closeProb()" aria-label="Fermer">×</button>
-    <div class="pm-kicker" id="pm-kicker"></div>
-    <h3 class="pm-head" id="pm-head"></h3>
-    <p class="pm-body" id="pm-body"></p>
-    <ul class="pm-bullets" id="pm-bullets"></ul>
-    <p class="pm-close" id="pm-close"></p>
-  </div>
+  <a href="clubs.html">Clubs</a>
+  <a href="contact.html">Contact</a>
+  <a href="contact.html" class="mm-cta">Candidater</a>
 </div>
 
 <main id="contenu">
@@ -62,58 +55,14 @@
 <section class="ed-section page-hero">
   <div class="ed-header">
     <div>
-      <div class="eyebrow reveal">Le label</div>
+      <div class="eyebrow reveal">Notre mission</div>
       <h1 class="ed-giant reveal">Le <em>Label</em></h1>
     </div>
     <p class="ed-manifesto reveal">Le label national de certification des pratiques d'hygiène dans les sports de combat. <strong>Un cadre clair pour protéger les pratiquants.</strong></p>
   </div>
 </section>
 
-<section class="ed-section" id="s-probleme">
-  <div class="ed-header">
-    <div>
-      <div class="eyebrow reveal">Le problème</div>
-      <h2 class="ed-giant reveal">Le Probl<em>è</em>me</h2>
-    </div>
-    <p class="ed-manifesto reveal">
-      <strong>Un seul cas peut contaminer plusieurs pratiquants en quelques jours.</strong>
-      Et aujourd'hui, la majorité des clubs n'ont aucune structure claire pour gérer ce risque.
-    </p>
-  </div>
-
-  <!-- Le poster fourni, affiché tel quel. Chaque case est un bouton calé en %
-       sur une case blanche de l'image : au clic, une fenêtre affiche tout le
-       détail (le contenu est trop riche pour tenir dans la case). -->
-  <div class="poster-wrap reveal">
-    <img src="assets/probleme-ring.jpg" alt="MatSafe — les six enjeux du problème d'hygiène dans les sports de combat" loading="lazy">
-    <button class="poster-box" style="left:9.9%;top:20.4%;width:25.5%;height:32.9%" onclick="openProb(0)" aria-label="Transmission rapide — voir le détail">
-      <span class="pb-num">01</span><span class="pb-title">Transmission rapide</span>
-    </button>
-    <button class="poster-box" style="left:38.3%;top:20.4%;width:24.3%;height:32.9%" onclick="openProb(1)" aria-label="Surfaces partagées — voir le détail">
-      <span class="pb-num">02</span><span class="pb-title">Surfaces partagées</span>
-    </button>
-    <button class="poster-box" style="left:66.3%;top:20.4%;width:24.3%;height:32.9%" onclick="openProb(2)" aria-label="Peau fragilisée — voir le détail">
-      <span class="pb-num">03</span><span class="pb-title">Peau fragilisée</span>
-    </button>
-    <button class="poster-box" style="left:9.9%;top:56.6%;width:25.5%;height:32.8%" onclick="openProb(3)" aria-label="Réaction improvisée — voir le détail">
-      <span class="pb-num">04</span><span class="pb-title">Réaction improvisée</span>
-    </button>
-    <button class="poster-box" style="left:38.3%;top:56.6%;width:24.3%;height:32.8%" onclick="openProb(4)" aria-label="Arrêt de la pratique — voir le détail">
-      <span class="pb-num">05</span><span class="pb-title">Arrêt de la pratique</span>
-    </button>
-    <button class="poster-box" style="left:66.3%;top:56.6%;width:24.3%;height:32.8%" onclick="openProb(5)" aria-label="Confiance du club — voir le détail">
-      <span class="pb-num">06</span><span class="pb-title">Confiance du club</span>
-    </button>
-  </div>
-</section>
-
 <section class="ed-section">
-  <div class="ed-header">
-    <div>
-      <div class="eyebrow reveal">Notre mission</div>
-      <h2 class="ed-giant ed-giant--md reveal">Notre <em>mission</em></h2>
-    </div>
-  </div>
   <div class="label-block reveal">
     <h3 class="label-lead">L'hygiène doit évoluer avec la pratique</h3>
     <p>Les sports de combat connaissent une croissance importante en France et accueillent aujourd'hui un public toujours plus large : enfants, adultes, parents, débutants comme compétiteurs. Cette évolution doit s'accompagner d'une même exigence en matière d'hygiène et de prévention.</p>
@@ -134,13 +83,10 @@
 
 <section class="ed-section">
   <div class="ed-header">
-    <div>
-      <div class="eyebrow reveal">Contact</div>
-      <h2 class="ed-giant ed-giant--md reveal">Une <em>question</em> ?</h2>
-    </div>
+    <div><div class="eyebrow reveal">Contact</div><h2 class="ed-giant ed-giant--md reveal">Une <em>question</em> ?</h2></div>
     <p class="ed-manifesto reveal">Candidature gratuite et sans engagement. <strong>Un conseiller vous répond sous 48h ouvrées.</strong></p>
   </div>
-  <p class="reveal cta-row"><a class="cta" href="index.html#s-contact">Candidater →</a> <a class="cta cta--ghost" href="tel:+33633188502">06 33 18 85 02</a></p>
+  <p class="reveal cta-row"><a class="cta" href="contact.html">Candidater →</a> <a class="cta cta--ghost" href="tel:+33633188502">06 33 18 85 02</a></p>
 </section>
 
 </main>
@@ -152,22 +98,22 @@
       <p class="fb-body">Le label national de certification des pratiques d'hygiène dans les clubs de sport de combat en France.</p>
     </div>
     <div class="footer-col">
-      <div class="fc-head">Label</div>
+      <div class="fc-head">Le label</div>
+      <a href="probleme.html">Le Problème</a>
       <a href="label.html">Le Label</a>
-      <a href="services.html">Nos Services</a>
       <a href="certification.html">Certification</a>
     </div>
     <div class="footer-col">
       <div class="fc-head">Adhérents</div>
+      <a href="pour-qui.html">Pour qui ?</a>
+      <a href="services.html">Nos Services</a>
       <a href="clubs.html">Trouver un club</a>
-      <a href="index.html#s-contact">Candidater</a>
-      <a href="https://www.medecindirect.fr/" target="_blank" rel="noopener">Téléconsultation MédecinDirect ↗</a>
     </div>
     <div class="footer-col">
-      <div class="fc-head">Légal</div>
+      <div class="fc-head">Contact</div>
+      <a href="contact.html">Candidater</a>
+      <a href="https://www.medecindirect.fr/" target="_blank" rel="noopener">MédecinDirect ↗</a>
       <a href="#">Mentions légales</a>
-      <a href="#">Confidentialité</a>
-      <a href="#">Presse</a>
     </div>
   </div>
   <div class="footer-bot">
@@ -177,6 +123,5 @@
 </footer>
 
 <script src="app.js"></script>
-
 </body>
 </html>

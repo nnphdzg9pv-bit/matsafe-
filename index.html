@@ -29,23 +29,27 @@
   </a>
   <div class="nav-links">
     <a href="index.html" class="is-active" aria-current="page">Accueil</a>
+    <a href="probleme.html">Le Problème</a>
+    <a href="pour-qui.html">Pour qui</a>
     <a href="services.html">Nos Services</a>
     <a href="label.html">Le Label</a>
-    <a href="clubs.html">Clubs</a>
     <a href="certification.html">Certification</a>
-    <a href="index.html#s-contact" class="nav-cta">Candidater</a>
+    <a href="clubs.html">Clubs</a>
+    <a href="contact.html">Contact</a>
+    <a href="contact.html" class="nav-cta">Candidater</a>
   </div>
-  <button class="nav-burger" id="nav-burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobile-menu">
-    <span></span><span></span><span></span>
-  </button>
+  <button class="nav-burger" id="nav-burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button>
 </nav>
 <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
   <a href="index.html" class="is-active" aria-current="page">Accueil</a>
+  <a href="probleme.html">Le Problème</a>
+  <a href="pour-qui.html">Pour qui</a>
   <a href="services.html">Nos Services</a>
   <a href="label.html">Le Label</a>
-  <a href="clubs.html">Clubs</a>
   <a href="certification.html">Certification</a>
-  <a href="index.html#s-contact" class="mm-cta">Candidater</a>
+  <a href="clubs.html">Clubs</a>
+  <a href="contact.html">Contact</a>
+  <a href="contact.html" class="mm-cta">Candidater</a>
 </div>
 
 <main id="contenu">
@@ -80,137 +84,28 @@
   <div class="stat-item"><span class="stat-num" data-t="48">0</span><span class="stat-suf">h</span><span class="stat-lbl">Délai de réponse</span></div>
 </div>
 
-<section class="ed-section" id="s-pourqui">
-  <div class="ed-header">
-    <div>
-      <div class="eyebrow reveal">Pour qui ?</div>
-      <h2 class="ed-giant reveal">Pour <em>qui</em></h2>
-    </div>
-    <p class="ed-manifesto reveal">
-      MatSafe protège ceux qui combattent. Le label s'adresse aux clubs
-      de sports de contact qui veulent structurer leur hygiène et protéger
-      leurs fighters. <strong>Particulièrement adapté aux clubs avec compétiteurs.</strong>
-    </p>
+<section class="ed-section svcl">
+  <div class="ed-header"><div>
+    <div class="eyebrow reveal">Explorer</div>
+    <h2 class="ed-giant ed-giant--md reveal">Le <em>site</em></h2>
+  </div></div>
+  <div class="svcl-list reveal">
+    <a class="svcl-row" href="probleme.html"><span class="svcl-i">(01)</span><span class="svcl-name">Le Problème</span><span class="svcl-desc">Les risques d'hygiène en sports de combat</span></a>
+    <a class="svcl-row" href="pour-qui.html"><span class="svcl-i">(02)</span><span class="svcl-name">Pour qui&nbsp;?</span><span class="svcl-desc">À qui s'adresse le label</span></a>
+    <a class="svcl-row" href="services.html"><span class="svcl-i">(03)</span><span class="svcl-name">Nos Services</span><span class="svcl-desc">Cinq services concrets</span></a>
+    <a class="svcl-row" href="label.html"><span class="svcl-i">(04)</span><span class="svcl-name">Le Label</span><span class="svcl-desc">Notre mission</span></a>
+    <a class="svcl-row" href="certification.html"><span class="svcl-i">(05)</span><span class="svcl-name">Certification</span><span class="svcl-desc">La démarche en 4 étapes</span></a>
+    <a class="svcl-row" href="clubs.html"><span class="svcl-i">(06)</span><span class="svcl-name">Clubs certifiés</span><span class="svcl-desc">La carte nationale</span></a>
+    <a class="svcl-row" href="club-client.html"><span class="svcl-i">(07)</span><span class="svcl-name">Club Client</span><span class="svcl-desc">Cube Fight Club, club pionnier</span></a>
   </div>
-
-  <!-- ── BANDE FIGHTERS : défilement continu ──
-       Deux jeux d'images identiques ; la piste glisse de -50% en boucle,
-       la couture est donc invisible. Le second jeu (aria-hidden, alt vide)
-       n'existe que pour la continuité. Pause au survol ; immobile si
-       l'utilisateur demande à réduire les animations. -->
-  <div class="fighters-band reveal" aria-label="Photos de pratiquants en action">
-    <div class="fighters-viewport">
-      <div class="fighters-track">
-        <!-- JEU 1 (accessible) -->
-        <figure class="fighters-slide"><img class="fighters-photo" src="assets/fighter-2.jpg" alt="Boxeur décochant un direct sur le ring, sous les projecteurs" loading="lazy" decoding="async"></figure>
-        <figure class="fighters-slide"><img class="fighters-photo" src="assets/fighter-4.jpg" alt="Combattant de jiu-jitsu en position montée, dominant son adversaire au sol" loading="lazy" decoding="async"></figure>
-        <figure class="fighters-slide"><img class="fighters-photo" src="assets/fighter-5.jpg" alt="Trois pratiquantes en rashguard, souriantes après l'entraînement" loading="lazy" decoding="async"></figure>
-        <figure class="fighters-slide"><img class="fighters-photo" src="assets/pourqui-sport.jpg" alt="Pratiquant de jiu-jitsu brésilien contrôlant la jambe de son partenaire au sol" loading="lazy" decoding="async"></figure>
-        <figure class="fighters-slide"><img class="fighters-photo" src="assets/fighter-1.jpg" alt="Lutteur exécutant une projection à l'entraînement, en plein mouvement" loading="lazy" decoding="async"></figure>
-        <figure class="fighters-slide"><img class="fighters-photo" src="assets/fighter-3.jpg" alt="Judoka projetant son partenaire lors d'un randori en dojo" loading="lazy" decoding="async"></figure>
-        <!-- JEU 2 (décoratif, dupliqué pour la boucle) -->
-        <figure class="fighters-slide" aria-hidden="true"><img class="fighters-photo" src="assets/fighter-2.jpg" alt="" loading="lazy" decoding="async"></figure>
-        <figure class="fighters-slide" aria-hidden="true"><img class="fighters-photo" src="assets/fighter-4.jpg" alt="" loading="lazy" decoding="async"></figure>
-        <figure class="fighters-slide" aria-hidden="true"><img class="fighters-photo" src="assets/fighter-5.jpg" alt="" loading="lazy" decoding="async"></figure>
-        <figure class="fighters-slide" aria-hidden="true"><img class="fighters-photo" src="assets/pourqui-sport.jpg" alt="" loading="lazy" decoding="async"></figure>
-        <figure class="fighters-slide" aria-hidden="true"><img class="fighters-photo" src="assets/fighter-1.jpg" alt="" loading="lazy" decoding="async"></figure>
-        <figure class="fighters-slide" aria-hidden="true"><img class="fighters-photo" src="assets/fighter-3.jpg" alt="" loading="lazy" decoding="async"></figure>
-      </div>
-    </div>
-  </div>
-
-  <div class="ed-list">
-
-    <article class="ed-row ed-row--link reveal"><div class="ed-index">01</div><h3 class="ed-name">Jiu-Jitsu Brésilien</h3></article>
-    <article class="ed-row ed-row--link reveal"><div class="ed-index">02</div><h3 class="ed-name">MMA</h3></article>
-    <article class="ed-row ed-row--link reveal"><div class="ed-index">03</div><h3 class="ed-name">Grappling</h3></article>
-    <article class="ed-row ed-row--link reveal"><div class="ed-index">04</div><h3 class="ed-name">Judo</h3></article>
-    <article class="ed-row ed-row--link reveal"><div class="ed-index">05</div><h3 class="ed-name">Lutte</h3></article>
-    <article class="ed-row ed-row--link reveal"><div class="ed-index">06</div><h3 class="ed-name">Sports de combat en général</h3></article>
-
-  </div>
-
-  <p class="ed-note reveal"><span><strong>Vous n'êtes pas dans la liste ?</strong> Tout club où le contact peau-à-peau est fréquent est concerné.</span></p>
 </section>
 
-<section class="ed-section" id="s-club">
+<section class="ed-section">
   <div class="ed-header">
-    <div>
-      <div class="eyebrow reveal">Club client</div>
-      <h2 class="ed-giant ed-giant--md reveal">Cube Fight <em>Club</em></h2>
-    </div>
-    <p class="ed-manifesto reveal">Premier club labellisé MatSafe — le standard que tous les clubs certifiés visent désormais. <strong>Découvrez comment ils ont structuré leur hygiène.</strong></p>
+    <div><div class="eyebrow reveal">Contact</div><h2 class="ed-giant ed-giant--md reveal">Une <em>question</em> ?</h2></div>
+    <p class="ed-manifesto reveal">Candidature gratuite et sans engagement. <strong>Un conseiller vous répond sous 48h ouvrées.</strong></p>
   </div>
-  <div class="reveal d1">
-    <div class="spotlight-photos">
-      <img src="assets/club-cube-1.jpg" alt="Cube Fight Club — salle principale" width="1400" height="1050" loading="lazy" decoding="async"/>
-      <img src="assets/club-cube-2.jpg" alt="Cube Fight Club — mur signé" width="1400" height="1050" loading="lazy" decoding="async"/>
-    </div>
-  </div>
-  <p class="reveal cta-row"><a class="cta" href="club-client.html">Découvrir le Club Client →</a></p>
-</section>
-
-<section class="ed-section" id="s-contact">
-  <div class="ed-header">
-    <div>
-      <div class="eyebrow reveal">Contact</div>
-      <h2 class="ed-giant reveal">Cand<em>i</em>dater</h2>
-    </div>
-    <p class="ed-manifesto reveal">
-      Candidature gratuite et sans engagement.
-      <strong>Un conseiller vous répond sous 48h ouvrées.</strong>
-    </p>
-  </div>
-
-  <div class="contact2 reveal">
-    <!-- Colonne gauche : infos courtes -->
-    <div class="contact2-info">
-      <div class="c2-block"><span class="c2-label">Zone</span><p>France entière</p></div>
-      <div class="c2-block"><span class="c2-label">Horaires</span><p>Lun – Ven<br>9h – 18h</p></div>
-      <div class="c2-block"><span class="c2-label">Réponse</span><p>Sous 48h ouvrées</p></div>
-    </div>
-
-    <!-- Formulaire : champs soulignés -->
-    <form class="contact2-form" id="contact-form" novalidate>
-      <div class="c2-row">
-        <div class="c2-field">
-          <label class="c2-flabel" for="fp">Prénom <span aria-hidden="true">*</span></label>
-          <input type="text" class="c2-input" id="fp" name="prenom" autocomplete="given-name" placeholder="Prénom" required/>
-        </div>
-        <div class="c2-field">
-          <label class="c2-flabel" for="fn">Nom <span aria-hidden="true">*</span></label>
-          <input type="text" class="c2-input" id="fn" name="nom" autocomplete="family-name" placeholder="Nom de famille" required/>
-        </div>
-      </div>
-      <div class="c2-field">
-        <label class="c2-flabel" for="fc">Nom du club</label>
-        <input type="text" class="c2-input" id="fc" name="club" autocomplete="organization" placeholder="Votre club"/>
-      </div>
-      <div class="c2-field">
-        <label class="c2-flabel" for="fd">Discipline principale</label>
-        <select class="c2-input c2-select" id="fd" name="discipline">
-          <option>BJJ / Grappling</option><option>MMA</option><option>Judo</option>
-          <option>Boxe</option><option>Muay Thaï</option><option>Lutte / Wrestling</option>
-          <option>Sambo</option><option>Autre</option>
-        </select>
-      </div>
-      <div class="c2-field">
-        <label class="c2-flabel" for="fe">E-mail <span aria-hidden="true">*</span></label>
-        <input type="email" class="c2-input" id="fe" name="email" autocomplete="email" placeholder="vous@club.fr" required/>
-      </div>
-      <div class="c2-field">
-        <label class="c2-flabel" for="fm">Votre message</label>
-        <textarea class="c2-input c2-textarea" id="fm" name="message" rows="3" placeholder="Dites-nous où vous en êtes. On vous dit ce qu'il manque."></textarea>
-      </div>
-      <button type="submit" class="c2-submit">Envoyer la demande →</button>
-    </form>
-  </div>
-
-  <!-- Coordonnées -->
-  <div class="contact2-big reveal">
-    <a class="c2-huge c2-mail" href="mailto:contact@matsafe.fr">contact@matsafe.fr</a>
-    <a class="c2-huge c2-tel" href="tel:+33633188502">06 33 18 85 02</a>
-  </div>
+  <p class="reveal cta-row"><a class="cta" href="contact.html">Candidater →</a> <a class="cta cta--ghost" href="tel:+33633188502">06 33 18 85 02</a></p>
 </section>
 
 </main>
@@ -222,22 +117,22 @@
       <p class="fb-body">Le label national de certification des pratiques d'hygiène dans les clubs de sport de combat en France.</p>
     </div>
     <div class="footer-col">
-      <div class="fc-head">Label</div>
+      <div class="fc-head">Le label</div>
+      <a href="probleme.html">Le Problème</a>
       <a href="label.html">Le Label</a>
-      <a href="services.html">Nos Services</a>
       <a href="certification.html">Certification</a>
     </div>
     <div class="footer-col">
       <div class="fc-head">Adhérents</div>
+      <a href="pour-qui.html">Pour qui ?</a>
+      <a href="services.html">Nos Services</a>
       <a href="clubs.html">Trouver un club</a>
-      <a href="index.html#s-contact">Candidater</a>
-      <a href="https://www.medecindirect.fr/" target="_blank" rel="noopener">Téléconsultation MédecinDirect ↗</a>
     </div>
     <div class="footer-col">
-      <div class="fc-head">Légal</div>
+      <div class="fc-head">Contact</div>
+      <a href="contact.html">Candidater</a>
+      <a href="https://www.medecindirect.fr/" target="_blank" rel="noopener">MédecinDirect ↗</a>
       <a href="#">Mentions légales</a>
-      <a href="#">Confidentialité</a>
-      <a href="#">Presse</a>
     </div>
   </div>
   <div class="footer-bot">
@@ -247,6 +142,5 @@
 </footer>
 
 <script src="app.js"></script>
-
 </body>
 </html>
