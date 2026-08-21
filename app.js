@@ -281,10 +281,12 @@ const CONTACT_EMAIL = 'contact@matsafe.fr';
     const btn=form.querySelector('.c2-submit');
     btn.disabled=true;
 
+    const val=n=>{const el=form[n];return el?String(el.value||'').trim():'';};
     const payload={
       prenom:f.prenom.value.trim(),nom:f.nom.value.trim(),
       email:f.email.value.trim(),club:f.club.value.trim(),
-      discipline:f.discipline.value,message:f.message.value.trim(),
+      discipline:f.discipline.value,message:f.message?f.message.value.trim():'',
+      ville:val('ville'),tel:val('tel'),surface:val('surface'),
     };
 
     const done=()=>{
@@ -310,13 +312,16 @@ const CONTACT_EMAIL = 'contact@matsafe.fr';
       `Prénom : ${payload.prenom}`,
       `Nom : ${payload.nom}`,
       `E-mail : ${payload.email}`,
+      payload.tel?`Téléphone : ${payload.tel}`:null,
       `Club : ${payload.club||'—'}`,
+      payload.ville?`Ville : ${payload.ville}`:null,
       `Discipline : ${payload.discipline}`,
+      payload.surface?`Surface : ${payload.surface}`:null,
       '',
       payload.message||'(pas de message)',
-    ].join('\n');
+    ].filter(Boolean).join('\n');
     window.location.href='mailto:'+CONTACT_EMAIL
-      +'?subject='+encodeURIComponent(`Candidature MatSafe — ${payload.club||payload.nom}`)
+      +'?subject='+encodeURIComponent(`Demande d'audit MATSAFE — ${payload.club||payload.nom}`)
       +'&body='+encodeURIComponent(body);
     done();
   });
