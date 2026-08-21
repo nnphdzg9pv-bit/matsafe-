@@ -784,6 +784,12 @@ footer{
   font-size:1.14rem !important;line-height:1.5;color:var(--black);
 }
 .label-close strong{font-weight:600}
+.label-sub{
+  font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;
+  font-size:clamp(1.25rem,2.4vw,1.9rem);line-height:1.05;letter-spacing:.02em;
+  color:var(--black);margin-top:2.6rem !important;
+}
+.label-sub + .label-close{margin-top:.7rem !important}
 @media(max-width:720px){
   .label-block{padding-top:2.1rem;margin-top:2.6rem}
   .label-block p{font-size:.92rem}
