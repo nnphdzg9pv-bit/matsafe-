@@ -802,7 +802,7 @@ footer{
    Les enjeux défilent verticalement ; celui au centre passe en noir plein,
    avec sa vignette à gauche et son mot-clé à droite. DA MatSafe (crème/noir).
    ══════════════════════════════════════════ */
-.pfocus{position:relative;height:420vh;background:var(--off)}
+.pfocus{position:relative;height:240vh;background:var(--off)}
 .pfocus-stage{
   position:sticky;top:0;height:100vh;overflow:hidden;
   -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 14%,#000 86%,transparent 100%);
@@ -838,7 +838,7 @@ footer{
   position:absolute;left:3.2%;top:50%;transform:translateY(-50%) translateX(-12px);
   z-index:1;width:clamp(108px,12vw,182px);height:clamp(148px,16vw,246px);
   object-fit:cover;border-radius:3px;background:var(--light);
-  opacity:var(--pf-th,0);transition:opacity .4s ease,transform .5s ease;pointer-events:none;
+  opacity:var(--pf-th,0);transition:opacity .26s ease,transform .3s cubic-bezier(.2,.7,.2,1);pointer-events:none;
 }
 .pf-word.is-active .pf-thumb{transform:translateY(-50%) translateX(0)}
 /* Mot-clé attaché au mot (à droite) : il apparaît quand le mot approche du centre. */
@@ -846,7 +846,7 @@ footer{
   position:absolute;right:3.6%;top:50%;transform:translateY(-50%);z-index:2;
   font-family:'Barlow',sans-serif;font-weight:600;text-transform:uppercase;
   letter-spacing:.18em;font-size:clamp(.7rem,.95vw,.92rem);
-  color:rgba(10,10,10,.55);opacity:var(--pf-t,0);transition:opacity .3s ease;pointer-events:none;
+  color:rgba(10,10,10,.55);opacity:var(--pf-t,0);transition:opacity .2s ease;pointer-events:none;
 }
 @media(max-width:820px){
   .pf-thumb,.pf-tag{display:none}
