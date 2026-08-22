@@ -770,38 +770,31 @@ footer{
    ══════════════════════════════════════════ */
 .label-block{
   margin-top:0;padding-top:0;
-  max-width:860px;
+  max-width:880px;
 }
-.label-block > * + *{margin-top:1.35rem}
-/* Titre-accroche : c'est désormais l'ouverture de la page, on le pose grand. */
+.label-block > * + *{margin-top:1.3rem}
+/* Titre-accroche : gras, sur une ligne plutôt longue (comme le 1er prototype),
+   pas empilé mot par mot. */
 .label-lead{
   font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
-  font-size:clamp(2.3rem,5.2vw,4rem);line-height:1;letter-spacing:.01em;
-  color:var(--black);margin-bottom:2.1rem;max-width:15ch;
+  font-size:clamp(1.9rem,3.7vw,3rem);line-height:1.04;letter-spacing:.01em;
+  color:var(--black);margin-bottom:1.9rem;
 }
-/* Paragraphe d'accroche (juste après le titre) : plus grand, il happe la lecture. */
-.label-lead + p{
-  font-size:clamp(1.35rem,2.4vw,1.85rem);line-height:1.4;font-weight:500;
-  color:var(--black);
-}
-.label-block p{font-size:1.08rem;line-height:1.85;color:var(--black)}
-.label-block p strong{font-weight:700}
+/* Corps : le texte tel qu'il était, juste un peu agrandi pour le confort de lecture. */
+.label-block p{font-size:1.05rem;line-height:1.85;color:var(--black)}
 .label-accent{
-  font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
-  font-size:clamp(1.6rem,3vw,2.4rem) !important;line-height:1.05;letter-spacing:.01em;
-  color:var(--black);margin-top:2.4rem !important;
+  font-family:'Barlow',sans-serif;font-style:italic;font-weight:500;
+  font-size:1.22rem !important;line-height:1.5;color:var(--black);
 }
-.label-close{font-size:1.18rem !important}
-.label-close strong{font-weight:700}
+.label-close strong{font-weight:600}
 .label-sub{
   font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;
-  font-size:clamp(1.5rem,2.8vw,2.2rem);line-height:1.05;letter-spacing:.02em;
-  color:var(--black);margin-top:3rem !important;
+  font-size:clamp(1.3rem,2.5vw,2rem);line-height:1.05;letter-spacing:.02em;
+  color:var(--black);margin-top:2.8rem !important;
 }
-.label-sub + .label-close{margin-top:.8rem !important}
+.label-sub + .label-close{margin-top:.7rem !important}
 @media(max-width:720px){
-  .label-block p{font-size:1rem}
-  .label-lead + p{font-size:1.25rem}
+  .label-block p{font-size:.99rem}
 }
 
 /* ══════════════════════════════════════════
