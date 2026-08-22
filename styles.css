@@ -769,30 +769,39 @@ footer{
    continu, dans la typographie du site (filet noir en haut, comme .ed-list).
    ══════════════════════════════════════════ */
 .label-block{
-  margin-top:3.5rem;padding-top:2.8rem;
-  max-width:840px;
+  margin-top:0;padding-top:0;
+  max-width:860px;
 }
-.label-block > * + *{margin-top:1.25rem}
+.label-block > * + *{margin-top:1.35rem}
+/* Titre-accroche : c'est désormais l'ouverture de la page, on le pose grand. */
 .label-lead{
   font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
-  font-size:clamp(1.7rem,3.4vw,2.8rem);line-height:1.02;letter-spacing:.01em;
-  color:var(--black);margin-bottom:1.7rem;
+  font-size:clamp(2.3rem,5.2vw,4rem);line-height:1;letter-spacing:.01em;
+  color:var(--black);margin-bottom:2.1rem;max-width:15ch;
 }
-.label-block p{font-size:.98rem;line-height:1.78;color:var(--black)}
+/* Paragraphe d'accroche (juste après le titre) : plus grand, il happe la lecture. */
+.label-lead + p{
+  font-size:clamp(1.35rem,2.4vw,1.85rem);line-height:1.4;font-weight:500;
+  color:var(--black);
+}
+.label-block p{font-size:1.08rem;line-height:1.85;color:var(--black)}
+.label-block p strong{font-weight:700}
 .label-accent{
-  font-family:'Barlow',sans-serif;font-style:italic;font-weight:500;
-  font-size:1.14rem !important;line-height:1.5;color:var(--black);
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
+  font-size:clamp(1.6rem,3vw,2.4rem) !important;line-height:1.05;letter-spacing:.01em;
+  color:var(--black);margin-top:2.4rem !important;
 }
-.label-close strong{font-weight:600}
+.label-close{font-size:1.18rem !important}
+.label-close strong{font-weight:700}
 .label-sub{
   font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;
-  font-size:clamp(1.25rem,2.4vw,1.9rem);line-height:1.05;letter-spacing:.02em;
-  color:var(--black);margin-top:2.6rem !important;
+  font-size:clamp(1.5rem,2.8vw,2.2rem);line-height:1.05;letter-spacing:.02em;
+  color:var(--black);margin-top:3rem !important;
 }
-.label-sub + .label-close{margin-top:.7rem !important}
+.label-sub + .label-close{margin-top:.8rem !important}
 @media(max-width:720px){
-  .label-block{padding-top:2.1rem;margin-top:2.6rem}
-  .label-block p{font-size:.92rem}
+  .label-block p{font-size:1rem}
+  .label-lead + p{font-size:1.25rem}
 }
 
 /* ══════════════════════════════════════════
@@ -807,7 +816,7 @@ footer{
           mask-image:linear-gradient(180deg,transparent 0,#000 14%,#000 86%,transparent 100%);
 }
 .pfocus-eyebrow{
-  position:absolute;top:2.2rem;left:2.5rem;z-index:5;
+  position:absolute;top:5rem;left:2.5rem;z-index:5;
   font-family:'Barlow',sans-serif;font-weight:600;text-transform:uppercase;
   letter-spacing:.2em;font-size:.72rem;color:var(--black);
 }
@@ -1406,9 +1415,15 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
   .svcl-desc{grid-column:2;grid-row:2;align-self:start}
 }
 
-/* audit: retrait filets noirs epais + espacement hero de page resserre */
-.page-hero{padding-bottom:2rem}
-.page-hero .ed-header{margin-bottom:0}
+/* Première section de contenu : dégagement sous la nav fixe
+   (remplace l'ancien padding-top des blocs-titres « page-hero » supprimés).
+   Couvre le multipage (#contenu > section) et le single-file (#contenu > .route > section). */
+#contenu > .ed-section:first-child,
+#contenu > .route > .ed-section:first-child{padding-top:7rem}
+@media(max-width:720px){
+  #contenu > .ed-section:first-child,
+  #contenu > .route > .ed-section:first-child{padding-top:5.6rem}
+}
 
 
 /* ── Multipage : menu, état actif, CTA, hero de page ── */
@@ -1422,8 +1437,6 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
 .cta:hover{opacity:.85;transform:translateY(-2px)}
 .cta--ghost{background:transparent;color:var(--black);border:1.6px solid var(--black)}
 .cta-row{display:flex;flex-wrap:wrap;gap:1rem;margin-top:2.4rem}
-.page-hero{padding-top:6.5rem}
-.page-hero .ed-giant{margin-top:.35rem}
 a.svcl-row{color:var(--black)}
 .sec-intro{max-width:62ch;font-size:1rem;line-height:1.7;color:var(--gray);margin:.6rem 0 0}
 .sec-intro strong{color:var(--black);font-weight:600}
