@@ -165,14 +165,14 @@ nav.solid{box-shadow:0 2px 16px rgba(0,0,0,.06)}
 @keyframes fighters-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .fighters-slide{flex:0 0 auto;margin:0;margin-right:16px}
 .fighters-photo{
-  width:300px;height:400px;display:block;object-fit:cover;
+  width:380px;height:520px;display:block;object-fit:cover;
   border-radius:3px;background:var(--light);
 }
 
 @media(max-width:720px){
   .fighters-band{margin-left:-1.4rem;margin-right:-1.4rem;padding:1.1rem 0}
   .fighters-slide{margin-right:12px}
-  .fighters-photo{width:220px;height:300px}
+  .fighters-photo{width:270px;height:370px}
 }
 /* Réduire les animations : bande immobile. */
 @media(prefers-reduced-motion:reduce){
