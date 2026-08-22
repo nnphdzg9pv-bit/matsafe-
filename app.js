@@ -236,10 +236,10 @@ document.querySelectorAll('.reveal').forEach(el=>rObs.observe(el));
   if(!track)return;
   const list=track.querySelector('.pfocus-list');
   const words=[].slice.call(track.querySelectorAll('.pf-word'));
-  const thumb=document.getElementById('pfocus-thumb');
-  const tag=document.getElementById('pfocus-tag');
+  const counter=document.getElementById('pfocus-count');
   if(!words.length)return;
   const N=words.length;
+  const pad=n=>(n<10?'0':'')+n;
   // Respect de « prefers-reduced-motion » : liste statique, tout en noir.
   if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches){
     words.forEach(w=>w.classList.add('is-active'));return;
@@ -254,21 +254,29 @@ document.querySelectorAll('.reveal').forEach(el=>rObs.observe(el));
     const C=words.map(w=>w.offsetTop+w.offsetHeight/2);
     const idxF=p*(N-1);
     const lo=Math.floor(idxF),hi=Math.min(N-1,lo+1),f=idxF-lo;
-    const off=C[lo]+(C[hi]-C[lo])*f;
+    const off=C[lo]+(C[hi]-C[lo])*f;          // point de la liste aligné au centre du viewport
     list.style.transform='translateY('+(mid-off)+'px)';
     let best=1e9,bi=0;
     for(let i=0;i<N;i++){
       const d=Math.abs(C[i]-off);
-      const o=Math.max(.12,1-d/(vh*0.42));
+      // Couleur du mot : gris clair au loin -> noir près du centre (chute nette
+      // pour que seul le mot centré ressorte en noir, comme la référence).
+      const o=Math.max(.18,1-d/(vh*0.2));
+      // Mot-clé : n'apparaît que lorsque le mot est proche du centre.
+      const t=Math.max(0,1-d/(vh*0.15));
       words[i].style.setProperty('--pf-o',o.toFixed(3));
+      words[i].style.setProperty('--pf-t',t.toFixed(3));
       if(d<best){best=d;bi=i;}
     }
     if(bi!==active){
       active=bi;
-      words.forEach((w,i)=>w.classList.toggle('is-active',i===bi));
-      const w=words[bi];
-      if(thumb&&w.getAttribute('data-img')){thumb.src=w.getAttribute('data-img');thumb.classList.add('show');}
-      if(tag&&w.getAttribute('data-tag')){tag.textContent=w.getAttribute('data-tag');tag.classList.add('show');}
+      words.forEach((w,i)=>{
+        const on=i===bi;
+        w.classList.toggle('is-active',on);
+        // Seule la vignette du mot actif est visible ; elle voyage avec le mot.
+        w.style.setProperty('--pf-th',on?'1':'0');
+      });
+      if(counter)counter.textContent=pad(bi+1)+' / '+pad(N);
     }
   }
   function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(update);}}
@@ -277,7 +285,7 @@ document.querySelectorAll('.reveal').forEach(el=>rObs.observe(el));
   window.addEventListener('scroll',onScroll,{passive:true,capture:true});
   window.addEventListener('resize',update);
   // Ré-init quand la route devient visible (build single-file à hash router).
-  window.addEventListener('hashchange',()=>{active=-1;setTimeout(update,80);});
+  window.addEventListener('hashchange',function(){active=-1;setTimeout(update,80);});
   update();
 })();
 
