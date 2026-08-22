@@ -228,6 +228,59 @@ const rObs=new IntersectionObserver(entries=>{
 },{threshold:.1});
 document.querySelectorAll('.reveal').forEach(el=>rObs.observe(el));
 
+// ── LE PROBLÈME : liste-focus au scroll ───────────────────────
+// Les enjeux défilent ; celui au centre passe en noir plein, avec sa
+// vignette (à gauche) et son mot-clé (à droite). Vanilla JS, sans dépendance.
+(function(){
+  const track=document.querySelector('.pfocus');
+  if(!track)return;
+  const list=track.querySelector('.pfocus-list');
+  const words=[].slice.call(track.querySelectorAll('.pf-word'));
+  const thumb=document.getElementById('pfocus-thumb');
+  const tag=document.getElementById('pfocus-tag');
+  if(!words.length)return;
+  const N=words.length;
+  // Respect de « prefers-reduced-motion » : liste statique, tout en noir.
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches){
+    words.forEach(w=>w.classList.add('is-active'));return;
+  }
+  let active=-1,ticking=false;
+  function update(){
+    ticking=false;
+    const vh=window.innerHeight,mid=vh/2;
+    const total=track.offsetHeight-vh;
+    if(total<=0)return;                       // route masquée (single-file) : rien à faire
+    const p=Math.min(1,Math.max(0,(-track.getBoundingClientRect().top)/total));
+    const C=words.map(w=>w.offsetTop+w.offsetHeight/2);
+    const idxF=p*(N-1);
+    const lo=Math.floor(idxF),hi=Math.min(N-1,lo+1),f=idxF-lo;
+    const off=C[lo]+(C[hi]-C[lo])*f;
+    list.style.transform='translateY('+(mid-off)+'px)';
+    let best=1e9,bi=0;
+    for(let i=0;i<N;i++){
+      const d=Math.abs(C[i]-off);
+      const o=Math.max(.12,1-d/(vh*0.42));
+      words[i].style.setProperty('--pf-o',o.toFixed(3));
+      if(d<best){best=d;bi=i;}
+    }
+    if(bi!==active){
+      active=bi;
+      words.forEach((w,i)=>w.classList.toggle('is-active',i===bi));
+      const w=words[bi];
+      if(thumb&&w.getAttribute('data-img')){thumb.src=w.getAttribute('data-img');thumb.classList.add('show');}
+      if(tag&&w.getAttribute('data-tag')){tag.textContent=w.getAttribute('data-tag');tag.classList.add('show');}
+    }
+  }
+  function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(update);}}
+  // Capture: attrape le scroll même quand c'est <body> qui défile
+  // (body{overflow-x:hidden} en fait le conteneur de défilement).
+  window.addEventListener('scroll',onScroll,{passive:true,capture:true});
+  window.addEventListener('resize',update);
+  // Ré-init quand la route devient visible (build single-file à hash router).
+  window.addEventListener('hashchange',()=>{active=-1;setTimeout(update,80);});
+  update();
+})();
+
 // ── FORMULAIRE DE CANDIDATURE ─────────────────────────────────
 // Tant qu'aucun back-end n'est branché, la demande part par le client mail
 // du visiteur : elle arrive vraiment, sans serveur à héberger.
