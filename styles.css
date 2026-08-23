@@ -1494,6 +1494,10 @@ a.svcl-row{color:var(--black)}
   padding:2.3rem 2.1rem;cursor:pointer;
   will-change:transform,opacity;
 }
+.svcx-action{
+  display:block;font-family:'Barlow',sans-serif;font-weight:700;text-transform:uppercase;
+  letter-spacing:.22em;font-size:.7rem;color:rgba(10,10,10,.5);margin-bottom:.85rem;
+}
 .svcx-title{
   display:block;font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
   font-size:clamp(1.7rem,2.7vw,2.5rem);line-height:1;letter-spacing:.005em;color:var(--black);
@@ -1511,6 +1515,17 @@ a.svcl-row{color:var(--black)}
   .svcx-sub{font-size:.92rem}
   .svcx-keys{font-size:.92rem}
 }
+/* Chaîne de progression : Évaluer → … → Certifier (le label = aboutissement) */
+.svcx-method{padding-top:3rem}
+.svcx-chain{display:flex;flex-wrap:wrap;align-items:center;gap:.55rem .75rem}
+.svcx-step{
+  font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;
+  letter-spacing:.02em;font-size:clamp(1.1rem,2vw,1.7rem);color:rgba(10,10,10,.5);
+}
+.svcx-step--label{color:var(--off);background:var(--black);padding:.18em .7em;border-radius:3px}
+.svcx-arr{color:rgba(10,10,10,.28);font-size:1.05rem}
+.svcx-method-note{margin-top:1.7rem;font-size:1.12rem;line-height:1.55;color:var(--black);max-width:60ch}
+.svcx-method-note strong{font-weight:700}
 /* Sans animation : les cartes s'affichent en pile verticale lisible. */
 @media(prefers-reduced-motion:reduce){
   .svcx{height:auto}
