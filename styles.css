@@ -1455,3 +1455,69 @@ a.svcl-row{color:var(--black)}
 .faq-item[open] summary::after{transform:rotate(45deg)}
 .faq-item .faq-a{padding:0 .2rem 1.3rem;font-size:.96rem;line-height:1.65;color:var(--gray);max-width:70ch}
 .faq-item .faq-a strong{color:var(--black);font-weight:600}
+
+/* ══════════════════════════════════════════
+   NOS SERVICES — cartes empilées au scroll (inspiré de la réf. « scroll
+   animations », adapté DA MatSafe). Le grand mot « NOS SERVICES » se floute
+   en fond pendant que les cartes défilent et s'empilent, légèrement inclinées.
+   ══════════════════════════════════════════ */
+.svcx{position:relative;height:460vh;background:var(--off)}
+.svcx-stage{position:sticky;top:0;height:100vh;overflow:hidden;background:var(--off)}
+.svcx-bg{
+  position:absolute;inset:0;z-index:0;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;gap:0;pointer-events:none;
+  will-change:filter,transform,opacity;
+}
+.svcx-bg span{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
+  font-size:clamp(3.4rem,17vw,14rem);line-height:.82;letter-spacing:-.01em;color:var(--black);
+}
+.svcx-eyebrow{
+  position:absolute;top:5rem;left:2.5rem;z-index:5;
+  font-family:'Barlow',sans-serif;font-weight:600;text-transform:uppercase;
+  letter-spacing:.2em;font-size:.72rem;color:var(--black);
+}
+.svcx-count{margin-left:.6rem;color:rgba(10,10,10,.4)}
+.svcx-hint{
+  position:absolute;bottom:2.1rem;left:0;right:0;z-index:5;text-align:center;
+  font-family:'Barlow',sans-serif;font-weight:500;text-transform:uppercase;
+  letter-spacing:.16em;font-size:.7rem;color:rgba(10,10,10,.4);
+}
+.svcx-deck{position:absolute;inset:0;z-index:2}
+.svcx-card{
+  position:absolute;left:50%;top:50%;
+  width:min(440px,86vw);min-height:min(74vh,460px);
+  transform:translate(-50%,-50%);opacity:0;
+  display:flex;flex-direction:column;justify-content:space-between;text-align:left;
+  background:var(--light);color:var(--black);border:1px solid var(--border);border-radius:10px;
+  box-shadow:0 34px 70px -26px rgba(10,10,10,.42);
+  padding:2.3rem 2.1rem;cursor:pointer;
+  will-change:transform,opacity;
+}
+.svcx-title{
+  display:block;font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
+  font-size:clamp(1.7rem,2.7vw,2.5rem);line-height:1;letter-spacing:.005em;color:var(--black);
+}
+.svcx-sub{display:block;margin-top:1rem;font-size:.98rem;line-height:1.5;color:rgba(10,10,10,.72);max-width:32ch}
+.svcx-foot{display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;margin-top:2rem}
+.svcx-keys{display:flex;flex-direction:column;gap:.2rem;
+  font-family:'Barlow',sans-serif;font-weight:600;font-size:1rem;line-height:1.35;color:var(--black)}
+.svcx-num{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;line-height:.8;
+  font-size:clamp(2.6rem,5vw,4rem);color:var(--black);
+}
+@media(max-width:720px){
+  .svcx-card{padding:1.8rem 1.5rem;min-height:64vh}
+  .svcx-sub{font-size:.92rem}
+  .svcx-keys{font-size:.92rem}
+}
+/* Sans animation : les cartes s'affichent en pile verticale lisible. */
+@media(prefers-reduced-motion:reduce){
+  .svcx{height:auto}
+  .svcx-stage{position:static;height:auto;overflow:visible;padding:4rem 1.5rem;display:flex;flex-direction:column;align-items:center;gap:1.5rem}
+  .svcx-bg{position:static;flex-direction:row;gap:.4ch;margin-bottom:1rem}
+  .svcx-bg span{font-size:clamp(2.2rem,9vw,4rem)}
+  .svcx-deck{position:static;display:flex;flex-direction:column;gap:1.5rem;width:100%;max-width:460px}
+  .svcx-card{position:static;transform:none;opacity:1;width:100%}
+  .svcx-hint{position:static;margin-top:1rem}
+}

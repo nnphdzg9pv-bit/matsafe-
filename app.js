@@ -289,6 +289,60 @@ document.querySelectorAll('.reveal').forEach(el=>rObs.observe(el));
   update();
 })();
 
+// ── NOS SERVICES : cartes empilées au scroll ──────────────────
+// Le grand mot « NOS SERVICES » se floute en fond ; les cartes montent une à
+// une, s'inclinent et s'empilent (les précédentes dépassent en haut). Vanilla JS.
+(function(){
+  const track=document.querySelector('.svcx');
+  if(!track)return;
+  const bg=document.getElementById('svcx-bg');
+  const cards=[].slice.call(track.querySelectorAll('.svcx-card'));
+  const counter=document.getElementById('svcx-count');
+  if(!cards.length)return;
+  const N=cards.length;
+  const pad=n=>(n<10?'0':'')+n;
+  const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+  const ROT=[-5,4,-3,5,-4,3];
+  const OX=[-12,14,-8,12,-6,10];
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches){
+    cards.forEach(c=>{c.style.opacity=1;});return;   // pile statique via CSS
+  }
+  let ticking=false,cur=-1;
+  function update(){
+    ticking=false;
+    const vh=window.innerHeight;
+    const total=track.offsetHeight-vh;
+    if(total<=0)return;                               // route masquée (single-file)
+    const p=clamp(-track.getBoundingClientRect().top/total,0,1);
+    const f=p*(N+1)-1;                                // -1 .. N
+    // Fond : net à l'intro, flouté/estompé dès que les cartes arrivent.
+    const bp=clamp(f+1,0,1);
+    if(bg){
+      bg.style.filter='blur('+(bp*12).toFixed(1)+'px)';
+      bg.style.opacity=(0.9-0.78*bp).toFixed(3);
+      bg.style.transform='scale('+(1+0.06*bp).toFixed(3)+')';
+    }
+    for(let i=0;i<N;i++){
+      const t=f-i;                                    // <-1 attente ; (-1,0) arrivée ; >=0 empilée
+      const rest=ROT[i%ROT.length], ox=OX[i%OX.length];
+      let ty,rot,sc,op,z,pe;
+      if(t<=-1){ ty=0.58*vh; rot=rest*0.3; sc=0.92; op=0; z=i; pe='none'; }
+      else if(t<0){ const k=t+1; ty=0.58*vh*(1-k); rot=rest*k; sc=0.92+0.08*k; op=k; z=100+i; pe=k>0.5?'auto':'none'; }
+      else { const s=Math.min(t,N); ty=-s*0.032*vh; rot=rest; sc=1-Math.min(t,4)*0.03; op=1; z=i; pe='auto'; }
+      const c=cards[i];
+      c.style.transform='translate(calc(-50% + '+ox+'px), calc(-50% + '+ty.toFixed(1)+'px)) rotate('+rot.toFixed(2)+'deg) scale('+sc.toFixed(3)+')';
+      c.style.opacity=op; c.style.zIndex=z; c.style.pointerEvents=pe;
+    }
+    const idx=clamp(Math.round(f),0,N-1);
+    if(idx!==cur){cur=idx;if(counter)counter.textContent=pad(idx+1)+' / '+pad(N);}
+  }
+  function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(update);}}
+  window.addEventListener('scroll',onScroll,{passive:true,capture:true});
+  window.addEventListener('resize',update);
+  window.addEventListener('hashchange',function(){cur=-1;setTimeout(update,80);});
+  update();
+})();
+
 // ── FORMULAIRE DE CANDIDATURE ─────────────────────────────────
 // Tant qu'aucun back-end n'est branché, la demande part par le client mail
 // du visiteur : elle arrive vraiment, sans serveur à héberger.

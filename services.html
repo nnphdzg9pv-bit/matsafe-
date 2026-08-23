@@ -60,34 +60,37 @@
 
 <main id="contenu">
 
-<section class="ed-section svcl" aria-label="Nos services">
-  <div class="svcl-list reveal" role="list" aria-label="Nos cinq services">
-    <button class="svcl-row" role="listitem" onclick="openSvc(0)" aria-haspopup="dialog">
-      <span class="svcl-i">(01)</span>
-      <span class="svcl-name">Audit d'hygiène spécialisé</span>
-      <span class="svcl-desc">Diagnostic terrain indépendant</span>
-    </button>
-    <button class="svcl-row" role="listitem" onclick="openSvc(1)" aria-haspopup="dialog">
-      <span class="svcl-i">(02)</span>
-      <span class="svcl-name">Plan d'action MatSafe</span>
-      <span class="svcl-desc">Feuille de route priorisée</span>
-    </button>
-    <button class="svcl-row" role="listitem" onclick="openSvc(2)" aria-haspopup="dialog">
-      <span class="svcl-i">(03)</span>
-      <span class="svcl-name">Référentiel opérationnel</span>
-      <span class="svcl-desc">Procédures + kit prêt à l'emploi</span>
-    </button>
-    <button class="svcl-row" role="listitem" onclick="openSvc(3)" aria-haspopup="dialog">
-      <span class="svcl-i">(04)</span>
-      <span class="svcl-name">Formation Hygiène &amp; Prévention</span>
-      <span class="svcl-desc">Micro-formations pour vos équipes</span>
-    </button>
-    <button class="svcl-row" role="listitem" onclick="openSvc(4)" aria-haspopup="dialog">
-      <span class="svcl-i">(05)</span>
-      <span class="svcl-name">Téléconsultation médicale 24/7</span>
-      <span class="svcl-desc">Avis médical avec MédecinDirect</span>
-    </button>
+<section class="svcx" id="s-services" aria-label="Nos services">
+  <div class="svcx-stage">
+    <div class="svcx-bg" id="svcx-bg" aria-hidden="true"><span>Nos</span><span>services</span></div>
+    <div class="svcx-eyebrow">Nos services <span class="svcx-count" id="svcx-count">01 / 05</span></div>
+    <div class="svcx-deck" id="svcx-deck">
+      <button class="svcx-card" type="button" onclick="openSvc(0)" aria-haspopup="dialog">
+        <span class="svcx-head"><span class="svcx-title">Audit d'hygiène spécialisé</span><span class="svcx-sub">Un diagnostic terrain indépendant, sur une grille propre aux sports de contact.</span></span>
+        <span class="svcx-foot"><span class="svcx-keys"><span>Audit terrain</span><span>Grille spécialisée</span><span>Diagnostic indépendant</span></span><span class="svcx-num">01</span></span>
+      </button>
+      <button class="svcx-card" type="button" onclick="openSvc(1)" aria-haspopup="dialog">
+        <span class="svcx-head"><span class="svcx-title">Plan d'action MatSafe</span><span class="svcx-sub">Une feuille de route priorisée : quoi corriger, dans quel ordre, à quel coût.</span></span>
+        <span class="svcx-foot"><span class="svcx-keys"><span>Feuille de route</span><span>Priorités</span><span>Budget maîtrisé</span></span><span class="svcx-num">02</span></span>
+      </button>
+      <button class="svcx-card" type="button" onclick="openSvc(2)" aria-haspopup="dialog">
+        <span class="svcx-head"><span class="svcx-title">Référentiel opérationnel</span><span class="svcx-sub">Des procédures et un kit physique prêts à l'emploi. Rien à inventer.</span></span>
+        <span class="svcx-foot"><span class="svcx-keys"><span>Procédures</span><span>Kit physique</span><span>Prêt à l'emploi</span></span><span class="svcx-num">03</span></span>
+      </button>
+      <button class="svcx-card" type="button" onclick="openSvc(3)" aria-haspopup="dialog">
+        <span class="svcx-head"><span class="svcx-title">Formation Hygiène &amp; Prévention</span><span class="svcx-sub">Des micro-formations qui transforment le référentiel en réflexe.</span></span>
+        <span class="svcx-foot"><span class="svcx-keys"><span>Micro-formations</span><span>Réflexe terrain</span><span>Culture partagée</span></span><span class="svcx-num">04</span></span>
+      </button>
+      <button class="svcx-card" type="button" onclick="openSvc(4)" aria-haspopup="dialog">
+        <span class="svcx-head"><span class="svcx-title">Téléconsultation médicale 24/7</span><span class="svcx-sub">Un accès à un médecin à toute heure, via notre partenaire MédecinDirect.</span></span>
+        <span class="svcx-foot"><span class="svcx-keys"><span>Avis médical</span><span>Infection cutanée</span><span>Accès 24/7</span></span><span class="svcx-num">05</span></span>
+      </button>
+    </div>
+    <div class="svcx-hint">Faites défiler · cliquez une carte pour le détail</div>
   </div>
+</section>
+
+<section class="ed-section">
   <p class="reveal cta-row"><a class="cta" href="certification.html">Voir la démarche →</a> <a class="cta cta--ghost" href="contact.html">Candidater</a></p>
 </section>
 
