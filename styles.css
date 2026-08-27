@@ -8,7 +8,12 @@
   --gray:  #6B6B6B;
   --light: #E8E6E1;
   --border:#D8D5CF;
+  /* 4e couleur de marque : bordeaux foncé. S'associe au noir/blanc/gris et
+     marque les moments forts (pied de page, marquee, CTA, accents, label). */
+  --wine:      #6B1C2B;   /* accent bordeaux (texte/CTA/chip) — ~11:1 sur crème */
+  --wine-deep: #4A0F1B;   /* bordeaux très foncé (fonds : footer, marquee) */
 }
+::selection{background:var(--wine);color:var(--off)}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{font-size:16px;scroll-behavior:smooth}
 /* La nav est fixe : sans cette marge, une ancre dépose son titre dessous. */
@@ -40,11 +45,11 @@ nav.solid{box-shadow:0 2px 16px rgba(0,0,0,.06)}
 .nav-links a:hover{opacity:.55}
 .nav-cta{
   padding:.42rem 1.1rem !important;
-  border:1.5px solid var(--black) !important;
+  border:1.5px solid var(--wine) !important;
   border-radius:2px;
-  color:var(--black) !important;
+  color:var(--wine) !important;
 }
-.nav-cta:hover{background:var(--black) !important;color:var(--white) !important}
+.nav-cta:hover{background:var(--wine) !important;color:var(--off) !important;border-color:var(--wine) !important}
 
 /* ── HERO ── */
 .hero{
@@ -126,7 +131,7 @@ nav.solid{box-shadow:0 2px 16px rgba(0,0,0,.06)}
 /* ── MARQUEE ── */
 /* Bandeau noir : seule respiration sombre entre le hero et le footer. */
 .marquee-section{
-  background:var(--black);overflow:hidden;padding:1.25rem 0;
+  background:var(--wine-deep);overflow:hidden;padding:1.25rem 0;
 }
 .marquee-track{
   display:flex;animation:marquee 24s linear infinite;white-space:nowrap;
@@ -185,7 +190,7 @@ nav.solid{box-shadow:0 2px 16px rgba(0,0,0,.06)}
 .eyebrow{
   font-family:'Barlow Condensed',sans-serif;
   font-weight:700;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;
-  color:var(--black);margin-bottom:1rem;
+  color:var(--gray);margin-bottom:1rem;
   display:flex;align-items:center;gap:.6rem;
 }
 .eyebrow::before{content:'';width:22px;height:1.5px;background:currentColor;display:block}
@@ -345,8 +350,8 @@ textarea.f-input{min-height:100px;resize:vertical}
 
 /* ── FOOTER ── */
 footer{
-  background:var(--black);color:var(--white);
-  border-top:1px solid #1a1a1a;padding:4rem 2.5rem 2.5rem;
+  background:var(--wine-deep);color:var(--white);
+  border-top:1px solid rgba(255,255,255,.14);padding:4rem 2.5rem 2.5rem;
 }
 .footer-grid{
   display:grid;grid-template-columns:2fr 1fr 1fr 1fr;
@@ -366,7 +371,7 @@ footer{
 .footer-col a{display:block;font-size:.82rem;color:rgba(255,255,255,.7);margin-bottom:.5rem;transition:color .2s}
 .footer-col a:hover{color:var(--white)}
 .footer-bot{
-  border-top:1px solid #1a1a1a;padding-top:1.75rem;
+  border-top:1px solid rgba(255,255,255,.14);padding-top:1.75rem;
   display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.75rem;
   font-family:'Barlow Condensed',sans-serif;
   font-weight:700;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.6);
@@ -469,7 +474,7 @@ footer{
   padding:5rem 2.5rem 6rem;
   overflow:hidden;
 }
-.ed-section .eyebrow{color:var(--black)}
+.ed-section .eyebrow{color:var(--gray)}
 
 /* En-tête : titre géant */
 .ed-header{
@@ -486,7 +491,7 @@ footer{
 }
 .ed-giant em{
   font-style:normal;font-weight:inherit;
-  color:var(--black);letter-spacing:inherit;
+  color:var(--wine);letter-spacing:inherit;
 }
 /* Titres géants pour libellés plus longs (2–3 mots) */
 .ed-giant--md{font-size:clamp(2.6rem,7.5vw,6rem);line-height:.9}
@@ -522,7 +527,7 @@ footer{
 .ed-index{
   font-family:'Barlow Condensed',sans-serif;
   font-size:1rem;font-weight:800;letter-spacing:.06em;
-  color:var(--black);padding-top:.4rem;
+  color:var(--gray);padding-top:.4rem;
 }
 .ed-name{
   font-family:'Barlow Condensed',sans-serif;
@@ -784,7 +789,7 @@ footer{
 .label-block p{font-size:1.05rem;line-height:1.85;color:var(--black)}
 .label-accent{
   font-family:'Barlow',sans-serif;font-style:italic;font-weight:500;
-  font-size:1.22rem !important;line-height:1.5;color:var(--black);
+  font-size:1.22rem !important;line-height:1.5;color:var(--wine);
 }
 .label-close strong{font-weight:600}
 .label-sub{
@@ -811,7 +816,7 @@ footer{
 .pfocus-eyebrow{
   position:absolute;top:5rem;left:2.5rem;z-index:5;
   font-family:'Barlow',sans-serif;font-weight:600;text-transform:uppercase;
-  letter-spacing:.2em;font-size:.72rem;color:var(--black);
+  letter-spacing:.2em;font-size:.72rem;color:var(--gray);
 }
 .pfocus-count{margin-left:.6rem;color:rgba(10,10,10,.4)}
 .pfocus-hint{
@@ -1010,7 +1015,7 @@ body.pm-open{overflow:hidden}
   font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--black);
 }
 .map-lg-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
-.map-lg-dot--exc{background:#0A0A0A}
+.map-lg-dot--exc{background:var(--wine)}
 .map-lg-dot--pre{background:#767676}
 .map-lg-dot--std{background:#C9C6C0}
 .map-layout {
@@ -1274,7 +1279,7 @@ body.pm-open{overflow:hidden}
   margin-top:1rem;border:1.5px solid var(--white);color:#fff;
   padding:.7rem 2rem;border-radius:2px;
 }
-.mobile-menu .mm-cta:hover{background:var(--white);color:var(--black)}
+.mobile-menu .mm-cta:hover{background:var(--wine);color:var(--off);border-color:var(--wine)}
 
 @media(max-width:820px){
   .nav-links{display:none}
@@ -1425,7 +1430,7 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
 .nav-links a.is-active{opacity:1;text-decoration:underline;text-underline-offset:.35em;text-decoration-thickness:.1em}
 .mobile-menu a.is-active{text-decoration:underline;text-underline-offset:.3em}
 .cta{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;
-  letter-spacing:.08em;font-size:.85rem;line-height:1;background:var(--black);color:var(--off);
+  letter-spacing:.08em;font-size:.85rem;line-height:1;background:var(--wine);color:var(--off);
   padding:.95rem 1.7rem;border-radius:2px;text-decoration:none;transition:opacity .2s,transform .2s}
 .cta:hover{opacity:.85;transform:translateY(-2px)}
 .cta--ghost{background:transparent;color:var(--black);border:1.6px solid var(--black)}
@@ -1475,7 +1480,7 @@ a.svcl-row{color:var(--black)}
 .svcx-eyebrow{
   position:absolute;top:5rem;left:2.5rem;z-index:5;
   font-family:'Barlow',sans-serif;font-weight:600;text-transform:uppercase;
-  letter-spacing:.2em;font-size:.72rem;color:var(--black);
+  letter-spacing:.2em;font-size:.72rem;color:var(--gray);
 }
 .svcx-count{margin-left:.6rem;color:rgba(10,10,10,.4)}
 .svcx-hint{
@@ -1522,7 +1527,7 @@ a.svcl-row{color:var(--black)}
   font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;
   letter-spacing:.02em;font-size:clamp(1.1rem,2vw,1.7rem);color:rgba(10,10,10,.5);
 }
-.svcx-step--label{color:var(--off);background:var(--black);padding:.18em .7em;border-radius:3px}
+.svcx-step--label{color:var(--off);background:var(--wine);padding:.18em .7em;border-radius:3px}
 .svcx-arr{color:rgba(10,10,10,.28);font-size:1.05rem}
 .svcx-method-note{margin-top:1.7rem;font-size:1.12rem;line-height:1.55;color:var(--black);max-width:60ch}
 .svcx-method-note strong{font-weight:700}
