@@ -1,17 +1,17 @@
 :root {
-  /* Palette MatSafe — épurée, premium. 65% blanc cassé, 20% anthracite,
-     10% bordeaux, 5% nuances secondaires. */
-  --black: #191919;      /* texte principal (anthracite) */
+  /* MatSafe — direction premium SaaS/tech. Bordeaux = signature (~5-8%),
+     réservé aux CTA, états actifs, mots-clés et petits détails. */
+  --black: #171717;      /* texte principal, sections sombres */
+  --ink:   #141414;      /* fond section sombre premium (footer) */
   --white: #FFFFFF;
-  --off:   #FAF8F7;      /* fond principal (blanc cassé chaud) */
-  --gray:  #686262;      /* texte secondaire */
-  --light: #F1ECEA;      /* surface douce (cartes, pastilles) */
-  --border:#E8DEDF;      /* bordures */
-  /* Bordeaux — réservé aux boutons, icônes, mots forts, éléments actifs
-     et quelques sections fortes. */
-  --wine:      #6D1525;  /* bordeaux principal */
-  --wine-deep: #480D17;  /* bordeaux sombre (fonds : footer, marquee) */
-  --wine-light:#963347;  /* bordeaux clair (hover, détails) */
+  --off:   #FAFAF9;      /* fond principal (blanc cassé très léger) */
+  --tint:  #F3F2F0;      /* gris très clair : rythme des sections */
+  --gray:  #6B6B6B;      /* texte secondaire */
+  --light: #F3F2F0;      /* surface douce (pastilles, vignettes) */
+  --border:#E7E4E1;      /* bordures fines, neutres */
+  --wine:      #701D2C;  /* bordeaux signature (CTA, accents) */
+  --wine-deep: #4A101A;  /* bordeaux foncé (hover, détails) */
+  --wine-light:#8A2A3A;  /* bordeaux clair */
 }
 ::selection{background:var(--wine);color:var(--off)}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -56,7 +56,7 @@ nav.solid{box-shadow:0 2px 16px rgba(0,0,0,.06)}
 .hero{
   position:relative;height:100vh;height:100svh;min-height:600px;overflow:hidden;
   display:flex;flex-direction:column;justify-content:center;
-  padding:0 2.5rem;
+  padding:0;
 }
 .hero-video-wrap{position:absolute;inset:0;z-index:0}
 .hero-video-wrap video{width:100%;height:100%;object-fit:cover}
@@ -69,38 +69,46 @@ nav.solid{box-shadow:0 2px 16px rgba(0,0,0,.06)}
     rgba(0,0,0,.55) 100%
   );
 }
-.hero-content{position:relative;z-index:2;max-width:720px}
-/* Texte du hero dans le crème du site (--off), pas un blanc pur. */
+.hero-content{position:relative;z-index:2;width:100%;max-width:1200px;margin:0 auto;padding:0 2.5rem}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:.55rem;margin-bottom:1.5rem;
+  font-family:'Barlow',sans-serif;font-weight:600;text-transform:uppercase;
+  letter-spacing:.2em;font-size:.72rem;color:#fff;
+  padding:.42rem .9rem;border:1px solid rgba(255,255,255,.3);border-radius:999px;
+  background:rgba(255,255,255,.06);backdrop-filter:blur(4px);
+}
+.hero-eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--wine-light)}
 .hero-title{
   font-family:'Barlow Condensed',sans-serif;
-  font-weight:900;font-size:clamp(3.2rem,7vw,6.5rem);
-  line-height:.94;letter-spacing:-.01em;text-transform:uppercase;
-  color:var(--off);margin-bottom:1.35rem;
-  text-shadow:0 2px 30px rgba(0,0,0,.3);
+  font-weight:900;font-size:clamp(3.4rem,8vw,7.2rem);
+  line-height:.92;letter-spacing:-.02em;text-transform:uppercase;
+  color:#fff;margin-bottom:1.6rem;
+  text-shadow:0 2px 40px rgba(0,0,0,.35);
 }
 .hero-body{
-  font-size:1rem;line-height:1.65;
-  color:var(--off);max-width:540px;margin-bottom:2.25rem;
-  text-shadow:0 1px 12px rgba(0,0,0,.2);
+  font-size:clamp(1.05rem,1.5vw,1.25rem);line-height:1.6;font-weight:400;
+  color:rgba(255,255,255,.9);max-width:620px;margin-bottom:2.5rem;
+  text-shadow:0 1px 12px rgba(0,0,0,.25);
 }
-.hero-actions{display:flex;gap:1rem;flex-wrap:wrap}
-.btn-white{
+.hero-actions{display:flex;gap:.9rem;flex-wrap:wrap}
+.btn-hero{
   font-family:'Barlow Condensed',sans-serif;
-  font-weight:800;font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;
-  padding:.78rem 2rem;background:var(--off);color:var(--black);
-  border:none;cursor:pointer;border-radius:2px;
+  font-weight:800;font-size:.86rem;letter-spacing:.06em;text-transform:uppercase;
+  padding:.95rem 1.9rem;background:var(--wine);color:#fff;
+  border:none;cursor:pointer;border-radius:6px;
   display:inline-flex;align-items:center;gap:.5rem;
-  transition:all .2s;
+  transition:background .2s ease,transform .2s ease,box-shadow .2s ease;
+  box-shadow:0 8px 26px -12px rgba(0,0,0,.6);
 }
-.btn-white:hover{background:#fff;transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.btn-hero:hover{background:var(--wine-deep);transform:translateY(-1px);box-shadow:0 12px 30px -12px rgba(0,0,0,.7)}
 .btn-ghost{
   font-family:'Barlow Condensed',sans-serif;
-  font-weight:800;font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;
-  padding:.76rem 2rem;background:transparent;color:var(--off);
-  border:1.5px solid rgba(242,240,236,.45);cursor:pointer;border-radius:2px;
-  display:inline-flex;align-items:center;gap:.5rem;transition:all .2s;
+  font-weight:800;font-size:.86rem;letter-spacing:.06em;text-transform:uppercase;
+  padding:.95rem 1.9rem;background:rgba(255,255,255,.04);color:#fff;
+  border:1px solid rgba(255,255,255,.4);cursor:pointer;border-radius:6px;
+  display:inline-flex;align-items:center;gap:.5rem;transition:all .2s ease;backdrop-filter:blur(4px);
 }
-.btn-ghost:hover{background:rgba(242,240,236,.12);border-color:rgba(242,240,236,.8)}
+.btn-ghost:hover{background:rgba(255,255,255,.14);border-color:#fff;transform:translateY(-1px)}
 
 /* ── STATS BAR ── */
 /* Aligné sur le système éditorial : fond clair, filets noirs, chiffres géants. */
@@ -132,7 +140,8 @@ nav.solid{box-shadow:0 2px 16px rgba(0,0,0,.06)}
 /* ── MARQUEE ── */
 /* Bandeau noir : seule respiration sombre entre le hero et le footer. */
 .marquee-section{
-  background:var(--wine-deep);overflow:hidden;padding:1.25rem 0;
+  background:var(--off);overflow:hidden;padding:1.15rem 0;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
 }
 .marquee-track{
   display:flex;animation:marquee 24s linear infinite;white-space:nowrap;
@@ -141,11 +150,11 @@ nav.solid{box-shadow:0 2px 16px rgba(0,0,0,.06)}
 @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .marquee-item{
   font-family:'Barlow Condensed',sans-serif;
-  font-weight:900;font-size:1rem;letter-spacing:.22em;text-transform:uppercase;
-  color:var(--white);padding:0 2.5rem;
+  font-weight:800;font-size:.95rem;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--gray);padding:0 2.5rem;
   display:flex;align-items:center;gap:2.5rem;
 }
-.marquee-item::after{content:'·';color:var(--white);font-size:1.4rem}
+.marquee-item::after{content:'·';color:var(--wine);font-size:1.4rem}
 
 /* ══════════════════════════════════════════
    BANDE FIGHTERS — défilement continu (section « Pour qui »)
@@ -351,9 +360,11 @@ textarea.f-input{min-height:100px;resize:vertical}
 
 /* ── FOOTER ── */
 footer{
-  background:var(--wine-deep);color:var(--white);
-  border-top:1px solid rgba(255,255,255,.14);padding:4rem 2.5rem 2.5rem;
+  background:var(--ink);color:var(--white);
+  border-top:3px solid var(--wine);padding:5rem 2.5rem 2.5rem;
 }
+.footer-grid{max-width:1200px;margin-inline:auto}
+.footer-bot{max-width:1200px;margin-inline:auto}
 .footer-grid{
   display:grid;grid-template-columns:2fr 1fr 1fr 1fr;
   gap:3rem;margin-bottom:3rem;
@@ -472,21 +483,25 @@ footer{
                  > .ed-list   (suite de .ed-row)                        */
 .ed-section{
   background:var(--off);color:var(--black);
-  padding:5rem 2.5rem 6rem;
+  padding:clamp(5rem,9vw,8.5rem) 2.5rem;
   overflow:hidden;
 }
+/* Contenu centré, largeur maîtrisée (rendu SaaS aéré) */
+.ed-section > *{max-width:1200px;margin-inline:auto;width:100%}
+/* Rythme : sections gris très clair */
+.ed-section--tint{background:var(--tint)}
 .ed-section .eyebrow{color:var(--gray)}
 
 /* En-tête : titre géant */
 .ed-header{
   display:flex;align-items:flex-end;justify-content:space-between;
-  gap:2rem;flex-wrap:wrap;margin-bottom:1.5rem;
+  gap:2.5rem;flex-wrap:wrap;margin-bottom:2.5rem;
 }
 .ed-giant{
   font-family:'Barlow Condensed',sans-serif;
   font-weight:900;text-transform:uppercase;
   font-size:clamp(3rem,10vw,8.5rem);
-  line-height:.86;letter-spacing:-.02em;
+  line-height:.84;letter-spacing:-.025em;
   color:var(--black);
   margin:.25rem 0 0 -.06em;
 }
@@ -497,8 +512,8 @@ footer{
 /* Titres géants pour libellés plus longs (2–3 mots) */
 .ed-giant--md{font-size:clamp(2.6rem,7.5vw,6rem);line-height:.9}
 .ed-manifesto{
-  font-size:.92rem;line-height:1.7;color:var(--black);
-  max-width:400px;padding-bottom:.75rem;
+  font-size:1.05rem;line-height:1.65;color:var(--gray);
+  max-width:440px;padding-bottom:.75rem;
 }
 .ed-manifesto strong{color:var(--black);font-weight:600}
 
@@ -1431,12 +1446,12 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
 .nav-links a.is-active{opacity:1;color:var(--wine);text-decoration:underline;text-underline-offset:.35em;text-decoration-thickness:.1em;text-decoration-color:var(--wine)}
 .mobile-menu a.is-active{text-decoration:underline;text-underline-offset:.3em}
 .cta{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;
-  letter-spacing:.09em;font-size:.85rem;line-height:1;background:var(--wine);color:var(--off);
-  padding:1rem 1.9rem;border-radius:4px;text-decoration:none;
-  transition:background .22s ease,transform .22s ease,box-shadow .22s ease;box-shadow:0 1px 2px rgba(72,13,23,.12)}
-.cta:hover{background:var(--wine-deep);transform:translateY(-2px);box-shadow:0 12px 28px -10px rgba(72,13,23,.45)}
-.cta--ghost{background:transparent;color:var(--black);border:1.5px solid var(--border);box-shadow:none}
-.cta--ghost:hover{background:var(--black);color:var(--off);border-color:var(--black);box-shadow:0 12px 28px -12px rgba(25,25,25,.4)}
+  letter-spacing:.06em;font-size:.8rem;line-height:1;background:var(--wine);color:#fff;
+  padding:.82rem 1.5rem;border-radius:6px;text-decoration:none;
+  transition:background .2s ease,transform .2s ease,box-shadow .2s ease}
+.cta:hover{background:var(--wine-deep);transform:translateY(-1px);box-shadow:0 8px 20px -10px rgba(74,16,26,.5)}
+.cta--ghost{background:transparent;color:var(--black);border:1px solid var(--border);box-shadow:none}
+.cta--ghost:hover{background:var(--black);color:#fff;border-color:var(--black);transform:translateY(-1px)}
 .cta-row{display:flex;flex-wrap:wrap;gap:1rem;margin-top:2.4rem}
 a.svcl-row{color:var(--black)}
 .sec-intro{max-width:62ch;font-size:1rem;line-height:1.7;color:var(--gray);margin:.6rem 0 0}
@@ -1500,8 +1515,8 @@ a.svcl-row{color:var(--black)}
   width:min(440px,86vw);min-height:min(74vh,460px);
   transform:translate(-50%,-50%);opacity:0;
   display:flex;flex-direction:column;justify-content:space-between;text-align:left;
-  background:var(--white);color:var(--black);border:1px solid var(--border);border-radius:14px;
-  box-shadow:0 40px 80px -30px rgba(72,13,23,.30), 0 2px 8px rgba(25,25,25,.06);
+  background:var(--white);color:var(--black);border:1px solid var(--border);border-radius:12px;
+  box-shadow:0 1px 2px rgba(23,23,23,.04), 0 22px 48px -32px rgba(23,23,23,.20);
   padding:2.4rem 2.2rem;cursor:pointer;
   will-change:transform,opacity;
 }
@@ -1546,4 +1561,15 @@ a.svcl-row{color:var(--black)}
   .svcx-deck{position:static;display:flex;flex-direction:column;gap:1.5rem;width:100%;max-width:460px}
   .svcx-card{position:static;transform:none;opacity:1;width:100%}
   .svcx-hint{position:static;margin-top:1rem}
+}
+
+/* ══════════════════════════════════════════
+   Refonte DA — ajustements responsive & finitions
+   ══════════════════════════════════════════ */
+@media(max-width:720px){
+  .hero-content{padding:0 1.5rem}
+  .hero-actions{gap:.7rem}
+  .btn-hero,.btn-ghost{width:100%;justify-content:center}
+  .ed-header{margin-bottom:1.8rem}
+  .ed-manifesto{font-size:1rem}
 }
