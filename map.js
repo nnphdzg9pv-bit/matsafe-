@@ -56,7 +56,7 @@ let mapMarkers = [];
 let activeClubId = null;
 
 const LEVEL_MARKER_COLOR = {
-  excellence: '#6B1C2B',
+  excellence: '#6D1525',
   premium:    '#767676',
   standard:   '#AAAAAA',
 };

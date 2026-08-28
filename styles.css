@@ -1,17 +1,17 @@
 :root {
-  --black: #0A0A0A;
+  /* Palette MatSafe — épurée, premium. 65% blanc cassé, 20% anthracite,
+     10% bordeaux, 5% nuances secondaires. */
+  --black: #191919;      /* texte principal (anthracite) */
   --white: #FFFFFF;
-  --off:   #F2F0EC;
-  /* #888 tombait à 3,5:1 sur le fond crème — sous le minimum WCAG AA (4,5:1)
-     pour le petit texte de la carte. #6B6B6B donne 4,7:1 sur crème, 5,3:1
-     sur blanc, sans changer la valeur perçue du gris. */
-  --gray:  #6B6B6B;
-  --light: #E8E6E1;
-  --border:#D8D5CF;
-  /* 4e couleur de marque : bordeaux foncé. S'associe au noir/blanc/gris et
-     marque les moments forts (pied de page, marquee, CTA, accents, label). */
-  --wine:      #6B1C2B;   /* accent bordeaux (texte/CTA/chip) — ~11:1 sur crème */
-  --wine-deep: #4A0F1B;   /* bordeaux très foncé (fonds : footer, marquee) */
+  --off:   #FAF8F7;      /* fond principal (blanc cassé chaud) */
+  --gray:  #686262;      /* texte secondaire */
+  --light: #F1ECEA;      /* surface douce (cartes, pastilles) */
+  --border:#E8DEDF;      /* bordures */
+  /* Bordeaux — réservé aux boutons, icônes, mots forts, éléments actifs
+     et quelques sections fortes. */
+  --wine:      #6D1525;  /* bordeaux principal */
+  --wine-deep: #480D17;  /* bordeaux sombre (fonds : footer, marquee) */
+  --wine-light:#963347;  /* bordeaux clair (hover, détails) */
 }
 ::selection{background:var(--wine);color:var(--off)}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -42,7 +42,8 @@ nav.solid{box-shadow:0 2px 16px rgba(0,0,0,.06)}
   font-weight:700;font-size:.78rem;letter-spacing:.13em;text-transform:uppercase;
   color:var(--black);transition:opacity .2s;
 }
-.nav-links a:hover{opacity:.55}
+.nav-links a{transition:color .2s ease,opacity .2s ease}
+.nav-links a:hover{color:var(--wine);opacity:1}
 .nav-cta{
   padding:.42rem 1.1rem !important;
   border:1.5px solid var(--wine) !important;
@@ -1427,13 +1428,15 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
 /* ── Multipage : menu, état actif, CTA, hero de page ── */
 .nav-links{gap:1.15rem}
 .nav-links a{font-size:.7rem;letter-spacing:.08em}
-.nav-links a.is-active{opacity:1;text-decoration:underline;text-underline-offset:.35em;text-decoration-thickness:.1em}
+.nav-links a.is-active{opacity:1;color:var(--wine);text-decoration:underline;text-underline-offset:.35em;text-decoration-thickness:.1em;text-decoration-color:var(--wine)}
 .mobile-menu a.is-active{text-decoration:underline;text-underline-offset:.3em}
 .cta{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;
-  letter-spacing:.08em;font-size:.85rem;line-height:1;background:var(--wine);color:var(--off);
-  padding:.95rem 1.7rem;border-radius:2px;text-decoration:none;transition:opacity .2s,transform .2s}
-.cta:hover{opacity:.85;transform:translateY(-2px)}
-.cta--ghost{background:transparent;color:var(--black);border:1.6px solid var(--black)}
+  letter-spacing:.09em;font-size:.85rem;line-height:1;background:var(--wine);color:var(--off);
+  padding:1rem 1.9rem;border-radius:4px;text-decoration:none;
+  transition:background .22s ease,transform .22s ease,box-shadow .22s ease;box-shadow:0 1px 2px rgba(72,13,23,.12)}
+.cta:hover{background:var(--wine-deep);transform:translateY(-2px);box-shadow:0 12px 28px -10px rgba(72,13,23,.45)}
+.cta--ghost{background:transparent;color:var(--black);border:1.5px solid var(--border);box-shadow:none}
+.cta--ghost:hover{background:var(--black);color:var(--off);border-color:var(--black);box-shadow:0 12px 28px -12px rgba(25,25,25,.4)}
 .cta-row{display:flex;flex-wrap:wrap;gap:1rem;margin-top:2.4rem}
 a.svcl-row{color:var(--black)}
 .sec-intro{max-width:62ch;font-size:1rem;line-height:1.7;color:var(--gray);margin:.6rem 0 0}
@@ -1454,10 +1457,13 @@ a.svcl-row{color:var(--black)}
 .faq-item{border-bottom:1px solid var(--border)}
 .faq-item summary{list-style:none;cursor:pointer;padding:1.3rem .2rem;display:flex;justify-content:space-between;
   align-items:center;gap:1rem;font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;
-  font-size:1.08rem;letter-spacing:.01em;color:var(--black)}
+  font-size:1.08rem;letter-spacing:.01em;color:var(--black);transition:color .2s ease}
+.faq-item summary:hover{color:var(--wine)}
+.faq-item[open] summary{color:var(--wine)}
 .faq-item summary::-webkit-details-marker{display:none}
-.faq-item summary::after{content:'+';font-size:1.5rem;font-weight:400;transition:transform .25s;color:var(--gray)}
-.faq-item[open] summary::after{transform:rotate(45deg)}
+.faq-item summary::after{content:'+';font-size:1.5rem;font-weight:400;transition:transform .25s ease,color .2s ease;color:var(--gray)}
+.faq-item summary:hover::after{color:var(--wine)}
+.faq-item[open] summary::after{transform:rotate(45deg);color:var(--wine)}
 .faq-item .faq-a{padding:0 .2rem 1.3rem;font-size:.96rem;line-height:1.65;color:var(--gray);max-width:70ch}
 .faq-item .faq-a strong{color:var(--black);font-weight:600}
 
@@ -1494,9 +1500,9 @@ a.svcl-row{color:var(--black)}
   width:min(440px,86vw);min-height:min(74vh,460px);
   transform:translate(-50%,-50%);opacity:0;
   display:flex;flex-direction:column;justify-content:space-between;text-align:left;
-  background:var(--light);color:var(--black);border:1px solid var(--border);border-radius:10px;
-  box-shadow:0 34px 70px -26px rgba(10,10,10,.42);
-  padding:2.3rem 2.1rem;cursor:pointer;
+  background:var(--white);color:var(--black);border:1px solid var(--border);border-radius:14px;
+  box-shadow:0 40px 80px -30px rgba(72,13,23,.30), 0 2px 8px rgba(25,25,25,.06);
+  padding:2.4rem 2.2rem;cursor:pointer;
   will-change:transform,opacity;
 }
 .svcx-action{
