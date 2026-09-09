@@ -422,7 +422,7 @@ const ANO_CATS=[['hygiene','Hygiène'],['equipment','Équipement'],['product','P
 const CTL_TYPES=[['first_aid_kit_check','Trousse de secours'],['products_check','Produits d\'entretien'],['equipment_check','Équipements'],['documentation_check','Documentation']];
 const USER={name:'Rémy Lassalle', role:'Référent Hygiène'};
 
-const STORE='matsafe_demo_v3';
+const STORE='matsafe_demo_v4';
 let db;
 
 function seed(){
@@ -450,7 +450,22 @@ function seed(){
   };
 }
 function id(){return Math.random().toString(36).slice(2,10)}
-function load(){ try{const r=localStorage.getItem(STORE); if(r)return JSON.parse(r)}catch(e){} return seed(); }
+/* Répare un texte "mojibake" (UTF-8 relu en Latin-1) : ex. "Ã©" -> "é". */
+function fixMojibake(s){
+  if(typeof s!=='string' || !/[ÃÂ]/.test(s)) return s;
+  try{
+    const bytes=Uint8Array.from(s, c=>c.charCodeAt(0)&0xff);
+    const dec=new TextDecoder('utf-8',{fatal:false}).decode(bytes);
+    if(!/[ÃÂ]/.test(dec) && !dec.includes('�')) return dec;
+  }catch(e){}
+  return s;
+}
+function repair(o){
+  if(Array.isArray(o)) return o.map(repair);
+  if(o && typeof o==='object'){ for(const k in o) o[k]=repair(o[k]); return o; }
+  return fixMojibake(o);
+}
+function load(){ try{const r=localStorage.getItem(STORE); if(r)return repair(JSON.parse(r));}catch(e){} return seed(); }
 function save(){ try{localStorage.setItem(STORE, JSON.stringify(db))}catch(e){} }
 
 /* ============================ HELPERS ============================ */
