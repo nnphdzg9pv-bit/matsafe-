@@ -1,3 +1,5 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>MatSafe Control · App</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -83,7 +85,7 @@
   .statedot.todo{border-color:var(--warn)}
   .opline .grow{flex:1; min-width:0}
   .opline .ttl{font-family:var(--cond); font-weight:700; text-transform:uppercase; letter-spacing:.02em; font-size:18px; line-height:1.02}
-  .opline .desc{font-size:12px; color:var(--faint); margin-top:2px}
+  .opline .desc{font-size:12.5px; color:var(--gray); margin-top:3px; font-weight:400}
   .opline .status{font-family:var(--cond); font-weight:700; text-transform:uppercase; letter-spacing:.05em; font-size:13px; white-space:nowrap; display:flex; align-items:center; gap:8px}
   .st-ok{color:var(--ok)} .st-warn{color:var(--warn)} .st-crit{color:var(--crit)} .st-info{color:var(--info)} .st-mute{color:var(--faint)}
   .chev{color:var(--faint)}
@@ -91,7 +93,9 @@
   .opline .ttl,.opline .desc,.logline .lt,.logline .lm,.itemrow .ir-t,.itemrow .ir-d,.railrow .rt,.railrow .rm{display:block}
   /* anti-débordement : les rangées tiennent toujours dans la largeur */
   .opline .grow,.itemrow .grow,.logline .grow,.railrow .grow{overflow:hidden}
-  .opline .ttl,.opline .desc,.logline .lt,.logline .lm,.itemrow .ir-t,.railrow .rt,.railrow .rm{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .opline .ttl,.opline .desc,.logline .lt,.logline .lm,.itemrow .ir-t,.railrow .rt{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  /* descriptifs longs : 2 lignes propres puis coupe (accès au détail au clic) */
+  .railrow .rm,.itemrow .ir-d{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 
   /* état du club (mobile only rows) */
   .state-rows{margin-top:8px}
@@ -137,7 +141,7 @@
   .chip.ok{background:var(--ok-bg); color:var(--ok)} .chip.warn{background:var(--warn-bg); color:var(--warn)}
   .chip.crit{background:var(--crit-bg); color:var(--crit)} .chip.info{background:var(--info-bg); color:var(--info)}
   .chip.mute{background:var(--paper-2); color:var(--gray)}
-  .metatext{font-size:12px; color:var(--faint)}
+  .metatext{font-size:12px; color:var(--gray)}
   .dot{width:3px;height:3px;border-radius:50%;background:var(--faint);display:inline-block}
 
   .empty{text-align:center; color:var(--gray); font-size:13.5px; padding:48px 20px; border-top:1px solid var(--hair); margin-top:8px}
@@ -246,7 +250,7 @@
     .railrow{display:flex; gap:11px; align-items:flex-start; width:100%; text-align:left; background:none; border:0; cursor:pointer; padding:14px 0; border-top:1px solid var(--hair); color:var(--ink)}
     .railrow .grow{flex:1;min-width:0}
     .railrow .rt{font-family:var(--cond); font-weight:700; text-transform:uppercase; letter-spacing:.02em; font-size:14.5px; line-height:1.05}
-    .railrow .rm{font-size:11.5px; color:var(--faint); margin-top:3px}
+    .railrow .rm{font-size:12px; color:var(--gray); margin-top:3px; line-height:1.35}
     .rail .rempty{font-size:12.5px; color:var(--faint); padding:14px 0; border-top:1px solid var(--hair)}
 
     .state-rows{display:none}           /* le rail remplace ces lignes sur desktop */
@@ -492,7 +496,7 @@ function render(){
   $('#planList').innerHTML=DAILY_PLAN.map((p,i)=>{
     const st=planStatus(p); if(st.done)done++;
     const right=st.done
-      ? `<span class="status st-ok">Fait — ${timeFmt(st.at)}</span>`
+      ? `<span class="status st-ok">Fait à ${timeFmt(st.at)}</span>`
       : `<span class="status st-warn">À faire <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></span>`;
     return `<button class="opline" data-plan="${i}">
       <span class="lead"><span class="statedot ${st.done?'done':'todo'}"></span></span>
