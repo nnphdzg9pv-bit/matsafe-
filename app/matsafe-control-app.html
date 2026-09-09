@@ -456,7 +456,7 @@ function fixMojibake(s){
   try{
     const bytes=Uint8Array.from(s, c=>c.charCodeAt(0)&0xff);
     const dec=new TextDecoder('utf-8',{fatal:false}).decode(bytes);
-    if(!/[ÃÂ]/.test(dec) && !dec.includes('�')) return dec;
+    if(!/[ÃÂ]/.test(dec) && dec.indexOf(String.fromCharCode(0xFFFD))===-1) return dec;
   }catch(e){}
   return s;
 }
