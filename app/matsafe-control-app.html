@@ -226,6 +226,13 @@
   .backlink:hover{color:var(--ink)}
   .setrow-act{font-family:var(--cond); font-weight:700; text-transform:uppercase; letter-spacing:.05em; font-size:12px; color:var(--brand); flex:none; align-self:center}
   #s-settings input[type=text]{margin-bottom:2px}
+  .proto-card{margin-top:12px; background:var(--paper); border:1px solid var(--border); border-left:3px solid var(--brand); border-radius:10px; padding:13px 15px}
+  .proto-card .pc-name{font-family:var(--cond); font-weight:800; text-transform:uppercase; letter-spacing:.02em; font-size:15px; margin-bottom:6px}
+  .proto-card .pc-row{display:flex; justify-content:space-between; gap:12px; font-size:13px; padding:4px 0; border-top:1px solid var(--hair)}
+  .proto-card .pc-row:first-of-type{border-top:0}
+  .proto-card .pc-row span{color:var(--gray)}
+  .proto-card .pc-row b{font-weight:600; text-align:right}
+  .proto-card .pc-note{margin-top:8px; font-size:12.5px; color:var(--gray); line-height:1.45}
 
   /* ============================ DESKTOP ============================ */
   @media (min-width:1024px){
@@ -386,6 +393,10 @@
         <div class="sect"><h2>Zones</h2><button class="link js-zone-add">+ Ajouter</button></div>
         <div class="ruled"></div>
         <div id="zoneList"></div>
+
+        <div class="sect"><h2>Protocoles &amp; produits</h2><button class="link js-proto-add">+ Ajouter</button></div>
+        <div class="ruled"></div>
+        <div id="protoList"></div>
       </div>
     </section>
   </main>
@@ -496,7 +507,10 @@ function defaultState(){
     session:{clubId:'club_demo', userId:'u_ref'},
     config:{
       zones: DEFAULT_ZONES.map(([name,type])=>({id:id(), name, type, active:true})),
-      protocols: [],
+      protocols: [
+        {id:id(), name:'Désinfection tatami', product:'Détergent-désinfectant surfaces (norme EN 14476)', dilution:'20 ml/L', contactTime:'5 min', rinse:false, note:'Balayage puis passage microfibre. Laisser sécher à l\'air libre.'},
+        {id:id(), name:'Sanitaires', product:'Nettoyant sanitaire désinfectant', dilution:'Prêt à l\'emploi', contactTime:'5 min', rinse:true, note:'Cuvettes, lavabos, poignées. Rincer les surfaces en contact avec la peau.'}
+      ],
       plan: []
     },
     records: seedRecords()
@@ -511,6 +525,15 @@ const ZONE_TYPES=[
   ['reception','Réception'],['shared_equipment','Matériel partagé'],['first_aid','Premiers secours'],['other','Autre']
 ];
 function zoneTypeName(c){ return (ZONE_TYPES.find(t=>t[0]===c)||[c,c])[1]; }
+function protocolById(pid){ return STATE.config.protocols.find(p=>p.id===pid)||null; }
+function protoCardHTML(p){
+  return `<div class="pc-name">${escapeHtml(p.name)}</div>
+    ${p.product?`<div class="pc-row"><span>Produit</span><b>${escapeHtml(p.product)}</b></div>`:''}
+    ${p.dilution?`<div class="pc-row"><span>Dilution / concentration</span><b>${escapeHtml(p.dilution)}</b></div>`:''}
+    ${p.contactTime?`<div class="pc-row"><span>Temps de contact</span><b>${escapeHtml(p.contactTime)}</b></div>`:''}
+    <div class="pc-row"><span>Rinçage</span><b>${p.rinse?'Oui':'Non'}</b></div>
+    ${p.note?`<div class="pc-note">${escapeHtml(p.note)}</div>`:''}`;
+}
 function id(){return Math.random().toString(36).slice(2,10)}
 /* Répare un texte "mojibake" (UTF-8 relu en Latin-1) : ex. "Ã©" -> "é". */
 function fixMojibake(s){
@@ -682,22 +705,37 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet();});
 document.addEventListener('click',e=>{const ch=e.target.closest('.choice'); if(!ch)return; const g=ch.parentElement; $$('.choice',g).forEach(c=>c.classList.remove('sel')); ch.classList.add('sel');});
 
 /* ============================ VALIDATION EXPRESS ============================ */
-function openValidate(code, presetZone){
+function openValidate(code, presetZone, presetProtocolId){
   const t=opType(code);
   const zone = presetZone || t.name;
+  const protos = STATE.config.protocols;
+  const protoBlock = protos.length ? `
+    <div class="fieldlab">Protocole d'entretien</div>
+    <div class="choices" id="opProto">
+      ${protos.map(p=>`<button class="choice ${p.id===presetProtocolId?'sel':''}" data-pid="${p.id}">${escapeHtml(p.name)}</button>`).join('')}
+    </div>
+    <div id="protoCard" class="proto-card" hidden></div>` : '';
   const body=`
     <p style="font-size:15px;color:var(--gray);margin:6px 0 2px">Entretien de <b style="color:var(--ink)">${zone}</b> terminé&nbsp;?</p>
+    ${protoBlock}
     <button class="reveal" id="cmtToggle">＋ Ajouter un commentaire</button>
-    <div id="cmtWrap" hidden><div class="fieldlab">Commentaire</div><textarea id="opComment" rows="2" placeholder="Ex : produit utilisé, remarque…"></textarea></div>`;
+    <div id="cmtWrap" hidden><div class="fieldlab">Commentaire</div><textarea id="opComment" rows="2" placeholder="Ex : remarque, produit de substitution…"></textarea></div>`;
   const foot=`
     <button class="btn btn-primary" id="doValidate"><span class="ic">${ICcheck}</span>Valider l'entretien</button>
     <button class="btn btn-danger btn-sm" id="toReport">Signaler un problème</button>`;
   openSheet(t.full, zone, body, foot);
+  const card=$('#protoCard');
+  function showProto(pid){ const p=protocolById(pid); if(p&&card){ card.innerHTML=protoCardHTML(p); card.hidden=false; } }
+  $$('#opProto .choice').forEach(b=>b.onclick=()=>showProto(b.dataset.pid));
+  if(presetProtocolId) showProto(presetProtocolId);
   $('#cmtToggle').onclick=()=>{const w=$('#cmtWrap'); w.hidden=!w.hidden; if(!w.hidden)$('#opComment').focus();};
   $('#doValidate').onclick=()=>{
     const cw=$('#cmtWrap'); const comment=(!cw.hidden && $('#opComment'))?$('#opComment').value.trim():'';
+    const pid=$('#opProto')?($('.choice.sel',$('#opProto'))?.dataset.pid||null):null;
+    const proto=pid?protocolById(pid):null;
     const now=Date.now();
-    db.ops.unshift({id:id(), type:code, zone, by:currentUser().short, at:now, anomaly:false, comment});
+    db.ops.unshift({id:id(), type:code, zone, by:currentUser().short, at:now, anomaly:false, comment,
+      protocolId:pid||null, product:proto?proto.product:null});
     render(); showBurst('Entretien enregistré', `${zone} · ${timeFmt(now)}`);
   };
   $('#toReport').onclick=()=>{ closeSheet(); setTimeout(()=>openReport(presetZone),180); };
@@ -799,8 +837,10 @@ document.addEventListener('click',e=>{
   if(e.target.closest('.js-pick')){openPick();return;}
   if(e.target.closest('.js-settings')){goto('settings');return;}
   if(e.target.closest('.js-zone-add')){openZoneEdit();return;}
+  if(e.target.closest('.js-proto-add')){openProtoEdit();return;}
   if(e.target.closest('[data-club-edit]')){openClubEdit();return;}
   const ze=e.target.closest('[data-zone-edit]'); if(ze){openZoneEdit(ze.dataset.zoneEdit);return;}
+  const pe=e.target.closest('[data-proto-edit]'); if(pe){openProtoEdit(pe.dataset.protoEdit);return;}
   if(e.target.closest('.js-reset')){ if(confirm('Réinitialiser les données de démonstration ?')){STATE=defaultState(); db=STATE.records; render(); goto('home'); toast('<b>Démo réinitialisée</b>');} return;}
 });
 
@@ -822,6 +862,16 @@ function renderSettings(){
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B0AA9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:3px"><path d="m9 6 6 6-6 6"/></svg>
       </button>`).join('')
       : emptyBox('Aucune zone','Ajoutez les zones de votre club.');
+  }
+  const pl=$('#protoList');
+  if(pl){
+    const ps=STATE.config.protocols;
+    pl.innerHTML = ps.length ? ps.map(p=>`
+      <button class="itemrow" data-proto-edit="${p.id}">
+        <span class="grow"><span class="ir-t">${escapeHtml(p.name)}</span><span class="ir-d">${[p.product,p.dilution].filter(Boolean).map(escapeHtml).join(' · ')||'—'}</span></span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B0AA9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:3px"><path d="m9 6 6 6-6 6"/></svg>
+      </button>`).join('')
+      : emptyBox('Aucun protocole','Ajoutez un protocole d\'entretien (produit, dilution…).');
   }
 }
 function openZoneEdit(zoneId){
@@ -870,6 +920,44 @@ function openClubEdit(){
     const n=$('#cName').value.trim(); if(!n){ $('#cName').focus(); return; }
     cl.name=n; cl.city=$('#cCity').value.trim();
     render(); closeSheet(); toast('<b>Club mis à jour</b>');
+  };
+}
+function openProtoEdit(protoId){
+  const p = protoId ? protocolById(protoId) : null;
+  const body=`
+    <div class="fieldlab">Nom du protocole</div>
+    <input type="text" id="pName" value="${p?escapeHtml(p.name):''}" placeholder="Ex : Désinfection tatami">
+    <div class="fieldlab">Produit</div>
+    <input type="text" id="pProduct" value="${p?escapeHtml(p.product||''):''}" placeholder="Ex : Détergent-désinfectant surfaces">
+    <div class="fieldlab">Dilution / concentration</div>
+    <input type="text" id="pDil" value="${p?escapeHtml(p.dilution||''):''}" placeholder="Ex : 20 ml/L ou prêt à l'emploi">
+    <div class="fieldlab">Temps de contact</div>
+    <input type="text" id="pTime" value="${p?escapeHtml(p.contactTime||''):''}" placeholder="Ex : 5 min">
+    <div class="fieldlab">Rinçage nécessaire</div>
+    <div class="choices" id="pRinse">
+      <button class="choice ${p&&p.rinse?'sel':''}" data-r="1">Oui</button>
+      <button class="choice ${!p||!p.rinse?'sel':''}" data-r="0">Non</button>
+    </div>
+    <div class="fieldlab">Instruction courte (facultatif)</div>
+    <textarea id="pNote" rows="2" placeholder="Ex : passage microfibre, laisser sécher…">${p?escapeHtml(p.note||''):''}</textarea>`;
+  const foot=`
+    <button class="btn btn-primary" id="pSave"><span class="ic">${ICcheck}</span>${p?'Enregistrer':'Ajouter le protocole'}</button>
+    ${p?'<button class="btn btn-danger btn-sm" id="pDel">Supprimer le protocole</button>':''}`;
+  openSheet('Protocole', p?'Modifier le protocole':'Nouveau protocole', body, foot);
+  $('#pSave').onclick=()=>{
+    const name=$('#pName').value.trim();
+    if(!name){ $('#pName').focus(); $('#pName').style.borderColor='var(--crit)'; return; }
+    const data={ name, product:$('#pProduct').value.trim(), dilution:$('#pDil').value.trim(),
+      contactTime:$('#pTime').value.trim(), rinse:($('.choice.sel',$('#pRinse'))?.dataset.r||'0')==='1', note:$('#pNote').value.trim() };
+    if(p){ Object.assign(p, data); }
+    else { STATE.config.protocols.push({id:id(), ...data}); }
+    render(); closeSheet(); toast(`<b>Protocole ${p?'modifié':'ajouté'}</b> · ${name}`);
+  };
+  const del=$('#pDel'); if(del) del.onclick=()=>{
+    if(confirm('Supprimer ce protocole ?')){
+      STATE.config.protocols=STATE.config.protocols.filter(x=>x.id!==p.id);
+      render(); closeSheet(); toast('<b>Protocole supprimé</b>');
+    }
   };
 }
 
