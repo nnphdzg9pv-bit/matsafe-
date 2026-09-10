@@ -178,7 +178,7 @@
   .choices{display:flex; flex-wrap:wrap; gap:8px}
   .choice{font-family:var(--cond); font-weight:700; text-transform:uppercase; letter-spacing:.03em; font-size:13px; padding:9px 13px; border-radius:10px; border:1px solid var(--border); background:transparent; cursor:pointer; color:var(--ink)}
   .choice.sel{background:var(--black); color:var(--off); border-color:var(--black)}
-  textarea,input[type=text]{width:100%; font-family:var(--sans); font-size:15px; color:var(--ink); background:var(--paper); border:1px solid var(--border); border-radius:10px; padding:12px 13px; resize:vertical}
+  textarea,input[type=text],input[type=date]{width:100%; font-family:var(--sans); font-size:15px; color:var(--ink); background:var(--paper); border:1px solid var(--border); border-radius:10px; padding:12px 13px; resize:vertical}
   textarea:focus,input:focus{outline:2px solid var(--black); outline-offset:1px}
   .hint{font-size:11.5px; color:var(--faint); margin-top:8px; line-height:1.45; display:flex; gap:7px}
   .hint svg{flex:none; margin-top:1px}
@@ -235,6 +235,26 @@
   .proto-card .pc-row b{font-weight:600; text-align:right}
   .proto-card .pc-note{margin-top:8px; font-size:12.5px; color:var(--gray); line-height:1.45}
   .ev-photo{display:block; width:100%; max-height:230px; object-fit:cover; border-radius:10px; border:1px solid var(--border); margin:6px 0 2px}
+
+  /* ---- Impression du registre (export) ---- */
+  #printArea{display:none}
+  @media print{
+    @page{ margin:14mm; }
+    html,body{background:#fff}
+    .app,.scrim,.sheet,.toast{display:none!important}
+    #printArea{display:block!important; color:#000; font-family:var(--sans); line-height:1.4}
+    #printArea .rp-head{display:flex; justify-content:space-between; align-items:flex-end; border-bottom:3px solid #000; padding-bottom:8px; margin-bottom:6px}
+    #printArea .rp-brand{font-family:var(--cond); font-weight:800; text-transform:uppercase; letter-spacing:.02em; font-size:15px; color:#C83830}
+    #printArea .rp-h1{font-family:var(--cond); font-weight:800; text-transform:uppercase; font-size:26px; line-height:1; margin:2px 0 0; color:#000}
+    #printArea .rp-meta{font-size:11px; color:#333; text-align:right}
+    #printArea h3{font-family:var(--cond); font-weight:800; text-transform:uppercase; letter-spacing:.02em; font-size:14px; border-bottom:2px solid #000; padding-bottom:3px; margin:20px 0 6px}
+    #printArea table{width:100%; border-collapse:collapse; font-size:10px}
+    #printArea th{text-align:left; border-bottom:1px solid #000; padding:5px 6px; font-family:var(--cond); text-transform:uppercase; letter-spacing:.02em; font-size:9.5px; color:#000}
+    #printArea td{border-bottom:1px solid #ccc; padding:5px 6px; vertical-align:top; color:#111}
+    #printArea tr{break-inside:avoid}
+    #printArea .rp-empty{font-size:11px; color:#666; padding:6px 0}
+    #printArea .rp-foot{margin-top:16px; border-top:1px solid #000; padding-top:6px; font-size:9.5px; color:#444}
+  }
 
   /* ============================ DESKTOP ============================ */
   @media (min-width:1024px){
@@ -361,7 +381,7 @@
     <section class="screen" id="s-reg">
       <div class="pad">
         <div class="eyebrow">Historique</div>
-        <div class="sect"><h2>Registre</h2></div>
+        <div class="sect"><h2>Registre</h2><button class="link js-export">Exporter</button></div>
         <div class="ruled"></div>
         <div id="regList"></div>
       </div>
@@ -446,6 +466,8 @@
   <!-- TOAST -->
   <div class="toast" id="toast"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span class="tx" id="toastTx"></span></div>
 </div>
+
+<div id="printArea" aria-hidden="true"></div>
 
 <script>
 /* ============================ ICONES NAV ============================ */
@@ -597,6 +619,7 @@ const ANO_FLOW=[
   ['closed','Clôturée','Clôture définitive']
 ];
 function anoChip(s){const m={open:['crit','Ouverte'],in_progress:['warn','En cours'],corrected:['info','Corrigée'],verified:['info','Vérifiée'],closed:['mute','Clôturée']};const x=m[s]||['mute',s];return `<span class="chip ${x[0]}"><span class="cd"></span>${x[1]}</span>`}
+function anoStatusLabel(s){return ({open:'Ouverte',in_progress:'En cours',corrected:'Corrigée',verified:'Vérifiée',closed:'Clôturée'})[s]||s;}
 /* Catégorie d'anomalie déduite du type de contrôle (correctif #9) */
 function ctlToAnoCat(code){
   return ({first_aid_kit_check:'first_aid', products_check:'product', equipment_check:'equipment', documentation_check:'other'})[code] || 'other';
@@ -963,7 +986,7 @@ document.addEventListener('click',e=>{
   openSheet('Contrôle périodique', ctlName(ctl.type), body, foot);
   const d=$('#doCtl'); if(d)d.onclick=()=>{
     const res=$('.choice.sel',$('#ctlRes'))?.dataset.r||'ok';
-    ctl.status='completed'; ctl.result=res; ctl.completedAt=Date.now();
+    ctl.status='completed'; ctl.result=res; ctl.completedAt=Date.now(); ctl.completedBy=currentUser().short;
     if(res==='not_ok'){ db.anos.unshift({id:id(),zone:ctl.zone||'—',cat:ctlToAnoCat(ctl.type),prio:'high',desc:'Non-conformité relevée lors du contrôle : '+ctlName(ctl.type),by:currentUser().short,at:Date.now(),status:'open'}); }
     render(); showBurst('Contrôle enregistré', ctlName(ctl.type)+' · '+(res==='ok'?'Conforme':'Non conforme'));
   };
@@ -985,6 +1008,7 @@ document.addEventListener('click',e=>{
   const au=e.target.closest('[data-au]'); if(au){const o=AU_OCC[+au.dataset.au]; if(!o)return;
     openValidate({code:o.ot.code, zone:o.zoneName, protocolId:o.task.protocolId, planId:o.task.id, slot:''}); return;}
   if(e.target.closest('.js-report')){openReport();return;}
+  if(e.target.closest('.js-export')){openExport();return;}
   if(e.target.closest('.js-pick')){openPick();return;}
   if(e.target.closest('.js-settings')){goto('settings');return;}
   if(e.target.closest('.js-zone-add')){openZoneEdit();return;}
@@ -1167,6 +1191,59 @@ function openPlanEdit(taskId){
       render(); closeSheet(); toast('<b>Tâche retirée</b>');
     }
   };
+}
+
+/* ============================ EXPORT DU REGISTRE ============================ */
+function openExport(){
+  const presets=[['today',"Aujourd'hui"],['7','7 derniers jours'],['30','30 derniers jours'],['custom','Personnalisée']];
+  const body=`
+    <div class="fieldlab">Période</div>
+    <div class="choices" id="exPeriod">${presets.map((p,i)=>`<button class="choice ${i===1?'sel':''}" data-p="${p[0]}">${p[1]}</button>`).join('')}</div>
+    <div id="exCustom" hidden>
+      <div class="fieldlab">Du</div><input type="date" id="exFrom">
+      <div class="fieldlab">Au</div><input type="date" id="exTo">
+    </div>
+    <div class="hint" style="margin-top:14px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><rect x="6" y="13" width="12" height="9"/><path d="M6 18H4a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-2"/></svg><span>Génère un registre propre à imprimer ou à enregistrer en PDF (via le menu d'impression du navigateur).</span></div>`;
+  openSheet('Export','Exporter le registre',body,`<button class="btn btn-primary" id="exGo"><span class="ic">${ICcheck}</span>Générer le registre</button>`);
+  const custom=$('#exCustom');
+  const iso=d=>new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+  $('#exFrom').value=iso(new Date(Date.now()-7*864e5)); $('#exTo').value=iso(new Date());
+  $$('#exPeriod .choice').forEach(b=>b.onclick=()=>{ custom.hidden = b.dataset.p!=='custom'; });
+  $('#exGo').onclick=()=>{
+    const p=$('.choice.sel',$('#exPeriod'))?.dataset.p||'7'; let from, to=Date.now();
+    if(p==='today'){ const d=new Date(); d.setHours(0,0,0,0); from=d.getTime(); }
+    else if(p==='30'){ from=Date.now()-30*864e5; }
+    else if(p==='custom'){ const f=$('#exFrom').value,t=$('#exTo').value; if(!f||!t){toast('Choisissez les deux dates');return;} from=new Date(f+'T00:00:00').getTime(); to=new Date(t+'T23:59:59').getTime(); }
+    else { from=Date.now()-7*864e5; }
+    const label=({today:"Aujourd'hui",'7':'7 derniers jours','30':'30 derniers jours',custom:'Période personnalisée'})[p];
+    closeSheet(); setTimeout(()=>buildAndPrint(from,to,label),220);
+  };
+}
+function buildAndPrint(from,to,label){
+  const club=currentClub();
+  const df=d=>new Date(d).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'});
+  const ops=db.ops.filter(o=>o.at>=from&&o.at<=to).sort((a,b)=>a.at-b.at);
+  const anos=db.anos.filter(a=>a.at>=from&&a.at<=to).sort((a,b)=>a.at-b.at);
+  const ctls=db.ctls.filter(c=>(c.completedAt&&c.completedAt>=from&&c.completedAt<=to)||(c.status!=='completed'&&c.status!=='cancelled'&&c.due>=from&&c.due<=to)).sort((a,b)=>((a.completedAt||a.due)-(b.completedAt||b.due)));
+  const opsRows=ops.map(o=>{const t=opType(o.type),pr=o.protocolId?protocolById(o.protocolId):null;
+    return `<tr><td>${df(o.at)}</td><td>${timeFmt(o.at)}</td><td>${escapeHtml(o.zone||'—')}</td><td>${escapeHtml(t.full)}</td><td>${escapeHtml(o.slot||'—')}</td><td>${escapeHtml(o.by||'—')}</td><td>${escapeHtml(pr?pr.name:(o.product||'—'))}</td><td>${o.anomaly?'Anomalie':'Conforme'}</td></tr>`;}).join('');
+  const anosRows=anos.map(a=>`<tr><td>${df(a.at)}</td><td>${escapeHtml(a.zone||'—')}</td><td>${catName(a.cat)}</td><td>${escapeHtml(a.desc)}</td><td>${anoStatusLabel(a.status)}</td><td>${escapeHtml(a.assignedTo||'—')}</td><td>${escapeHtml(a.correctiveAction||'—')}</td><td>${a.verifiedBy?escapeHtml(a.verifiedBy):'—'}</td></tr>`).join('');
+  const ctlsRows=ctls.map(c=>{const s=ctlStatus(c);
+    return `<tr><td>${ctlName(c.type)}</td><td>${escapeHtml(c.zone||'—')}</td><td>${df(c.due)}</td><td>${s[1]}</td><td>${c.result?(c.result==='ok'?'Conforme':'Non conforme'):'—'}</td><td>${c.completedBy?escapeHtml(c.completedBy):'—'}${c.completedAt?' · '+df(c.completedAt):''}</td></tr>`;}).join('');
+  const pa=document.getElementById('printArea');
+  pa.innerHTML=`
+    <div class="rp-head">
+      <div><div class="rp-brand">MatSafe Control</div><div class="rp-h1">${escapeHtml(club.name)}</div></div>
+      <div class="rp-meta">Registre d'hygiène et de traçabilité<br>Période : ${label} (${df(from)} – ${df(to)})<br>Édité le ${df(Date.now())} à ${timeFmt(Date.now())}</div>
+    </div>
+    <h3>Opérations d'entretien (${ops.length})</h3>
+    ${ops.length?`<table><thead><tr><th>Date</th><th>Heure</th><th>Zone</th><th>Opération</th><th>Créneau</th><th>Réalisé par</th><th>Protocole / produit</th><th>Statut</th></tr></thead><tbody>${opsRows}</tbody></table>`:'<div class="rp-empty">Aucune opération sur la période.</div>'}
+    <h3>Anomalies (${anos.length})</h3>
+    ${anos.length?`<table><thead><tr><th>Signalée</th><th>Zone</th><th>Catégorie</th><th>Description</th><th>Statut</th><th>Responsable</th><th>Action corrective</th><th>Vérifiée par</th></tr></thead><tbody>${anosRows}</tbody></table>`:'<div class="rp-empty">Aucune anomalie sur la période.</div>'}
+    <h3>Contrôles périodiques (${ctls.length})</h3>
+    ${ctls.length?`<table><thead><tr><th>Contrôle</th><th>Zone</th><th>Échéance</th><th>Statut</th><th>Résultat</th><th>Réalisé</th></tr></thead><tbody>${ctlsRows}</tbody></table>`:'<div class="rp-empty">Aucun contrôle sur la période.</div>'}
+    <div class="rp-foot">Registre de traçabilité MatSafe Control — élément à croiser avec l'observation terrain, les procédures et les échanges avec les responsables. Ne contient aucune donnée médicale nominative.</div>`;
+  try{ window.print(); }catch(e){ toast('Ouvrez le menu Imprimer de votre navigateur'); }
 }
 
 /* ============================ INIT ============================ */
