@@ -121,7 +121,8 @@
 
   /* registre / listes chronologiques */
   .dayhead{font-family:var(--cond); font-weight:700; text-transform:uppercase; letter-spacing:.16em; font-size:11px; color:var(--gray); margin:26px 0 2px}
-  .logline{display:flex; gap:16px; width:100%; text-align:left; background:none; border:0; padding:15px 2px; border-top:1px solid var(--hair); color:var(--ink); cursor:default}
+  .logline{display:flex; gap:16px; align-items:flex-start; width:100%; text-align:left; background:none; border:0; padding:15px 2px; border-top:1px solid var(--hair); color:var(--ink); cursor:pointer}
+  .logline:hover{background:linear-gradient(90deg, rgba(10,10,10,.02), transparent)}
   .logline .time{font-family:var(--cond); font-weight:800; font-size:20px; letter-spacing:.01em; width:56px; flex:none; font-variant-numeric:tabular-nums}
   .logline .grow{flex:1; min-width:0}
   .logline .lt{font-family:var(--cond); font-weight:700; text-transform:uppercase; letter-spacing:.02em; font-size:16px; line-height:1.05}
@@ -484,13 +485,13 @@ let TODAY_OCC=[], AU_OCC=[];   // occurrences du jour (planifiées) + tâches à
 function seedRecords(plan){
   const now=Date.now(), H=3600e3, D=24*H;
   const at=(h,m)=>{const d=new Date(); d.setHours(h,m,0,0); return d.getTime();};
-  const tId=code=>{const t=(plan||[]).find(x=>x.opTypeCode===code); return t?t.id:null;};
+  const tOf=code=>(plan||[]).find(x=>x.opTypeCode===code)||{};
   return {
     ops:[
-      {id:id(), type:'training_surface_cleaning', zone:'Tatami principal', by:'Rémy L.', at:at(8,34), anomaly:false, planId:tId('training_surface_cleaning'), slot:''},
-      {id:id(), type:'changing_room_cleaning', zone:'Vestiaires & douches', by:'Rémy L.', at:at(9,12), anomaly:false, planId:tId('changing_room_cleaning'), slot:''},
-      {id:id(), type:'restroom_cleaning', zone:'Sanitaires', by:'Karim B.', at:at(9,30), anomaly:false, planId:tId('restroom_cleaning'), slot:'Matin'},
-      {id:id(), type:'shared_equipment_cleaning', zone:'Matériel partagé', by:'Rémy L.', at:at(9,18), anomaly:false, planId:tId('shared_equipment_cleaning'), slot:''},
+      {id:id(), type:'training_surface_cleaning', zone:'Tatami principal', by:'Rémy L.', at:at(8,34), anomaly:false, planId:tOf('training_surface_cleaning').id||null, protocolId:tOf('training_surface_cleaning').protocolId||null, slot:''},
+      {id:id(), type:'changing_room_cleaning', zone:'Vestiaires & douches', by:'Rémy L.', at:at(9,12), anomaly:false, planId:tOf('changing_room_cleaning').id||null, protocolId:tOf('changing_room_cleaning').protocolId||null, slot:''},
+      {id:id(), type:'restroom_cleaning', zone:'Sanitaires', by:'Karim B.', at:at(9,30), anomaly:false, planId:tOf('restroom_cleaning').id||null, protocolId:tOf('restroom_cleaning').protocolId||null, slot:'Matin'},
+      {id:id(), type:'shared_equipment_cleaning', zone:'Matériel partagé', by:'Rémy L.', at:at(9,18), anomaly:false, planId:tOf('shared_equipment_cleaning').id||null, protocolId:tOf('shared_equipment_cleaning').protocolId||null, slot:''},
       {id:id(), type:'training_surface_cleaning', zone:'Tatami 2', by:'Léa M.', at:now-1*D-4*H, anomaly:false},
       {id:id(), type:'restroom_cleaning', zone:'Sanitaires', by:'Karim B.', at:now-1*D-6*H, anomaly:true}
     ],
@@ -720,11 +721,11 @@ function render(){
   save();
 }
 function logRow(o){const t=opType(o.type);return `
-  <div class="logline">
+  <button class="logline" data-op="${o.id}">
     <span class="time">${timeFmt(o.at)}</span>
-    <span class="grow"><span class="lt">${o.zone||t.name}</span><span class="lm">${t.full} · ${o.by}</span></span>
+    <span class="grow"><span class="lt">${escapeHtml(o.zone||t.name)}</span><span class="lm">${escapeHtml(t.full)}${o.slot?' · '+o.slot:''} · ${escapeHtml(o.by||'')}</span></span>
     <span class="flag ${o.anomaly?'st-crit':'st-ok'}">${o.anomaly?'Anomalie':'Conforme'}</span>
-  </div>`;
+  </button>`;
 }
 function emptyBox(big,sub=''){return `<div class="empty"><div class="big">${big}</div>${sub}</div>`}
 
@@ -825,6 +826,29 @@ function openReport(presetZone){
     render(); showBurst('Anomalie signalée','Ajoutée au suivi · statut Ouverte');
   };
 }
+
+/* ============================ DETAIL OPÉRATION (preuve) ============================ */
+function openOpDetail(opId){
+  const o=db.ops.find(x=>x.id===opId); if(!o)return;
+  const t=opType(o.type);
+  const proto=o.protocolId?protocolById(o.protocolId):null;
+  const body=`
+    <div style="margin:2px 0 14px">${o.anomaly?'<span class="chip crit"><span class="cd"></span>Anomalie signalée</span>':'<span class="chip ok"><span class="cd"></span>Conforme</span>'}</div>
+    <div class="kv"><span class="k">Opération</span><span class="v">${escapeHtml(t.full)}</span></div>
+    <div class="kv"><span class="k">Zone</span><span class="v">${escapeHtml(o.zone||'—')}</span></div>
+    ${o.slot?`<div class="kv"><span class="k">Créneau</span><span class="v">${escapeHtml(o.slot)}</span></div>`:''}
+    <div class="kv"><span class="k">Effectué par</span><span class="v">${escapeHtml(o.by||'—')}</span></div>
+    <div class="kv"><span class="k">Date &amp; heure</span><span class="v">${dateLong(o.at)} · ${timeFmt(o.at)}</span></div>
+    ${proto?`<div class="kv"><span class="k">Protocole</span><span class="v">${escapeHtml(proto.name)}</span></div>`:(o.product?`<div class="kv"><span class="k">Produit</span><span class="v">${escapeHtml(o.product)}</span></div>`:'')}
+    ${o.comment?`<div class="kv"><span class="k">Commentaire</span><span class="v">${escapeHtml(o.comment)}</span></div>`:''}
+    ${proto?`<div class="fieldlab">Protocole appliqué</div><div class="proto-card">${protoCardHTML(proto)}</div>`:''}
+    <p class="hint" style="margin-top:16px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>Enregistrement conservé dans le registre (preuve d'exécution, non modifiable).</span></p>`;
+  openSheet('Opération', o.zone||t.name, body, `<button class="btn btn-ghost" onclick="closeSheet()">Fermer</button>`);
+}
+document.addEventListener('click',e=>{
+  const c=e.target.closest('[data-op]'); if(!c)return;
+  openOpDetail(c.dataset.op);
+});
 
 /* ============================ DETAIL ANOMALIE ============================ */
 document.addEventListener('click',e=>{
