@@ -279,7 +279,7 @@
       <button class="snav" data-tab="ctl"><span class="ic"></span>Contrôles<span class="badge" id="navCtlBadge" hidden>0</span></button>
     </nav>
     <div class="sb-foot">
-      <div class="club">Cube Fight Club</div>
+      <div class="club" id="sbClub">Cube Fight Club</div>
       <div class="role" id="sbRole">Référent Hygiène</div>
       <button class="rst js-reset"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Réinitialiser la démo</button>
     </div>
@@ -299,7 +299,7 @@
       <div class="pad">
         <div class="clubhead">
           <div class="kicker">Registre du jour</div>
-          <h1>Cube Fight Club</h1>
+          <h1 id="clubName">Cube Fight Club</h1>
           <div class="sub"><span class="role" id="hRole">Référent Hygiène</span><span class="bar"></span><span id="hDate"></span></div>
         </div>
 
@@ -420,15 +420,18 @@ const DAILY_PLAN=[
   {label:'Sanitaires',          type:'restroom_cleaning',         zone:'Sanitaires', desc:'Toilettes / lavabos'},
   {label:'Matériel partagé',    type:'shared_equipment_cleaning', zone:'Matériel partagé', desc:'Gants, pattes d\'ours, cibles'}
 ];
-const ZONES=['Tatami principal','Tatami 2','Vestiaires & douches','Sanitaires','Matériel partagé','Réception','Premiers secours'];
+/* Zones par défaut d'un nouveau club (désormais stockées dans STATE.config.zones) */
+const DEFAULT_ZONES=[['Tatami principal','tatami'],['Tatami 2','tatami'],['Vestiaires & douches','changing_room'],['Sanitaires','restroom'],['Matériel partagé','shared_equipment'],['Réception','reception'],['Premiers secours','first_aid']];
 const ANO_CATS=[['hygiene','Hygiène'],['equipment','Équipement'],['product','Produit'],['damage','Dégât'],['installation','Installation'],['first_aid','1ers secours'],['other','Autre']];
 const CTL_TYPES=[['first_aid_kit_check','Trousse de secours'],['products_check','Produits d\'entretien'],['equipment_check','Équipements'],['documentation_check','Documentation']];
-const USER={name:'Rémy Lassalle', role:'Référent Hygiène'};
+/* Utilisateur & club : voir STATE / defaultState() — plus aucune identité en dur ici. */
 
-const STORE='matsafe_demo_v4';
-let db;
+const STORE='matsafe_demo_v5';       // état club-scoped (config + session + records)
+const OLD_STORE='matsafe_demo_v4';   // ancien format plat {ops,anos,ctls} -> migration
+let STATE, db;
 
-function seed(){
+/* Enregistrements de démonstration (opérations / anomalies / contrôles) */
+function seedRecords(){
   const now=Date.now(), H=3600e3, D=24*H;
   const at=(h,m)=>{const d=new Date(); d.setHours(h,m,0,0); return d.getTime();};
   return {
@@ -452,6 +455,25 @@ function seed(){
     ]
   };
 }
+
+/* État complet d'un club (config éditable + session + enregistrements) */
+function defaultState(){
+  return {
+    v:5,
+    club:{id:'club_demo', name:'Cube Fight Club', city:'Paris'},
+    users:[{id:'u_ref', name:'Rémy Lassalle', short:'Rémy L.', role:'Référent Hygiène'}],
+    session:{clubId:'club_demo', userId:'u_ref'},
+    config:{
+      zones: DEFAULT_ZONES.map(([name,type])=>({id:id(), name, type, active:true})),
+      protocols: [],
+      plan: []
+    },
+    records: seedRecords()
+  };
+}
+function currentClub(){ return STATE.club; }
+function currentUser(){ return STATE.users.find(u=>u.id===STATE.session.userId) || STATE.users[0]; }
+function zoneNames(){ return STATE.config.zones.filter(z=>z.active).map(z=>z.name); }
 function id(){return Math.random().toString(36).slice(2,10)}
 /* Répare un texte "mojibake" (UTF-8 relu en Latin-1) : ex. "Ã©" -> "é". */
 function fixMojibake(s){
@@ -468,8 +490,15 @@ function repair(o){
   if(o && typeof o==='object'){ for(const k in o) o[k]=repair(o[k]); return o; }
   return fixMojibake(o);
 }
-function load(){ try{const r=localStorage.getItem(STORE); if(r)return repair(JSON.parse(r));}catch(e){} return seed(); }
-function save(){ try{localStorage.setItem(STORE, JSON.stringify(db))}catch(e){} }
+function load(){
+  try{ const r=localStorage.getItem(STORE); if(r) return repair(JSON.parse(r)); }catch(e){}
+  const st=defaultState();
+  try{ const old=localStorage.getItem(OLD_STORE);
+       if(old){ const o=repair(JSON.parse(old));
+         if(o && (o.ops||o.anos||o.ctls)) st.records={ops:o.ops||[], anos:o.anos||[], ctls:o.ctls||[]}; } }catch(e){}
+  return st;
+}
+function save(){ try{localStorage.setItem(STORE, JSON.stringify(STATE))}catch(e){} }
 
 /* ============================ HELPERS ============================ */
 const $=(s,r=document)=>r.querySelector(s);
@@ -507,7 +536,10 @@ function planStatus(p){
 
 /* ============================ RENDER ============================ */
 function render(){
-  $('#hDate').textContent=dateHead(Date.now()); $('#hRole').textContent=USER.role; $('#sbRole').textContent=USER.role;
+  const u=currentUser(), cl=currentClub();
+  const elClub=$('#clubName'); if(elClub)elClub.textContent=cl.name;
+  const elSbClub=$('#sbClub'); if(elSbClub)elSbClub.textContent=cl.name;
+  $('#hDate').textContent=dateHead(Date.now()); $('#hRole').textContent=u.role; $('#sbRole').textContent=u.role;
 
   // plan du jour
   let done=0;
@@ -627,7 +659,7 @@ function openValidate(code, presetZone){
   $('#doValidate').onclick=()=>{
     const cw=$('#cmtWrap'); const comment=(!cw.hidden && $('#opComment'))?$('#opComment').value.trim():'';
     const now=Date.now();
-    db.ops.unshift({id:id(), type:code, zone, by:'Rémy L.', at:now, anomaly:false, comment});
+    db.ops.unshift({id:id(), type:code, zone, by:currentUser().short, at:now, anomaly:false, comment});
     render(); showBurst('Entretien enregistré', `${zone} · ${timeFmt(now)}`);
   };
   $('#toReport').onclick=()=>{ closeSheet(); setTimeout(()=>openReport(presetZone),180); };
@@ -641,7 +673,7 @@ function openPick(){
 
 /* ============================ SIGNALEMENT ============================ */
 function openReport(presetZone){
-  const zoneChips=ZONES.map((z,i)=>`<button class="choice ${z===presetZone||(i===0&&!presetZone)?'sel':''}" data-z="${z}">${z}</button>`).join('');
+  const zoneChips=zoneNames().map((z,i)=>`<button class="choice ${z===presetZone||(i===0&&!presetZone)?'sel':''}" data-z="${z}">${z}</button>`).join('');
   const catChips=ANO_CATS.map((c,i)=>`<button class="choice ${i===0?'sel':''}" data-c="${c[0]}">${c[1]}</button>`).join('');
   const body=`
     <div class="fieldlab">Zone</div><div class="choices" id="rZone">${zoneChips}</div>
@@ -658,7 +690,7 @@ function openReport(presetZone){
     const desc=$('#rDesc').value.trim();
     if(!desc){ $('#rDesc').focus(); $('#rDesc').style.borderColor='var(--crit)'; return; }
     const now=Date.now();
-    db.anos.unshift({id:id(), zone:$('.choice.sel',$('#rZone'))?.dataset.z||ZONES[0], cat:$('.choice.sel',$('#rCat'))?.dataset.c||'other', prio:'normal', desc, by:'Rémy L.', at:now, status:'open'});
+    db.anos.unshift({id:id(), zone:$('.choice.sel',$('#rZone'))?.dataset.z||zoneNames()[0], cat:$('.choice.sel',$('#rCat'))?.dataset.c||'other', prio:'normal', desc, by:currentUser().short, at:now, status:'open'});
     render(); showBurst('Anomalie signalée','Ajoutée au suivi · statut Ouverte');
   };
 }
@@ -708,7 +740,7 @@ document.addEventListener('click',e=>{
   const d=$('#doCtl'); if(d)d.onclick=()=>{
     const res=$('.choice.sel',$('#ctlRes'))?.dataset.r||'ok';
     ctl.status='completed'; ctl.result=res; ctl.completedAt=Date.now();
-    if(res==='not_ok'){ db.anos.unshift({id:id(),zone:ctl.zone||'—',cat:'equipment',prio:'high',desc:'Non-conformité relevée lors du contrôle : '+ctlName(ctl.type),by:'Rémy L.',at:Date.now(),status:'open'}); }
+    if(res==='not_ok'){ db.anos.unshift({id:id(),zone:ctl.zone||'—',cat:'equipment',prio:'high',desc:'Non-conformité relevée lors du contrôle : '+ctlName(ctl.type),by:currentUser().short,at:Date.now(),status:'open'}); }
     render(); showBurst('Contrôle enregistré', ctlName(ctl.type)+' · '+(res==='ok'?'Conforme':'Non conforme'));
   };
 });
@@ -727,11 +759,12 @@ document.addEventListener('click',e=>{
     if(st.done){toast(`<b>${item.label}</b> · déjà validé à ${timeFmt(st.at)}`);} else {openValidate(item.type, item.zone);} return;}
   if(e.target.closest('.js-report')){openReport();return;}
   if(e.target.closest('.js-pick')){openPick();return;}
-  if(e.target.closest('.js-reset')){ if(confirm('Réinitialiser les données de démonstration ?')){db=seed(); render(); goto('home'); toast('<b>Démo réinitialisée</b>');} return;}
+  if(e.target.closest('.js-reset')){ if(confirm('Réinitialiser les données de démonstration ?')){STATE=defaultState(); db=STATE.records; render(); goto('home'); toast('<b>Démo réinitialisée</b>');} return;}
 });
 
 /* ============================ INIT ============================ */
 $$('.tab, .snav').forEach(el=>{const k=el.dataset.tab; if(NAV_IC[k]){const ic=el.querySelector('.ic'); if(ic)ic.innerHTML=NAV_IC[k];}});
-db=load();
+STATE=load();
+db=STATE.records;
 render();
 </script>
