@@ -334,6 +334,12 @@
 
         <div class="lines" id="planList"></div>
 
+        <div id="onDemandWrap" hidden>
+          <div class="sect"><h2>À la demande</h2></div>
+          <div class="ruled"></div>
+          <div class="lines" id="onDemandList"></div>
+        </div>
+
         <div class="actions">
           <button class="btn btn-secondary js-pick"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Autre opération</button>
           <button class="btn btn-danger js-report"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>Signaler un problème</button>
@@ -397,6 +403,10 @@
         <div class="sect"><h2>Protocoles &amp; produits</h2><button class="link js-proto-add">+ Ajouter</button></div>
         <div class="ruled"></div>
         <div id="protoList"></div>
+
+        <div class="sect"><h2>Plan d'entretien</h2><button class="link js-plan-add">+ Ajouter</button></div>
+        <div class="ruled"></div>
+        <div id="planCfgList"></div>
       </div>
     </section>
   </main>
@@ -455,13 +465,10 @@ const OP_TYPES=[
   {code:'shared_equipment_cleaning', name:'Matériel partagé', full:'Nettoyage équipement partagé'},
   {code:'first_aid_check',           name:'Premiers secours', full:'Vérification premiers secours'}
 ];
-/* Plan quotidien : opérations attendues chaque jour (statut dérivé des opérations du jour) */
-const DAILY_PLAN=[
-  {label:'Tatami principal',    type:'training_surface_cleaning', zone:'Tatami principal', desc:'Surface d\'entraînement'},
-  {label:'Vestiaires & douches',type:'changing_room_cleaning',    zone:'Vestiaires & douches', desc:'Vestiaires et douches'},
-  {label:'Sanitaires',          type:'restroom_cleaning',         zone:'Sanitaires', desc:'Toilettes / lavabos'},
-  {label:'Matériel partagé',    type:'shared_equipment_cleaning', zone:'Matériel partagé', desc:'Gants, pattes d\'ours, cibles'}
-];
+/* Fréquences du plan d'entretien + jours (getDay : 0=dim..6=sam) */
+const FREQS=[['daily','Chaque jour'],['twice_daily','2× par jour'],['after_use','Après utilisation'],['weekly','Hebdomadaire']];
+function freqLabel(f){ return (FREQS.find(x=>x[0]===f)||[f,f])[1]; }
+const WEEKDAYS=[['1','Lun'],['2','Mar'],['3','Mer'],['4','Jeu'],['5','Ven'],['6','Sam'],['0','Dim']];
 /* Zones par défaut d'un nouveau club (désormais stockées dans STATE.config.zones) */
 const DEFAULT_ZONES=[['Tatami principal','tatami'],['Tatami 2','tatami'],['Vestiaires & douches','changing_room'],['Sanitaires','restroom'],['Matériel partagé','shared_equipment'],['Réception','reception'],['Premiers secours','first_aid']];
 const ANO_CATS=[['hygiene','Hygiène'],['equipment','Équipement'],['product','Produit'],['damage','Dégât'],['installation','Installation'],['first_aid','1ers secours'],['other','Autre']];
@@ -471,16 +478,19 @@ const CTL_TYPES=[['first_aid_kit_check','Trousse de secours'],['products_check',
 const STORE='matsafe_demo_v5';       // état club-scoped (config + session + records)
 const OLD_STORE='matsafe_demo_v4';   // ancien format plat {ops,anos,ctls} -> migration
 let STATE, db;
+let TODAY_OCC=[], AU_OCC=[];   // occurrences du jour (planifiées) + tâches à la demande
 
 /* Enregistrements de démonstration (opérations / anomalies / contrôles) */
-function seedRecords(){
+function seedRecords(plan){
   const now=Date.now(), H=3600e3, D=24*H;
   const at=(h,m)=>{const d=new Date(); d.setHours(h,m,0,0); return d.getTime();};
+  const tId=code=>{const t=(plan||[]).find(x=>x.opTypeCode===code); return t?t.id:null;};
   return {
     ops:[
-      {id:id(), type:'training_surface_cleaning', zone:'Tatami principal', by:'Rémy L.', at:at(8,34), anomaly:false},
-      {id:id(), type:'changing_room_cleaning', zone:'Vestiaires & douches', by:'Rémy L.', at:at(9,12), anomaly:false},
-      {id:id(), type:'shared_equipment_cleaning', zone:'Matériel partagé', by:'Rémy L.', at:at(9,18), anomaly:false},
+      {id:id(), type:'training_surface_cleaning', zone:'Tatami principal', by:'Rémy L.', at:at(8,34), anomaly:false, planId:tId('training_surface_cleaning'), slot:''},
+      {id:id(), type:'changing_room_cleaning', zone:'Vestiaires & douches', by:'Rémy L.', at:at(9,12), anomaly:false, planId:tId('changing_room_cleaning'), slot:''},
+      {id:id(), type:'restroom_cleaning', zone:'Sanitaires', by:'Karim B.', at:at(9,30), anomaly:false, planId:tId('restroom_cleaning'), slot:'Matin'},
+      {id:id(), type:'shared_equipment_cleaning', zone:'Matériel partagé', by:'Rémy L.', at:at(9,18), anomaly:false, planId:tId('shared_equipment_cleaning'), slot:''},
       {id:id(), type:'training_surface_cleaning', zone:'Tatami 2', by:'Léa M.', at:now-1*D-4*H, anomaly:false},
       {id:id(), type:'restroom_cleaning', zone:'Sanitaires', by:'Karim B.', at:now-1*D-6*H, anomaly:true}
     ],
@@ -500,20 +510,23 @@ function seedRecords(){
 
 /* État complet d'un club (config éditable + session + enregistrements) */
 function defaultState(){
+  const zones = DEFAULT_ZONES.map(([name,type])=>({id:id(), name, type, active:true}));
+  const zByName = n => (zones.find(z=>z.name===n)||{}).id || null;
+  const protoTatami={id:id(), name:'Désinfection tatami', product:'Détergent-désinfectant surfaces (norme EN 14476)', dilution:'20 ml/L', contactTime:'5 min', rinse:false, note:'Balayage puis passage microfibre. Laisser sécher à l\'air libre.'};
+  const protoSanit ={id:id(), name:'Sanitaires', product:'Nettoyant sanitaire désinfectant', dilution:'Prêt à l\'emploi', contactTime:'5 min', rinse:true, note:'Cuvettes, lavabos, poignées. Rincer les surfaces en contact avec la peau.'};
+  const plan=[
+    {id:id(), zoneId:zByName('Tatami principal'),     opTypeCode:'training_surface_cleaning', frequency:'daily',       days:[], protocolId:protoTatami.id, active:true},
+    {id:id(), zoneId:zByName('Vestiaires & douches'), opTypeCode:'changing_room_cleaning',    frequency:'daily',       days:[], protocolId:null,          active:true},
+    {id:id(), zoneId:zByName('Sanitaires'),           opTypeCode:'restroom_cleaning',         frequency:'twice_daily', days:[], protocolId:protoSanit.id,  active:true},
+    {id:id(), zoneId:zByName('Matériel partagé'),     opTypeCode:'shared_equipment_cleaning', frequency:'after_use',   days:[], protocolId:null,          active:true}
+  ];
   return {
     v:5,
     club:{id:'club_demo', name:'Cube Fight Club', city:'Paris'},
     users:[{id:'u_ref', name:'Rémy Lassalle', short:'Rémy L.', role:'Référent Hygiène'}],
     session:{clubId:'club_demo', userId:'u_ref'},
-    config:{
-      zones: DEFAULT_ZONES.map(([name,type])=>({id:id(), name, type, active:true})),
-      protocols: [
-        {id:id(), name:'Désinfection tatami', product:'Détergent-désinfectant surfaces (norme EN 14476)', dilution:'20 ml/L', contactTime:'5 min', rinse:false, note:'Balayage puis passage microfibre. Laisser sécher à l\'air libre.'},
-        {id:id(), name:'Sanitaires', product:'Nettoyant sanitaire désinfectant', dilution:'Prêt à l\'emploi', contactTime:'5 min', rinse:true, note:'Cuvettes, lavabos, poignées. Rincer les surfaces en contact avec la peau.'}
-      ],
-      plan: []
-    },
-    records: seedRecords()
+    config:{ zones, protocols:[protoTatami, protoSanit], plan },
+    records: seedRecords(plan)
   };
 }
 function currentClub(){ return STATE.club; }
@@ -589,9 +602,28 @@ function ctlStatus(c){
   if(c.due<=Date.now()+864e5)return['warn','À faire'];
   return['info','Planifié'];
 }
-function planStatus(p){
-  const today=db.ops.filter(o=>o.type===p.type && isToday(o.at)).sort((a,b)=>b.at-a.at);
-  return today.length? {done:true, at:today[0].at, by:today[0].by} : {done:false};
+function zoneById(zid){ return STATE.config.zones.find(z=>z.id===zid)||null; }
+/* Occurrences planifiées du jour (daily / 2×jour / hebdo le bon jour) */
+function todayOccurrences(){
+  const wd=new Date().getDay(); const occ=[];
+  for(const task of STATE.config.plan){
+    if(!task.active) continue;
+    const z=zoneById(task.zoneId); const zoneName=z?z.name:'—'; const ot=opType(task.opTypeCode);
+    if(task.frequency==='after_use') continue;
+    if(task.frequency==='weekly'){ if(!(task.days||[]).includes(wd)) continue; occ.push({task, slot:'', zoneName, ot}); }
+    else if(task.frequency==='twice_daily'){ occ.push({task, slot:'Matin', zoneName, ot}); occ.push({task, slot:'Soir', zoneName, ot}); }
+    else { occ.push({task, slot:'', zoneName, ot}); }
+  }
+  return occ;
+}
+/* Tâches "à la demande" (après utilisation) */
+function afterUseTasks(){
+  return STATE.config.plan.filter(t=>t.active && t.frequency==='after_use')
+    .map(task=>{ const z=zoneById(task.zoneId); return {task, zoneName:z?z.name:'—', ot:opType(task.opTypeCode)}; });
+}
+/* Une occurrence (task+slot) est-elle déjà validée aujourd'hui ? */
+function occDone(task, slot){
+  return db.ops.filter(o=>isToday(o.at) && o.planId===task.id && (o.slot||'')===(slot||'')).sort((a,b)=>b.at-a.at)[0]||null;
 }
 
 /* ============================ RENDER ============================ */
@@ -601,22 +633,40 @@ function render(){
   const elSbClub=$('#sbClub'); if(elSbClub)elSbClub.textContent=cl.name;
   $('#hDate').textContent=dateHead(Date.now()); $('#hRole').textContent=u.role; $('#sbRole').textContent=u.role;
 
-  // plan du jour
-  let done=0;
-  $('#planList').innerHTML=DAILY_PLAN.map((p,i)=>{
-    const st=planStatus(p); if(st.done)done++;
-    const right=st.done
-      ? `<span class="status st-ok">Fait à ${timeFmt(st.at)}</span>`
-      : `<span class="status st-warn">À faire <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></span>`;
-    return `<button class="opline" data-plan="${i}">
-      <span class="lead"><span class="statedot ${st.done?'done':'todo'}"></span></span>
-      <span class="grow"><span class="ttl">${p.label}</span><span class="desc">${p.desc}</span></span>
+  // plan du jour (généré depuis config.plan)
+  const chev='<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>';
+  TODAY_OCC=todayOccurrences(); let done=0;
+  $('#planList').innerHTML = TODAY_OCC.length ? TODAY_OCC.map((o,i)=>{
+    const d=occDone(o.task,o.slot); if(d)done++;
+    const sub=o.ot.full+(o.slot?` · ${o.slot}`:'');
+    const right=d ? `<span class="status st-ok">Fait à ${timeFmt(d.at)}</span>`
+      : `<span class="status st-warn">À faire ${chev}</span>`;
+    return `<button class="opline" data-occ="${i}">
+      <span class="lead"><span class="statedot ${d?'done':'todo'}"></span></span>
+      <span class="grow"><span class="ttl">${escapeHtml(o.zoneName)}</span><span class="desc">${escapeHtml(sub)}</span></span>
       ${right}
     </button>`;
-  }).join('');
+  }).join('') : emptyBox('Rien de planifié aujourd\'hui','Configurez le plan dans Réglages › Plan d\'entretien.');
+  const total=TODAY_OCC.length;
   $('#rDone').textContent=String(done).padStart(2,'0');
-  $('#rTot').textContent='/ '+String(DAILY_PLAN.length).padStart(2,'0');
-  $('#progBar').style.width=Math.round(done/DAILY_PLAN.length*100)+'%';
+  $('#rTot').textContent='/ '+String(total).padStart(2,'0');
+  $('#progBar').style.width=(total?Math.round(done/total*100):0)+'%';
+
+  // à la demande (après utilisation)
+  AU_OCC=afterUseTasks();
+  const auWrap=$('#onDemandWrap');
+  if(auWrap){
+    auWrap.hidden = AU_OCC.length===0;
+    const auList=$('#onDemandList');
+    if(auList) auList.innerHTML=AU_OCC.map((o,i)=>{
+      const n=db.ops.filter(x=>isToday(x.at)&&x.planId===o.task.id).length;
+      return `<button class="opline" data-au="${i}">
+        <span class="lead"><span class="statedot ${n?'done':'todo'}"></span></span>
+        <span class="grow"><span class="ttl">${escapeHtml(o.zoneName)}</span><span class="desc">${escapeHtml(o.ot.full)}${n?` · ${n} aujourd'hui`:''}</span></span>
+        <span class="status st-mute">Valider ${chev}</span>
+      </button>`;
+    }).join('');
+  }
 
   const anoOpen=db.anos.filter(a=>a.status!=='closed');
   const ctlUp=[...db.ctls].filter(c=>c.status==='scheduled').sort((a,b)=>a.due-b.due);
@@ -702,12 +752,17 @@ function openSheet(kicker,title,body,foot){
 function closeSheet(){$('#scrim').classList.remove('show'); $('#sheet').classList.remove('show');}
 $('#scrim').addEventListener('click',closeSheet);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet();});
-document.addEventListener('click',e=>{const ch=e.target.closest('.choice'); if(!ch)return; const g=ch.parentElement; $$('.choice',g).forEach(c=>c.classList.remove('sel')); ch.classList.add('sel');});
+document.addEventListener('click',e=>{const ch=e.target.closest('.choice'); if(!ch)return; const g=ch.parentElement;
+  if(g&&g.dataset.multi==='1'){ ch.classList.toggle('sel'); }
+  else { $$('.choice',g).forEach(c=>c.classList.remove('sel')); ch.classList.add('sel'); }});
 
 /* ============================ VALIDATION EXPRESS ============================ */
-function openValidate(code, presetZone, presetProtocolId){
+function openValidate(opts){
+  opts = opts || {};
+  const code=opts.code, planId=opts.planId||null, slot=opts.slot||'';
+  const presetProtocolId=opts.protocolId||null;
   const t=opType(code);
-  const zone = presetZone || t.name;
+  const zone = opts.zone || t.name;
   const protos = STATE.config.protocols;
   const protoBlock = protos.length ? `
     <div class="fieldlab">Protocole d'entretien</div>
@@ -735,16 +790,16 @@ function openValidate(code, presetZone, presetProtocolId){
     const proto=pid?protocolById(pid):null;
     const now=Date.now();
     db.ops.unshift({id:id(), type:code, zone, by:currentUser().short, at:now, anomaly:false, comment,
-      protocolId:pid||null, product:proto?proto.product:null});
-    render(); showBurst('Entretien enregistré', `${zone} · ${timeFmt(now)}`);
+      protocolId:pid||null, product:proto?proto.product:null, planId:planId||null, slot:slot||''});
+    render(); showBurst('Entretien enregistré', `${zone}${slot?' · '+slot:''} · ${timeFmt(now)}`);
   };
-  $('#toReport').onclick=()=>{ closeSheet(); setTimeout(()=>openReport(presetZone),180); };
+  $('#toReport').onclick=()=>{ closeSheet(); setTimeout(()=>openReport(zone),180); };
 }
 function openPick(){
   const body=`<div class="fieldlab">Type d'opération</div><div class="choices" style="flex-direction:column" id="pickGrp">
     ${OP_TYPES.map(o=>`<button class="choice" style="text-align:left;width:100%" data-pick="${o.code}">${o.full}</button>`).join('')}</div>`;
   openSheet('Enregistrer','Autre opération',body,'');
-  $$('#pickGrp .choice').forEach(b=>b.onclick=()=>{ closeSheet(); setTimeout(()=>openValidate(b.dataset.pick),180); });
+  $$('#pickGrp .choice').forEach(b=>b.onclick=()=>{ closeSheet(); setTimeout(()=>openValidate({code:b.dataset.pick}),180); });
 }
 
 /* ============================ SIGNALEMENT ============================ */
@@ -831,16 +886,21 @@ function toast(html){ $('#toastTx').innerHTML=html; $('#toast').classList.add('s
 
 /* ============================ ACTIONS GLOBALES ============================ */
 document.addEventListener('click',e=>{
-  const p=e.target.closest('[data-plan]'); if(p){const item=DAILY_PLAN[+p.dataset.plan]; const st=planStatus(item);
-    if(st.done){toast(`<b>${item.label}</b> · déjà validé à ${timeFmt(st.at)}`);} else {openValidate(item.type, item.zone);} return;}
+  const oc=e.target.closest('[data-occ]'); if(oc){const o=TODAY_OCC[+oc.dataset.occ]; if(!o)return; const d=occDone(o.task,o.slot);
+    if(d){toast(`<b>${o.zoneName}${o.slot?' · '+o.slot:''}</b> · déjà validé à ${timeFmt(d.at)}`);}
+    else {openValidate({code:o.ot.code, zone:o.zoneName, protocolId:o.task.protocolId, planId:o.task.id, slot:o.slot});} return;}
+  const au=e.target.closest('[data-au]'); if(au){const o=AU_OCC[+au.dataset.au]; if(!o)return;
+    openValidate({code:o.ot.code, zone:o.zoneName, protocolId:o.task.protocolId, planId:o.task.id, slot:''}); return;}
   if(e.target.closest('.js-report')){openReport();return;}
   if(e.target.closest('.js-pick')){openPick();return;}
   if(e.target.closest('.js-settings')){goto('settings');return;}
   if(e.target.closest('.js-zone-add')){openZoneEdit();return;}
   if(e.target.closest('.js-proto-add')){openProtoEdit();return;}
+  if(e.target.closest('.js-plan-add')){openPlanEdit();return;}
   if(e.target.closest('[data-club-edit]')){openClubEdit();return;}
   const ze=e.target.closest('[data-zone-edit]'); if(ze){openZoneEdit(ze.dataset.zoneEdit);return;}
   const pe=e.target.closest('[data-proto-edit]'); if(pe){openProtoEdit(pe.dataset.protoEdit);return;}
+  const te=e.target.closest('[data-plan-edit]'); if(te){openPlanEdit(te.dataset.planEdit);return;}
   if(e.target.closest('.js-reset')){ if(confirm('Réinitialiser les données de démonstration ?')){STATE=defaultState(); db=STATE.records; render(); goto('home'); toast('<b>Démo réinitialisée</b>');} return;}
 });
 
@@ -872,6 +932,19 @@ function renderSettings(){
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B0AA9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:3px"><path d="m9 6 6 6-6 6"/></svg>
       </button>`).join('')
       : emptyBox('Aucun protocole','Ajoutez un protocole d\'entretien (produit, dilution…).');
+  }
+  const plc=$('#planCfgList');
+  if(plc){
+    const ts=STATE.config.plan;
+    plc.innerHTML = ts.length ? ts.map(t=>{
+      const z=zoneById(t.zoneId), ot=opType(t.opTypeCode), pr=t.protocolId?protocolById(t.protocolId):null;
+      const meta=[ot.full, freqLabel(t.frequency), pr?pr.name:null].filter(Boolean).map(escapeHtml).join(' · ');
+      return `<button class="itemrow" data-plan-edit="${t.id}">
+        <span class="grow"><span class="ir-t"${t.active?'':' style="color:var(--faint)"'}>${escapeHtml(z?z.name:'—')}</span><span class="ir-d">${meta}${t.active?'':' · inactif'}</span></span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B0AA9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:3px"><path d="m9 6 6 6-6 6"/></svg>
+      </button>`;
+    }).join('')
+      : emptyBox('Plan vide','Définissez les opérations récurrentes par zone.');
   }
 }
 function openZoneEdit(zoneId){
@@ -957,6 +1030,48 @@ function openProtoEdit(protoId){
     if(confirm('Supprimer ce protocole ?')){
       STATE.config.protocols=STATE.config.protocols.filter(x=>x.id!==p.id);
       render(); closeSheet(); toast('<b>Protocole supprimé</b>');
+    }
+  };
+}
+function openPlanEdit(taskId){
+  const t = taskId ? STATE.config.plan.find(x=>x.id===taskId) : null;
+  const zones = STATE.config.zones.filter(z=>z.active || (t&&z.id===t.zoneId));
+  const curZone = t?t.zoneId:(zones[0]&&zones[0].id);
+  const zoneChips = zones.map(z=>`<button class="choice ${curZone===z.id?'sel':''}" data-zid="${z.id}">${escapeHtml(z.name)}</button>`).join('');
+  const otChips = OP_TYPES.map(o=>`<button class="choice ${(t?t.opTypeCode:'training_surface_cleaning')===o.code?'sel':''}" data-otc="${o.code}">${o.name}</button>`).join('');
+  const freqChips = FREQS.map(f=>`<button class="choice ${(t?t.frequency:'daily')===f[0]?'sel':''}" data-freq="${f[0]}">${f[1]}</button>`).join('');
+  const dayChips = WEEKDAYS.map(d=>`<button class="choice ${t&&(t.days||[]).includes(+d[0])?'sel':''}" data-day="${d[0]}">${d[1]}</button>`).join('');
+  const protoOpts = `<button class="choice ${!t||!t.protocolId?'sel':''}" data-pid="">Aucun</button>`+
+    STATE.config.protocols.map(p=>`<button class="choice ${t&&t.protocolId===p.id?'sel':''}" data-pid="${p.id}">${escapeHtml(p.name)}</button>`).join('');
+  const body=`
+    <div class="fieldlab">Zone</div><div class="choices" id="plZone">${zoneChips}</div>
+    <div class="fieldlab">Opération</div><div class="choices" id="plOt">${otChips}</div>
+    <div class="fieldlab">Fréquence</div><div class="choices" id="plFreq">${freqChips}</div>
+    <div id="plDaysWrap" ${t&&t.frequency==='weekly'?'':'hidden'}><div class="fieldlab">Jours</div><div class="choices" data-multi="1" id="plDays">${dayChips}</div></div>
+    ${STATE.config.protocols.length?`<div class="fieldlab">Protocole</div><div class="choices" id="plProto">${protoOpts}</div>`:''}
+    <div class="fieldlab">Statut</div><div class="choices" id="plActive"><button class="choice ${!t||t.active?'sel':''}" data-a="1">Active</button><button class="choice ${t&&!t.active?'sel':''}" data-a="0">Inactive</button></div>`;
+  const foot=`
+    <button class="btn btn-primary" id="plSave"><span class="ic">${ICcheck}</span>${t?'Enregistrer':'Ajouter au plan'}</button>
+    ${t?'<button class="btn btn-danger btn-sm" id="plDel">Retirer du plan</button>':''}`;
+  openSheet('Plan d\'entretien', t?'Modifier la tâche':'Nouvelle tâche', body, foot);
+  $$('#plFreq .choice').forEach(b=>b.onclick=()=>{ $('#plDaysWrap').hidden = b.dataset.freq!=='weekly'; });
+  $('#plSave').onclick=()=>{
+    const zoneId=$('.choice.sel',$('#plZone'))?.dataset.zid;
+    if(!zoneId){ toast('Sélectionnez une zone'); return; }
+    const opTypeCode=$('.choice.sel',$('#plOt'))?.dataset.otc||'training_surface_cleaning';
+    const frequency=$('.choice.sel',$('#plFreq'))?.dataset.freq||'daily';
+    const days=frequency==='weekly'?$$('#plDays .choice.sel').map(x=>+x.dataset.day):[];
+    if(frequency==='weekly' && !days.length){ toast('Sélectionnez au moins un jour'); return; }
+    const protocolId=$('#plProto')?($('.choice.sel',$('#plProto'))?.dataset.pid||''):'';
+    const active=($('.choice.sel',$('#plActive'))?.dataset.a||'1')==='1';
+    const data={zoneId, opTypeCode, frequency, days, protocolId:protocolId||null, active};
+    if(t) Object.assign(t,data); else STATE.config.plan.push({id:id(), ...data});
+    render(); closeSheet(); toast(`<b>Plan ${t?'modifié':'complété'}</b>`);
+  };
+  const del=$('#plDel'); if(del) del.onclick=()=>{
+    if(confirm('Retirer cette tâche du plan d\'entretien ?')){
+      STATE.config.plan=STATE.config.plan.filter(x=>x.id!==t.id);
+      render(); closeSheet(); toast('<b>Tâche retirée</b>');
     }
   };
 }
