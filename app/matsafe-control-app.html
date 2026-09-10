@@ -234,6 +234,7 @@
   .proto-card .pc-row span{color:var(--gray)}
   .proto-card .pc-row b{font-weight:600; text-align:right}
   .proto-card .pc-note{margin-top:8px; font-size:12.5px; color:var(--gray); line-height:1.45}
+  .ev-photo{display:block; width:100%; max-height:230px; object-fit:cover; border-radius:10px; border:1px solid var(--border); margin:6px 0 2px}
 
   /* ============================ DESKTOP ============================ */
   @media (min-width:1024px){
@@ -814,15 +815,17 @@ function openReport(presetZone){
     <textarea id="rDesc" rows="3" placeholder="Décrivez le problème constaté…"></textarea>
     <div class="hint"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><span>Ne renseignez aucune donnée médicale ni information permettant d'identifier un pratiquant.</span></div>
     <div class="fieldlab">Photo (facultative)</div>
-    <button class="photo-btn" type="button" id="rPhoto"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L8 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4Z"/><circle cx="12" cy="13" r="3.5"/></svg>Ajouter une photo</button>`;
+    <button class="photo-btn" type="button" id="rPhoto"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L8 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4Z"/><circle cx="12" cy="13" r="3.5"/></svg>Ajouter une photo</button>
+    <div id="rPhotoPrev"></div>`;
   const foot=`<button class="btn btn-danger solid" id="doReport"><span class="ic">${ICwarn}</span>Envoyer le signalement</button>`;
   openSheet('Anomalie','Signaler un problème',body,foot);
-  $('#rPhoto').onclick=()=>toast('📷 Ajout de photo — disponible avec l\'app connectée');
+  let reportPhoto=null;
+  $('#rPhoto').onclick=()=>pickPhoto(d=>{ reportPhoto=d; $('#rPhotoPrev').innerHTML=photoThumb(d); });
   $('#doReport').onclick=()=>{
     const desc=$('#rDesc').value.trim();
     if(!desc){ $('#rDesc').focus(); $('#rDesc').style.borderColor='var(--crit)'; return; }
     const now=Date.now();
-    db.anos.unshift({id:id(), zone:$('.choice.sel',$('#rZone'))?.dataset.z||zoneNames()[0], cat:$('.choice.sel',$('#rCat'))?.dataset.c||'other', prio:'normal', desc, by:currentUser().short, at:now, status:'open'});
+    db.anos.unshift({id:id(), zone:$('.choice.sel',$('#rZone'))?.dataset.z||zoneNames()[0], cat:$('.choice.sel',$('#rCat'))?.dataset.c||'other', prio:'normal', desc, by:currentUser().short, at:now, status:'open', photo:reportPhoto||null});
     render(); showBurst('Anomalie signalée','Ajoutée au suivi · statut Ouverte');
   };
 }
@@ -850,10 +853,30 @@ document.addEventListener('click',e=>{
   openOpDetail(c.dataset.op);
 });
 
+/* ============================ PHOTO (capture + compression) ============================ */
+function pickPhoto(cb){
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*'; inp.setAttribute('capture','environment');
+  inp.onchange=()=>{ const f=inp.files&&inp.files[0]; if(!f)return;
+    const r=new FileReader();
+    r.onload=()=>{ const img=new Image(); img.onload=()=>{
+      const max=1024; let w=img.naturalWidth, h=img.naturalHeight; const sc=Math.min(1, max/Math.max(w,h));
+      w=Math.max(1,Math.round(w*sc)); h=Math.max(1,Math.round(h*sc));
+      const cv=document.createElement('canvas'); cv.width=w; cv.height=h; cv.getContext('2d').drawImage(img,0,0,w,h);
+      try{ cb(cv.toDataURL('image/jpeg',0.7)); }catch(err){ toast('Photo non prise en charge'); }
+    }; img.onerror=()=>toast('Image illisible'); img.src=r.result; };
+    r.readAsDataURL(f);
+  };
+  inp.click();
+}
+function photoThumb(d){ return `<img class="ev-photo" src="${d}" alt="Photo" loading="lazy">`; }
+
 /* ============================ DETAIL ANOMALIE ============================ */
 document.addEventListener('click',e=>{
   const c=e.target.closest('[data-ano]'); if(!c)return;
-  const a=db.anos.find(x=>x.id===c.dataset.ano); if(!a)return;
+  openAnoDetail(c.dataset.ano);
+});
+function openAnoDetail(anoId){
+  const a=db.anos.find(x=>x.id===anoId); if(!a)return;
   const cur=ANO_FLOW.findIndex(f=>f[0]===a.status);
   const steps=ANO_FLOW.map((f,i)=>{
     const cls=i<cur?'done':(i===cur?'cur':'pending');
@@ -863,20 +886,62 @@ document.addEventListener('click',e=>{
       <div class="sb"><div class="s1">${f[1]}</div>${f[2]?`<div class="s2">${f[2]}</div>`:''}</div>
     </div>`;
   }).join('');
+  const evidence = a.photo ? `<div class="fieldlab">Photo du signalement</div>${photoThumb(a.photo)}` : '';
+  const correction = (a.correctiveAction||a.proofPhoto||a.correctedAt) ? `
+    <div class="fieldlab">Action corrective</div>
+    ${a.correctiveAction?`<p style="font-size:14px;line-height:1.5;margin:0 0 8px">${escapeHtml(a.correctiveAction)}</p>`:''}
+    ${a.correctedAt?`<div class="kv"><span class="k">Corrigée le</span><span class="v">${dateLong(a.correctedAt)} · ${timeFmt(a.correctedAt)}</span></div>`:''}
+    ${a.proofPhoto?photoThumb(a.proofPhoto):''}` : '';
+  const verify = a.verifiedBy ? `<div class="kv"><span class="k">Vérifiée par</span><span class="v">${escapeHtml(a.verifiedBy)}${a.verifiedAt?' · '+dateLong(a.verifiedAt):''}</span></div>` : '';
   const body=`
     <div style="margin:2px 0 14px">${anoChip(a.status)}</div>
     <p style="font-size:15px;line-height:1.5;margin:0 0 6px">${escapeHtml(a.desc)}</p>
     <div class="kv"><span class="k">Catégorie</span><span class="v">${catName(a.cat)}</span></div>
-    <div class="kv"><span class="k">Zone</span><span class="v">${a.zone}</span></div>
-    <div class="kv"><span class="k">Signalée par</span><span class="v">${a.by}</span></div>
+    <div class="kv"><span class="k">Zone</span><span class="v">${escapeHtml(a.zone)}</span></div>
+    <div class="kv"><span class="k">Signalée par</span><span class="v">${escapeHtml(a.by)}</span></div>
     <div class="kv"><span class="k">Le</span><span class="v">${dateLong(a.at)} · ${timeFmt(a.at)}</span></div>
+    ${a.assignedTo?`<div class="kv"><span class="k">Responsable</span><span class="v">${escapeHtml(a.assignedTo)}</span></div>`:''}
+    ${evidence}
+    ${correction}
+    ${verify}
     <div class="fieldlab">Cycle de vie</div><div class="steps">${steps}</div>`;
-  let foot='';
+  let foot;
   if(a.status!=='closed'){const nx=ANO_FLOW[cur+1]; foot=`<button class="btn btn-primary" id="advAno"><span class="ic">${ICcheck}</span>Passer à : ${nx[1]}</button>`;}
   else foot=`<button class="btn btn-ghost" onclick="closeSheet()">Fermer</button>`;
   openSheet('Anomalie', catName(a.cat), body, foot);
-  const adv=$('#advAno'); if(adv)adv.onclick=()=>{a.status=ANO_FLOW[cur+1][0]; render(); closeSheet(); toast(`<b>Anomalie mise à jour</b> · ${ANO_FLOW[cur+1][1]}`);};
-});
+  const adv=$('#advAno'); if(adv) adv.onclick=()=>openAnoAdvance(a);
+}
+function openAnoAdvance(a){
+  const cur=ANO_FLOW.findIndex(f=>f[0]===a.status);
+  const target=ANO_FLOW[cur+1]; if(!target)return;
+  const to=target[0];
+  let body='';
+  if(to==='in_progress'){
+    body=`<div class="fieldlab">Responsable du traitement</div>
+      <input type="text" id="axResp" value="${escapeHtml(a.assignedTo||currentUser().name)}" placeholder="Nom du responsable">`;
+  } else if(to==='corrected'){
+    body=`<div class="fieldlab">Action corrective réalisée</div>
+      <textarea id="axAction" rows="3" placeholder="Décrivez la correction effectuée…">${escapeHtml(a.correctiveAction||'')}</textarea>
+      <div class="fieldlab">Preuve photo (facultative)</div>
+      <button class="photo-btn" type="button" id="axPhotoBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L8 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4Z"/><circle cx="12" cy="13" r="3.5"/></svg>Ajouter une photo</button>
+      <div id="axPhotoPrev"></div>`;
+  } else if(to==='verified'){
+    body=`<p style="font-size:14.5px;color:var(--gray);line-height:1.5">Confirmez la vérification de la correction. Elle sera enregistrée à votre nom (<b style="color:var(--ink)">${escapeHtml(currentUser().name)}</b>).</p>`;
+  } else {
+    body=`<p style="font-size:14.5px;color:var(--gray);line-height:1.5">Clôturer définitivement cette anomalie ? L'historique reste conservé.</p>`;
+  }
+  openSheet('Anomalie', 'Passer à : '+target[1], body, `<button class="btn btn-primary" id="axSave"><span class="ic">${ICcheck}</span>${target[1]}</button>`);
+  let photo=null;
+  const pb=$('#axPhotoBtn'); if(pb) pb.onclick=()=>pickPhoto(d=>{ photo=d; const pv=$('#axPhotoPrev'); if(pv)pv.innerHTML=photoThumb(d); });
+  $('#axSave').onclick=()=>{
+    if(to==='in_progress'){ a.assignedTo=$('#axResp').value.trim()||currentUser().name; }
+    else if(to==='corrected'){ const act=$('#axAction').value.trim(); if(!act){ $('#axAction').focus(); $('#axAction').style.borderColor='var(--crit)'; return; } a.correctiveAction=act; a.correctedAt=Date.now(); if(photo)a.proofPhoto=photo; }
+    else if(to==='verified'){ a.verifiedBy=currentUser().name; a.verifiedAt=Date.now(); }
+    else { a.closedAt=Date.now(); }
+    a.status=to;
+    render(); closeSheet(); toast(`<b>Anomalie mise à jour</b> · ${target[1]}`);
+  };
+}
 
 /* ============================ DETAIL CONTROLE ============================ */
 document.addEventListener('click',e=>{
