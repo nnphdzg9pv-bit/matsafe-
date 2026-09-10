@@ -597,6 +597,10 @@ const ANO_FLOW=[
   ['closed','Clôturée','Clôture définitive']
 ];
 function anoChip(s){const m={open:['crit','Ouverte'],in_progress:['warn','En cours'],corrected:['info','Corrigée'],verified:['info','Vérifiée'],closed:['mute','Clôturée']};const x=m[s]||['mute',s];return `<span class="chip ${x[0]}"><span class="cd"></span>${x[1]}</span>`}
+/* Catégorie d'anomalie déduite du type de contrôle (correctif #9) */
+function ctlToAnoCat(code){
+  return ({first_aid_kit_check:'first_aid', products_check:'product', equipment_check:'equipment', documentation_check:'other'})[code] || 'other';
+}
 function ctlStatus(c){
   if(c.status==='completed')return['ok','Terminé'];
   if(c.status==='cancelled')return['mute','Annulé'];
@@ -960,7 +964,7 @@ document.addEventListener('click',e=>{
   const d=$('#doCtl'); if(d)d.onclick=()=>{
     const res=$('.choice.sel',$('#ctlRes'))?.dataset.r||'ok';
     ctl.status='completed'; ctl.result=res; ctl.completedAt=Date.now();
-    if(res==='not_ok'){ db.anos.unshift({id:id(),zone:ctl.zone||'—',cat:'equipment',prio:'high',desc:'Non-conformité relevée lors du contrôle : '+ctlName(ctl.type),by:currentUser().short,at:Date.now(),status:'open'}); }
+    if(res==='not_ok'){ db.anos.unshift({id:id(),zone:ctl.zone||'—',cat:ctlToAnoCat(ctl.type),prio:'high',desc:'Non-conformité relevée lors du contrôle : '+ctlName(ctl.type),by:currentUser().short,at:Date.now(),status:'open'}); }
     render(); showBurst('Contrôle enregistré', ctlName(ctl.type)+' · '+(res==='ok'?'Conforme':'Non conforme'));
   };
 });
