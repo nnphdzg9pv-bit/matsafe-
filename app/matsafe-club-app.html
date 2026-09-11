@@ -140,6 +140,29 @@
   .opcard .oc-time{font-family:var(--cond); font-weight:700; font-size:14px; color:var(--ink); letter-spacing:.02em}
   .opcard.done{background:var(--surface-2)}
   .opcard.done .oc-zone{color:var(--ink-2)}
+  /* CTA « Nettoyer à nouveau » sur une carte terminée */
+  .opcard .recta{display:flex; align-items:center; justify-content:center; gap:8px; width:calc(100% + 34px); margin:14px -17px -15px; padding:12px;
+    border:0; border-top:1px solid var(--line); background:transparent; cursor:pointer; color:var(--brand);
+    font-family:var(--cond); font-weight:800; text-transform:uppercase; letter-spacing:.04em; font-size:13px; border-radius:0 0 var(--radius-sm) var(--radius-sm)}
+  .opcard .recta:hover{background:var(--brand-soft); color:var(--brand-strong)}
+  .opcard .recta:active{transform:none}
+  .opcard .recta svg{width:15px;height:15px}
+  /* Carte invitation « opération supplémentaire » */
+  .supcard{display:flex; align-items:center; gap:18px; width:100%; text-align:left; cursor:pointer; margin-top:14px;
+    background:linear-gradient(120deg,var(--brand-soft),var(--surface) 78%); border:1px solid #F0D7D2; border-radius:var(--radius); padding:20px 22px; box-shadow:var(--shadow); transition:transform .14s, box-shadow .2s}
+  .supcard:hover{box-shadow:var(--shadow-lg); transform:translateY(-1px)}
+  .supcard:active{transform:translateY(0)}
+  .supcard .supicon{flex:none; width:52px; height:52px; border-radius:15px; background:var(--surface); border:1px solid #F0D7D2; color:var(--brand); display:grid; place-items:center}
+  .supcard .supicon svg{width:28px;height:28px}
+  .supcard .suptx{flex:1 1 auto; min-width:0}
+  .supcard .supt{display:block; font-family:var(--cond); font-weight:800; text-transform:uppercase; letter-spacing:.01em; font-size:19px; line-height:1.05}
+  .supcard .sups{display:block; color:var(--ink-2); font-size:13.5px; margin-top:4px; line-height:1.4}
+  .supcard .supcta{flex:none}
+  @media (max-width:560px){ .supcard{flex-wrap:wrap; gap:14px} .supcard .supcta{width:auto} }
+  /* Chip « + passage supplémentaire » sur le bloc Aujourd'hui (hero sombre) */
+  .today .today-extra{display:inline-flex; align-items:center; gap:7px; margin-top:11px; font-family:var(--cond); font-weight:700;
+    text-transform:uppercase; letter-spacing:.04em; font-size:12px; color:#F4CFC9; background:rgba(255,255,255,.09); border:1px solid rgba(255,255,255,.2); border-radius:999px; padding:5px 12px}
+  .today .today-extra svg{width:13px;height:13px}
 
   /* pills (never color-only: dot + label) */
   .pill{display:inline-flex; align-items:center; gap:7px; font-family:var(--cond); font-weight:700; text-transform:uppercase;
@@ -677,25 +700,27 @@ function viewHome(){
   var u=currentUser(), occ=todayOccurrences(), done=0;
   occ.forEach(function(o){if(occDone(o.task,o.slot))done++;});
   var total=occ.length, pct=total?Math.round(done/total*100):0;
-  var au=afterUseTasks();
+  var au=afterUseTasks(), extra=extraToday();
 
-  // ring
+  // ring — progression des opérations PRÉVUES uniquement
   var R=42, C=2*Math.PI*R, off=C*(1-pct/100);
   var ring='<div class="ring"><svg width="96" height="96" viewBox="0 0 96 96"><circle class="rc" cx="48" cy="48" r="'+R+'" fill="none" stroke-width="9"/>'+
     '<circle class="rp" cx="48" cy="48" r="'+R+'" fill="none" stroke-width="9" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'"/></svg>'+
-    '<div class="rt"><div><b>'+done+'<span style="opacity:.5">/'+total+'</span></b><span>faites</span></div></div></div>';
+    '<div class="rt"><div><b>'+done+'<span style="opacity:.5">/'+total+'</span></b><span>prévues</span></div></div></div>';
   var todayMsg = total===0 ? 'Rien de planifié aujourd’hui.'
-    : (done>=total ? 'Tout est fait pour aujourd’hui. Beau travail.' : (total-done)+' opération'+((total-done)>1?'s':'')+' encore à réaliser.');
-  var todayHero='<div class="today rz"><div>'+ring+'</div><div class="tx"><div class="k">Aujourd’hui</div>'+
-    '<div class="v">'+done+' opération'+(done>1?'s':'')+' réalisée'+(done>1?'s':'')+'<br>sur '+total+'</div>'+
-    '<div class="s '+(done>=total&&total>0?'alldone':'')+'">'+esc(todayMsg)+'</div></div></div>';
+    : (done>=total ? 'Tout le prévu est fait pour aujourd’hui. Beau travail.' : (total-done)+' opération'+((total-done)>1?'s':'')+' prévue'+((total-done)>1?'s':'')+' encore à réaliser.');
+  var extraChip = extra>0 ? '<div class="today-extra">'+IC_REDO+'+ '+extra+' passage'+(extra>1?'s':'')+' supplémentaire'+(extra>1?'s':'')+' aujourd’hui</div>' : '';
+  var todayHero='<div class="today rz"><div>'+ring+'</div><div class="tx"><div class="k">Aujourd’hui · opérations prévues</div>'+
+    '<div class="v">'+done+' réalisée'+(done>1?'s':'')+'<br>sur '+total+' prévue'+(total>1?'s':'')+'</div>'+
+    '<div class="s '+(done>=total&&total>0?'alldone':'')+'">'+esc(todayMsg)+'</div>'+extraChip+'</div></div>';
 
   // operation cards (planned + on-demand)
   var cards=occ.map(function(o,i){return opCardHTML(o,'occ',i);}).join('');
   var auCards=au.map(function(o,i){return opCardHTML(o,'au',i);}).join('');
   var opsBlock = (occ.length||au.length)
     ? '<div class="shead rz"><h2>Opérations du jour</h2>'+(total?'<button class="lk" data-nav="today">Tout voir</button>':'')+'</div>'+
-      '<div class="opgrid rz">'+cards+auCards+'</div>'
+      '<div class="opgrid rz">'+cards+auCards+'</div>'+
+      '<div class="rz">'+supInviteCard()+'</div>'
     : '<div class="rz">'+emptyBox('Aucune opération planifiée','Ajoutez des opérations dans Planification.')+'</div>';
 
   // points d'attention
@@ -725,6 +750,7 @@ function viewHome(){
     todayHero + opsBlock + attnBlock + fBlock + bilan;
 }
 
+var IC_REDO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>';
 function opCardHTML(o,kind,i){
   var d = kind==='occ' ? occDone(o.task,o.slot) : null;
   var doneToday = kind==='au' ? db.ops.filter(function(x){return isToday(x.at)&&x.planId===o.task.id;}).length : 0;
@@ -733,13 +759,27 @@ function opCardHTML(o,kind,i){
   var statusHTML = isDone
     ? pill('done','Terminé à '+timeFmt(d.at))
     : (kind==='au' ? pill('mute', doneToday?doneToday+' aujourd’hui':'À valider') : pill('todo','À faire'));
-  return '<button class="opcard rz '+(isDone?'done':'')+'" data-'+kind+'="'+i+'">'+
+  var inner =
     '<div class="oc-top"><span class="oc-zone">'+esc(o.zoneName)+'</span>'+statusHTML+'</div>'+
     '<div class="oc-act">'+esc(planActionFull(o.task))+'</div>'+
     '<div class="oc-foot"><span class="oc-time">'+esc(timeTxt)+'</span>'+
-      (isDone?'<span class="lmeta" style="color:var(--faint);font-size:12.5px">· '+esc(d.by||'')+'</span>':'')+'</div>'+
-  '</button>';
+      (isDone?'<span class="lmeta" style="color:var(--faint);font-size:12.5px">· '+esc(d.by||'')+'</span>':'')+'</div>';
+  // Carte terminée : non-cliquable en bloc, mais CTA « Nettoyer à nouveau »
+  if(isDone){
+    return '<div class="opcard done rz">'+inner+
+      '<button class="recta" data-reclean="'+i+'">'+IC_REDO+' Nettoyer à nouveau</button></div>';
+  }
+  return '<button class="opcard rz" data-'+kind+'="'+i+'">'+inner+'</button>';
 }
+// Carte « opération supplémentaire » — invitation visible et valorisante
+function supInviteCard(){
+  return '<button class="supcard rz" data-act="pick">'+
+    '<span class="supicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>'+
+    '<span class="suptx"><span class="supt">Envie d’ajouter un passage ?</span>'+
+    '<span class="sups">Un nettoyage supplémentaire peut être enregistré à tout moment — il est tracé à part.</span></span>'+
+    '<span class="supcta pill attn"><span class="pd"></span>Ajouter une opération</span></button>';
+}
+function extraToday(){ return db.ops.filter(function(o){return o.extra&&isToday(o.at);}).length; }
 function attnCardHTML(a){
   var attnClass = a.status==='open' ? 'attnbg' : '';
   return '<button class="lcard '+attnClass+'" data-ano="'+a.id+'">'+
@@ -758,14 +798,16 @@ function fighterCardHTML(f){
 function viewToday(){
   var occ=todayOccurrences(), au=afterUseTasks(), done=0; occ.forEach(function(o){if(occDone(o.task,o.slot))done++;});
   var total=occ.length;
+  var xtra=extraToday();
+  var xline = xtra>0 ? ' <b style="color:var(--brand)">+ '+xtra+' passage'+(xtra>1?'s':'')+' supplémentaire'+(xtra>1?'s':'')+'</b>.' : '';
   var head='<div class="peyebrow rz">'+esc(dateHead(Date.now()))+'</div><h1 class="ptitle rz">Aujourd’hui</h1>'+
-    '<p class="pintro rz">'+ (total? done+' / '+total+' opérations réalisées. Validez une carte dès qu’une opération est faite — elle est aussitôt historisée.' : 'Aucune opération planifiée aujourd’hui.') +'</p>';
+    '<p class="pintro rz">'+ (total? done+' / '+total+' opérations <b>prévues</b> réalisées.'+xline+' Validez une carte dès qu’une opération est faite — elle est aussitôt historisée.' : 'Aucune opération planifiée aujourd’hui.') +'</p>';
   var planned = occ.length ? '<div class="shead rz"><h2>Planifié</h2></div><div class="opgrid rz">'+occ.map(function(o,i){return opCardHTML(o,'occ',i);}).join('')+'</div>' : '';
+  var invite = '<div class="shead rz"><h2>Un passage en plus&nbsp;?</h2></div><div class="rz">'+supInviteCard()+'</div>';
   var demand = au.length ? '<div class="shead rz"><h2>À la demande</h2></div><div class="opgrid rz">'+au.map(function(o,i){return opCardHTML(o,'au',i);}).join('')+'</div>' : '';
   var extra = '<div class="shead rz"><h2>Autre</h2></div><div class="stack rz">'+
-    '<button class="srow" data-act="pick"><span class="li" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);margin-right:2px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span><span class="sg"><span class="st">Enregistrer un nettoyage supplémentaire</span><span class="ss">Une opération hors plan, réalisée maintenant · tracée à part</span></span>'+CHEV+'</button>'+
     '<button class="srow" data-act="report"><span class="li" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--brand-soft);border:1px solid #F2D8D3;color:var(--brand);margin-right:2px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span><span class="sg"><span class="st">Signaler un point d’attention</span><span class="ss">Un problème constaté dans une zone</span></span>'+CHEV+'</button></div>';
-  return head + (planned||demand? planned+demand : '<div class="rz">'+emptyBox('Rien de planifié','Ajoutez des opérations dans Planification.')+'</div>') + extra;
+  return head + (planned? planned : '<div class="rz">'+emptyBox('Rien de planifié','Ajoutez des opérations dans Planification.')+'</div>') + invite + demand + extra;
 }
 
 /* ----------------------------- REGISTRE ----------------------------- */
@@ -931,6 +973,7 @@ function wire(){
   var occ=todayOccurrences(), au=afterUseTasks();
   $$('[data-occ]').forEach(function(b){b.onclick=function(){var o=occ[+b.dataset.occ]; if(o) openValidate({code:o.task.opTypeCode, zone:o.zoneName, zoneId:o.task.zoneId, planId:o.task.id, slot:o.slot, protocolId:o.task.protocolId, actionName:planActionFull(o.task)});};});
   $$('[data-au]').forEach(function(b){b.onclick=function(){var o=au[+b.dataset.au]; if(o) openValidate({code:o.task.opTypeCode, zone:o.zoneName, zoneId:o.task.zoneId, planId:o.task.id, slot:'', protocolId:o.task.protocolId, actionName:planActionFull(o.task)});};});
+  $$('[data-reclean]').forEach(function(b){b.onclick=function(e){e.stopPropagation(); var o=occ[+b.dataset.reclean]; if(o) openReclean({code:o.task.opTypeCode, zone:o.zoneName, zoneId:o.task.zoneId, protocolId:o.task.protocolId, actionName:planActionFull(o.task)});};});
   $$('[data-ano]').forEach(function(b){b.onclick=function(){openAnoDetail(b.dataset.ano);};});
   $$('[data-fighter]').forEach(function(b){b.onclick=function(){openFighterDetail(b.dataset.fighter);};});
   $$('[data-ctl]').forEach(function(b){b.onclick=function(){openCtlDetail(b.dataset.ctl);};});
@@ -1032,6 +1075,26 @@ function protoCardHTML(p){
     (p.contactTime?'<div class="pc-row"><span>Temps de contact</span><b>'+esc(p.contactTime)+'</b></div>':'')+
     '<div class="pc-row"><span>Rinçage</span><b>'+(p.rinse?'Oui':'Non')+'</b></div>'+
     (p.note?'<div class="pc-note">'+esc(p.note)+'</div>':'');
+}
+
+/* ------- Nettoyer à nouveau : passage supplémentaire pré-rempli ------- */
+function openReclean(opts){
+  var act=opts.actionName||opType(opts.code).full;
+  var recap='<div class="protobox" style="background:var(--surface)">'+
+    '<div class="pc-name">'+esc(opts.zone)+'</div>'+
+    '<div class="pc-row"><span>Action</span><b>'+esc(act)+'</b></div>'+
+    '<div class="pc-row"><span>Heure</span><b>maintenant · '+timeFmt(Date.now())+'</b></div>'+
+    '<div class="pc-row"><span>Type</span><b>Opération supplémentaire</b></div></div>';
+  var body='<p class="pintro" style="margin:2px 0 8px">Un passage <b>en plus</b> du planning, enregistré maintenant. Il est tracé à part et ne change rien au prévu.</p>'+
+    recap+
+    (opts.protocolId?'<div class="fieldlab">Protocole</div><div class="protobox">'+protoCardHTML(protocolById(opts.protocolId))+'</div>':'')+
+    '<div class="fieldlab">Un mot ? <span class="opt">— optionnel</span></div><textarea id="rcComment" rows="2" placeholder="Remarque éventuelle…"></textarea>';
+  openSheet('Passage supplémentaire', opts.zone, body,
+    '<button class="btn good" id="rcSave"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Enregistrer</button>'+
+    '<button class="btn ghost" id="rcPb" style="border:1px solid var(--line-2)">J’ai constaté un problème</button>');
+  function rec(anomaly){ db.ops.unshift({id:id(), type:opts.code, actionName:act, zone:opts.zone, zoneId:opts.zoneId||null, by:currentUser().short, at:Date.now(), anomaly:anomaly, planId:null, protocolId:opts.protocolId||null, slot:'', comment:($('#rcComment').value||'').trim(), extra:true}); save(); }
+  $('#rcSave').onclick=function(){ rec(false); burst('Opération supplémentaire enregistrée','Merci de contribuer au maintien des standards de votre club.'); setTimeout(render,300); };
+  $('#rcPb').onclick=function(){ rec(true); closeSheet(); setTimeout(function(){ openReport(opts.zone); render(); },200); };
 }
 
 /* ---------------- Nettoyage supplémentaire (hors plan) ---------------- */
