@@ -262,7 +262,7 @@
   .choices{display:flex; flex-wrap:wrap; gap:8px}
   .choice{font-family:var(--cond); font-weight:700; text-transform:uppercase; letter-spacing:.03em; font-size:13px; padding:10px 14px; border-radius:12px; border:1px solid var(--line-2); background:var(--surface); cursor:pointer; color:var(--ink)}
   .choice.sel{background:var(--ink); color:#fff; border-color:var(--ink)}
-  textarea,input[type=text],input[type=date]{width:100%; font-family:var(--sans); font-size:15px; color:var(--ink); background:var(--surface-2); border:1px solid var(--line-2); border-radius:12px; padding:12px 13px; resize:vertical}
+  textarea,input[type=text],input[type=date],input[type=time]{width:100%; font-family:var(--sans); font-size:15px; color:var(--ink); background:var(--surface-2); border:1px solid var(--line-2); border-radius:12px; padding:12px 13px; resize:vertical}
   textarea:focus,input:focus{outline:2px solid var(--ink); outline-offset:1px}
   .protobox{background:var(--surface-2); border:1px solid var(--line); border-radius:14px; padding:14px 15px; margin-top:6px}
   .protobox .pc-name{font-family:var(--cond); font-weight:800; text-transform:uppercase; font-size:15px; margin-bottom:8px}
@@ -346,7 +346,7 @@
       <div class="navgrp" id="navMain"></div>
       <div class="navgrp"><div class="lbl">Mon club</div><div id="navSec"></div></div>
       <div class="sb-spacer"></div>
-      <div class="sb-user"><div class="av" id="sbAv">R</div><div><div class="u-n" id="sbUser">Rémy Lassalle</div><div class="u-r" id="sbRole">Référent Hygiène</div></div></div>
+      <div class="sb-user"><div class="av" id="sbAv">S</div><div><div class="u-n" id="sbUser">Simon Ehrlacher</div><div class="u-r" id="sbRole">Référent Hygiène</div></div></div>
     </nav>
     <main id="main"><div class="page" id="page"></div></main>
   </div>
@@ -384,14 +384,15 @@ var OP_TYPES=[
   {code:'shared_equipment_cleaning', name:'Matériel partagé',full:'Nettoyage du matériel partagé'},
   {code:'first_aid_check',           name:'Premiers secours',full:'Vérification premiers secours'}
 ];
-var FREQS=[['daily','Chaque jour'],['twice_daily','2× par jour'],['after_use','À la demande'],['weekly','Hebdomadaire']];
+var FREQS=[['daily','Chaque jour'],['some_days','Certains jours'],['multi_daily','Plusieurs fois / jour'],['after_use','Après chaque séance'],['weekly','Chaque semaine'],['monthly','Chaque mois'],['once','Ponctuel']];
+var FREQ_NEEDS_DAYS=['some_days','weekly'];
 var ANO_CATS=[['hygiene','Hygiène'],['equipment','Équipement'],['product','Consommable'],['damage','Dégât'],['installation','Installation'],['first_aid','Premiers secours'],['other','Autre']];
 var CTL_TYPES=[['first_aid_kit_check','Trousse de secours'],['products_check','Produits d’entretien'],['equipment_check','Équipements'],['documentation_check','Documentation']];
 var ZONE_TYPES=[['tatami','Tatami'],['training_area','Espace d’entraînement'],['ring','Ring'],['cage','Cage MMA'],['heavy_bags','Sacs de frappe'],['changing_room','Vestiaire'],['shower','Douches'],['restroom','Sanitaires'],['reception','Réception'],['shared_equipment','Matériel partagé'],['first_aid','Premiers secours'],['other','Autre']];
 var DEFAULT_ZONES=[['Tatami principal','tatami'],['Tatami 2','tatami'],['Vestiaires & douches','changing_room'],['Sanitaires','restroom'],['Matériel partagé','shared_equipment'],['Réception','reception'],['Premiers secours','first_aid']];
 var WEEKDAYS=[[1,'Lun'],[2,'Mar'],[3,'Mer'],[4,'Jeu'],[5,'Ven'],[6,'Sam'],[0,'Dim']];
 var FIGHTER_INBOX='matsafe_fighter_inbox';   // clé écrite par l'app MATSAFE Fighter (même origine)
-var STORE='matsafe_club_v1';
+var STORE='matsafe_club_v2';
 
 /* Points d'attention : cycle de vie en vocabulaire clair */
 var ANO_FLOW=[
@@ -416,6 +417,23 @@ function ctlName(c){for(var i=0;i<CTL_TYPES.length;i++)if(CTL_TYPES[i][0]===c)re
 function catName(c){for(var i=0;i<ANO_CATS.length;i++)if(ANO_CATS[i][0]===c)return ANO_CATS[i][1];return c;}
 function freqLabel(f){for(var i=0;i<FREQS.length;i++)if(FREQS[i][0]===f)return FREQS[i][1];return f;}
 function zoneTypeName(c){for(var i=0;i<ZONE_TYPES.length;i++)if(ZONE_TYPES[i][0]===c)return ZONE_TYPES[i][1];return c;}
+/* Nom d'action : action personnalisée sinon libellé de la bibliothèque MATSAFE */
+function planActionName(t){return t.actionName || opType(t.opTypeCode).name;}
+function planActionFull(t){return t.actionName || opType(t.opTypeCode).full;}
+function opActionFull(o){return o.actionName || opType(o.type).full;}
+function daysLabel(days){ if(!days||!days.length)return ''; return WEEKDAYS.filter(function(w){return days.indexOf(w[0])>=0;}).map(function(w){return w[1];}).join(', '); }
+/* Résumé lisible d'une fréquence de plan (pour l'affichage) */
+function freqSummary(t){
+  var f=t.frequency, times=(t.times&&t.times.length)?t.times.join(' · '):'';
+  if(f==='daily') return 'Chaque jour'+(times?' · '+times:'');
+  if(f==='multi_daily') return 'Plusieurs fois / jour'+(times?' · '+times:'');
+  if(f==='some_days') return (daysLabel(t.days)||'Certains jours')+(times?' · '+times:'');
+  if(f==='weekly') return 'Chaque semaine'+(t.days&&t.days.length?' ('+daysLabel(t.days)+')':'')+(times?' · '+times:'');
+  if(f==='monthly') return 'Chaque mois'+(t.monthDay?' (le '+t.monthDay+')':'')+(times?' · '+times:'');
+  if(f==='once') return 'Ponctuel'+(t.onceAt?' · '+shortDate(t.onceAt):'')+(times?' · '+times:'');
+  if(f==='after_use') return 'Après chaque séance';
+  return freqLabel(f);
+}
 function pad2(n){return (n<10?'0':'')+n;}
 function timeFmt(ts){var d=new Date(ts);return pad2(d.getHours())+':'+pad2(d.getMinutes());}
 function isToday(ts){return new Date(ts).toDateString()===new Date().toDateString();}
@@ -433,58 +451,79 @@ function fixMojibake(s){if(typeof s!=='string'||!/[ÃÂ]/.test(s))return s;try{v
 function repair(o){if(Array.isArray(o))return o.map(repair);if(o&&typeof o==='object'){for(var k in o)o[k]=repair(o[k]);return o;}return fixMojibake(o);}
 
 /* ------------------------- État & démo ------------------------- */
-function seedRecords(plan){
+function seedRecords(plan, zid){
   var now=Date.now(), H=3600e3, D=24*H;
   function at(h,m){var d=new Date();d.setHours(h,m,0,0);return d.getTime();}
-  function tOf(code){for(var i=0;i<(plan||[]).length;i++)if(plan[i].opTypeCode===code)return plan[i];return {};}
+  function pe(zoneName,code){var z=zid(zoneName);for(var i=0;i<plan.length;i++)if(plan[i].zoneId===z&&plan[i].opTypeCode===code)return plan[i];return {};}
+  var pT1=pe('Tatami 1','training_surface_cleaning'), pT2=pe('Tatami 2','training_surface_cleaning'),
+      pSan=pe('Sanitaires','restroom_cleaning'), pVest=pe('Vestiaires & douches','changing_room_cleaning');
+  function op(o){o.id=id(); return o;}
   return {
+    // Chaque validation = une trace indépendante. Tatami 1 est planifié 4×/jour :
+    // 08:00 et 13:00 déjà faits, 18:00 et 22:00 restent à faire.
     ops:[
-      {id:id(), type:'training_surface_cleaning', zone:'Tatami principal', by:'Rémy L.', at:at(8,34), anomaly:false, planId:tOf('training_surface_cleaning').id||null, protocolId:tOf('training_surface_cleaning').protocolId||null, slot:''},
-      {id:id(), type:'changing_room_cleaning', zone:'Vestiaires & douches', by:'Rémy L.', at:at(9,12), anomaly:false, planId:tOf('changing_room_cleaning').id||null, protocolId:tOf('changing_room_cleaning').protocolId||null, slot:''},
-      {id:id(), type:'restroom_cleaning', zone:'Sanitaires', by:'Karim B.', at:at(9,30), anomaly:false, planId:tOf('restroom_cleaning').id||null, protocolId:tOf('restroom_cleaning').protocolId||null, slot:'Matin'},
-      {id:id(), type:'training_surface_cleaning', zone:'Tatami 2', by:'Léa M.', at:now-1*D-4*H, anomaly:false},
-      {id:id(), type:'restroom_cleaning', zone:'Sanitaires', by:'Karim B.', at:now-1*D-6*H, anomaly:true}
+      op({type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Tatami 1', zoneId:zid('Tatami 1'), by:'Simon E.', at:at(8,12), anomaly:false, planId:pT1.id||null, protocolId:pT1.protocolId||null, slot:'08:00'}),
+      op({type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Tatami 1', zoneId:zid('Tatami 1'), by:'Karim B.', at:at(13,20), anomaly:false, planId:pT1.id||null, protocolId:pT1.protocolId||null, slot:'13:00'}),
+      op({type:'restroom_cleaning', actionName:'Nettoyage sanitaires', zone:'Sanitaires', zoneId:zid('Sanitaires'), by:'Karim B.', at:at(9,35), anomaly:false, planId:pSan.id||null, protocolId:pSan.protocolId||null, slot:'09:00'}),
+      op({type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Zone grappling', zoneId:zid('Zone grappling'), by:'Simon E.', at:at(15,40), anomaly:false, planId:null, protocolId:null, slot:'', extra:true}),
+      op({type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Tatami 1', zoneId:zid('Tatami 1'), by:'Léa M.', at:now-1*D-4*H, anomaly:false, planId:pT1.id||null, slot:'18:00'}),
+      op({type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Tatami 2', zoneId:zid('Tatami 2'), by:'Karim B.', at:now-1*D-3*H, anomaly:false, planId:pT2.id||null, slot:'20:00'}),
+      op({type:'restroom_cleaning', actionName:'Nettoyage sanitaires', zone:'Sanitaires', zoneId:zid('Sanitaires'), by:'Karim B.', at:now-1*D-6*H, anomaly:true, planId:pSan.id||null, slot:'19:00'})
     ],
     anos:[
       {id:id(), zone:'Sanitaires', cat:'product', desc:'Plus de savon dans les sanitaires.', by:'Karim B.', at:now-20*H, status:'open', origin:'club', history:[]},
-      {id:id(), zone:'Tatami principal', cat:'damage', desc:'Angle du tatami légèrement décollé côté cage.', by:'Rémy L.', at:now-2*D, status:'in_progress', assignedTo:'Rémy L.', origin:'club', history:[{s:'in_progress',by:'Rémy L.',at:now-1.6*D}]},
-      {id:id(), zone:'Vestiaires & douches', cat:'hygiene', desc:'Moisissure visible dans la douche 3.', by:'Léa M.', at:now-6*D, status:'closed', assignedTo:'Rémy L.', correctiveAction:'Traitement anti-moisissure + reprise du joint.', correctedAt:now-4*D, verifiedBy:'Rémy L.', verifiedAt:now-3.5*D, closedAt:now-3*D, origin:'club', history:[]}
+      {id:id(), zone:'Tatami 1', cat:'damage', desc:'Angle du tatami légèrement décollé côté cage.', by:'Simon E.', at:now-2*D, status:'in_progress', assignedTo:'Simon E.', origin:'club', history:[{s:'in_progress',by:'Simon E.',at:now-1.6*D}]},
+      {id:id(), zone:'Vestiaires & douches', cat:'hygiene', desc:'Moisissure visible dans la douche 3.', by:'Léa M.', at:now-6*D, status:'closed', assignedTo:'Simon E.', correctiveAction:'Traitement anti-moisissure + reprise du joint.', correctedAt:now-4*D, verifiedBy:'Simon E.', verifiedAt:now-3.5*D, closedAt:now-3*D, origin:'club', history:[]}
     ],
     ctls:[
       {id:id(), type:'first_aid_kit_check', zone:'Premiers secours', due:now-1*D, status:'scheduled', lastAt:now-31*D},
       {id:id(), type:'products_check', zone:'Réserve', due:now+1*D, status:'scheduled', lastAt:now-29*D},
-      {id:id(), type:'equipment_check', zone:'Tatami principal', due:now+5*D, status:'scheduled', lastAt:now-25*D},
+      {id:id(), type:'equipment_check', zone:'Tatami 1', due:now+5*D, status:'scheduled', lastAt:now-25*D},
       {id:id(), type:'documentation_check', zone:null, due:now-3*D, status:'completed', result:'ok', completedAt:now-3*D}
     ],
     fighter:[
       {id:id(), zone:'Douches', text:'Il n’y avait plus de savon après l’entraînement du soir.', at:now-3*H, status:'to_verify', origin:'fighter', history:[]},
-      {id:id(), zone:'Tatami principal', text:'Le tatami collait un peu près de la cage, peut-être à repasser.', at:now-1*D-2*H, status:'in_progress', origin:'fighter', history:[]},
+      {id:id(), zone:'Tatami 1', text:'Le tatami collait un peu près de la cage, peut-être à repasser.', at:now-1*D-2*H, status:'in_progress', origin:'fighter', history:[]},
       {id:id(), zone:'Vestiaires', text:'Vestiaire nickel ce soir, rien à signaler 👍', at:now-2*D, status:'resolved', origin:'fighter', history:[]}
     ]
   };
 }
+/* Zones réelles du club (type + zone réelle + description) */
+var SEED_ZONES=[
+  ['Tatami 1','tatami','Surface principale — entraînements quotidiens'],
+  ['Tatami 2','tatami','Deuxième surface — cours enfants & no-gi'],
+  ['Cage MMA','cage','Cage de sparring MMA'],
+  ['Zone grappling','training_area','Espace grappling au sol'],
+  ['Vestiaires & douches','changing_room','Vestiaires hommes/femmes + douches'],
+  ['Sanitaires','restroom','WC accueil'],
+  ['Matériel partagé','shared_equipment','Gants, pattes d’ours, protections prêtées'],
+  ['Premiers secours','first_aid','Trousse de secours & défibrillateur']
+];
 function defaultState(){
-  var zones=DEFAULT_ZONES.map(function(z){return {id:id(),name:z[0],type:z[1],active:true};});
+  var zones=SEED_ZONES.map(function(z){return {id:id(),name:z[0],type:z[1],desc:z[2],active:true};});
   function zByName(n){for(var i=0;i<zones.length;i++)if(zones[i].name===n)return zones[i].id;return null;}
   var protoTatami={id:id(), name:'Désinfection tatami', product:'Détergent-désinfectant surfaces (EN 14476)', dilution:'20 ml/L', contactTime:'5 min', rinse:false, note:'Balayage puis passage microfibre. Laisser sécher à l’air libre.'};
   var protoSanit={id:id(), name:'Sanitaires', product:'Nettoyant sanitaire désinfectant', dilution:'Prêt à l’emploi', contactTime:'5 min', rinse:true, note:'Cuvettes, lavabos, poignées. Rincer les surfaces en contact avec la peau.'};
+  function P(o){o.id=id(); if(!o.days)o.days=[]; if(!o.times)o.times=[]; o.active=(o.active!==false); return o;}
   var plan=[
-    {id:id(), zoneId:zByName('Tatami principal'),     opTypeCode:'training_surface_cleaning', frequency:'daily',       days:[], protocolId:protoTatami.id, active:true},
-    {id:id(), zoneId:zByName('Vestiaires & douches'), opTypeCode:'changing_room_cleaning',    frequency:'daily',       days:[], protocolId:null,          active:true},
-    {id:id(), zoneId:zByName('Sanitaires'),           opTypeCode:'restroom_cleaning',         frequency:'twice_daily', days:[], protocolId:protoSanit.id,  active:true},
-    {id:id(), zoneId:zByName('Matériel partagé'),     opTypeCode:'shared_equipment_cleaning', frequency:'after_use',   days:[], protocolId:null,          active:true}
+    P({zoneId:zByName('Tatami 1'),               opTypeCode:'training_surface_cleaning', frequency:'multi_daily', times:['08:00','13:00','18:00','22:00'], assignee:'Équipe',            instruction:'Balayer puis désinfecter. Laisser sécher à l’air libre.', protocolId:protoTatami.id}),
+    P({zoneId:zByName('Tatami 2'),               opTypeCode:'training_surface_cleaning', frequency:'daily',       times:['20:00'],                          assignee:'Coach du créneau',  instruction:'Désinfection en fin de journée.',                        protocolId:protoTatami.id}),
+    P({zoneId:zByName('Cage MMA'),               opTypeCode:'training_surface_cleaning', frequency:'some_days',   days:[1,3,5], times:['19:30'],             assignee:'Coach MMA',         instruction:'Après le sparring MMA.',                                 protocolId:protoTatami.id}),
+    P({zoneId:zByName('Sanitaires'),             opTypeCode:'restroom_cleaning',         frequency:'multi_daily', times:['09:00','19:00'],                  assignee:'Équipe',            instruction:'Cuvettes, lavabos, poignées. Vérifier savon & papier.',  protocolId:protoSanit.id}),
+    P({zoneId:zByName('Vestiaires & douches'),   opTypeCode:'changing_room_cleaning',    frequency:'daily',       times:['21:00'],                          assignee:'Référent Hygiène',  instruction:'Sols, bancs, douches.',                                  protocolId:null}),
+    P({zoneId:zByName('Matériel partagé'),       opTypeCode:'shared_equipment_cleaning', frequency:'after_use',   times:[],                                 assignee:'Coach',             instruction:'Désinfecter le matériel prêté après chaque séance.',     protocolId:null})
   ];
   return {
-    v:1,
+    v:2,
     club:{id:'club_demo', name:'Cube Fight Club', city:'Paris', since:'Mars 2026'},
     users:[
-      {id:'u_ref', name:'Rémy Lassalle', short:'Rémy L.', role:'Référent Hygiène'},
+      {id:'u_ref', name:'Simon Ehrlacher', short:'Simon E.', role:'Référent Hygiène'},
       {id:'u_coach', name:'Karim Benali', short:'Karim B.', role:'Coach'},
       {id:'u_coach2', name:'Léa Martin', short:'Léa M.', role:'Coach'}
     ],
     session:{clubId:'club_demo', userId:'u_ref'},
     config:{zones:zones, protocols:[protoTatami, protoSanit], plan:plan},
-    records: seedRecords(plan)
+    records: seedRecords(plan, zByName)
   };
 }
 var STATE, db;
@@ -511,15 +550,21 @@ function ingestFighter(){
 
 /* --------------------- Plan du jour --------------------- */
 function todayOccurrences(){
-  var wd=new Date().getDay(), occ=[];
+  var now=new Date(), wd=now.getDay(), dom=now.getDate(), occ=[];
   STATE.config.plan.forEach(function(task){
     if(!task.active) return;
+    if(task.frequency==='after_use') return;          // à la demande, jamais échéancé
+    var due=false, f=task.frequency;
+    if(f==='daily'||f==='multi_daily') due=true;
+    else if(f==='some_days'||f==='weekly') due=(task.days||[]).indexOf(wd)>=0;
+    else if(f==='monthly') due=(task.monthDay||1)===dom;
+    else if(f==='once') due=!!task.onceAt && new Date(task.onceAt).toDateString()===now.toDateString();
+    if(!due) return;
     var z=zoneById(task.zoneId), zoneName=z?z.name:'—', ot=opType(task.opTypeCode);
-    if(task.frequency==='after_use') return;
-    if(task.frequency==='weekly'){ if((task.days||[]).indexOf(wd)===-1) return; occ.push({task:task,slot:'',zoneName:zoneName,ot:ot}); }
-    else if(task.frequency==='twice_daily'){ occ.push({task:task,slot:'Matin',zoneName:zoneName,ot:ot}); occ.push({task:task,slot:'Soir',zoneName:zoneName,ot:ot}); }
-    else { occ.push({task:task,slot:'',zoneName:zoneName,ot:ot}); }
+    var times=(task.times&&task.times.length)?task.times.slice().sort():[''];
+    times.forEach(function(t){ occ.push({task:task, slot:t, zoneName:zoneName, ot:ot}); });
   });
+  occ.sort(function(a,b){ return (a.slot||'~').localeCompare(b.slot||'~'); }); // heures d'abord, sans-heure en dernier
   return occ;
 }
 function afterUseTasks(){
@@ -545,6 +590,7 @@ function ctlStatus(c){
 var NAV=[
   {id:'home',  label:'Accueil',           grp:'main'},
   {id:'today', label:'Aujourd’hui',       grp:'main'},
+  {id:'planif',label:'Planification',     grp:'main'},
   {id:'reg',   label:'Registre',          grp:'main'},
   {id:'attn',  label:'Points d’attention',grp:'main', badge:'attn'},
   {id:'ctl',   label:'Contrôles',         grp:'main', badge:'ctl'},
@@ -556,6 +602,8 @@ var NAV=[
 var NAV_IC={
   home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9"/></svg>',
   today:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>',
+  planif:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 14h3M8 18h5"/></svg>',
+  menu:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M6 21V7l6-4 6 4v14"/><path d="M10 9h4M10 13h4M10 17h4"/></svg>',
   reg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h11M8 12h11M8 18h11M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg>',
   attn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
   ctl:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>',
@@ -578,11 +626,10 @@ function buildNav(){
   var tb=$('#tabbar');
   tb.innerHTML=TAB_ORDER.map(function(t){
     if(t.id==='__add') return '<button class="tab plus" data-act="add" aria-label="Ajouter"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></button>';
-    var icid = t.id==='__club' ? 'etab' : t.id;
-    var nb=''; if(t.id==='home'){var c=openAnos().length+newFighter().length;}
+    var icid = t.id==='__club' ? 'menu' : t.id;
     return '<button class="tab" data-nav="'+t.id+'">'+NAV_IC[icid]+'<span class="tl2">'+esc(t.label)+'</span></button>';
   }).join('');
-  $$('.tab',tb).forEach(function(b){ if(b.dataset.act==='add'){b.onclick=openAdd;} else b.onclick=function(){ b.dataset.nav==='__club'?go('etab'):go(b.dataset.nav); }; });
+  $$('.tab',tb).forEach(function(b){ if(b.dataset.act==='add'){b.onclick=openAdd;} else b.onclick=function(){ b.dataset.nav==='__club'?go('menu'):go(b.dataset.nav); }; });
 }
 function navBtn(n){
   var nb=''; if(n.badge){var c=badgeCount(n.badge); if(c)nb='<span class="nb">'+c+'</span>';}
@@ -590,8 +637,7 @@ function navBtn(n){
 }
 function setActiveNav(){
   $$('.snav',$('#sidebar')).forEach(function(b){b.classList.toggle('on', b.dataset.nav===route);});
-  var tabMap={home:'home',today:'today',reg:'reg'};
-  $$('.tab',$('#tabbar')).forEach(function(b){ if(!b.dataset.nav){b.classList.remove('on');return;} var on = b.dataset.nav===route || (b.dataset.nav==='__club' && ['etab','equipe','params','attn','ctl','fighter'].indexOf(route)>=0); b.classList.toggle('on',on); });
+  $$('.tab',$('#tabbar')).forEach(function(b){ if(!b.dataset.nav){b.classList.remove('on');return;} var on = b.dataset.nav===route || (b.dataset.nav==='__club' && ['menu','etab','equipe','params','planif','attn','ctl','fighter'].indexOf(route)>=0); b.classList.toggle('on',on); });
 }
 function go(r){ route=r; render(); var m=$('#main'); if(m)m.scrollTop=0; window.scrollTo(0,0); }
 
@@ -606,6 +652,8 @@ function render(){
   var page=$('#page'), html='';
   if(route==='home') html=viewHome();
   else if(route==='today') html=viewToday();
+  else if(route==='planif') html=viewPlanif();
+  else if(route==='menu') html=viewMenu();
   else if(route==='reg') html=viewReg();
   else if(route==='attn') html=viewAttn();
   else if(route==='ctl') html=viewCtl();
@@ -645,7 +693,7 @@ function viewHome(){
   var opsBlock = (occ.length||au.length)
     ? '<div class="shead rz"><h2>Opérations du jour</h2>'+(total?'<button class="lk" data-nav="today">Tout voir</button>':'')+'</div>'+
       '<div class="opgrid rz">'+cards+auCards+'</div>'
-    : '<div class="rz">'+emptyBox('Aucune opération planifiée','Configurez le plan dans Établissement › Plan d’entretien.')+'</div>';
+    : '<div class="rz">'+emptyBox('Aucune opération planifiée','Ajoutez des opérations dans Planification.')+'</div>';
 
   // points d'attention
   var attn=openAnos().slice(0,3);
@@ -678,14 +726,13 @@ function opCardHTML(o,kind,i){
   var d = kind==='occ' ? occDone(o.task,o.slot) : null;
   var doneToday = kind==='au' ? db.ops.filter(function(x){return isToday(x.at)&&x.planId===o.task.id;}).length : 0;
   var isDone = kind==='occ' ? !!d : false;
-  var timeTxt = o.slot ? o.slot : (o.task.frequency==='after_use' ? 'À la demande' : (o.task.frequency==='twice_daily'?'2× / jour':freqLabel(o.task.frequency)));
+  var timeTxt = o.slot ? o.slot : (o.task.frequency==='after_use' ? 'À la demande' : 'Dans la journée');
   var statusHTML = isDone
     ? pill('done','Terminé à '+timeFmt(d.at))
     : (kind==='au' ? pill('mute', doneToday?doneToday+' aujourd’hui':'À valider') : pill('todo','À faire'));
-  var sub = o.ot.full + (isDone && d.by ? '' : '');
   return '<button class="opcard rz '+(isDone?'done':'')+'" data-'+kind+'="'+i+'">'+
     '<div class="oc-top"><span class="oc-zone">'+esc(o.zoneName)+'</span>'+statusHTML+'</div>'+
-    '<div class="oc-act">'+esc(o.ot.full)+'</div>'+
+    '<div class="oc-act">'+esc(planActionFull(o.task))+'</div>'+
     '<div class="oc-foot"><span class="oc-time">'+esc(timeTxt)+'</span>'+
       (isDone?'<span class="lmeta" style="color:var(--faint);font-size:12.5px">· '+esc(d.by||'')+'</span>':'')+'</div>'+
   '</button>';
@@ -713,9 +760,9 @@ function viewToday(){
   var planned = occ.length ? '<div class="shead rz"><h2>Planifié</h2></div><div class="opgrid rz">'+occ.map(function(o,i){return opCardHTML(o,'occ',i);}).join('')+'</div>' : '';
   var demand = au.length ? '<div class="shead rz"><h2>À la demande</h2></div><div class="opgrid rz">'+au.map(function(o,i){return opCardHTML(o,'au',i);}).join('')+'</div>' : '';
   var extra = '<div class="shead rz"><h2>Autre</h2></div><div class="stack rz">'+
-    '<button class="srow" data-act="pick"><span class="sg"><span class="st">Enregistrer une autre opération</span><span class="ss">Une action hors plan que vous avez réalisée</span></span>'+CHEV+'</button>'+
-    '<button class="srow" data-act="report"><span class="sg"><span class="st">Signaler un point d’attention</span><span class="ss">Un problème constaté dans une zone</span></span>'+CHEV+'</button></div>';
-  return head + (planned||demand? planned+demand : '<div class="rz">'+emptyBox('Rien de planifié','Configurez le plan dans Établissement.')+'</div>') + extra;
+    '<button class="srow" data-act="pick"><span class="li" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);margin-right:2px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span><span class="sg"><span class="st">Enregistrer un nettoyage supplémentaire</span><span class="ss">Une opération hors plan, réalisée maintenant · tracée à part</span></span>'+CHEV+'</button>'+
+    '<button class="srow" data-act="report"><span class="li" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--brand-soft);border:1px solid #F2D8D3;color:var(--brand);margin-right:2px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span><span class="sg"><span class="st">Signaler un point d’attention</span><span class="ss">Un problème constaté dans une zone</span></span>'+CHEV+'</button></div>';
+  return head + (planned||demand? planned+demand : '<div class="rz">'+emptyBox('Rien de planifié','Ajoutez des opérations dans Planification.')+'</div>') + extra;
 }
 
 /* ----------------------------- REGISTRE ----------------------------- */
@@ -729,7 +776,7 @@ function viewReg(){
 
   // merge ops + anomalies into timeline events
   var evs=[];
-  db.ops.forEach(function(o){var t=opType(o.type); evs.push({at:o.at, attn:o.anomaly, kind:'op', t:o.zone||t.name, d:t.full+(o.slot?' · '+o.slot:''), by:o.by, tag: o.anomaly?pill('attn','Anomalie constatée'):pill('ok','Conforme'), ref:{op:o.id}});});
+  db.ops.forEach(function(o){var d=opActionFull(o)+(o.slot?' · prévu '+o.slot:'')+(o.extra?' · supplémentaire':''); evs.push({at:o.at, attn:o.anomaly, kind:'op', t:o.zone||opType(o.type).name, d:d, by:o.by, tag: o.anomaly?pill('attn','Anomalie constatée'):(o.extra?pill('info','Supplémentaire'):pill('ok','Conforme')), ref:{op:o.id}});});
   db.anos.forEach(function(a){ evs.push({at:a.at, attn:true, kind:'attn', t:a.zone, d:'Point d’attention — '+catName(a.cat), by:a.by, tag:anoPill(a.status), ref:{ano:a.id}}); });
   if(regFilter.type==='op') evs=evs.filter(function(e){return e.kind==='op';});
   if(regFilter.type==='attn') evs=evs.filter(function(e){return e.kind==='attn';});
@@ -805,12 +852,12 @@ function viewEtab(){
   var head='<div class="peyebrow rz">Configuration</div><h1 class="ptitle rz">Établissement</h1>';
   var clubCard='<button class="srow rz" data-act="clubedit"><span class="sg"><span class="st">'+esc(cl.name)+'</span><span class="ss">'+esc(cl.city||'')+' · labellisé depuis '+esc(cl.since||'—')+'</span></span>'+CHEV+'</button>';
   var zonesBlock='<div class="shead rz"><h2>Zones</h2><button class="lk" data-act="zoneadd">+ Ajouter</button></div><div class="stack rz">'+
-    zones.map(function(z){return '<button class="srow" data-zone="'+z.id+'"><span class="sg"><span class="st">'+esc(z.name)+'</span><span class="ss">'+esc(zoneTypeName(z.type))+(z.active?'':' · inactive')+'</span></span>'+CHEV+'</button>';}).join('')+'</div>';
+    zones.map(function(z){return '<button class="srow" data-zone="'+z.id+'"><span class="sg"><span class="st">'+esc(z.name)+'</span><span class="ss">'+esc(zoneTypeName(z.type)+(z.desc?' · '+z.desc:''))+'</span></span>'+(z.active?'':pill('mute','Inactive'))+CHEV+'</button>';}).join('')+'</div>';
   var protoBlock='<div class="shead rz"><h2>Protocoles & produits</h2><button class="lk" data-act="protoadd">+ Ajouter</button></div><div class="stack rz">'+
     (protos.length?protos.map(function(p){return '<button class="srow" data-proto="'+p.id+'"><span class="sg"><span class="st">'+esc(p.name)+'</span><span class="ss">'+esc(p.product||'—')+'</span></span>'+CHEV+'</button>';}).join(''):emptyBox('Aucun protocole'))+'</div>';
-  var planBlock='<div class="shead rz"><h2>Plan d’entretien</h2><button class="lk" data-act="planadd">+ Ajouter</button></div><div class="stack rz">'+
-    (plan.length?plan.map(function(t){var z=zoneById(t.zoneId);return '<button class="srow" data-plan="'+t.id+'"><span class="sg"><span class="st">'+esc(z?z.name:'—')+'</span><span class="ss">'+esc(opType(t.opTypeCode).full)+' · '+esc(freqLabel(t.frequency))+(t.active?'':' · inactif')+'</span></span>'+CHEV+'</button>';}).join(''):emptyBox('Plan vide'))+'</div>';
-  return head + '<div class="stack rz" style="margin-top:8px">'+clubCard+'</div>' + zonesBlock + protoBlock + planBlock;
+  var planLink='<div class="shead rz"><h2>Planification</h2></div><div class="stack rz">'+
+    '<button class="srow" data-nav="planif"><span class="li" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);margin-right:2px">'+NAV_IC.planif+'</span><span class="sg"><span class="st">Gérer la planification</span><span class="ss">'+plan.length+' opération'+(plan.length>1?'s':'')+' planifiée'+(plan.length>1?'s':'')+' · fréquences, heures, responsables</span></span>'+CHEV+'</button></div>';
+  return head + '<div class="stack rz" style="margin-top:8px">'+clubCard+'</div>' + zonesBlock + protoBlock + planLink;
 }
 function viewEquipe(){
   var head='<div class="peyebrow rz">Personnes autorisées</div><h1 class="ptitle rz">Équipe</h1>'+
@@ -839,13 +886,48 @@ function viewParams(){
 
 function bilanMonthName(){ return new Date().toLocaleDateString('fr-FR',{month:'long'}); }
 
+/* ----------------------------- PLANIFICATION ----------------------------- */
+function planCardHTML(t){
+  var z=zoneById(t.zoneId);
+  return '<button class="lcard" data-plan="'+t.id+'">'+
+    '<span class="li">'+NAV_IC.planif+'</span>'+
+    '<span class="lg"><span class="lt">'+esc(planActionName(t))+' · '+esc(z?z.name:'—')+'</span>'+
+    '<span class="ld">'+esc(freqSummary(t))+'</span>'+
+    (t.assignee||t.instruction?'<span class="ld" style="color:var(--faint)">'+esc([t.assignee,t.instruction].filter(Boolean).join(' · '))+'</span>':'')+
+    '<span class="lm">'+(t.active?pill('ok','Actif'):pill('mute','Suspendu'))+'</span></span>'+CHEV+'</button>';
+}
+function viewPlanif(){
+  var active=STATE.config.plan.filter(function(t){return t.active;});
+  var suspended=STATE.config.plan.filter(function(t){return !t.active;});
+  var head='<div class="peyebrow rz">Ce qui est prévu</div><h1 class="ptitle rz">Planification</h1>'+
+    '<p class="pintro rz">Définissez ici ce qui <b>doit</b> se produire. <b>Aujourd’hui</b> affiche automatiquement les échéances du jour ; le <b>Registre</b> conserve ce qui a réellement été réalisé.</p>'+
+    '<div class="rz" style="margin-top:16px"><button class="btn brand" data-act="planadd" style="width:auto;padding:13px 20px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg> Nouvelle opération planifiée</button></div>';
+  var act = active.length
+    ? '<div class="shead rz"><h2>Actives</h2><span class="pill ghost"><span class="pd"></span>'+active.length+'</span></div><div class="stack rz">'+active.map(planCardHTML).join('')+'</div>'
+    : '<div class="rz">'+emptyBox('Aucune opération planifiée','Ajoutez votre première opération planifiée.')+'</div>';
+  var sus = suspended.length ? '<div class="shead rz"><h2>Suspendues</h2></div><div class="stack rz">'+suspended.map(planCardHTML).join('')+'</div>' : '';
+  return head+act+sus;
+}
+
+/* ----------------------------- MENU (mobile) ----------------------------- */
+function viewMenu(){
+  var head='<div class="peyebrow rz">Mon club</div><h1 class="ptitle rz">Club</h1>'+
+    '<p class="pintro rz">Toutes les rubriques de MATSAFE Club.</p>';
+  var items=[['planif','Planification','Ce qui est prévu'],['attn','Points d’attention','Suivi hygiène & sécurité'],['ctl','Contrôles','Vérifications périodiques'],['fighter','Fighter','Retours des pratiquants'],['etab','Établissement','Zones · protocoles · plan'],['equipe','Équipe','Membres autorisés'],['params','Paramètres','Export · bilan · réglages']];
+  var rows=items.map(function(it){var c=0; if(it[0]==='attn')c=openAnos().length; else if(it[0]==='ctl')c=badgeCount('ctl'); else if(it[0]==='fighter')c=newFighter().length;
+    return '<button class="srow" data-nav="'+it[0]+'"><span class="li" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);margin-right:2px">'+NAV_IC[it[0]]+'</span><span class="sg"><span class="st">'+esc(it[1])+'</span><span class="ss">'+esc(it[2])+'</span></span>'+(c?'<span class="pill attn"><span class="pd"></span>'+c+'</span>':'')+CHEV+'</button>';
+  }).join('');
+  var user='<div class="shead rz"><h2>Compte</h2></div><div class="stack rz"><button class="srow" data-act="switchuser"><span class="av" style="width:38px;height:38px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-family:var(--cond);font-weight:800;flex:none">'+esc(initials(currentUser().name).toUpperCase())+'</span><span class="sg"><span class="st">'+esc(currentUser().name)+'</span><span class="ss">'+esc(currentUser().role)+'</span></span>'+CHEV+'</button></div>';
+  return head+'<div class="stack rz" style="margin-top:14px">'+rows+'</div>'+user;
+}
+
 /* =====================================================================
    INTERACTIONS (wiring)
    ===================================================================== */
 function wire(){
   var occ=todayOccurrences(), au=afterUseTasks();
-  $$('[data-occ]').forEach(function(b){b.onclick=function(){var o=occ[+b.dataset.occ]; if(o) openValidate({code:o.task.opTypeCode, zone:o.zoneName, planId:o.task.id, slot:o.slot, protocolId:o.task.protocolId});};});
-  $$('[data-au]').forEach(function(b){b.onclick=function(){var o=au[+b.dataset.au]; if(o) openValidate({code:o.task.opTypeCode, zone:o.zoneName, planId:o.task.id, slot:'', protocolId:o.task.protocolId});};});
+  $$('[data-occ]').forEach(function(b){b.onclick=function(){var o=occ[+b.dataset.occ]; if(o) openValidate({code:o.task.opTypeCode, zone:o.zoneName, zoneId:o.task.zoneId, planId:o.task.id, slot:o.slot, protocolId:o.task.protocolId, actionName:planActionFull(o.task)});};});
+  $$('[data-au]').forEach(function(b){b.onclick=function(){var o=au[+b.dataset.au]; if(o) openValidate({code:o.task.opTypeCode, zone:o.zoneName, zoneId:o.task.zoneId, planId:o.task.id, slot:'', protocolId:o.task.protocolId, actionName:planActionFull(o.task)});};});
   $$('[data-ano]').forEach(function(b){b.onclick=function(){openAnoDetail(b.dataset.ano);};});
   $$('[data-fighter]').forEach(function(b){b.onclick=function(){openFighterDetail(b.dataset.fighter);};});
   $$('[data-ctl]').forEach(function(b){b.onclick=function(){openCtlDetail(b.dataset.ctl);};});
@@ -908,7 +990,7 @@ function pickPhoto(cb){
 function openAdd(){
   openSheet('Ajouter','Que voulez-vous ajouter ?',
     '<div class="stack" style="margin-top:6px">'+
-    '<button class="srow" data-add="op"><span class="li" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);margin-right:2px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span><span class="sg"><span class="st">Opération</span><span class="ss">Enregistrer une opération réalisée</span></span></button>'+
+    '<button class="srow" data-add="op"><span class="li" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);margin-right:2px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span><span class="sg"><span class="st">Nettoyage supplémentaire</span><span class="ss">Enregistrer une opération réalisée hors plan</span></span></button>'+
     '<button class="srow" data-add="attn"><span class="li" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--brand-soft);border:1px solid #F2D8D3;color:var(--brand);margin-right:2px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span><span class="sg"><span class="st">Point d’attention</span><span class="ss">Signaler un problème constaté</span></span></button>'+
     '<button class="srow" data-add="ctl"><span class="li" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);margin-right:2px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><span class="sg"><span class="st">Contrôle</span><span class="ss">Planifier un contrôle périodique</span></span></button>'+
     '</div>','');
@@ -921,7 +1003,7 @@ function openValidate(opts){
   var proto = opts.protocolId? protocolById(opts.protocolId): null;
   var protoHTML = proto ? '<div class="fieldlab">Protocole à appliquer</div><div class="protobox">'+protoCardHTML(proto)+'</div>' : '';
   var body='<div class="fieldlab" style="margin-top:8px">Opération</div>'+
-    '<div class="protobox" style="background:var(--surface)"><div class="pc-name">'+esc(zone)+'</div><div style="color:var(--ink-2);font-size:14px">'+esc(t.full)+(opts.slot?' · '+esc(opts.slot):'')+'</div></div>'+
+    '<div class="protobox" style="background:var(--surface)"><div class="pc-name">'+esc(zone)+'</div><div style="color:var(--ink-2);font-size:14px">'+esc(opts.actionName||t.full)+(opts.slot?' · prévu '+esc(opts.slot):'')+(opts.extra?' · supplémentaire':'')+'</div></div>'+
     protoHTML+
     '<div class="fieldlab">Un mot ? <span class="opt">— optionnel</span></div><textarea id="vComment" rows="2" placeholder="Remarque éventuelle…"></textarea>';
   var foot='<button class="btn good" id="vFinish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Terminer l’opération</button>';
@@ -935,7 +1017,7 @@ function openValidate(opts){
       '<button class="srow" id="vPb"><span class="li" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--brand-soft);border:1px solid #F2D8D3;color:var(--brand);margin-right:2px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span><span class="sg"><span class="st">Problème constaté</span><span class="ss">Créer un point d’attention</span></span></button>'+
       '</div>';
     $('#shFoot').innerHTML='';
-    function record(anomaly){ db.ops.unshift({id:id(), type:code, zone:zone, by:currentUser().short, at:Date.now(), anomaly:anomaly, planId:opts.planId||null, protocolId:opts.protocolId||null, slot:opts.slot||'', comment:comment}); save(); }
+    function record(anomaly){ db.ops.unshift({id:id(), type:code, actionName:opts.actionName||opType(code).full, zone:zone, zoneId:opts.zoneId||null, by:currentUser().short, at:Date.now(), anomaly:anomaly, planId:opts.planId||null, protocolId:opts.protocolId||null, slot:opts.slot||'', comment:comment, extra:!!opts.extra}); save(); }
     $('#vOk').onclick=function(){ record(false); burst('Opération enregistrée', zone+' · '+timeFmt(Date.now())); setTimeout(function(){ render(); },300); };
     $('#vPb').onclick=function(){ record(true); closeSheet(); setTimeout(function(){ openReport(zone); render(); },200); };
   };
@@ -949,18 +1031,20 @@ function protoCardHTML(p){
     (p.note?'<div class="pc-note">'+esc(p.note)+'</div>':'');
 }
 
-/* ---------------------- Autre opération (pick) ---------------------- */
+/* ---------------- Nettoyage supplémentaire (hors plan) ---------------- */
 function openPick(){
-  var body='<div class="fieldlab" style="margin-top:8px">Zone</div><div class="choices" id="pkZone">'+
-    zoneNames().map(function(z){return '<button class="choice" data-z="'+esc(z)+'">'+esc(z)+'</button>';}).join('')+'</div>'+
-    '<div class="fieldlab">Type d’opération</div><div class="choices" id="pkType">'+
+  var zones=STATE.config.zones.filter(function(z){return z.active;});
+  var body='<p class="pintro" style="margin:2px 0 4px">Une opération réalisée <b>maintenant</b>, hors planning. Elle est tracée à part et ne modifie pas le plan prévu.</p>'+
+    '<div class="fieldlab">Zone</div><div class="choices" id="pkZone">'+
+    zones.map(function(z){return '<button class="choice" data-zid="'+z.id+'" data-z="'+esc(z.name)+'">'+esc(z.name)+'</button>';}).join('')+'</div>'+
+    '<div class="fieldlab">Action</div><div class="choices" id="pkType">'+
     OP_TYPES.map(function(o){return '<button class="choice" data-c="'+o.code+'">'+esc(o.name)+'</button>';}).join('')+'</div>';
-  openSheet('Autre opération','Enregistrer une opération', body, '<button class="btn" id="pkNext" disabled>Continuer</button>');
-  var st={zone:'',code:''};
-  $$('#pkZone .choice').forEach(function(b){b.onclick=function(){st.zone=b.dataset.z; refresh();};});
+  openSheet('Nettoyage supplémentaire','Enregistrer', body, '<button class="btn" id="pkNext" disabled>Continuer</button>');
+  var st={zone:'',zid:null,code:''};
+  $$('#pkZone .choice').forEach(function(b){b.onclick=function(){st.zone=b.dataset.z; st.zid=b.dataset.zid; refresh();};});
   $$('#pkType .choice').forEach(function(b){b.onclick=function(){st.code=b.dataset.c; refresh();};});
   function refresh(){ $('#pkNext').disabled=!(st.zone&&st.code); }
-  $('#pkNext').onclick=function(){ closeSheet(); setTimeout(function(){ openValidate({code:st.code, zone:st.zone}); },180); };
+  $('#pkNext').onclick=function(){ closeSheet(); setTimeout(function(){ openValidate({code:st.code, zone:st.zone, zoneId:st.zid, extra:true, actionName:opType(st.code).full}); },180); };
 }
 
 /* ------------------- Signaler un point d'attention ------------------- */
@@ -989,8 +1073,9 @@ function openOpDetail(opId){
   var o=null; for(var i=0;i<db.ops.length;i++)if(db.ops[i].id===opId)o=db.ops[i]; if(!o)return;
   var t=opType(o.type), proto=o.protocolId?protocolById(o.protocolId):null;
   var body='<div class="detail-meta">'+
-    dm('Zone',o.zone||t.name)+dm('Opération',t.full)+dm('Date',dayLabel(o.at)+' · '+timeFmt(o.at))+dm('Par',o.by||'—')+
-    (o.slot?dm('Créneau',o.slot):'')+dm('Résultat',o.anomaly?'Anomalie constatée':'Conforme')+'</div>'+
+    dm('Zone',o.zone||t.name)+dm('Opération',opActionFull(o))+
+    (o.slot?dm('Heure prévue',o.slot):'')+dm('Heure réelle',timeFmt(o.at))+dm('Date',dayLabel(o.at))+dm('Par',o.by||'—')+
+    dm('Type',o.extra?'Nettoyage supplémentaire':'Planifié')+dm('Résultat',o.anomaly?'Anomalie constatée':'Conforme')+'</div>'+
     (o.comment?'<div class="fieldlab">Remarque</div><div class="card soft pad" style="padding:14px">'+esc(o.comment)+'</div>':'')+
     (proto?'<div class="fieldlab">Protocole appliqué</div><div class="protobox">'+protoCardHTML(proto)+'</div>':'')+
     '<div class="card soft pad" style="padding:13px;margin-top:14px;color:var(--ink-2);font-size:12.5px"><span class="pill mute"><span class="pd"></span>Historisé</span> Cet enregistrement est conservé dans le registre et n’est pas modifiable.</div>';
@@ -1130,12 +1215,14 @@ function openZoneEdit(zid){
   var z = zid? zoneById(zid): null;
   var typeOpts=ZONE_TYPES.map(function(t){return '<button class="choice '+((z&&z.type===t[0])||(!z&&t[0]==='tatami')?'sel':'')+'" data-t="'+t[0]+'">'+esc(t[1])+'</button>';}).join('');
   openSheet('Zone', z?'Modifier la zone':'Nouvelle zone',
-    '<div class="fieldlab" style="margin-top:8px">Nom</div><input type="text" id="zN" value="'+(z?esc(z.name):'')+'" placeholder="Ex. : Tatami principal">'+
-    '<div class="fieldlab">Type</div><div class="choices" id="zT">'+typeOpts+'</div>',
+    '<div class="fieldlab" style="margin-top:8px">Nom de la zone réelle</div><input type="text" id="zN" value="'+(z?esc(z.name):'')+'" placeholder="Ex. : Tatami 1, Cage MMA…">'+
+    '<div class="fieldlab">Type</div><div class="choices" id="zT">'+typeOpts+'</div>'+
+    '<div class="fieldlab">Description <span class="opt">— optionnel</span></div><input type="text" id="zD" value="'+(z?esc(z.desc||''):'')+'" placeholder="Ex. : surface principale">'+
+    '<div class="fieldlab">Statut</div><div class="choices" id="zA"><button class="choice '+((!z||z.active)?'sel':'')+'" data-a="1">Active</button><button class="choice '+((z&&!z.active)?'sel':'')+'" data-a="0">Inactive</button></div>',
     '<div class="btnrow">'+(z?'<button class="btn ghost" id="zDel" style="border:1px solid var(--line-2);color:var(--brand)">Supprimer</button>':'')+'<button class="btn" id="zS">Enregistrer</button></div>');
-  $('#zS').onclick=function(){ var name=($('#zN').value||'').trim(); if(!name){toast('Nom requis');return;} var type=($('.choice.sel',$('#zT'))||{dataset:{t:'other'}}).dataset.t;
-    if(z){z.name=name; z.type=type;} else STATE.config.zones.push({id:id(),name:name,type:type,active:true}); save(); closeSheet(); toast('Zone enregistrée'); render(); };
-  if(z&&$('#zDel'))$('#zDel').onclick=function(){ if(confirm('Supprimer cette zone ?')){ STATE.config.zones=STATE.config.zones.filter(function(x){return x.id!==z.id;}); save(); closeSheet(); toast('Zone supprimée'); render(); } };
+  $('#zS').onclick=function(){ var name=($('#zN').value||'').trim(); if(!name){toast('Nom requis');return;} var type=($('.choice.sel',$('#zT'))||{dataset:{t:'other'}}).dataset.t; var active=($('.choice.sel',$('#zA'))||{dataset:{a:'1'}}).dataset.a==='1'; var desc=($('#zD').value||'').trim();
+    if(z){z.name=name; z.type=type; z.desc=desc; z.active=active;} else STATE.config.zones.push({id:id(),name:name,type:type,desc:desc,active:active}); save(); closeSheet(); toast('Zone enregistrée'); render(); };
+  if(z&&$('#zDel'))$('#zDel').onclick=function(){ if(confirm('Supprimer cette zone ? Les événements passés la conservent dans l’historique.')){ STATE.config.zones=STATE.config.zones.filter(function(x){return x.id!==z.id;}); save(); closeSheet(); toast('Zone supprimée'); render(); } };
 }
 function openProtoEdit(pid){
   var p=pid?protocolById(pid):null;
@@ -1155,21 +1242,60 @@ function openProtoEdit(pid){
 function openPlanEdit(tid){
   var t=tid?(function(){for(var i=0;i<STATE.config.plan.length;i++)if(STATE.config.plan[i].id===tid)return STATE.config.plan[i];})():null;
   var zones=STATE.config.zones.filter(function(z){return z.active||(t&&z.id===t.zoneId);});
+  var st={times:(t&&t.times?t.times.slice():[])};
   var zoneOpts=zones.map(function(z){return '<button class="choice '+((t&&t.zoneId===z.id)?'sel':'')+'" data-z="'+z.id+'">'+esc(z.name)+'</button>';}).join('');
   var otOpts=OP_TYPES.map(function(o){return '<button class="choice '+((t?t.opTypeCode:'training_surface_cleaning')===o.code?'sel':'')+'" data-o="'+o.code+'">'+esc(o.name)+'</button>';}).join('');
   var frOpts=FREQS.map(function(f){return '<button class="choice '+((t?t.frequency:'daily')===f[0]?'sel':'')+'" data-f="'+f[0]+'">'+esc(f[1])+'</button>';}).join('');
-  var protoOpts='<button class="choice '+(t&&!t.protocolId?'sel':(!t?'sel':''))+'" data-pid="">Aucun</button>'+STATE.config.protocols.map(function(p){return '<button class="choice '+(t&&t.protocolId===p.id?'sel':'')+'" data-pid="'+p.id+'">'+esc(p.name)+'</button>';}).join('');
-  openSheet('Plan d’entretien', t?'Modifier l’entrée':'Nouvelle entrée',
-    '<div class="fieldlab" style="margin-top:8px">Zone</div><div class="choices" id="plZ">'+zoneOpts+'</div>'+
-    '<div class="fieldlab">Opération</div><div class="choices" id="plO">'+otOpts+'</div>'+
+  var dayOpts=WEEKDAYS.map(function(w){return '<button class="choice '+((t&&(t.days||[]).indexOf(w[0])>=0)?'sel':'')+'" data-d="'+w[0]+'">'+w[1]+'</button>';}).join('');
+  var assignees=STATE.users.map(function(u){return u.short;}).concat(['Équipe','Coach du créneau']);
+  var asgOpts=assignees.map(function(a){return '<button class="choice '+((t&&t.assignee===a)?'sel':'')+'" data-a="'+esc(a)+'">'+esc(a)+'</button>';}).join('');
+  var protoOpts='<button class="choice '+((!t||!t.protocolId)?'sel':'')+'" data-pid="">Aucun</button>'+STATE.config.protocols.map(function(p){return '<button class="choice '+(t&&t.protocolId===p.id?'sel':'')+'" data-pid="'+p.id+'">'+esc(p.name)+'</button>';}).join('');
+  openSheet('Planification', t?'Modifier l’opération':'Nouvelle opération planifiée',
+    '<div class="fieldlab" style="margin-top:8px">Action <span class="opt">— bibliothèque MATSAFE</span></div><div class="choices" id="plO">'+otOpts+'</div>'+
+    '<div class="fieldlab">Nom affiché <span class="opt">— personnalisable</span></div><input type="text" id="plName" value="'+(t?esc(planActionName(t)):'')+'" placeholder="Nom de l’action">'+
+    '<div class="fieldlab">Zone</div><div class="choices" id="plZ">'+zoneOpts+'</div>'+
     '<div class="fieldlab">Fréquence</div><div class="choices" id="plF">'+frOpts+'</div>'+
-    '<div class="fieldlab">Protocole <span class="opt">— optionnel</span></div><div class="choices" id="plP">'+protoOpts+'</div>',
-    '<div class="btnrow">'+(t?'<button class="btn ghost" id="plDel" style="border:1px solid var(--line-2);color:var(--brand)">Supprimer</button>':'')+'<button class="btn" id="plS">Enregistrer</button></div>');
-  $('#plS').onclick=function(){ var z=$('.choice.sel',$('#plZ')), o=$('.choice.sel',$('#plO')), f=$('.choice.sel',$('#plF')), pd=$('.choice.sel',$('#plP'));
-    if(!z){toast('Zone requise');return;}
-    var data={zoneId:z.dataset.z, opTypeCode:o?o.dataset.o:'training_surface_cleaning', frequency:f?f.dataset.f:'daily', days:[], protocolId:(pd&&pd.dataset.pid)?pd.dataset.pid:null, active:true};
-    if(t)Object.assign(t,data); else STATE.config.plan.push(Object.assign({id:id()},data)); save(); closeSheet(); toast('Plan mis à jour'); render(); };
-  if(t&&$('#plDel'))$('#plDel').onclick=function(){ if(confirm('Supprimer cette entrée du plan ?')){ STATE.config.plan=STATE.config.plan.filter(function(x){return x.id!==t.id;}); save(); closeSheet(); toast('Entrée supprimée'); render(); } };
+    '<div id="plDaysRow" hidden><div class="fieldlab">Jours concernés</div><div class="choices" id="plD" data-multi="1">'+dayOpts+'</div></div>'+
+    '<div id="plMonthRow" hidden><div class="fieldlab">Jour du mois (1–28)</div><input type="text" id="plMonth" inputmode="numeric" value="'+(t&&t.monthDay?t.monthDay:'1')+'" style="max-width:120px"></div>'+
+    '<div id="plOnceRow" hidden><div class="fieldlab">Date</div><input type="date" id="plOnce" value="'+(t&&t.onceAt?new Date(t.onceAt).toISOString().slice(0,10):'')+'"></div>'+
+    '<div id="plTimesRow"><div class="fieldlab">Heure(s) <span class="opt">— une ou plusieurs</span></div><div id="plTimes" class="choices" data-multi="1"></div>'+
+      '<div style="display:flex;gap:8px;margin-top:8px"><input type="time" id="plTimeInput" style="max-width:150px"><button class="fchip" id="plTimeAdd" type="button">+ Ajouter l’heure</button></div></div>'+
+    '<div class="fieldlab">Responsable / rôle</div><div class="choices" id="plA">'+asgOpts+'</div>'+
+    '<div class="fieldlab">Consigne courte <span class="opt">— optionnel</span></div><input type="text" id="plInstr" value="'+(t?esc(t.instruction||''):'')+'" placeholder="Ex. : balayer puis désinfecter">'+
+    '<div class="fieldlab">Protocole <span class="opt">— optionnel</span></div><div class="choices" id="plP">'+protoOpts+'</div>'+
+    '<div class="fieldlab">Statut</div><div class="choices" id="plActive"><button class="choice '+((!t||t.active)?'sel':'')+'" data-v="1">Actif</button><button class="choice '+((t&&!t.active)?'sel':'')+'" data-v="0">Suspendu</button></div>',
+    '<div class="btnrow">'+(t?'<button class="btn ghost" id="plDup" style="border:1px solid var(--line-2)">Dupliquer</button>':'')+'<button class="btn" id="plS">Enregistrer</button></div>'+(t?'<button class="btn ghost" id="plDel" style="border:1px solid var(--line-2);color:var(--brand)">Supprimer</button>':''));
+  // Nom auto quand on choisit une action de la bibliothèque
+  $$('#plO .choice').forEach(function(b){b.addEventListener('click',function(){ var nm=$('#plName'); var known=OP_TYPES.some(function(x){return x.name===(nm.value||'').trim();}); if(!(nm.value||'').trim()||known) nm.value=opType(b.dataset.o).name; });});
+  // Éditeur d'heures
+  function drawTimes(){ st.times.sort(); $('#plTimes').innerHTML = st.times.length ? st.times.map(function(tm){return '<button class="choice sel" data-tm="'+tm+'" type="button">'+tm+' ✕</button>';}).join('') : '<span style="color:var(--faint);font-size:13px;align-self:center">Aucune heure — « dans la journée »</span>';
+    $$('#plTimes [data-tm]').forEach(function(b){b.onclick=function(){ st.times=st.times.filter(function(x){return x!==b.dataset.tm;}); drawTimes(); };}); }
+  drawTimes();
+  $('#plTimeAdd').onclick=function(){ var v=$('#plTimeInput').value; if(v&&st.times.indexOf(v)<0){ st.times.push(v); drawTimes(); } };
+  // Affichage conditionnel selon la fréquence
+  function curFreq(){ var f=$('.choice.sel',$('#plF')); return f?f.dataset.f:'daily'; }
+  function updateFreqUI(){ var f=curFreq();
+    $('#plDaysRow').hidden = FREQ_NEEDS_DAYS.indexOf(f)<0;
+    $('#plMonthRow').hidden = f!=='monthly';
+    $('#plOnceRow').hidden = f!=='once';
+    $('#plTimesRow').hidden = f==='after_use';
+  }
+  $$('#plF .choice').forEach(function(b){b.addEventListener('click',function(){ setTimeout(updateFreqUI,0); });});
+  updateFreqUI();
+  function collect(){
+    var z=$('.choice.sel',$('#plZ')); if(!z){toast('Zone requise');return null;}
+    var o=$('.choice.sel',$('#plO')), f=curFreq(), pd=$('.choice.sel',$('#plP')), asg=$('.choice.sel',$('#plA'));
+    var code=o?o.dataset.o:'training_surface_cleaning', name=($('#plName').value||'').trim();
+    var days=$$('#plD .choice.sel').map(function(x){return +x.dataset.d;});
+    var active=($('.choice.sel',$('#plActive'))||{dataset:{v:'1'}}).dataset.v==='1';
+    var data={zoneId:z.dataset.z, opTypeCode:code, actionName:(name&&name!==opType(code).name?name:''), frequency:f, days:days, times:st.times.slice(), assignee:asg?asg.dataset.a:'', instruction:($('#plInstr').value||'').trim(), protocolId:(pd&&pd.dataset.pid)?pd.dataset.pid:null, active:active};
+    if(f==='monthly') data.monthDay=Math.max(1,Math.min(28,parseInt($('#plMonth').value||'1',10)||1));
+    if(f==='once') data.onceAt=$('#plOnce').value? new Date($('#plOnce').value).getTime(): Date.now();
+    return data;
+  }
+  $('#plS').onclick=function(){ var data=collect(); if(!data)return; if(t)Object.assign(t,data); else STATE.config.plan.push(Object.assign({id:id()},data)); save(); closeSheet(); toast('Planification enregistrée'); render(); };
+  if(t&&$('#plDup'))$('#plDup').onclick=function(){ var data=collect(); if(!data)return; STATE.config.plan.push(Object.assign({id:id()},data)); save(); closeSheet(); toast('Opération dupliquée'); render(); };
+  if(t&&$('#plDel'))$('#plDel').onclick=function(){ if(confirm('Supprimer cette opération planifiée ? Les événements passés restent dans l’historique.')){ STATE.config.plan=STATE.config.plan.filter(function(x){return x.id!==t.id;}); save(); closeSheet(); toast('Opération supprimée'); render(); } };
 }
 function openUserEdit(){
   openSheet('Équipe','Ajouter un membre',
