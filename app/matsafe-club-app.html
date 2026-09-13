@@ -244,6 +244,25 @@
   .srow .ss{color:var(--ink-2); font-size:12.5px; margin-top:3px}
   .srow .schev{color:var(--faint); flex:none}
   .subtabs{display:flex; gap:8px; flex-wrap:wrap; margin:14px 0 4px}
+  /* Équipe — cartes membres */
+  .memrow{display:flex; align-items:center; gap:15px; width:100%; text-align:left; cursor:pointer; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-sm); padding:15px 16px; box-shadow:var(--shadow)}
+  .memrow:hover{box-shadow:var(--shadow-lg)}
+  .memav{flex:none; width:46px; height:46px; border-radius:50%; background:var(--ink); color:#fff; display:grid; place-items:center; font-family:var(--cond); font-weight:800; font-size:16px; letter-spacing:.02em}
+  .memav.off{background:var(--faint)}
+  .memrow .sg{flex:1 1 auto; min-width:0}
+  .memrow .st{display:block; font-family:var(--cond); font-weight:800; text-transform:uppercase; letter-spacing:.01em; font-size:17px; line-height:1.05}
+  .memrow .ss{display:block; color:var(--ink-2); font-size:13px; margin-top:3px}
+  .memrow.off .memav,.memrow.off .st{opacity:.72}
+  /* Fiche membre — en-tête + stats */
+  .uhead{display:flex; align-items:center; gap:16px; margin:4px 0 6px}
+  .uhead .uav{flex:none; width:60px; height:60px; border-radius:50%; background:var(--ink); color:#fff; display:grid; place-items:center; font-family:var(--cond); font-weight:900; font-size:22px}
+  .uhead .uav.off{background:var(--faint)}
+  .uhead .un{font-family:var(--cond); font-weight:900; text-transform:uppercase; letter-spacing:.005em; font-size:26px; line-height:1}
+  .uhead .ur{color:var(--ink-2); font-size:14px; margin-top:5px; display:flex; align-items:center; gap:9px}
+  .ustats{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line); border-radius:14px; overflow:hidden; margin:14px 0 4px}
+  .ustat{background:var(--surface-2); padding:14px 15px}
+  .ustat .sv{font-family:var(--cond); font-weight:900; font-size:26px; line-height:1}
+  .ustat .sk{font-family:var(--cond); font-weight:700; text-transform:uppercase; letter-spacing:.05em; font-size:10.5px; color:var(--ink-2); margin-top:5px}
 
   .empty{text-align:center; color:var(--ink-2); padding:34px 20px; background:var(--surface-2); border:1px dashed var(--line-2); border-radius:var(--radius-sm); margin-top:14px}
   .empty .big{font-family:var(--cond); font-weight:800; text-transform:uppercase; font-size:17px; color:var(--ink); margin-bottom:5px}
@@ -418,7 +437,7 @@ var ZONE_TYPES=[['tatami','Tatami'],['training_area','Espace d’entraînement']
 var DEFAULT_ZONES=[['Tatami principal','tatami'],['Tatami 2','tatami'],['Vestiaires & douches','changing_room'],['Sanitaires','restroom'],['Matériel partagé','shared_equipment'],['Réception','reception'],['Premiers secours','first_aid']];
 var WEEKDAYS=[[1,'Lun'],[2,'Mar'],[3,'Mer'],[4,'Jeu'],[5,'Ven'],[6,'Sam'],[0,'Dim']];
 var FIGHTER_INBOX='matsafe_fighter_inbox';   // clé écrite par l'app MATSAFE Fighter (même origine)
-var STORE='matsafe_club_v2';
+var STORE='matsafe_club_v3';
 
 /* Points d'attention : cycle de vie en vocabulaire clair */
 var ANO_FLOW=[
@@ -472,6 +491,40 @@ function pill(kind,label){return '<span class="pill '+kind+'"><span class="pd"><
 function firstName(n){return (n||'').split(' ')[0];}
 function initials(n){var p=(n||'').trim().split(/\s+/);return ((p[0]||'')[0]||'')+((p[1]||'')[0]||'');}
 
+/* ------------------------- Utilisateurs (traçabilité nominative) -------------------------
+   Chaque action est reliée à un user_id ; on stocke aussi un « instantané » du nom
+   (byName) pour que l'historique reste lisible même si la personne devient inactive ou
+   est renommée. Une personne ayant déjà des traces n'est jamais réellement supprimée. */
+var ROLES=['Gérant','Gérante','Référent Hygiène','Coach','Salarié','Alternant','Bénévole','Membre d’équipe'];
+function userById(uid){ if(!uid)return null; for(var i=0;i<STATE.users.length;i++)if(STATE.users[i].id===uid)return STATE.users[i]; return null; }
+function userName(u){ return u?((u.firstName||'')+' '+(u.lastName||'')).trim():''; }
+function userShort(u){ return u?((u.firstName||'')+' '+((u.lastName||'')[0]||'')+'.').trim():''; }
+function initialsU(u){ return u?(((u.firstName||'')[0]||'')+((u.lastName||'')[0]||'')).toUpperCase():''; }
+function activeUsers(){ return STATE.users.filter(function(u){return u.status!=='inactive';}); }
+/* Nom à afficher pour une action : l'instantané figé s'il existe, sinon le membre courant */
+function nameOfId(uid, snap){ if(snap)return snap; var u=userById(uid); return u?userName(u):''; }
+/* Libellé du responsable prévu d'une opération planifiée (personne ou rôle) */
+function planRespLabel(t){
+  if(!t) return '';
+  if(t.respKind==='person'){ var u=userById(t.respUserId); return u?userName(u):(t.assignee||''); }
+  if(t.respKind==='role') return t.respRole||'';
+  return t.assignee||''; // rétro-compat
+}
+/* Statistiques d'un membre (pour sa fiche) */
+function userStats(uid){
+  var ops=db.ops.filter(function(o){return o.byId===uid;});
+  var ctls=db.ctls.filter(function(c){return c.status==='completed'&&c.byId===uid;});
+  var corr=db.anos.filter(function(a){return a.assignedToId===uid||a.verifiedById===uid;});
+  var times=[]; ops.forEach(function(o){times.push(o.at);}); ctls.forEach(function(c){times.push(c.completedAt||c.lastAt);}); corr.forEach(function(a){times.push(a.at);});
+  var last=times.length?Math.max.apply(null,times):0;
+  return {ops:ops.length, ctls:ctls.length, corr:corr.length, last:last};
+}
+function userHasHistory(uid){
+  return db.ops.some(function(o){return o.byId===uid;})
+    || db.anos.some(function(a){return a.byId===uid||a.assignedToId===uid||a.verifiedById===uid;})
+    || db.ctls.some(function(c){return c.byId===uid;});
+}
+
 /* mojibake repair (UTF-8 relu Latin-1) */
 function fixMojibake(s){if(typeof s!=='string'||!/[ÃÂ]/.test(s))return s;try{var b=Uint8Array.from(s,function(c){return c.charCodeAt(0)&0xff;});var d=new TextDecoder('utf-8',{fatal:false}).decode(b);if(!/[ÃÂ]/.test(d)&&d.indexOf(String.fromCharCode(0xFFFD))===-1)return d;}catch(e){}return s;}
 function repair(o){if(Array.isArray(o))return o.map(repair);if(o&&typeof o==='object'){for(var k in o)o[k]=repair(o[k]);return o;}return fixMojibake(o);}
@@ -484,28 +537,31 @@ function seedRecords(plan, zid){
   var pT1=pe('Tatami 1','training_surface_cleaning'), pT2=pe('Tatami 2','training_surface_cleaning'),
       pSan=pe('Sanitaires','restroom_cleaning'), pVest=pe('Vestiaires & douches','changing_room_cleaning');
   function op(o){o.id=id(); return o;}
+  // Personnes de démonstration (user_id fixes) + instantané du nom sur chaque trace
+  var SIMON='u_ref', KARIM='u_coach', LUCAS='u_alt', CLAIRE='u_ger';
+  var NM={u_ref:'Simon Ehrlacher', u_coach:'Karim Benali', u_alt:'Lucas Martin', u_ger:'Claire Dupont'};
   return {
-    // Chaque validation = une trace indépendante. Tatami 1 est planifié 4×/jour :
-    // 08:00 et 13:00 déjà faits, 18:00 et 22:00 restent à faire.
+    // Chaque validation = une trace indépendante, reliée au user_id (byId) + nom figé (by).
+    // Tatami 1 est planifié 4×/jour : 08:00 et 13:00 faits, 18:00 & 22:00 à faire.
     ops:[
-      op({type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Tatami 1', zoneId:zid('Tatami 1'), by:'Simon E.', at:at(8,12), anomaly:false, planId:pT1.id||null, protocolId:pT1.protocolId||null, slot:'08:00'}),
-      op({type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Tatami 1', zoneId:zid('Tatami 1'), by:'Karim B.', at:at(13,20), anomaly:false, planId:pT1.id||null, protocolId:pT1.protocolId||null, slot:'13:00'}),
-      op({type:'restroom_cleaning', actionName:'Nettoyage sanitaires', zone:'Sanitaires', zoneId:zid('Sanitaires'), by:'Karim B.', at:at(9,35), anomaly:false, planId:pSan.id||null, protocolId:pSan.protocolId||null, slot:'09:00'}),
-      op({type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Zone grappling', zoneId:zid('Zone grappling'), by:'Simon E.', at:at(15,40), anomaly:false, planId:null, protocolId:null, slot:'', extra:true}),
-      op({type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Tatami 1', zoneId:zid('Tatami 1'), by:'Léa M.', at:now-1*D-4*H, anomaly:false, planId:pT1.id||null, slot:'18:00'}),
-      op({type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Tatami 2', zoneId:zid('Tatami 2'), by:'Karim B.', at:now-1*D-3*H, anomaly:false, planId:pT2.id||null, slot:'20:00'}),
-      op({type:'restroom_cleaning', actionName:'Nettoyage sanitaires', zone:'Sanitaires', zoneId:zid('Sanitaires'), by:'Karim B.', at:now-1*D-6*H, anomaly:true, planId:pSan.id||null, slot:'19:00'})
+      op({type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Tatami 1', zoneId:zid('Tatami 1'), byId:SIMON, by:NM[SIMON], at:at(8,12), anomaly:false, planId:pT1.id||null, protocolId:pT1.protocolId||null, slot:'08:00'}),
+      op({type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Tatami 1', zoneId:zid('Tatami 1'), byId:KARIM, by:NM[KARIM], at:at(13,20), anomaly:false, planId:pT1.id||null, protocolId:pT1.protocolId||null, slot:'13:00'}),
+      op({type:'restroom_cleaning', actionName:'Nettoyage sanitaires', zone:'Sanitaires', zoneId:zid('Sanitaires'), byId:LUCAS, by:NM[LUCAS], at:at(9,35), anomaly:false, planId:pSan.id||null, protocolId:pSan.protocolId||null, slot:'09:00'}),
+      op({type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Zone grappling', zoneId:zid('Zone grappling'), byId:CLAIRE, by:NM[CLAIRE], at:at(15,40), anomaly:false, planId:null, protocolId:null, slot:'', extra:true}),
+      op({type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Tatami 1', zoneId:zid('Tatami 1'), byId:LUCAS, by:NM[LUCAS], at:now-1*D-4*H, anomaly:false, planId:pT1.id||null, slot:'18:00'}),
+      op({type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Tatami 2', zoneId:zid('Tatami 2'), byId:KARIM, by:NM[KARIM], at:now-1*D-3*H, anomaly:false, planId:pT2.id||null, slot:'20:00'}),
+      op({type:'restroom_cleaning', actionName:'Nettoyage sanitaires', zone:'Sanitaires', zoneId:zid('Sanitaires'), byId:LUCAS, by:NM[LUCAS], at:now-1*D-6*H, anomaly:true, planId:pSan.id||null, slot:'19:00'})
     ],
     anos:[
-      {id:id(), zone:'Sanitaires', cat:'product', desc:'Plus de savon dans les sanitaires.', by:'Karim B.', at:now-20*H, status:'open', origin:'club', history:[]},
-      {id:id(), zone:'Tatami 1', cat:'damage', desc:'Angle du tatami légèrement décollé côté cage.', by:'Simon E.', at:now-2*D, status:'in_progress', assignedTo:'Simon E.', origin:'club', history:[{s:'in_progress',by:'Simon E.',at:now-1.6*D}]},
-      {id:id(), zone:'Vestiaires & douches', cat:'hygiene', desc:'Moisissure visible dans la douche 3.', by:'Léa M.', at:now-6*D, status:'closed', assignedTo:'Simon E.', correctiveAction:'Traitement anti-moisissure + reprise du joint.', correctedAt:now-4*D, verifiedBy:'Simon E.', verifiedAt:now-3.5*D, closedAt:now-3*D, origin:'club', history:[]}
+      {id:id(), zone:'Sanitaires', cat:'product', desc:'Plus de savon dans les sanitaires.', byId:KARIM, by:NM[KARIM], at:now-20*H, status:'open', origin:'club', history:[]},
+      {id:id(), zone:'Tatami 1', cat:'damage', desc:'Angle du tatami légèrement décollé côté cage.', byId:SIMON, by:NM[SIMON], at:now-2*D, status:'in_progress', assignedToId:SIMON, assignedTo:NM[SIMON], origin:'club', history:[{s:'in_progress',by:NM[SIMON],at:now-1.6*D}]},
+      {id:id(), zone:'Vestiaires & douches', cat:'hygiene', desc:'Moisissure visible dans la douche 3.', byId:LUCAS, by:NM[LUCAS], at:now-6*D, status:'closed', assignedToId:SIMON, assignedTo:NM[SIMON], correctiveAction:'Traitement anti-moisissure + reprise du joint.', correctedAt:now-4*D, verifiedById:SIMON, verifiedBy:NM[SIMON], verifiedAt:now-3.5*D, closedAt:now-3*D, origin:'club', history:[]}
     ],
     ctls:[
       {id:id(), type:'first_aid_kit_check', zone:'Premiers secours', due:now-1*D, status:'scheduled', lastAt:now-31*D},
       {id:id(), type:'products_check', zone:'Réserve', due:now+1*D, status:'scheduled', lastAt:now-29*D},
       {id:id(), type:'equipment_check', zone:'Tatami 1', due:now+5*D, status:'scheduled', lastAt:now-25*D},
-      {id:id(), type:'documentation_check', zone:null, due:now-3*D, status:'completed', result:'ok', completedAt:now-3*D}
+      {id:id(), type:'documentation_check', zone:null, due:now-3*D, status:'completed', result:'ok', completedAt:now-3*D, byId:SIMON, by:NM[SIMON]}
     ],
     fighter:[
       {id:id(), zone:'Douches', text:'Il n’y avait plus de savon après l’entraînement du soir.', at:now-3*H, status:'to_verify', origin:'fighter', history:[]},
@@ -532,20 +588,22 @@ function defaultState(){
   var protoSanit={id:id(), name:'Sanitaires', product:'Nettoyant sanitaire désinfectant', dilution:'Prêt à l’emploi', contactTime:'5 min', rinse:true, note:'Cuvettes, lavabos, poignées. Rincer les surfaces en contact avec la peau.'};
   function P(o){o.id=id(); if(!o.days)o.days=[]; if(!o.times)o.times=[]; o.active=(o.active!==false); return o;}
   var plan=[
-    P({zoneId:zByName('Tatami 1'),               opTypeCode:'training_surface_cleaning', frequency:'multi_daily', times:['08:00','13:00','18:00','22:00'], assignee:'Équipe',            instruction:'Balayer puis désinfecter. Laisser sécher à l’air libre.', protocolId:protoTatami.id}),
-    P({zoneId:zByName('Tatami 2'),               opTypeCode:'training_surface_cleaning', frequency:'daily',       times:['20:00'],                          assignee:'Coach du créneau',  instruction:'Désinfection en fin de journée.',                        protocolId:protoTatami.id}),
-    P({zoneId:zByName('Cage MMA'),               opTypeCode:'training_surface_cleaning', frequency:'some_days',   days:[1,3,5], times:['19:30'],             assignee:'Coach MMA',         instruction:'Après le sparring MMA.',                                 protocolId:protoTatami.id}),
-    P({zoneId:zByName('Sanitaires'),             opTypeCode:'restroom_cleaning',         frequency:'multi_daily', times:['09:00','19:00'],                  assignee:'Équipe',            instruction:'Cuvettes, lavabos, poignées. Vérifier savon & papier.',  protocolId:protoSanit.id}),
-    P({zoneId:zByName('Vestiaires & douches'),   opTypeCode:'changing_room_cleaning',    frequency:'daily',       times:['21:00'],                          assignee:'Référent Hygiène',  instruction:'Sols, bancs, douches.',                                  protocolId:null}),
-    P({zoneId:zByName('Matériel partagé'),       opTypeCode:'shared_equipment_cleaning', frequency:'after_use',   times:[],                                 assignee:'Coach',             instruction:'Désinfecter le matériel prêté après chaque séance.',     protocolId:null})
+    P({zoneId:zByName('Tatami 1'),               opTypeCode:'training_surface_cleaning', frequency:'multi_daily', times:['08:00','13:00','18:00','22:00'], respKind:'role',   respRole:'Coach',            instruction:'Balayer puis désinfecter. Laisser sécher à l’air libre.', protocolId:protoTatami.id}),
+    P({zoneId:zByName('Tatami 2'),               opTypeCode:'training_surface_cleaning', frequency:'daily',       times:['20:00'],                          respKind:'role',   respRole:'Coach',            instruction:'Désinfection en fin de journée.',                        protocolId:protoTatami.id}),
+    P({zoneId:zByName('Cage MMA'),               opTypeCode:'training_surface_cleaning', frequency:'some_days',   days:[1,3,5], times:['19:30'],             respKind:'person', respUserId:'u_coach',        instruction:'Après le sparring MMA.',                                 protocolId:protoTatami.id}),
+    P({zoneId:zByName('Sanitaires'),             opTypeCode:'restroom_cleaning',         frequency:'multi_daily', times:['09:00','19:00'],                  respKind:'role',   respRole:'Alternant',        instruction:'Cuvettes, lavabos, poignées. Vérifier savon & papier.',  protocolId:protoSanit.id}),
+    P({zoneId:zByName('Vestiaires & douches'),   opTypeCode:'changing_room_cleaning',    frequency:'daily',       times:['21:00'],                          respKind:'person', respUserId:'u_ref',          instruction:'Sols, bancs, douches.',                                  protocolId:null}),
+    P({zoneId:zByName('Matériel partagé'),       opTypeCode:'shared_equipment_cleaning', frequency:'after_use',   times:[],                                 respKind:'role',   respRole:'Coach',            instruction:'Désinfecter le matériel prêté après chaque séance.',     protocolId:null})
   ];
+  var CT=Date.now();
   return {
-    v:2,
+    v:3,
     club:{id:'club_demo', name:'Cube Fight Club', city:'Paris', since:'Mars 2026'},
     users:[
-      {id:'u_ref', name:'Simon Ehrlacher', short:'Simon E.', role:'Référent Hygiène'},
-      {id:'u_coach', name:'Karim Benali', short:'Karim B.', role:'Coach'},
-      {id:'u_coach2', name:'Léa Martin', short:'Léa M.', role:'Coach'}
+      {id:'u_ref',   firstName:'Simon',  lastName:'Ehrlacher', role:'Référent Hygiène', status:'active', createdAt:CT, deactivatedAt:null},
+      {id:'u_coach', firstName:'Karim',  lastName:'Benali',    role:'Coach',            status:'active', createdAt:CT, deactivatedAt:null},
+      {id:'u_alt',   firstName:'Lucas',  lastName:'Martin',    role:'Alternant',        status:'active', createdAt:CT, deactivatedAt:null},
+      {id:'u_ger',   firstName:'Claire', lastName:'Dupont',    role:'Gérante',          status:'active', createdAt:CT, deactivatedAt:null}
     ],
     session:{clubId:'club_demo', userId:'u_ref'},
     config:{zones:zones, protocols:[protoTatami, protoSanit], plan:plan},
@@ -673,7 +731,7 @@ function go(r){ route=r; render(); var m=$('#main'); if(m)m.scrollTop=0; window.
 function render(){
   ingestFighter();
   var u=currentUser();
-  $('#sbUser').textContent=u.name; $('#sbRole').textContent=u.role; $('#sbAv').textContent=initials(u.name).toUpperCase();
+  $('#sbUser').textContent=userName(u); $('#sbRole').textContent=u.role; $('#sbAv').textContent=initialsU(u);
   buildNav(); setActiveNav();
   var page=$('#page'), html='';
   if(route==='home') html=viewHome();
@@ -744,7 +802,7 @@ function viewHome(){
     '<span class="bs">Vos opérations sont régulièrement renseignées et les derniers points d’attention ont été traités rapidement.</span></span>'+
     '<span class="bgo pill ghost"><span class="pd"></span>Voir mon bilan</span></button>';
 
-  return '<div class="hello rz"><div class="hi">Bonjour '+esc(firstName(u.name))+'</div>'+
+  return '<div class="hello rz"><div class="hi">Bonjour '+esc(u.firstName||firstName(userName(u)))+'</div>'+
       '<div class="club"><span class="dot"></span><span class="cn">'+esc(STATE.club.name)+'</span></div>'+
       '<div class="sub">Voici l’essentiel pour aujourd’hui.</div></div>'+
     todayHero + opsBlock + attnBlock + fBlock + bilan;
@@ -904,16 +962,47 @@ function viewEtab(){
     '<button class="srow" data-nav="planif"><span class="li" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);margin-right:2px">'+NAV_IC.planif+'</span><span class="sg"><span class="st">Gérer la planification</span><span class="ss">'+plan.length+' opération'+(plan.length>1?'s':'')+' planifiée'+(plan.length>1?'s':'')+' · fréquences, heures, responsables</span></span>'+CHEV+'</button></div>';
   return head + '<div class="stack rz" style="margin-top:8px">'+clubCard+'</div>' + zonesBlock + protoBlock + planLink;
 }
+function memRowHTML(u){
+  var me=u.id===STATE.session.userId, off=u.status==='inactive';
+  return '<button class="memrow'+(off?' off':'')+'" data-user="'+u.id+'"><span class="memav'+(off?' off':'')+'">'+esc(initialsU(u))+'</span>'+
+    '<span class="sg"><span class="st">'+esc(userName(u))+(me?' · vous':'')+'</span><span class="ss">'+esc(u.role)+'</span></span>'+
+    (off?pill('mute','Inactif'):pill('ok','Actif'))+CHEV+'</button>';
+}
 function viewEquipe(){
+  var active=activeUsers(), inactive=STATE.users.filter(function(u){return u.status==='inactive';});
   var head='<div class="peyebrow rz">Personnes autorisées</div><h1 class="ptitle rz">Équipe</h1>'+
-    '<p class="pintro rz">Les personnes qui utilisent MATSAFE Club dans l’établissement. Aucune donnée personnelle de pratiquant n’est stockée.</p>';
-  var rows=STATE.users.map(function(u){var me=u.id===STATE.session.userId;
-    return '<button class="srow" data-user="'+u.id+'"><span class="av" style="width:38px;height:38px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-family:var(--cond);font-weight:800;font-size:15px;flex:none">'+esc(initials(u.name).toUpperCase())+'</span>'+
-      '<span class="sg"><span class="st">'+esc(u.name)+(me?' · vous':'')+'</span><span class="ss">'+esc(u.role)+'</span></span>'+
-      pill(me?'ok':'mute', me?'Connecté':'Membre')+'</button>';
-  }).join('');
-  return head+'<div class="stack rz" style="margin-top:12px">'+rows+'</div>'+
-    '<div class="rz" style="margin-top:14px"><button class="btn ghost" data-act="useradd" style="width:auto;padding:13px 20px;border:1px solid var(--line-2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg> Ajouter un membre</button></div>';
+    '<p class="pintro rz">Les personnes qui participent à la gestion et aux opérations d’hygiène. Chaque action reste associée à qui l’a réellement réalisée — même après un départ. Aucune donnée RH, aucune donnée de pratiquant.</p>';
+  var actBlock='<div class="shead rz"><h2>Membres actifs</h2><span class="pill ghost"><span class="pd"></span>'+active.length+'</span></div><div class="stack rz">'+(active.length?active.map(memRowHTML).join(''):emptyBox('Aucun membre actif'))+'</div>';
+  var inaBlock=inactive.length?'<div class="shead rz"><h2>Anciens membres</h2></div><div class="rz card soft pad" style="padding:13px;color:var(--ink-2);font-size:12.5px;margin-bottom:11px"><span class="pill mute"><span class="pd"></span>Conservés</span> Leurs actions passées restent à leur nom dans l’historique.</div><div class="stack rz">'+inactive.map(memRowHTML).join('')+'</div>':'';
+  var add='<div class="rz" style="margin-top:16px"><button class="btn brand" data-act="useradd" style="width:auto;padding:13px 20px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg> Ajouter un membre</button></div>';
+  return head+actBlock+inaBlock+add;
+}
+function openUserDetail(uid){
+  var u=userById(uid); if(!u)return; var s=userStats(uid), off=u.status==='inactive', me=u.id===STATE.session.userId, hist=userHasHistory(uid);
+  var uhead='<div class="uhead"><span class="uav'+(off?' off':'')+'">'+esc(initialsU(u))+'</span><div><div class="un">'+esc(userName(u))+'</div>'+
+    '<div class="ur">'+esc(u.role)+' '+(off?pill('mute','Inactif'):pill('ok','Actif'))+'</div></div></div>';
+  var stats='<div class="ustats">'+
+    '<div class="ustat"><div class="sv">'+s.ops+'</div><div class="sk">Opérations réalisées</div></div>'+
+    '<div class="ustat"><div class="sv">'+s.ctls+'</div><div class="sk">Contrôles effectués</div></div>'+
+    '<div class="ustat"><div class="sv">'+s.corr+'</div><div class="sk">Corrections prises en charge</div></div>'+
+    '<div class="ustat"><div class="sv" style="font-size:16px;padding-top:7px">'+(s.last?esc(dayLabel(s.last)):'—')+'</div><div class="sk">Dernière activité</div></div>'+
+  '</div>';
+  var meta='<div class="detail-meta">'+dm('Membre depuis', u.createdAt?shortDate(u.createdAt):'—')+(u.deactivatedAt?dm('Inactif depuis',shortDate(u.deactivatedAt)):'')+'</div>';
+  var note=hist? '<div class="card soft pad" style="padding:13px;margin-top:12px;color:var(--ink-2);font-size:12.5px"><span class="pill mute"><span class="pd"></span>Traçabilité</span> Ce membre a un historique : il ne peut pas être supprimé. En cas de départ, passez-le en <b>inactif</b> — ses '+(s.ops+s.corr+s.ctls)+' action(s) passée(s) restent à son nom.</div>':'';
+  var foot='<div class="btnrow"><button class="btn ghost" id="udEdit" style="border:1px solid var(--line-2)">Modifier</button>'+
+    '<button class="btn '+(off?'good':'ghost')+'" id="udToggle" '+(off?'':'style="border:1px solid var(--line-2)"')+'>'+(off?'Réactiver':'Désactiver')+'</button></div>'+
+    (hist?'':'<button class="btn ghost" id="udDel" style="border:1px solid var(--line-2);color:var(--brand)">Supprimer</button>');
+  openSheet('Fiche membre', 'Traçabilité', uhead+stats+meta+note, foot);
+  $('#udEdit').onclick=function(){ closeSheet(); setTimeout(function(){ openUserEdit(uid); },160); };
+  $('#udToggle').onclick=function(){
+    if(off){ u.status='active'; u.deactivatedAt=null; save(); closeSheet(); toast('Membre réactivé'); render(); return; }
+    // désactivation
+    if(me && activeUsers().length<=1){ toast('Impossible : dernier membre actif'); return; }
+    u.status='inactive'; u.deactivatedAt=Date.now();
+    if(me){ var other=activeUsers()[0]; if(other) STATE.session.userId=other.id; }
+    save(); closeSheet(); toast('Membre passé en inactif'); render();
+  };
+  if(!hist && $('#udDel')) $('#udDel').onclick=function(){ if(confirm('Supprimer définitivement ce membre ? (aucun historique associé)')){ STATE.users=STATE.users.filter(function(x){return x.id!==uid;}); if(STATE.session.userId===uid){var o=activeUsers()[0]; if(o)STATE.session.userId=o.id;} save(); closeSheet(); toast('Membre supprimé'); render(); } };
 }
 function viewParams(){
   var head='<div class="peyebrow rz">Réglages</div><h1 class="ptitle rz">Paramètres</h1>';
@@ -938,7 +1027,7 @@ function planCardHTML(t){
     '<span class="li">'+NAV_IC.planif+'</span>'+
     '<span class="lg"><span class="lt">'+esc(planActionName(t))+' · '+esc(z?z.name:'—')+'</span>'+
     '<span class="ld">'+esc(freqSummary(t))+'</span>'+
-    (t.assignee||t.instruction?'<span class="ld" style="color:var(--faint)">'+esc([t.assignee,t.instruction].filter(Boolean).join(' · '))+'</span>':'')+
+    (planRespLabel(t)||t.instruction?'<span class="ld" style="color:var(--faint)">'+esc([planRespLabel(t),t.instruction].filter(Boolean).join(' · '))+'</span>':'')+
     '<span class="lm">'+(t.active?pill('ok','Actif'):pill('mute','Suspendu'))+'</span></span>'+CHEV+'</button>';
 }
 function viewPlanif(){
@@ -962,7 +1051,7 @@ function viewMenu(){
   var rows=items.map(function(it){var c=0; if(it[0]==='attn')c=openAnos().length; else if(it[0]==='ctl')c=badgeCount('ctl'); else if(it[0]==='fighter')c=newFighter().length;
     return '<button class="srow" data-nav="'+it[0]+'"><span class="li" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);margin-right:2px">'+NAV_IC[it[0]]+'</span><span class="sg"><span class="st">'+esc(it[1])+'</span><span class="ss">'+esc(it[2])+'</span></span>'+(c?'<span class="pill attn"><span class="pd"></span>'+c+'</span>':'')+CHEV+'</button>';
   }).join('');
-  var user='<div class="shead rz"><h2>Compte</h2></div><div class="stack rz"><button class="srow" data-act="switchuser"><span class="av" style="width:38px;height:38px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-family:var(--cond);font-weight:800;flex:none">'+esc(initials(currentUser().name).toUpperCase())+'</span><span class="sg"><span class="st">'+esc(currentUser().name)+'</span><span class="ss">'+esc(currentUser().role)+'</span></span>'+CHEV+'</button></div>';
+  var user='<div class="shead rz"><h2>Compte</h2></div><div class="stack rz"><button class="srow" data-act="switchuser"><span class="memav" style="width:38px;height:38px;font-size:14px">'+esc(initialsU(currentUser()))+'</span><span class="sg"><span class="st">'+esc(userName(currentUser()))+'</span><span class="ss">'+esc(currentUser().role)+'</span></span>'+CHEV+'</button></div>';
   return head+'<div class="stack rz" style="margin-top:14px">'+rows+'</div>'+user;
 }
 
@@ -971,8 +1060,8 @@ function viewMenu(){
    ===================================================================== */
 function wire(){
   var occ=todayOccurrences(), au=afterUseTasks();
-  $$('[data-occ]').forEach(function(b){b.onclick=function(){var o=occ[+b.dataset.occ]; if(o) openValidate({code:o.task.opTypeCode, zone:o.zoneName, zoneId:o.task.zoneId, planId:o.task.id, slot:o.slot, protocolId:o.task.protocolId, actionName:planActionFull(o.task)});};});
-  $$('[data-au]').forEach(function(b){b.onclick=function(){var o=au[+b.dataset.au]; if(o) openValidate({code:o.task.opTypeCode, zone:o.zoneName, zoneId:o.task.zoneId, planId:o.task.id, slot:'', protocolId:o.task.protocolId, actionName:planActionFull(o.task)});};});
+  $$('[data-occ]').forEach(function(b){b.onclick=function(){var o=occ[+b.dataset.occ]; if(o) openValidate({code:o.task.opTypeCode, zone:o.zoneName, zoneId:o.task.zoneId, planId:o.task.id, slot:o.slot, protocolId:o.task.protocolId, actionName:planActionFull(o.task), plannedResp:planRespLabel(o.task), plannedRespKind:o.task.respKind});};});
+  $$('[data-au]').forEach(function(b){b.onclick=function(){var o=au[+b.dataset.au]; if(o) openValidate({code:o.task.opTypeCode, zone:o.zoneName, zoneId:o.task.zoneId, planId:o.task.id, slot:'', protocolId:o.task.protocolId, actionName:planActionFull(o.task), plannedResp:planRespLabel(o.task), plannedRespKind:o.task.respKind});};});
   $$('[data-reclean]').forEach(function(b){b.onclick=function(e){e.stopPropagation(); var o=occ[+b.dataset.reclean]; if(o) openReclean({code:o.task.opTypeCode, zone:o.zoneName, zoneId:o.task.zoneId, protocolId:o.task.protocolId, actionName:planActionFull(o.task)});};});
   $$('[data-ano]').forEach(function(b){b.onclick=function(){openAnoDetail(b.dataset.ano);};});
   $$('[data-fighter]').forEach(function(b){b.onclick=function(){openFighterDetail(b.dataset.fighter);};});
@@ -982,7 +1071,7 @@ function wire(){
   $$('[data-zone]').forEach(function(b){b.onclick=function(){openZoneEdit(b.dataset.zone);};});
   $$('[data-proto]').forEach(function(b){b.onclick=function(){openProtoEdit(b.dataset.proto);};});
   $$('[data-plan]').forEach(function(b){b.onclick=function(){openPlanEdit(b.dataset.plan);};});
-  $$('[data-user]').forEach(function(b){b.onclick=function(){switchUser(b.dataset.user);};});
+  $$('[data-user]').forEach(function(b){b.onclick=function(){openUserDetail(b.dataset.user);};});
   $$('.filters [data-ftype]').forEach(function(b){b.onclick=function(){regFilter.type=b.dataset.ftype; render();};});
   $$('[data-act]').forEach(function(b){ b.onclick=function(){actionRouter(b.dataset.act);}; });
 }
@@ -1043,19 +1132,25 @@ function openAdd(){
   $$('#shBody [data-add]').forEach(function(b){b.onclick=function(){ var k=b.dataset.add; closeSheet(); setTimeout(function(){ k==='op'?openPick():k==='attn'?openReport():openCtlPlan(); },180); };});
 }
 
+/* Chips « réalisé par » / « responsable » — parmi les membres actifs */
+function realizerChips(selId){ return activeUsers().map(function(u){return '<button class="choice '+(u.id===selId?'sel':'')+'" data-by="'+u.id+'">'+esc(userName(u))+'</button>';}).join(''); }
+
 /* ------------------------- Validation express ------------------------- */
 function openValidate(opts){
   opts=opts||{}; var code=opts.code, t=opType(code), zone=opts.zone||t.name;
   var proto = opts.protocolId? protocolById(opts.protocolId): null;
   var protoHTML = proto ? '<div class="fieldlab">Protocole à appliquer</div><div class="protobox">'+protoCardHTML(proto)+'</div>' : '';
+  var respHTML = opts.plannedResp ? '<div class="pc-row"><span>Responsable prévu</span><b>'+esc(opts.plannedResp)+'</b></div>' : '';
   var body='<div class="fieldlab" style="margin-top:8px">Opération</div>'+
-    '<div class="protobox" style="background:var(--surface)"><div class="pc-name">'+esc(zone)+'</div><div style="color:var(--ink-2);font-size:14px">'+esc(opts.actionName||t.full)+(opts.slot?' · prévu '+esc(opts.slot):'')+(opts.extra?' · supplémentaire':'')+'</div></div>'+
+    '<div class="protobox" style="background:var(--surface)"><div class="pc-name">'+esc(zone)+'</div><div style="color:var(--ink-2);font-size:14px">'+esc(opts.actionName||t.full)+(opts.slot?' · prévu '+esc(opts.slot):'')+(opts.extra?' · supplémentaire':'')+'</div>'+respHTML+'</div>'+
     protoHTML+
+    '<div class="fieldlab">Réalisé par</div><div class="choices" id="vBy">'+realizerChips(currentUser().id)+'</div>'+
     '<div class="fieldlab">Un mot ? <span class="opt">— optionnel</span></div><textarea id="vComment" rows="2" placeholder="Remarque éventuelle…"></textarea>';
   var foot='<button class="btn good" id="vFinish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Terminer l’opération</button>';
   openSheet('Validation express', zone, body, foot);
   $('#vFinish').onclick=function(){
     var comment=($('#vComment').value||'').trim();
+    var byEl=$('.choice.sel',$('#vBy')); var byId=byEl?byEl.dataset.by:currentUser().id;
     // step 2: conforme / problème
     $('#shBody').innerHTML='<div class="fieldlab" style="margin-top:8px">Tout s’est bien passé ?</div>'+
       '<div class="stack">'+
@@ -1063,7 +1158,7 @@ function openValidate(opts){
       '<button class="srow" id="vPb"><span class="li" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--brand-soft);border:1px solid #F2D8D3;color:var(--brand);margin-right:2px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span><span class="sg"><span class="st">Problème constaté</span><span class="ss">Créer un point d’attention</span></span></button>'+
       '</div>';
     $('#shFoot').innerHTML='';
-    function record(anomaly){ db.ops.unshift({id:id(), type:code, actionName:opts.actionName||opType(code).full, zone:zone, zoneId:opts.zoneId||null, by:currentUser().short, at:Date.now(), anomaly:anomaly, planId:opts.planId||null, protocolId:opts.protocolId||null, slot:opts.slot||'', comment:comment, extra:!!opts.extra}); save(); }
+    function record(anomaly){ var byU=userById(byId)||currentUser(); db.ops.unshift({id:id(), type:code, actionName:opts.actionName||opType(code).full, zone:zone, zoneId:opts.zoneId||null, byId:byId, by:userName(byU), plannedResp:opts.plannedResp||'', plannedRespKind:opts.plannedRespKind||null, at:Date.now(), anomaly:anomaly, planId:opts.planId||null, protocolId:opts.protocolId||null, slot:opts.slot||'', comment:comment, extra:!!opts.extra}); save(); }
     $('#vOk').onclick=function(){ record(false); burst('Opération enregistrée', zone+' · '+timeFmt(Date.now())); setTimeout(function(){ render(); },300); };
     $('#vPb').onclick=function(){ record(true); closeSheet(); setTimeout(function(){ openReport(zone); render(); },200); };
   };
@@ -1088,11 +1183,12 @@ function openReclean(opts){
   var body='<p class="pintro" style="margin:2px 0 8px">Un passage <b>en plus</b> du planning, enregistré maintenant. Il est tracé à part et ne change rien au prévu.</p>'+
     recap+
     (opts.protocolId?'<div class="fieldlab">Protocole</div><div class="protobox">'+protoCardHTML(protocolById(opts.protocolId))+'</div>':'')+
+    '<div class="fieldlab">Réalisé par</div><div class="choices" id="rcBy">'+realizerChips(currentUser().id)+'</div>'+
     '<div class="fieldlab">Un mot ? <span class="opt">— optionnel</span></div><textarea id="rcComment" rows="2" placeholder="Remarque éventuelle…"></textarea>';
   openSheet('Passage supplémentaire', opts.zone, body,
     '<button class="btn good" id="rcSave"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Enregistrer</button>'+
     '<button class="btn ghost" id="rcPb" style="border:1px solid var(--line-2)">J’ai constaté un problème</button>');
-  function rec(anomaly){ db.ops.unshift({id:id(), type:opts.code, actionName:act, zone:opts.zone, zoneId:opts.zoneId||null, by:currentUser().short, at:Date.now(), anomaly:anomaly, planId:null, protocolId:opts.protocolId||null, slot:'', comment:($('#rcComment').value||'').trim(), extra:true}); save(); }
+  function rec(anomaly){ var byEl=$('.choice.sel',$('#rcBy')); var byId=byEl?byEl.dataset.by:currentUser().id; var byU=userById(byId)||currentUser(); db.ops.unshift({id:id(), type:opts.code, actionName:act, zone:opts.zone, zoneId:opts.zoneId||null, byId:byId, by:userName(byU), at:Date.now(), anomaly:anomaly, planId:null, protocolId:opts.protocolId||null, slot:'', comment:($('#rcComment').value||'').trim(), extra:true}); save(); }
   $('#rcSave').onclick=function(){ rec(false); burst('Opération supplémentaire enregistrée','Merci de contribuer au maintien des standards de votre club.'); setTimeout(render,300); };
   $('#rcPb').onclick=function(){ rec(true); closeSheet(); setTimeout(function(){ openReport(opts.zone); render(); },200); };
 }
@@ -1129,7 +1225,7 @@ function openReport(presetZone){
   $('#shBody').addEventListener('click',refresh); $('#rDesc').addEventListener('input',refresh); refresh();
   $('#rSave').onclick=function(){
     var z=$('.choice.sel',$('#rZone')), c=$('.choice.sel',$('#rCat'));
-    db.anos.unshift({id:id(), zone:z?z.dataset.z:zoneNames()[0], cat:c?c.dataset.c:'other', desc:($('#rDesc').value||'').trim(), by:currentUser().short, at:Date.now(), status:'open', origin:'club', photo:photo, history:[]});
+    db.anos.unshift({id:id(), zone:z?z.dataset.z:zoneNames()[0], cat:c?c.dataset.c:'other', desc:($('#rDesc').value||'').trim(), byId:currentUser().id, by:userName(currentUser()), at:Date.now(), status:'open', origin:'club', photo:photo, history:[]});
     save(); burst('Point d’attention créé','Suivi ouvert · à vérifier'); setTimeout(render,300);
   };
 }
@@ -1140,7 +1236,8 @@ function openOpDetail(opId){
   var t=opType(o.type), proto=o.protocolId?protocolById(o.protocolId):null;
   var body='<div class="detail-meta">'+
     dm('Zone',o.zone||t.name)+dm('Opération',opActionFull(o))+
-    (o.slot?dm('Heure prévue',o.slot):'')+dm('Heure réelle',timeFmt(o.at))+dm('Date',dayLabel(o.at))+dm('Par',o.by||'—')+
+    (o.slot?dm('Heure prévue',o.slot):'')+dm('Heure réelle',timeFmt(o.at))+dm('Date',dayLabel(o.at))+dm('Réalisé par',o.by||'—')+
+    (o.plannedResp&&o.plannedResp!==o.by?dm('Responsable prévu',o.plannedResp):'')+
     dm('Type',o.extra?'Nettoyage supplémentaire':'Planifié')+dm('Résultat',o.anomaly?'Anomalie constatée':'Conforme')+'</div>'+
     (o.comment?'<div class="fieldlab">Remarque</div><div class="card soft pad" style="padding:14px">'+esc(o.comment)+'</div>':'')+
     (proto?'<div class="fieldlab">Protocole appliqué</div><div class="protobox">'+protoCardHTML(proto)+'</div>':'')+
@@ -1158,7 +1255,7 @@ function openAnoDetail(anoId){
     return '<div class="fstep '+cls+'"><span class="fb">'+(i<idx?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>':'')+'</span><span><span class="ft">'+esc(f[1])+'</span><span class="fs">'+esc(f[2])+'</span></span></div>';
   }).join('');
   var meta='<div class="detail-meta">'+dm('Zone',a.zone)+dm('Nature',catName(a.cat))+dm('Signalé',dayLabel(a.at)+' · '+timeFmt(a.at))+dm('Origine',a.origin==='fighter'?'Retour Fighter':(a.origin==='control'?'Contrôle':'Club'))+
-    (a.assignedTo?dm('Responsable',a.assignedTo):'')+(a.by?dm('Par',a.by):'')+'</div>';
+    (a.assignedTo?dm('Pris en charge par',a.assignedTo):'')+(a.verifiedBy?dm('Vérifié par',a.verifiedBy):'')+(a.by?dm('Signalé par',a.by):'')+'</div>';
   var desc='<div class="fieldlab">Problème</div><div class="card soft pad" style="padding:14px">'+esc(a.desc)+'</div>';
   var photo=a.photo?'<div class="fieldlab">Photo</div><img class="proofimg" src="'+a.photo+'" alt="preuve">':'';
   var corr = a.correctiveAction?'<div class="fieldlab">Action corrective</div><div class="card soft pad" style="padding:14px">'+esc(a.correctiveAction)+(a.correctedAt?'<div style="color:var(--faint);font-size:12px;margin-top:6px">Corrigé le '+dayLabel(a.correctedAt)+'</div>':'')+'</div>':'';
@@ -1177,8 +1274,8 @@ function advanceAno(a){
   a.history=a.history||[];
   if(nstat==='in_progress'){
     sheetForm('Prendre en charge','Qui s’en occupe ?',
-      '<div class="fieldlab">Responsable</div><div class="choices" id="afWho">'+STATE.users.map(function(u){return '<button class="choice" data-w="'+esc(u.short)+'">'+esc(u.name)+'</button>';}).join('')+'</div>',
-      'Confirmer', function(){ var w=$('.choice.sel',$('#afWho')); a.assignedTo=w?w.dataset.w:currentUser().short; commitAno(a,nstat,'Pris en charge — '+a.assignedTo); });
+      '<div class="fieldlab">Responsable</div><div class="choices" id="afWho">'+activeUsers().map(function(u){return '<button class="choice'+(u.id===currentUser().id?' sel':'')+'" data-w="'+u.id+'">'+esc(userName(u))+'</button>';}).join('')+'</div>',
+      'Confirmer', function(){ var w=$('.choice.sel',$('#afWho')); var wu=w?userById(w.dataset.w):currentUser(); a.assignedToId=wu.id; a.assignedTo=userName(wu); commitAno(a,nstat,'Pris en charge — '+a.assignedTo); });
   } else if(nstat==='corrected'){
     var photo={v:null};
     sheetForm('Correction effectuée','Décrire la correction',
@@ -1188,13 +1285,13 @@ function advanceAno(a){
       function(){ $('#afAdd').onclick=function(){ pickPhoto(function(d){ if(d){photo.v=d; $('#afPh').innerHTML='<img class="proofimg" src="'+d+'">';} }); }; },
       function(){ return ($('#afAct').value||'').trim().length>2; });
   } else if(nstat==='verified'){
-    a.verifiedBy=currentUser().short; a.verifiedAt=Date.now(); commitAno(a,nstat,'Vérifié — '+a.verifiedBy);
+    a.verifiedById=currentUser().id; a.verifiedBy=userName(currentUser()); a.verifiedAt=Date.now(); commitAno(a,nstat,'Vérifié — '+a.verifiedBy);
   } else if(nstat==='closed'){
     a.closedAt=Date.now(); commitAno(a,nstat,'Clos');
   } else commitAno(a,nstat,anoStatusLabel(nstat));
 }
 function commitAno(a,nstat,logmsg){
-  a.history=a.history||[]; a.history.push({s:nstat, by:currentUser().short, at:Date.now(), msg:logmsg});
+  a.history=a.history||[]; a.history.push({s:nstat, byId:currentUser().id, by:userName(currentUser()), at:Date.now(), msg:logmsg});
   a.status=nstat; save(); closeSheet(); toast(anoStatusLabel(nstat)); setTimeout(function(){ render(); if(route==='home'||route==='attn'){} openAnoDetail(a.id); },260);
 }
 /* generic sub-form sheet used by workflow */
@@ -1223,12 +1320,12 @@ function openFighterDetail(fid){
   openSheet('Retour Fighter', f.zone, body(), foot);
   function body(){ return '<div class="fieldlab" style="margin-top:6px">'+fighterStatusLabel(f.status)+'</div>'+meta+quote+photo+note; }
   function done(msg){ save(); closeSheet(); toast(msg); setTimeout(render,240); }
-  if($('#fRes')) $('#fRes').onclick=function(){ f.status='resolved'; f.history=(f.history||[]); f.history.push({s:'resolved',by:currentUser().short,at:Date.now()}); done('Retour marqué résolu'); };
-  if($('#fTake')) $('#fTake').onclick=function(){ f.status='in_progress'; done('Retour pris en charge'); };
-  if($('#fNo')) $('#fNo').onclick=function(){ f.status='dismissed'; done('Retour marqué non confirmé'); };
+  if($('#fRes')) $('#fRes').onclick=function(){ f.status='resolved'; f.handledById=currentUser().id; f.handledBy=userName(currentUser()); f.history=(f.history||[]); f.history.push({s:'resolved',byId:currentUser().id,by:userName(currentUser()),at:Date.now()}); done('Retour marqué résolu'); };
+  if($('#fTake')) $('#fTake').onclick=function(){ f.status='in_progress'; f.handledById=currentUser().id; f.handledBy=userName(currentUser()); done('Retour pris en charge'); };
+  if($('#fNo')) $('#fNo').onclick=function(){ f.status='dismissed'; f.handledById=currentUser().id; f.handledBy=userName(currentUser()); done('Retour marqué non confirmé'); };
   if($('#fAno')) $('#fAno').onclick=function(){
-    db.anos.unshift({id:id(), zone:f.zone, cat:'other', desc:'D’après un retour Fighter : '+f.text, by:currentUser().short, at:Date.now(), status:'open', origin:'fighter', photo:f.photo||null, history:[]});
-    f.status='converted'; done('Point d’attention créé depuis le retour');
+    db.anos.unshift({id:id(), zone:f.zone, cat:'other', desc:'D’après un retour Fighter : '+f.text, byId:currentUser().id, by:userName(currentUser()), at:Date.now(), status:'open', origin:'fighter', photo:f.photo||null, history:[]});
+    f.status='converted'; f.handledById=currentUser().id; f.handledBy=userName(currentUser()); done('Point d’attention créé depuis le retour');
   };
   if($('#fClose')) $('#fClose').onclick=closeSheet;
 }
@@ -1249,7 +1346,7 @@ function openCtlDetail(cid){
       '<button class="srow" id="cConf"><span class="sg"><span class="st">Conforme</span><span class="ss">Rien à signaler</span></span></button>'+
       '<button class="srow" id="cNon"><span class="sg"><span class="st">Non conforme</span><span class="ss">Crée un point d’attention</span></span></button></div>';
     $('#shFoot').innerHTML='';
-    function complete(result){ c.status='completed'; c.result=result; c.completedAt=Date.now(); c.lastAt=Date.now(); if(result==='not_ok'){ db.anos.unshift({id:id(), zone:c.zone||'—', cat:ctlToAnoCat(c.type), desc:'Non-conformité relevée lors du contrôle : '+ctlName(c.type), by:currentUser().short, at:Date.now(), status:'open', origin:'control', history:[]}); } save(); }
+    function complete(result){ c.status='completed'; c.result=result; c.completedAt=Date.now(); c.lastAt=Date.now(); c.byId=currentUser().id; c.by=userName(currentUser()); if(result==='not_ok'){ db.anos.unshift({id:id(), zone:c.zone||'—', cat:ctlToAnoCat(c.type), desc:'Non-conformité relevée lors du contrôle : '+ctlName(c.type), byId:currentUser().id, by:userName(currentUser()), at:Date.now(), status:'open', origin:'control', history:[]}); } save(); }
     $('#cConf').onclick=function(){ complete('ok'); burst('Contrôle enregistré','Conforme'); setTimeout(render,300); };
     $('#cNon').onclick=function(){ complete('not_ok'); closeSheet(); toast('Contrôle · point d’attention créé'); setTimeout(render,200); };
   };
@@ -1313,8 +1410,9 @@ function openPlanEdit(tid){
   var otOpts=OP_TYPES.map(function(o){return '<button class="choice '+((t?t.opTypeCode:'training_surface_cleaning')===o.code?'sel':'')+'" data-o="'+o.code+'">'+esc(o.name)+'</button>';}).join('');
   var frOpts=FREQS.map(function(f){return '<button class="choice '+((t?t.frequency:'daily')===f[0]?'sel':'')+'" data-f="'+f[0]+'">'+esc(f[1])+'</button>';}).join('');
   var dayOpts=WEEKDAYS.map(function(w){return '<button class="choice '+((t&&(t.days||[]).indexOf(w[0])>=0)?'sel':'')+'" data-d="'+w[0]+'">'+w[1]+'</button>';}).join('');
-  var assignees=STATE.users.map(function(u){return u.short;}).concat(['Équipe','Coach du créneau']);
-  var asgOpts=assignees.map(function(a){return '<button class="choice '+((t&&t.assignee===a)?'sel':'')+'" data-a="'+esc(a)+'">'+esc(a)+'</button>';}).join('');
+  var respOpts='<button class="choice '+((!t||!t.respKind)?'sel':'')+'" data-rnone="1">Aucun</button>'+
+    activeUsers().map(function(u){return '<button class="choice '+((t&&t.respKind==='person'&&t.respUserId===u.id)?'sel':'')+'" data-ruser="'+u.id+'">'+esc(userName(u))+'</button>';}).join('')+
+    ROLES.map(function(r){return '<button class="choice '+((t&&t.respKind==='role'&&t.respRole===r)?'sel':'')+'" data-rrole="'+esc(r)+'">'+esc(r)+'</button>';}).join('');
   var protoOpts='<button class="choice '+((!t||!t.protocolId)?'sel':'')+'" data-pid="">Aucun</button>'+STATE.config.protocols.map(function(p){return '<button class="choice '+(t&&t.protocolId===p.id?'sel':'')+'" data-pid="'+p.id+'">'+esc(p.name)+'</button>';}).join('');
   openSheet('Planification', t?'Modifier l’opération':'Nouvelle opération planifiée',
     '<div class="fieldlab" style="margin-top:8px">Action <span class="opt">— bibliothèque MATSAFE</span></div><div class="choices" id="plO">'+otOpts+'</div>'+
@@ -1326,7 +1424,7 @@ function openPlanEdit(tid){
     '<div id="plOnceRow" hidden><div class="fieldlab">Date</div><input type="date" id="plOnce" value="'+(t&&t.onceAt?new Date(t.onceAt).toISOString().slice(0,10):'')+'"></div>'+
     '<div id="plTimesRow"><div class="fieldlab">Heure(s) <span class="opt">— une ou plusieurs</span></div><div id="plTimes" class="choices" data-multi="1"></div>'+
       '<div style="display:flex;gap:8px;margin-top:8px"><input type="time" id="plTimeInput" style="max-width:150px"><button class="fchip" id="plTimeAdd" type="button">+ Ajouter l’heure</button></div></div>'+
-    '<div class="fieldlab">Responsable / rôle</div><div class="choices" id="plA">'+asgOpts+'</div>'+
+    '<div class="fieldlab">Responsable prévu <span class="opt">— personne ou rôle</span></div><div class="choices" id="plResp">'+respOpts+'</div>'+
     '<div class="fieldlab">Consigne courte <span class="opt">— optionnel</span></div><input type="text" id="plInstr" value="'+(t?esc(t.instruction||''):'')+'" placeholder="Ex. : balayer puis désinfecter">'+
     '<div class="fieldlab">Protocole <span class="opt">— optionnel</span></div><div class="choices" id="plP">'+protoOpts+'</div>'+
     '<div class="fieldlab">Statut</div><div class="choices" id="plActive"><button class="choice '+((!t||t.active)?'sel':'')+'" data-v="1">Actif</button><button class="choice '+((t&&!t.active)?'sel':'')+'" data-v="0">Suspendu</button></div>',
@@ -1350,11 +1448,13 @@ function openPlanEdit(tid){
   updateFreqUI();
   function collect(){
     var z=$('.choice.sel',$('#plZ')); if(!z){toast('Zone requise');return null;}
-    var o=$('.choice.sel',$('#plO')), f=curFreq(), pd=$('.choice.sel',$('#plP')), asg=$('.choice.sel',$('#plA'));
+    var o=$('.choice.sel',$('#plO')), f=curFreq(), pd=$('.choice.sel',$('#plP')), rsp=$('.choice.sel',$('#plResp'));
     var code=o?o.dataset.o:'training_surface_cleaning', name=($('#plName').value||'').trim();
     var days=$$('#plD .choice.sel').map(function(x){return +x.dataset.d;});
     var active=($('.choice.sel',$('#plActive'))||{dataset:{v:'1'}}).dataset.v==='1';
-    var data={zoneId:z.dataset.z, opTypeCode:code, actionName:(name&&name!==opType(code).name?name:''), frequency:f, days:days, times:st.times.slice(), assignee:asg?asg.dataset.a:'', instruction:($('#plInstr').value||'').trim(), protocolId:(pd&&pd.dataset.pid)?pd.dataset.pid:null, active:active};
+    var respKind=null, respUserId=null, respRole=null;
+    if(rsp){ if(rsp.dataset.ruser){respKind='person'; respUserId=rsp.dataset.ruser;} else if(rsp.dataset.rrole){respKind='role'; respRole=rsp.dataset.rrole;} }
+    var data={zoneId:z.dataset.z, opTypeCode:code, actionName:(name&&name!==opType(code).name?name:''), frequency:f, days:days, times:st.times.slice(), respKind:respKind, respUserId:respUserId, respRole:respRole, assignee:'', instruction:($('#plInstr').value||'').trim(), protocolId:(pd&&pd.dataset.pid)?pd.dataset.pid:null, active:active};
     if(f==='monthly') data.monthDay=Math.max(1,Math.min(28,parseInt($('#plMonth').value||'1',10)||1));
     if(f==='once') data.onceAt=$('#plOnce').value? new Date($('#plOnce').value).getTime(): Date.now();
     return data;
@@ -1363,17 +1463,31 @@ function openPlanEdit(tid){
   if(t&&$('#plDup'))$('#plDup').onclick=function(){ var data=collect(); if(!data)return; STATE.config.plan.push(Object.assign({id:id()},data)); save(); closeSheet(); toast('Opération dupliquée'); render(); };
   if(t&&$('#plDel'))$('#plDel').onclick=function(){ if(confirm('Supprimer cette opération planifiée ? Les événements passés restent dans l’historique.')){ STATE.config.plan=STATE.config.plan.filter(function(x){return x.id!==t.id;}); save(); closeSheet(); toast('Opération supprimée'); render(); } };
 }
-function openUserEdit(){
-  openSheet('Équipe','Ajouter un membre',
-    '<div class="fieldlab" style="margin-top:8px">Nom complet</div><input type="text" id="uN" placeholder="Ex. : Sofia Rossi">'+
-    '<div class="fieldlab">Rôle</div><div class="choices" id="uR"><button class="choice sel" data-r="Coach">Coach</button><button class="choice" data-r="Référent Hygiène">Référent Hygiène</button><button class="choice" data-r="Gérant">Gérant</button></div>',
-    '<button class="btn" id="uS">Ajouter</button>');
-  $('#uS').onclick=function(){ var n=($('#uN').value||'').trim(); if(!n){toast('Nom requis');return;} var r=($('.choice.sel',$('#uR'))||{dataset:{r:'Coach'}}).dataset.r; var parts=n.split(' '); var short=parts[0]+' '+((parts[1]||'')[0]||'')+'.';
-    STATE.users.push({id:id(),name:n,short:short.trim(),role:r}); save(); closeSheet(); toast('Membre ajouté'); render(); };
+function openUserEdit(uid){
+  var u=uid?userById(uid):null;
+  var roleSel=u?u.role:'Coach';
+  var roleChips=ROLES.map(function(r){return '<button class="choice '+(roleSel===r?'sel':'')+'" data-r="'+esc(r)+'">'+esc(r)+'</button>';}).join('');
+  var customRole=(u && ROLES.indexOf(u.role)<0)?u.role:'';
+  openSheet('Équipe', u?'Modifier le membre':'Ajouter un membre',
+    '<div class="fieldlab" style="margin-top:8px">Prénom</div><input type="text" id="uF" value="'+(u?esc(u.firstName):'')+'" placeholder="Ex. : Simon">'+
+    '<div class="fieldlab">Nom</div><input type="text" id="uL" value="'+(u?esc(u.lastName):'')+'" placeholder="Ex. : Ehrlacher">'+
+    '<div class="fieldlab">Rôle</div><div class="choices" id="uR">'+roleChips+'</div>'+
+    '<div class="fieldlab">Rôle personnalisé <span class="opt">— optionnel</span></div><input type="text" id="uRC" value="'+esc(customRole)+'" placeholder="Ex. : Responsable vestiaires">'+
+    '<div class="fieldlab">Statut</div><div class="choices" id="uSt"><button class="choice '+((!u||u.status!=='inactive')?'sel':'')+'" data-s="active">Actif</button><button class="choice '+((u&&u.status==='inactive')?'sel':'')+'" data-s="inactive">Inactif</button></div>',
+    '<button class="btn" id="uSave">'+(u?'Enregistrer':'Ajouter le membre')+'</button>');
+  $('#uSave').onclick=function(){
+    var f=($('#uF').value||'').trim(), l=($('#uL').value||'').trim(); if(!f){toast('Prénom requis');return;}
+    var rc=($('#uRC').value||'').trim(); var rchip=$('.choice.sel',$('#uR')); var role=rc||(rchip?rchip.dataset.r:'Membre d’équipe');
+    var status=($('.choice.sel',$('#uSt'))||{dataset:{s:'active'}}).dataset.s;
+    if(u){ u.firstName=f; u.lastName=l; u.role=role; if(u.status!==status){ u.status=status; u.deactivatedAt=(status==='inactive'?Date.now():null); } }
+    else { STATE.users.push({id:id(), firstName:f, lastName:l, role:role, status:status, createdAt:Date.now(), deactivatedAt:(status==='inactive'?Date.now():null)}); }
+    save(); closeSheet(); toast(u?'Membre mis à jour':'Membre ajouté'); render();
+  };
 }
 function openSwitchUser(){
   openSheet('Démonstration','Changer d’utilisateur',
-    '<div class="stack" style="margin-top:6px">'+STATE.users.map(function(u){var me=u.id===STATE.session.userId;return '<button class="srow" data-su="'+u.id+'"><span class="sg"><span class="st">'+esc(u.name)+'</span><span class="ss">'+esc(u.role)+'</span></span>'+(me?pill('ok','Actuel'):'')+'</button>';}).join('')+'</div>','');
+    '<p class="pintro" style="margin:2px 0 8px">Basculez entre les membres actifs pour tester l’attribution des actions.</p>'+
+    '<div class="stack" style="margin-top:2px">'+activeUsers().map(function(u){var me=u.id===STATE.session.userId;return '<button class="srow" data-su="'+u.id+'"><span class="memav" style="width:38px;height:38px;font-size:14px">'+esc(initialsU(u))+'</span><span class="sg"><span class="st">'+esc(userName(u))+'</span><span class="ss">'+esc(u.role)+'</span></span>'+(me?pill('ok','Actuel'):'')+'</button>';}).join('')+'</div>','');
   $$('#shBody [data-su]').forEach(function(b){b.onclick=function(){ STATE.session.userId=b.dataset.su; save(); closeSheet(); toast('Utilisateur changé'); render(); };});
 }
 function switchUser(uid){ STATE.session.userId=uid; save(); toast('Utilisateur changé'); render(); }
