@@ -13,7 +13,11 @@
     --good:#2E6B4E; --good-soft:#E9F1EC;
     --warn:#8F5410; --warn-soft:#F5EBD9;
     --info:#3A4A66; --info-soft:#E7E9F0;
-    --radius:24px; --radius-sm:16px; --radius-xs:12px; --radius-pill:999px;
+    /* surfaces tintées douces (inspiration premium, color-blocking discret) */
+    --card-todo:#F6EEDA; --card-todo-line:#ECDFB9; --card-todo-ic:#8A6A26;
+    --card-done:#E9F1EC; --card-done-line:#D2E3D7; --card-done-ic:#2E6B4E;
+    --card-demand:#EDEAF3; --card-demand-line:#DED9EC; --card-demand-ic:#4C4470;
+    --radius:24px; --radius-lg:22px; --radius-sm:16px; --radius-xs:12px; --radius-pill:999px;
     --shadow:0 1px 2px rgba(22,21,15,.04), 0 10px 26px -18px rgba(22,21,15,.20);
     --shadow-lg:0 2px 6px rgba(22,21,15,.06), 0 30px 60px -30px rgba(22,21,15,.30);
     --cond:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
@@ -164,20 +168,29 @@
     text-transform:uppercase; letter-spacing:.04em; font-size:12px; color:#F4CFC9; background:rgba(255,255,255,.09); border:1px solid rgba(255,255,255,.2); border-radius:999px; padding:5px 12px}
   .today .today-extra svg{width:13px;height:13px}
 
-  /* Carte zone (Aujourd'hui / Accueil) — une carte par zone + action, état + action suivante */
-  .zcard{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-sm); padding:16px 17px 14px; box-shadow:var(--shadow); display:flex; flex-direction:column}
-  .zc-head{display:flex; align-items:center; justify-content:space-between; gap:10px}
-  .zc-zone{font-family:var(--cond); font-weight:800; text-transform:uppercase; letter-spacing:.01em; font-size:20px; line-height:1}
+  /* Carte zone (Aujourd'hui / Accueil) — une carte par zone + action, état + action suivante.
+     Surface tintée selon l'état (color-blocking discret, inspiration premium). */
+  .zcard{position:relative; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-lg); padding:16px 17px 15px; box-shadow:var(--shadow); display:flex; flex-direction:column; transition:box-shadow .2s, transform .12s}
+  .zcard:hover{box-shadow:var(--shadow-lg); transform:translateY(-1px)}
+  .zcard.todo{background:var(--card-todo); border-color:var(--card-todo-line)}
+  .zcard.done{background:var(--card-done); border-color:var(--card-done-line)}
+  .zcard.demand{background:var(--card-demand); border-color:var(--card-demand-line)}
+  .zc-head{display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:14px}
+  .zc-ic{flex:none; width:44px; height:44px; border-radius:14px; display:grid; place-items:center; background:rgba(255,255,255,.72); border:1px solid rgba(22,21,15,.06); color:var(--ink)}
+  .zc-ic svg{width:23px;height:23px}
+  .zcard.todo .zc-ic{color:var(--card-todo-ic)} .zcard.done .zc-ic{color:var(--card-done-ic)} .zcard.demand .zc-ic{color:var(--card-demand-ic)}
+  .zc-head .pill{background:rgba(255,255,255,.72); border-color:rgba(22,21,15,.07)}
+  .zc-zone{font-family:var(--cond); font-weight:800; text-transform:uppercase; letter-spacing:.01em; font-size:22px; line-height:1.02}
   .zc-act{color:var(--ink-2); font-size:13.5px; margin-top:5px}
-  .zc-meta{display:flex; flex-direction:column; gap:3px; margin-top:11px}
+  .zc-meta{display:flex; flex-direction:column; gap:3px; margin-top:12px}
   .zc-last{font-size:13.5px; color:var(--ink)} .zc-last b{font-weight:700}
   .zc-count{font-size:12.5px; color:var(--faint)}
   .zc-next{display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--warn)} .zc-next b{font-weight:700} .zc-next svg{width:14px;height:14px;flex:none}
-  .zc-actions{display:flex; gap:9px; margin-top:14px}
-  .zc-actions button{flex:1 1 auto; display:inline-flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; font-family:var(--cond); font-weight:800; text-transform:uppercase; letter-spacing:.03em; font-size:13.5px; padding:12px; border-radius:12px; border:1px solid transparent}
+  .zc-actions{display:flex; gap:9px; margin-top:15px}
+  .zc-actions button{flex:1 1 auto; display:inline-flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; font-family:var(--cond); font-weight:800; text-transform:uppercase; letter-spacing:.03em; font-size:13.5px; padding:13px 12px; border-radius:13px; border:1px solid transparent}
   .zc-actions button svg{width:15px;height:15px;flex:none}
   .zc-valid{background:var(--ink); color:#fff} .zc-valid:hover{background:#000}
-  .zc-reclean{background:var(--brand-soft); color:var(--brand); border-color:#F0D7D2!important} .zc-reclean:hover{background:#F7DFDA; color:var(--brand-strong)}
+  .zc-reclean{background:rgba(255,255,255,.66); color:var(--brand); border-color:rgba(200,56,48,.22)!important} .zc-reclean:hover{background:#fff; color:var(--brand-strong)}
   .zcard.solo .zc-reclean{flex:none; padding-left:20px; padding-right:20px}
   @media (max-width:430px){ .zc-actions{flex-direction:column} .zcard.solo .zc-reclean{padding-left:12px; padding-right:12px} }
 
@@ -911,6 +924,24 @@ function viewHome(){
 var IC_REDO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>';
 var IC_CLOCK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
 var IC_CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+/* Icônes par type de zone — pastille en tête de carte (inspiration premium) */
+function svgIc(p){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>';}
+var ZTYPE_IC={
+  tatami:svgIc('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 12h18M12 5v14"/>'),
+  training_area:svgIc('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 12h18M12 5v14"/>'),
+  ring:svgIc('<rect x="5" y="5" width="14" height="14" rx="1"/><circle cx="5" cy="5" r="1.5"/><circle cx="19" cy="5" r="1.5"/><circle cx="5" cy="19" r="1.5"/><circle cx="19" cy="19" r="1.5"/>'),
+  cage:svgIc('<path d="M8 3h8l5 5v8l-5 5H8l-5-5V8z"/><path d="M12 3v18"/>'),
+  heavy_bags:svgIc('<path d="M9 3h6M12 3v3"/><rect x="8" y="6" width="8" height="12" rx="3"/><path d="M10 20h4"/>'),
+  strength:svgIc('<path d="M6 9v6M4 10.5v3M18 9v6M20 10.5v3M6 12h12"/>'),
+  changing_room:svgIc('<circle cx="12" cy="5" r="2"/><path d="M12 7v1l-8 6h16l-8-6"/>'),
+  shower:svgIc('<path d="M12 3s6 6.4 6 10a6 6 0 0 1-12 0c0-3.6 6-10 6-10z"/>'),
+  restroom:svgIc('<path d="M12 3s6 6.4 6 10a6 6 0 0 1-12 0c0-3.6 6-10 6-10z"/>'),
+  shared_equipment:svgIc('<path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/>'),
+  first_aid:svgIc('<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M12 11v5M9.5 13.5h5"/>'),
+  reception:svgIc('<path d="M3 21h18M6 21V7l6-4 6 4v14"/><path d="M10 9h4M10 13h4"/>'),
+  other:svgIc('<path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M18 6l-2 2M8 16l-2 2"/>')
+};
+function zoneTypeIconFor(g){ var z=(g&&g.zoneId)?zoneById(g.zoneId):null; return ZTYPE_IC[z?z.type:'other']||ZTYPE_IC.other; }
 /* Regroupe la journée par zone + action : une seule carte par zone qui montre
    l'état actuel (dernier passage, nombre de passages) et l'action suivante.
    Les réalisations restent des traces indépendantes ; le détail vit dans le Registre. */
@@ -965,13 +996,15 @@ function zcardHTML(g, gi){
     : (g.onDemand ? 'Aucun passage aujourd’hui' : 'Pas encore réalisé aujourd’hui');
   var countLine = g.count>1 ? '<span class="zc-count">'+g.count+' passages aujourd’hui</span>' : '';
   var nextLine = g.next ? '<span class="zc-next">'+IC_CLOCK+'Prochain prévu <b>'+esc(g.next.slot)+'</b></span>' : '';
+  var variant = g.next ? 'todo' : ((g.onDemand && !g.hasSlots) ? 'demand' : 'done');
   var pillHTML = g.next ? pill('todo','À faire')
     : (g.allDone ? pill('done','À jour')
     : (g.onDemand ? pill('mute','À la demande') : pill('done','Fait')));
   var valBtn = g.next ? '<button class="zc-valid" data-g-valid="'+gi+'">'+IC_CHECK+' Valider '+esc(g.next.slot)+'</button>' : '';
   var recBtn = '<button class="zc-reclean" data-g-reclean="'+gi+'">'+IC_REDO+' Nettoyer à nouveau</button>';
-  return '<div class="zcard rz'+(valBtn?'':' solo')+'">'+
-    '<div class="zc-head"><div class="zc-zone">'+esc(g.zoneName)+'</div>'+pillHTML+'</div>'+
+  return '<div class="zcard '+variant+' rz'+(valBtn?'':' solo')+'">'+
+    '<div class="zc-head"><span class="zc-ic">'+zoneTypeIconFor(g)+'</span>'+pillHTML+'</div>'+
+    '<div class="zc-zone">'+esc(g.zoneName)+'</div>'+
     '<div class="zc-act">'+esc(g.actionName)+'</div>'+
     '<div class="zc-meta"><span class="zc-last">'+lastLine+'</span>'+countLine+nextLine+'</div>'+
     '<div class="zc-actions">'+valBtn+recBtn+'</div></div>';
