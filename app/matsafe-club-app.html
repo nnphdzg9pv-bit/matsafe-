@@ -243,6 +243,9 @@
   .srow .st{font-family:var(--cond); font-weight:800; text-transform:uppercase; letter-spacing:.01em; font-size:16px; line-height:1.05}
   .srow .ss{color:var(--ink-2); font-size:12.5px; margin-top:3px}
   .srow .schev{color:var(--faint); flex:none}
+  .srow.off{opacity:.66}
+  .regsel{flex:1 1 160px; min-width:0; font-family:var(--cond); font-weight:700; font-size:13.5px; padding:9px 12px; border-radius:var(--radius-sm); border:1px solid var(--line-2); background:var(--surface); color:var(--ink); cursor:pointer; -webkit-appearance:none; appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; padding-right:32px}
   .subtabs{display:flex; gap:8px; flex-wrap:wrap; margin:14px 0 4px}
   /* Équipe — cartes membres */
   .memrow{display:flex; align-items:center; gap:15px; width:100%; text-align:left; cursor:pointer; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-sm); padding:15px 16px; box-shadow:var(--shadow)}
@@ -433,11 +436,11 @@ var FREQS=[['daily','Chaque jour'],['some_days','Certains jours'],['multi_daily'
 var FREQ_NEEDS_DAYS=['some_days','weekly'];
 var ANO_CATS=[['hygiene','Hygiène'],['equipment','Équipement'],['product','Consommable'],['damage','Dégât'],['installation','Installation'],['first_aid','Premiers secours'],['other','Autre']];
 var CTL_TYPES=[['first_aid_kit_check','Trousse de secours'],['products_check','Produits d’entretien'],['equipment_check','Équipements'],['documentation_check','Documentation']];
-var ZONE_TYPES=[['tatami','Tatami'],['training_area','Espace d’entraînement'],['ring','Ring'],['cage','Cage MMA'],['heavy_bags','Sacs de frappe'],['changing_room','Vestiaire'],['shower','Douches'],['restroom','Sanitaires'],['reception','Réception'],['shared_equipment','Matériel partagé'],['first_aid','Premiers secours'],['other','Autre']];
+var ZONE_TYPES=[['training_area','Surface d’entraînement'],['tatami','Tatami'],['ring','Ring'],['cage','Cage MMA'],['heavy_bags','Sacs de frappe'],['strength','Zone musculation'],['changing_room','Vestiaire'],['shower','Douche'],['restroom','Sanitaire'],['shared_equipment','Équipement partagé'],['first_aid','Premiers secours'],['reception','Accueil'],['other','Autre']];
 var DEFAULT_ZONES=[['Tatami principal','tatami'],['Tatami 2','tatami'],['Vestiaires & douches','changing_room'],['Sanitaires','restroom'],['Matériel partagé','shared_equipment'],['Réception','reception'],['Premiers secours','first_aid']];
 var WEEKDAYS=[[1,'Lun'],[2,'Mar'],[3,'Mer'],[4,'Jeu'],[5,'Ven'],[6,'Sam'],[0,'Dim']];
 var FIGHTER_INBOX='matsafe_fighter_inbox';   // clé écrite par l'app MATSAFE Fighter (même origine)
-var STORE='matsafe_club_v3';
+var STORE='matsafe_club_v4';
 
 /* Points d'attention : cycle de vie en vocabulaire clair */
 var ANO_FLOW=[
@@ -463,9 +466,30 @@ function catName(c){for(var i=0;i<ANO_CATS.length;i++)if(ANO_CATS[i][0]===c)retu
 function freqLabel(f){for(var i=0;i<FREQS.length;i++)if(FREQS[i][0]===f)return FREQS[i][1];return f;}
 function zoneTypeName(c){for(var i=0;i<ZONE_TYPES.length;i++)if(ZONE_TYPES[i][0]===c)return ZONE_TYPES[i][1];return c;}
 /* Nom d'action : action personnalisée sinon libellé de la bibliothèque MATSAFE */
-function planActionName(t){return t.actionName || opType(t.opTypeCode).name;}
-function planActionFull(t){return t.actionName || opType(t.opTypeCode).full;}
-function opActionFull(o){return o.actionName || opType(o.type).full;}
+/* Établissement courant */
+function EST(){ return STATE.establishmentId; }
+/* Bibliothèque d'actions (collection reliée par action_id) */
+function actionById(aid){ if(!aid)return null; var A=(STATE.config&&STATE.config.actions)||[]; for(var i=0;i<A.length;i++)if(A[i].id===aid)return A[i]; return null; }
+function actionByCode(code){ var A=(STATE.config&&STATE.config.actions)||[]; for(var i=0;i<A.length;i++)if(A[i].opTypeCode===code)return A[i]; return null; }
+function activeActions(){ return ((STATE.config&&STATE.config.actions)||[]).filter(function(a){return a.status!=='inactive';}); }
+/* Code op-type d'une planif/action (pour protocole & mapping) */
+function schedCode(t){ var a=actionById(t.actionId); return (a&&a.opTypeCode)||t.opTypeCode||'training_surface_cleaning'; }
+/* Nom d'action : instantané éventuel, sinon action de la bibliothèque, sinon libellé type */
+function planActionName(t){ if(t.actionName)return t.actionName; var a=actionById(t.actionId); if(a)return a.name; return opType(t.opTypeCode).name; }
+function planActionFull(t){ if(t.actionName)return t.actionName; var a=actionById(t.actionId); if(a)return a.name; return opType(t.opTypeCode).full; }
+function opActionFull(o){ if(o.actionName)return o.actionName; var a=actionById(o.actionId); if(a)return a.name; return opType(o.type).full; }
+/* Types de zone (collection) */
+function zoneTypeById(ztid){ var Z=(STATE.config&&STATE.config.zoneTypes)||[]; for(var i=0;i<Z.length;i++)if(Z[i].id===ztid)return Z[i]; return null; }
+function zoneTypeLabel(z){ if(z&&z.zoneTypeId){var zt=zoneTypeById(z.zoneTypeId); if(zt)return zt.name;} return zoneTypeName(z?z.type:''); }
+/* Identité d'une occurrence prévue : schedule|date|heure */
+function occId(scheduleId, ts, slot){ var d=new Date(ts); return scheduleId+'|'+d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate())+'|'+(slot||''); }
+/* Journal d'audit (préparation PostgreSQL) */
+function logAudit(action, entityType, entityId, detail){
+  if(!STATE.records.audit) STATE.records.audit=[];
+  var u=currentUser();
+  STATE.records.audit.unshift({id:id(), establishmentId:EST(), at:Date.now(), userId:u?u.id:null, userName:u?userName(u):'', action:action, entityType:entityType||'', entityId:entityId||'', detail:detail||''});
+  if(STATE.records.audit.length>500) STATE.records.audit.length=500;
+}
 function daysLabel(days){ if(!days||!days.length)return ''; return WEEKDAYS.filter(function(w){return days.indexOf(w[0])>=0;}).map(function(w){return w[1];}).join(', '); }
 /* Résumé lisible d'une fréquence de plan (pour l'affichage) */
 function freqSummary(t){
@@ -524,33 +548,54 @@ function userHasHistory(uid){
     || db.anos.some(function(a){return a.byId===uid||a.assignedToId===uid||a.verifiedById===uid;})
     || db.ctls.some(function(c){return c.byId===uid;});
 }
+/* Une zone / une action ayant déjà servi n'est jamais supprimée : on la désactive. */
+function zoneHasHistory(zid){
+  var z=zoneById(zid), nm=z?z.name:null;
+  return db.ops.some(function(o){return o.zoneId===zid||(nm&&o.zone===nm);})
+    || db.anos.some(function(a){return nm&&a.zone===nm;})
+    || db.ctls.some(function(c){return nm&&c.zone===nm;})
+    || STATE.config.plan.some(function(t){return t.zoneId===zid;});
+}
+function actionHasHistory(aid){
+  return db.ops.some(function(o){return o.actionId===aid;})
+    || STATE.config.plan.some(function(t){return t.actionId===aid;});
+}
+function actionCatLabel(a){ return a.category==='recommended'?'Recommandée MATSAFE':'Personnalisée'; }
 
 /* mojibake repair (UTF-8 relu Latin-1) */
 function fixMojibake(s){if(typeof s!=='string'||!/[ÃÂ]/.test(s))return s;try{var b=Uint8Array.from(s,function(c){return c.charCodeAt(0)&0xff;});var d=new TextDecoder('utf-8',{fatal:false}).decode(b);if(!/[ÃÂ]/.test(d)&&d.indexOf(String.fromCharCode(0xFFFD))===-1)return d;}catch(e){}return s;}
 function repair(o){if(Array.isArray(o))return o.map(repair);if(o&&typeof o==='object'){for(var k in o)o[k]=repair(o[k]);return o;}return fixMojibake(o);}
 
 /* ------------------------- État & démo ------------------------- */
-function seedRecords(plan, zid){
-  var now=Date.now(), H=3600e3, D=24*H;
+function seedRecords(plan, zid, aid){
+  var now=Date.now(), H=3600e3, D=24*H, EE='est_cube';
   function at(h,m){var d=new Date();d.setHours(h,m,0,0);return d.getTime();}
-  function pe(zoneName,code){var z=zid(zoneName);for(var i=0;i<plan.length;i++)if(plan[i].zoneId===z&&plan[i].opTypeCode===code)return plan[i];return {};}
-  var pT1=pe('Tatami 1','training_surface_cleaning'), pT2=pe('Tatami 2','training_surface_cleaning'),
-      pSan=pe('Sanitaires','restroom_cleaning'), pVest=pe('Vestiaires & douches','changing_room_cleaning');
-  function op(o){o.id=id(); return o;}
-  // Personnes de démonstration (user_id fixes) + instantané du nom sur chaque trace
+  function pe(zoneName,code){var z=zid(zoneName), a=aid(code);for(var i=0;i<plan.length;i++)if(plan[i].zoneId===z&&plan[i].actionId===a)return plan[i];return {};}
+  var pT1=pe('Tatami 1','training_surface_cleaning'), pT2=pe('Tatami 2','training_surface_cleaning'), pSan=pe('Sanitaires','restroom_cleaning');
   var SIMON='u_ref', KARIM='u_coach', LUCAS='u_alt', CLAIRE='u_ger';
   var NM={u_ref:'Simon Ehrlacher', u_coach:'Karim Benali', u_alt:'Lucas Martin', u_ger:'Claire Dupont'};
-  return {
-    // Chaque validation = une trace indépendante, reliée au user_id (byId) + nom figé (by).
-    // Tatami 1 est planifié 4×/jour : 08:00 et 13:00 faits, 18:00 & 22:00 à faire.
+  // Réalisation = trace indépendante et immuable. Reliée au user_id + action_id + zone_id,
+  // avec instantané du nom (by / action / zone) et occurrence prévue (scheduleOccurrenceId).
+  function mk(o){
+    o.id=id(); o.establishmentId=EE;
+    o.actionId=aid(o.code); o.actionName=o.actionName; delete o.code;
+    o.performedById=o.byId; o.performedBy=o.by; o.performedAt=o.at;
+    o.status='done'; o.createdAt=o.at;
+    o.scheduleId=o.planId||null;
+    o.scheduleOccurrenceId=o.planId?occId(o.planId,o.at,o.slot):null;
+    o.scheduledAt=o.planId?o.at:null;
+    o.source=o.extra?'extra':'planned';
+    return o;
+  }
+  var R={
     ops:[
-      op({type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Tatami 1', zoneId:zid('Tatami 1'), byId:SIMON, by:NM[SIMON], at:at(8,12), anomaly:false, planId:pT1.id||null, protocolId:pT1.protocolId||null, slot:'08:00'}),
-      op({type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Tatami 1', zoneId:zid('Tatami 1'), byId:KARIM, by:NM[KARIM], at:at(13,20), anomaly:false, planId:pT1.id||null, protocolId:pT1.protocolId||null, slot:'13:00'}),
-      op({type:'restroom_cleaning', actionName:'Nettoyage sanitaires', zone:'Sanitaires', zoneId:zid('Sanitaires'), byId:LUCAS, by:NM[LUCAS], at:at(9,35), anomaly:false, planId:pSan.id||null, protocolId:pSan.protocolId||null, slot:'09:00'}),
-      op({type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Zone grappling', zoneId:zid('Zone grappling'), byId:CLAIRE, by:NM[CLAIRE], at:at(15,40), anomaly:false, planId:null, protocolId:null, slot:'', extra:true}),
-      op({type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Tatami 1', zoneId:zid('Tatami 1'), byId:LUCAS, by:NM[LUCAS], at:now-1*D-4*H, anomaly:false, planId:pT1.id||null, slot:'18:00'}),
-      op({type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Tatami 2', zoneId:zid('Tatami 2'), byId:KARIM, by:NM[KARIM], at:now-1*D-3*H, anomaly:false, planId:pT2.id||null, slot:'20:00'}),
-      op({type:'restroom_cleaning', actionName:'Nettoyage sanitaires', zone:'Sanitaires', zoneId:zid('Sanitaires'), byId:LUCAS, by:NM[LUCAS], at:now-1*D-6*H, anomaly:true, planId:pSan.id||null, slot:'19:00'})
+      mk({code:'training_surface_cleaning', type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Tatami 1', zoneId:zid('Tatami 1'), byId:SIMON, by:NM[SIMON], at:at(8,12), anomaly:false, planId:pT1.id||null, protocolId:pT1.protocolId||null, slot:'08:00'}),
+      mk({code:'training_surface_cleaning', type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Tatami 1', zoneId:zid('Tatami 1'), byId:KARIM, by:NM[KARIM], at:at(13,20), anomaly:false, planId:pT1.id||null, protocolId:pT1.protocolId||null, slot:'13:00'}),
+      mk({code:'restroom_cleaning', type:'restroom_cleaning', actionName:'Nettoyage sanitaires', zone:'Sanitaires', zoneId:zid('Sanitaires'), byId:LUCAS, by:NM[LUCAS], at:at(9,35), anomaly:false, planId:pSan.id||null, protocolId:pSan.protocolId||null, slot:'09:00'}),
+      mk({code:'training_surface_cleaning', type:'training_surface_cleaning', actionName:'Nettoyage de la cage après sparring', zone:'Zone grappling', zoneId:zid('Zone grappling'), byId:CLAIRE, by:NM[CLAIRE], at:at(15,40), anomaly:false, planId:null, protocolId:null, slot:'', extra:true}),
+      mk({code:'training_surface_cleaning', type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Tatami 1', zoneId:zid('Tatami 1'), byId:LUCAS, by:NM[LUCAS], at:now-1*D-4*H, anomaly:false, planId:pT1.id||null, slot:'18:00'}),
+      mk({code:'training_surface_cleaning', type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Tatami 2', zoneId:zid('Tatami 2'), byId:KARIM, by:NM[KARIM], at:now-1*D-3*H, anomaly:false, planId:pT2.id||null, slot:'20:00'}),
+      mk({code:'restroom_cleaning', type:'restroom_cleaning', actionName:'Nettoyage sanitaires', zone:'Sanitaires', zoneId:zid('Sanitaires'), byId:LUCAS, by:NM[LUCAS], at:now-1*D-6*H, anomaly:true, planId:pSan.id||null, slot:'19:00'})
     ],
     anos:[
       {id:id(), zone:'Sanitaires', cat:'product', desc:'Plus de savon dans les sanitaires.', byId:KARIM, by:NM[KARIM], at:now-20*H, status:'open', origin:'club', history:[]},
@@ -567,14 +612,23 @@ function seedRecords(plan, zid){
       {id:id(), zone:'Douches', text:'Il n’y avait plus de savon après l’entraînement du soir.', at:now-3*H, status:'to_verify', origin:'fighter', history:[]},
       {id:id(), zone:'Tatami 1', text:'Le tatami collait un peu près de la cage, peut-être à repasser.', at:now-1*D-2*H, status:'in_progress', origin:'fighter', history:[]},
       {id:id(), zone:'Vestiaires', text:'Vestiaire nickel ce soir, rien à signaler 👍', at:now-2*D, status:'resolved', origin:'fighter', history:[]}
+    ],
+    audit:[
+      {id:id(), establishmentId:EE, at:at(13,20), userId:KARIM, userName:NM[KARIM], action:'operation.validate', entityType:'operationRecord', entityId:'', detail:'Tatami 1 · Nettoyage et désinfection (prévu 13:00)'},
+      {id:id(), establishmentId:EE, at:at(9,35),  userId:LUCAS, userName:NM[LUCAS], action:'operation.validate', entityType:'operationRecord', entityId:'', detail:'Sanitaires · Nettoyage sanitaires (prévu 09:00)'},
+      {id:id(), establishmentId:EE, at:at(8,12),  userId:SIMON, userName:NM[SIMON], action:'operation.validate', entityType:'operationRecord', entityId:'', detail:'Tatami 1 · Nettoyage et désinfection (prévu 08:00)'}
     ]
   };
+  ['ops','anos','ctls','fighter'].forEach(function(k){R[k].forEach(function(x){if(!x.establishmentId)x.establishmentId=EE;});});
+  return R;
 }
-/* Zones réelles du club (type + zone réelle + description) */
+/* Zones réelles du club (nom, type, description) */
 var SEED_ZONES=[
   ['Tatami 1','tatami','Surface principale — entraînements quotidiens'],
   ['Tatami 2','tatami','Deuxième surface — cours enfants & no-gi'],
+  ['Tatami 3','tatami','Surface d’appoint'],
   ['Cage MMA','cage','Cage de sparring MMA'],
+  ['Ring','ring','Ring de boxe / K-1'],
   ['Zone grappling','training_area','Espace grappling au sol'],
   ['Vestiaires & douches','changing_room','Vestiaires hommes/femmes + douches'],
   ['Sanitaires','restroom','WC accueil'],
@@ -582,37 +636,49 @@ var SEED_ZONES=[
   ['Premiers secours','first_aid','Trousse de secours & défibrillateur']
 ];
 function defaultState(){
-  var zones=SEED_ZONES.map(function(z){return {id:id(),name:z[0],type:z[1],desc:z[2],active:true};});
+  var CT=Date.now(), EE='est_cube';
+  var zoneTypes=ZONE_TYPES.map(function(t){return {id:'zt_'+t[0], code:t[0], name:t[1]};});
+  var zones=SEED_ZONES.map(function(z){return {id:id(), establishmentId:EE, zoneTypeId:'zt_'+z[1], type:z[1], name:z[0], description:z[2], desc:z[2], status:'active', active:true, createdAt:CT, deactivatedAt:null};});
   function zByName(n){for(var i=0;i<zones.length;i++)if(zones[i].name===n)return zones[i].id;return null;}
   var protoTatami={id:id(), name:'Désinfection tatami', product:'Détergent-désinfectant surfaces (EN 14476)', dilution:'20 ml/L', contactTime:'5 min', rinse:false, note:'Balayage puis passage microfibre. Laisser sécher à l’air libre.'};
   var protoSanit={id:id(), name:'Sanitaires', product:'Nettoyant sanitaire désinfectant', dilution:'Prêt à l’emploi', contactTime:'5 min', rinse:true, note:'Cuvettes, lavabos, poignées. Rincer les surfaces en contact avec la peau.'};
-  function P(o){o.id=id(); if(!o.days)o.days=[]; if(!o.times)o.times=[]; o.active=(o.active!==false); return o;}
+  // Bibliothèque d'actions : recommandées MATSAFE (depuis OP_TYPES) + personnalisées du club
+  var actions=OP_TYPES.map(function(o){return {id:'act_'+o.code, establishmentId:EE, name:o.full, category:'recommended', opTypeCode:o.code, status:'active', createdAt:CT, deactivatedAt:null};});
+  actions.push({id:id(), establishmentId:EE, name:'Nettoyage de la cage après sparring', category:'custom', opTypeCode:'training_surface_cleaning', status:'active', createdAt:CT, deactivatedAt:null});
+  actions.push({id:id(), establishmentId:EE, name:'Désinfection des paos après le cours enfants', category:'custom', opTypeCode:'shared_equipment_cleaning', status:'active', createdAt:CT, deactivatedAt:null});
+  function aid(code){return 'act_'+code;}
+  function P(o){o.id=id(); o.establishmentId=EE; if(!o.days)o.days=[]; if(!o.times)o.times=[]; o.active=(o.active!==false); o.status=o.active?'active':'inactive'; o.createdAt=CT; return o;}
   var plan=[
-    P({zoneId:zByName('Tatami 1'),               opTypeCode:'training_surface_cleaning', frequency:'multi_daily', times:['08:00','13:00','18:00','22:00'], respKind:'role',   respRole:'Coach',            instruction:'Balayer puis désinfecter. Laisser sécher à l’air libre.', protocolId:protoTatami.id}),
-    P({zoneId:zByName('Tatami 2'),               opTypeCode:'training_surface_cleaning', frequency:'daily',       times:['20:00'],                          respKind:'role',   respRole:'Coach',            instruction:'Désinfection en fin de journée.',                        protocolId:protoTatami.id}),
-    P({zoneId:zByName('Cage MMA'),               opTypeCode:'training_surface_cleaning', frequency:'some_days',   days:[1,3,5], times:['19:30'],             respKind:'person', respUserId:'u_coach',        instruction:'Après le sparring MMA.',                                 protocolId:protoTatami.id}),
-    P({zoneId:zByName('Sanitaires'),             opTypeCode:'restroom_cleaning',         frequency:'multi_daily', times:['09:00','19:00'],                  respKind:'role',   respRole:'Alternant',        instruction:'Cuvettes, lavabos, poignées. Vérifier savon & papier.',  protocolId:protoSanit.id}),
-    P({zoneId:zByName('Vestiaires & douches'),   opTypeCode:'changing_room_cleaning',    frequency:'daily',       times:['21:00'],                          respKind:'person', respUserId:'u_ref',          instruction:'Sols, bancs, douches.',                                  protocolId:null}),
-    P({zoneId:zByName('Matériel partagé'),       opTypeCode:'shared_equipment_cleaning', frequency:'after_use',   times:[],                                 respKind:'role',   respRole:'Coach',            instruction:'Désinfecter le matériel prêté après chaque séance.',     protocolId:null})
+    P({zoneId:zByName('Tatami 1'),               actionId:aid('training_surface_cleaning'), frequency:'multi_daily', times:['08:00','13:00','18:00','22:00'], respKind:'role',   respRole:'Coach',            instruction:'Balayer puis désinfecter. Laisser sécher à l’air libre.', protocolId:protoTatami.id}),
+    P({zoneId:zByName('Tatami 2'),               actionId:aid('training_surface_cleaning'), frequency:'daily',       times:['20:00'],                          respKind:'role',   respRole:'Coach',            instruction:'Désinfection en fin de journée.',                        protocolId:protoTatami.id}),
+    P({zoneId:zByName('Cage MMA'),               actionId:aid('training_surface_cleaning'), frequency:'some_days',   days:[1,3,5], times:['19:30'],             respKind:'person', respUserId:'u_coach',        instruction:'Après le sparring MMA.',                                 protocolId:protoTatami.id}),
+    P({zoneId:zByName('Sanitaires'),             actionId:aid('restroom_cleaning'),         frequency:'multi_daily', times:['09:00','19:00'],                  respKind:'role',   respRole:'Alternant',        instruction:'Cuvettes, lavabos, poignées. Vérifier savon & papier.',  protocolId:protoSanit.id}),
+    P({zoneId:zByName('Vestiaires & douches'),   actionId:aid('changing_room_cleaning'),    frequency:'daily',       times:['21:00'],                          respKind:'person', respUserId:'u_ref',          instruction:'Sols, bancs, douches.',                                  protocolId:null}),
+    P({zoneId:zByName('Matériel partagé'),       actionId:aid('shared_equipment_cleaning'), frequency:'after_use',   times:[],                                 respKind:'role',   respRole:'Coach',            instruction:'Désinfecter le matériel prêté après chaque séance.',     protocolId:null})
   ];
-  var CT=Date.now();
   return {
-    v:3,
-    club:{id:'club_demo', name:'Cube Fight Club', city:'Paris', since:'Mars 2026'},
+    v:4,
+    establishmentId:EE,
+    establishments:[{id:EE, name:'Cube Fight Club', city:'Paris', since:'Mars 2026', createdAt:CT}],
+    club:{id:EE, name:'Cube Fight Club', city:'Paris', since:'Mars 2026'},
     users:[
-      {id:'u_ref',   firstName:'Simon',  lastName:'Ehrlacher', role:'Référent Hygiène', status:'active', createdAt:CT, deactivatedAt:null},
-      {id:'u_coach', firstName:'Karim',  lastName:'Benali',    role:'Coach',            status:'active', createdAt:CT, deactivatedAt:null},
-      {id:'u_alt',   firstName:'Lucas',  lastName:'Martin',    role:'Alternant',        status:'active', createdAt:CT, deactivatedAt:null},
-      {id:'u_ger',   firstName:'Claire', lastName:'Dupont',    role:'Gérante',          status:'active', createdAt:CT, deactivatedAt:null}
+      {id:'u_ref',   establishmentId:EE, firstName:'Simon',  lastName:'Ehrlacher', role:'Référent Hygiène', status:'active', createdAt:CT, deactivatedAt:null},
+      {id:'u_coach', establishmentId:EE, firstName:'Karim',  lastName:'Benali',    role:'Coach',            status:'active', createdAt:CT, deactivatedAt:null},
+      {id:'u_alt',   establishmentId:EE, firstName:'Lucas',  lastName:'Martin',    role:'Alternant',        status:'active', createdAt:CT, deactivatedAt:null},
+      {id:'u_ger',   establishmentId:EE, firstName:'Claire', lastName:'Dupont',    role:'Gérante',          status:'active', createdAt:CT, deactivatedAt:null}
     ],
-    session:{clubId:'club_demo', userId:'u_ref'},
-    config:{zones:zones, protocols:[protoTatami, protoSanit], plan:plan},
-    records: seedRecords(plan, zByName)
+    session:{establishmentId:EE, clubId:EE, userId:'u_ref'},
+    config:{zoneTypes:zoneTypes, zones:zones, actions:actions, protocols:[protoTatami, protoSanit], plan:plan},
+    records: seedRecords(plan, zByName, aid)
   };
 }
 var STATE, db;
 function load(){
-  try{var r=localStorage.getItem(STORE); if(r){var s=repair(JSON.parse(r)); if(!s.records.fighter)s.records.fighter=[]; return s;}}catch(e){}
+  try{var r=localStorage.getItem(STORE); if(r){var s=repair(JSON.parse(r));
+    if(!s.records.fighter)s.records.fighter=[]; if(!s.records.audit)s.records.audit=[];
+    if(!s.establishmentId)s.establishmentId=(s.establishments&&s.establishments[0]&&s.establishments[0].id)||'est_cube';
+    if(!s.config.actions)s.config.actions=[]; if(!s.config.zoneTypes)s.config.zoneTypes=[];
+    return s;}}catch(e){}
   return defaultState();
 }
 function save(){try{localStorage.setItem(STORE, JSON.stringify(STATE));}catch(e){}}
@@ -644,7 +710,7 @@ function todayOccurrences(){
     else if(f==='monthly') due=(task.monthDay||1)===dom;
     else if(f==='once') due=!!task.onceAt && new Date(task.onceAt).toDateString()===now.toDateString();
     if(!due) return;
-    var z=zoneById(task.zoneId), zoneName=z?z.name:'—', ot=opType(task.opTypeCode);
+    var z=zoneById(task.zoneId), zoneName=z?z.name:'—', ot=opType(schedCode(task));
     var times=(task.times&&task.times.length)?task.times.slice().sort():[''];
     times.forEach(function(t){ occ.push({task:task, slot:t, zoneName:zoneName, ot:ot}); });
   });
@@ -653,7 +719,7 @@ function todayOccurrences(){
 }
 function afterUseTasks(){
   return STATE.config.plan.filter(function(t){return t.active&&t.frequency==='after_use';})
-    .map(function(task){var z=zoneById(task.zoneId);return {task:task,zoneName:z?z.name:'—',ot:opType(task.opTypeCode)};});
+    .map(function(task){var z=zoneById(task.zoneId);return {task:task,zoneName:z?z.name:'—',ot:opType(schedCode(task))};});
 }
 function occDone(task,slot){
   return db.ops.filter(function(o){return isToday(o.at)&&o.planId===task.id&&(o.slot||'')===(slot||'');}).sort(function(a,b){return b.at-a.at;})[0]||null;
@@ -860,7 +926,12 @@ function viewToday(){
   var xline = xtra>0 ? ' <b style="color:var(--brand)">+ '+xtra+' passage'+(xtra>1?'s':'')+' supplémentaire'+(xtra>1?'s':'')+'</b>.' : '';
   var head='<div class="peyebrow rz">'+esc(dateHead(Date.now()))+'</div><h1 class="ptitle rz">Aujourd’hui</h1>'+
     '<p class="pintro rz">'+ (total? done+' / '+total+' opérations <b>prévues</b> réalisées.'+xline+' Validez une carte dès qu’une opération est faite — elle est aussitôt historisée.' : 'Aucune opération planifiée aujourd’hui.') +'</p>';
-  var planned = occ.length ? '<div class="shead rz"><h2>Planifié</h2></div><div class="opgrid rz">'+occ.map(function(o,i){return opCardHTML(o,'occ',i);}).join('')+'</div>' : '';
+  var withIdx=occ.map(function(o,i){return {o:o,i:i};});
+  var todoL=withIdx.filter(function(x){return !occDone(x.o.task,x.o.slot);});
+  var doneL=withIdx.filter(function(x){return occDone(x.o.task,x.o.slot);});
+  var todoBlock = todoL.length ? '<div class="shead rz"><h2>À faire</h2><span class="pill attn"><span class="pd"></span>'+todoL.length+'</span></div><div class="opgrid rz">'+todoL.map(function(x){return opCardHTML(x.o,'occ',x.i);}).join('')+'</div>' : '';
+  var doneBlock = doneL.length ? '<div class="shead rz"><h2>Déjà réalisé</h2><span class="pill ok"><span class="pd"></span>'+doneL.length+'</span></div><div class="opgrid rz">'+doneL.map(function(x){return opCardHTML(x.o,'occ',x.i);}).join('')+'</div>' : '';
+  var planned = occ.length ? (todoBlock + doneBlock) : '';
   var invite = '<div class="shead rz"><h2>Un passage en plus&nbsp;?</h2></div><div class="rz">'+supInviteCard()+'</div>';
   var demand = au.length ? '<div class="shead rz"><h2>À la demande</h2></div><div class="opgrid rz">'+au.map(function(o,i){return opCardHTML(o,'au',i);}).join('')+'</div>' : '';
   var extra = '<div class="shead rz"><h2>Autre</h2></div><div class="stack rz">'+
@@ -869,20 +940,28 @@ function viewToday(){
 }
 
 /* ----------------------------- REGISTRE ----------------------------- */
-var regFilter={zone:'',type:'all'};
+var regFilter={zone:'',type:'all',person:'',source:'all'};
 function viewReg(){
   var head='<div class="peyebrow rz">Historique</div><div class="shead rz" style="margin-top:2px"><h2 class="ptitle" style="font-size:clamp(30px,6vw,44px)">Registre</h2><button class="lk" data-act="export">Exporter</button></div>'+
     '<p class="pintro rz">L’historique complet des opérations et points d’attention, du plus récent au plus ancien.</p>';
-  // filters (type)
+  // filtres : type · source · zone · personne
   var typeChips=[['all','Tout'],['op','Opérations'],['attn','Points d’attention']].map(function(t){return '<button class="fchip '+(regFilter.type===t[0]?'on':'')+'" data-ftype="'+t[0]+'">'+t[1]+'</button>';}).join('');
-  var filters='<div class="filters rz">'+typeChips+'</div>';
+  var srcChips=[['all','Toutes sources'],['planned','Prévu'],['extra','Supplémentaire']].map(function(s){return '<button class="fchip '+(regFilter.source===s[0]?'on':'')+'" data-fsrc="'+s[0]+'">'+s[1]+'</button>';}).join('');
+  var zoneOptions='<option value="">Toutes les zones</option>'+STATE.config.zones.map(function(z){return '<option value="'+esc(z.name)+'"'+(regFilter.zone===z.name?' selected':'')+'>'+esc(z.name)+'</option>';}).join('');
+  var persOptions='<option value="">Toutes les personnes</option>'+STATE.users.map(function(u){return '<option value="'+u.id+'"'+(regFilter.person===u.id?' selected':'')+'>'+esc(userName(u))+'</option>';}).join('');
+  var filters='<div class="filters rz">'+typeChips+'</div>'+
+    '<div class="filters rz" style="margin-top:-4px">'+srcChips+'</div>'+
+    '<div class="rz" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px"><select id="regZone" class="regsel">'+zoneOptions+'</select><select id="regPerson" class="regsel">'+persOptions+'</select></div>';
 
   // merge ops + anomalies into timeline events
   var evs=[];
-  db.ops.forEach(function(o){var d=opActionFull(o)+(o.slot?' · prévu '+o.slot:'')+(o.extra?' · supplémentaire':''); evs.push({at:o.at, attn:o.anomaly, kind:'op', t:o.zone||opType(o.type).name, d:d, by:o.by, tag: o.anomaly?pill('attn','Anomalie constatée'):(o.extra?pill('info','Supplémentaire'):pill('ok','Conforme')), ref:{op:o.id}});});
-  db.anos.forEach(function(a){ evs.push({at:a.at, attn:true, kind:'attn', t:a.zone, d:'Point d’attention — '+catName(a.cat), by:a.by, tag:anoPill(a.status), ref:{ano:a.id}}); });
+  db.ops.forEach(function(o){var d=opActionFull(o)+(o.slot?' · prévu '+o.slot:'')+(o.extra?' · supplémentaire':''); evs.push({at:o.at, attn:o.anomaly, kind:'op', t:o.zone||opType(o.type).name, zoneName:o.zone||'', byId:o.byId||o.performedById||'', source:o.source||(o.extra?'extra':'planned'), d:d, by:o.by, tag: o.anomaly?pill('attn','Anomalie constatée'):(o.extra?pill('info','Supplémentaire'):pill('ok','Conforme')), ref:{op:o.id}});});
+  db.anos.forEach(function(a){ evs.push({at:a.at, attn:true, kind:'attn', t:a.zone, zoneName:a.zone||'', byId:a.byId||'', source:'', d:'Point d’attention — '+catName(a.cat), by:a.by, tag:anoPill(a.status), ref:{ano:a.id}}); });
   if(regFilter.type==='op') evs=evs.filter(function(e){return e.kind==='op';});
   if(regFilter.type==='attn') evs=evs.filter(function(e){return e.kind==='attn';});
+  if(regFilter.source!=='all') evs=evs.filter(function(e){return e.kind==='op'&&e.source===regFilter.source;});
+  if(regFilter.zone) evs=evs.filter(function(e){return e.zoneName===regFilter.zone;});
+  if(regFilter.person) evs=evs.filter(function(e){return e.byId===regFilter.person;});
   evs.sort(function(a,b){return b.at-a.at;});
 
   var tl='', last='';
@@ -954,13 +1033,20 @@ function viewEtab(){
   var zones=STATE.config.zones, protos=STATE.config.protocols, plan=STATE.config.plan;
   var head='<div class="peyebrow rz">Configuration</div><h1 class="ptitle rz">Établissement</h1>';
   var clubCard='<button class="srow rz" data-act="clubedit"><span class="sg"><span class="st">'+esc(cl.name)+'</span><span class="ss">'+esc(cl.city||'')+' · labellisé depuis '+esc(cl.since||'—')+'</span></span>'+CHEV+'</button>';
-  var zonesBlock='<div class="shead rz"><h2>Zones</h2><button class="lk" data-act="zoneadd">+ Ajouter</button></div><div class="stack rz">'+
-    zones.map(function(z){return '<button class="srow" data-zone="'+z.id+'"><span class="sg"><span class="st">'+esc(z.name)+'</span><span class="ss">'+esc(zoneTypeName(z.type)+(z.desc?' · '+z.desc:''))+'</span></span>'+(z.active?'':pill('mute','Inactive'))+CHEV+'</button>';}).join('')+'</div>';
+  var zonesBlock='<div class="shead rz"><h2>Zones</h2><button class="lk" data-act="zoneadd">+ Ajouter</button></div>'+
+    '<div class="rz card soft pad" style="padding:11px 13px;color:var(--ink-2);font-size:12px;margin-bottom:11px">Les zones <b>réelles</b> du club. Chaque zone a un <b>type</b> (tatami, sanitaires…) et reste dans l’historique même si elle est désactivée.</div>'+
+    '<div class="stack rz">'+
+    zones.map(function(z){return '<button class="srow'+(z.active?'':' off')+'" data-zone="'+z.id+'"><span class="sg"><span class="st">'+esc(z.name)+'</span><span class="ss">'+esc(zoneTypeLabel(z)+(z.desc?' · '+z.desc:''))+'</span></span>'+(z.active?'':pill('mute','Inactive'))+CHEV+'</button>';}).join('')+'</div>';
+  var actions=STATE.config.actions||[];
+  var actionsBlock='<div class="shead rz"><h2>Actions</h2><button class="lk" data-act="actionadd">+ Ajouter</button></div>'+
+    '<div class="rz card soft pad" style="padding:11px 13px;color:var(--ink-2);font-size:12px;margin-bottom:11px">La bibliothèque d’actions : les gestes recommandés MATSAFE et vos actions personnalisées. Chaque opération planifiée ou réalisée y est reliée.</div>'+
+    '<div class="stack rz">'+
+    actions.map(function(a){return '<button class="srow'+(a.status==='inactive'?' off':'')+'" data-action="'+a.id+'"><span class="sg"><span class="st">'+esc(a.name)+'</span><span class="ss">'+esc(actionCatLabel(a)+' · '+opType(a.opTypeCode).name)+'</span></span>'+(a.status==='inactive'?pill('mute','Inactive'):pill('ok','Active'))+CHEV+'</button>';}).join('')+'</div>';
   var protoBlock='<div class="shead rz"><h2>Protocoles & produits</h2><button class="lk" data-act="protoadd">+ Ajouter</button></div><div class="stack rz">'+
     (protos.length?protos.map(function(p){return '<button class="srow" data-proto="'+p.id+'"><span class="sg"><span class="st">'+esc(p.name)+'</span><span class="ss">'+esc(p.product||'—')+'</span></span>'+CHEV+'</button>';}).join(''):emptyBox('Aucun protocole'))+'</div>';
   var planLink='<div class="shead rz"><h2>Planification</h2></div><div class="stack rz">'+
     '<button class="srow" data-nav="planif"><span class="li" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);margin-right:2px">'+NAV_IC.planif+'</span><span class="sg"><span class="st">Gérer la planification</span><span class="ss">'+plan.length+' opération'+(plan.length>1?'s':'')+' planifiée'+(plan.length>1?'s':'')+' · fréquences, heures, responsables</span></span>'+CHEV+'</button></div>';
-  return head + '<div class="stack rz" style="margin-top:8px">'+clubCard+'</div>' + zonesBlock + protoBlock + planLink;
+  return head + '<div class="stack rz" style="margin-top:8px">'+clubCard+'</div>' + zonesBlock + actionsBlock + protoBlock + planLink;
 }
 function memRowHTML(u){
   var me=u.id===STATE.session.userId, off=u.status==='inactive';
@@ -1009,6 +1095,7 @@ function viewParams(){
   var rows='<div class="stack rz" style="margin-top:12px">'+
     '<button class="srow" data-act="export"><span class="sg"><span class="st">Exporter le registre</span><span class="ss">Générer un PDF du registre par période</span></span>'+CHEV+'</button>'+
     '<button class="srow" data-act="bilan"><span class="sg"><span class="st">Voir mon bilan MATSAFE</span><span class="ss">Bilan mensuel d’accompagnement</span></span>'+CHEV+'</button>'+
+    '<button class="srow" data-act="journal"><span class="sg"><span class="st">Journal d’activité</span><span class="ss">Trace horodatée des actions dans l’application</span></span>'+CHEV+'</button>'+
     '<button class="srow" data-act="switchuser"><span class="sg"><span class="st">Changer d’utilisateur</span><span class="ss">Basculer entre les membres (démo)</span></span>'+CHEV+'</button>'+
     '<button class="srow" data-act="reset"><span class="sg"><span class="st" style="color:var(--brand)">Réinitialiser la démonstration</span><span class="ss">Rétablir les données d’exemple</span></span>'+CHEV+'</button>'+
     '</div>';
@@ -1060,9 +1147,9 @@ function viewMenu(){
    ===================================================================== */
 function wire(){
   var occ=todayOccurrences(), au=afterUseTasks();
-  $$('[data-occ]').forEach(function(b){b.onclick=function(){var o=occ[+b.dataset.occ]; if(o) openValidate({code:o.task.opTypeCode, zone:o.zoneName, zoneId:o.task.zoneId, planId:o.task.id, slot:o.slot, protocolId:o.task.protocolId, actionName:planActionFull(o.task), plannedResp:planRespLabel(o.task), plannedRespKind:o.task.respKind});};});
-  $$('[data-au]').forEach(function(b){b.onclick=function(){var o=au[+b.dataset.au]; if(o) openValidate({code:o.task.opTypeCode, zone:o.zoneName, zoneId:o.task.zoneId, planId:o.task.id, slot:'', protocolId:o.task.protocolId, actionName:planActionFull(o.task), plannedResp:planRespLabel(o.task), plannedRespKind:o.task.respKind});};});
-  $$('[data-reclean]').forEach(function(b){b.onclick=function(e){e.stopPropagation(); var o=occ[+b.dataset.reclean]; if(o) openReclean({code:o.task.opTypeCode, zone:o.zoneName, zoneId:o.task.zoneId, protocolId:o.task.protocolId, actionName:planActionFull(o.task)});};});
+  $$('[data-occ]').forEach(function(b){b.onclick=function(){var o=occ[+b.dataset.occ]; if(o) openValidate({code:schedCode(o.task), actionId:o.task.actionId, zone:o.zoneName, zoneId:o.task.zoneId, planId:o.task.id, slot:o.slot, protocolId:o.task.protocolId, actionName:planActionFull(o.task), plannedResp:planRespLabel(o.task), plannedRespKind:o.task.respKind});};});
+  $$('[data-au]').forEach(function(b){b.onclick=function(){var o=au[+b.dataset.au]; if(o) openValidate({code:schedCode(o.task), actionId:o.task.actionId, zone:o.zoneName, zoneId:o.task.zoneId, planId:o.task.id, slot:'', protocolId:o.task.protocolId, actionName:planActionFull(o.task), plannedResp:planRespLabel(o.task), plannedRespKind:o.task.respKind});};});
+  $$('[data-reclean]').forEach(function(b){b.onclick=function(e){e.stopPropagation(); var o=occ[+b.dataset.reclean]; if(o) openReclean({code:schedCode(o.task), actionId:o.task.actionId, zone:o.zoneName, zoneId:o.task.zoneId, protocolId:o.task.protocolId, actionName:planActionFull(o.task)});};});
   $$('[data-ano]').forEach(function(b){b.onclick=function(){openAnoDetail(b.dataset.ano);};});
   $$('[data-fighter]').forEach(function(b){b.onclick=function(){openFighterDetail(b.dataset.fighter);};});
   $$('[data-ctl]').forEach(function(b){b.onclick=function(){openCtlDetail(b.dataset.ctl);};});
@@ -1072,7 +1159,11 @@ function wire(){
   $$('[data-proto]').forEach(function(b){b.onclick=function(){openProtoEdit(b.dataset.proto);};});
   $$('[data-plan]').forEach(function(b){b.onclick=function(){openPlanEdit(b.dataset.plan);};});
   $$('[data-user]').forEach(function(b){b.onclick=function(){openUserDetail(b.dataset.user);};});
+  $$('[data-action]').forEach(function(b){b.onclick=function(){openActionEdit(b.dataset.action);};});
   $$('.filters [data-ftype]').forEach(function(b){b.onclick=function(){regFilter.type=b.dataset.ftype; render();};});
+  $$('.filters [data-fsrc]').forEach(function(b){b.onclick=function(){regFilter.source=b.dataset.fsrc; render();};});
+  if($('#regZone'))$('#regZone').onchange=function(){regFilter.zone=this.value; render();};
+  if($('#regPerson'))$('#regPerson').onchange=function(){regFilter.person=this.value; render();};
   $$('[data-act]').forEach(function(b){ b.onclick=function(){actionRouter(b.dataset.act);}; });
 }
 function actionRouter(a){
@@ -1083,6 +1174,8 @@ function actionRouter(a){
   if(a==='bilan') return openBilan();
   if(a==='ctlplan') return openCtlPlan();
   if(a==='zoneadd') return openZoneEdit(null);
+  if(a==='actionadd') return openActionEdit(null);
+  if(a==='journal') return openJournal();
   if(a==='protoadd') return openProtoEdit(null);
   if(a==='planadd') return openPlanEdit(null);
   if(a==='clubedit') return openClubEdit();
@@ -1158,7 +1251,9 @@ function openValidate(opts){
       '<button class="srow" id="vPb"><span class="li" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--brand-soft);border:1px solid #F2D8D3;color:var(--brand);margin-right:2px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span><span class="sg"><span class="st">Problème constaté</span><span class="ss">Créer un point d’attention</span></span></button>'+
       '</div>';
     $('#shFoot').innerHTML='';
-    function record(anomaly){ var byU=userById(byId)||currentUser(); db.ops.unshift({id:id(), type:code, actionName:opts.actionName||opType(code).full, zone:zone, zoneId:opts.zoneId||null, byId:byId, by:userName(byU), plannedResp:opts.plannedResp||'', plannedRespKind:opts.plannedRespKind||null, at:Date.now(), anomaly:anomaly, planId:opts.planId||null, protocolId:opts.protocolId||null, slot:opts.slot||'', comment:comment, extra:!!opts.extra}); save(); }
+    function record(anomaly){ var byU=userById(byId)||currentUser(); var nowTs=Date.now(); var actId=opts.actionId||(actionByCode(code)&&actionByCode(code).id)||null; var actNm=opts.actionName||opType(code).full;
+      db.ops.unshift({id:id(), establishmentId:EST(), type:code, actionId:actId, actionName:actNm, action:actNm, zone:zone, zoneId:opts.zoneId||null, byId:byId, by:userName(byU), performedById:byId, performedBy:userName(byU), plannedResp:opts.plannedResp||'', plannedRespKind:opts.plannedRespKind||null, at:nowTs, performedAt:nowTs, createdAt:nowTs, scheduledAt:opts.planId?nowTs:null, anomaly:anomaly, planId:opts.planId||null, scheduleId:opts.planId||null, scheduleOccurrenceId:opts.planId?occId(opts.planId,nowTs,opts.slot):null, protocolId:opts.protocolId||null, slot:opts.slot||'', comment:comment, extra:!!opts.extra, source:opts.extra?'extra':'planned', status:'done'});
+      logAudit('operation.validate','operationRecord',null, zone+' · '+actNm+(opts.slot?' (prévu '+opts.slot+')':'')+(byU&&byU.id!==currentUser().id?' · réalisé par '+userName(byU):'')); save(); }
     $('#vOk').onclick=function(){ record(false); burst('Opération enregistrée', zone+' · '+timeFmt(Date.now())); setTimeout(function(){ render(); },300); };
     $('#vPb').onclick=function(){ record(true); closeSheet(); setTimeout(function(){ openReport(zone); render(); },200); };
   };
@@ -1188,7 +1283,9 @@ function openReclean(opts){
   openSheet('Passage supplémentaire', opts.zone, body,
     '<button class="btn good" id="rcSave"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Enregistrer</button>'+
     '<button class="btn ghost" id="rcPb" style="border:1px solid var(--line-2)">J’ai constaté un problème</button>');
-  function rec(anomaly){ var byEl=$('.choice.sel',$('#rcBy')); var byId=byEl?byEl.dataset.by:currentUser().id; var byU=userById(byId)||currentUser(); db.ops.unshift({id:id(), type:opts.code, actionName:act, zone:opts.zone, zoneId:opts.zoneId||null, byId:byId, by:userName(byU), at:Date.now(), anomaly:anomaly, planId:null, protocolId:opts.protocolId||null, slot:'', comment:($('#rcComment').value||'').trim(), extra:true}); save(); }
+  function rec(anomaly){ var byEl=$('.choice.sel',$('#rcBy')); var byId=byEl?byEl.dataset.by:currentUser().id; var byU=userById(byId)||currentUser(); var nowTs=Date.now(); var actId=opts.actionId||(actionByCode(opts.code)&&actionByCode(opts.code).id)||null;
+    db.ops.unshift({id:id(), establishmentId:EST(), type:opts.code, actionId:actId, actionName:act, action:act, zone:opts.zone, zoneId:opts.zoneId||null, byId:byId, by:userName(byU), performedById:byId, performedBy:userName(byU), at:nowTs, performedAt:nowTs, createdAt:nowTs, scheduledAt:null, anomaly:anomaly, planId:null, scheduleId:null, scheduleOccurrenceId:null, protocolId:opts.protocolId||null, slot:'', comment:($('#rcComment').value||'').trim(), extra:true, source:'extra', status:'done'});
+    logAudit('operation.extra','operationRecord',null, opts.zone+' · '+act+' · passage supplémentaire'+(byU&&byU.id!==currentUser().id?' · réalisé par '+userName(byU):'')); save(); }
   $('#rcSave').onclick=function(){ rec(false); burst('Opération supplémentaire enregistrée','Merci de contribuer au maintien des standards de votre club.'); setTimeout(render,300); };
   $('#rcPb').onclick=function(){ rec(true); closeSheet(); setTimeout(function(){ openReport(opts.zone); render(); },200); };
 }
@@ -1196,17 +1293,18 @@ function openReclean(opts){
 /* ---------------- Nettoyage supplémentaire (hors plan) ---------------- */
 function openPick(){
   var zones=STATE.config.zones.filter(function(z){return z.active;});
+  var acts=activeActions();
   var body='<p class="pintro" style="margin:2px 0 4px">Une opération réalisée <b>maintenant</b>, hors planning. Elle est tracée à part et ne modifie pas le plan prévu.</p>'+
     '<div class="fieldlab">Zone</div><div class="choices" id="pkZone">'+
     zones.map(function(z){return '<button class="choice" data-zid="'+z.id+'" data-z="'+esc(z.name)+'">'+esc(z.name)+'</button>';}).join('')+'</div>'+
-    '<div class="fieldlab">Action</div><div class="choices" id="pkType">'+
-    OP_TYPES.map(function(o){return '<button class="choice" data-c="'+o.code+'">'+esc(o.name)+'</button>';}).join('')+'</div>';
+    '<div class="fieldlab">Action <span class="opt">— bibliothèque du club</span></div><div class="choices" id="pkAct">'+
+    acts.map(function(a){return '<button class="choice" data-aid="'+a.id+'" data-c="'+a.opTypeCode+'">'+esc(a.name)+'</button>';}).join('')+'</div>';
   openSheet('Nettoyage supplémentaire','Enregistrer', body, '<button class="btn" id="pkNext" disabled>Continuer</button>');
-  var st={zone:'',zid:null,code:''};
+  var st={zone:'',zid:null,code:'',aid:null};
   $$('#pkZone .choice').forEach(function(b){b.onclick=function(){st.zone=b.dataset.z; st.zid=b.dataset.zid; refresh();};});
-  $$('#pkType .choice').forEach(function(b){b.onclick=function(){st.code=b.dataset.c; refresh();};});
-  function refresh(){ $('#pkNext').disabled=!(st.zone&&st.code); }
-  $('#pkNext').onclick=function(){ closeSheet(); setTimeout(function(){ openValidate({code:st.code, zone:st.zone, zoneId:st.zid, extra:true, actionName:opType(st.code).full}); },180); };
+  $$('#pkAct .choice').forEach(function(b){b.onclick=function(){st.code=b.dataset.c; st.aid=b.dataset.aid; refresh();};});
+  function refresh(){ $('#pkNext').disabled=!(st.zone&&st.aid); }
+  $('#pkNext').onclick=function(){ var a=actionById(st.aid); closeSheet(); setTimeout(function(){ openValidate({code:st.code, actionId:st.aid, zone:st.zone, zoneId:st.zid, extra:true, actionName:a?a.name:opType(st.code).full}); },180); };
 }
 
 /* ------------------- Signaler un point d'attention ------------------- */
@@ -1225,7 +1323,10 @@ function openReport(presetZone){
   $('#shBody').addEventListener('click',refresh); $('#rDesc').addEventListener('input',refresh); refresh();
   $('#rSave').onclick=function(){
     var z=$('.choice.sel',$('#rZone')), c=$('.choice.sel',$('#rCat'));
-    db.anos.unshift({id:id(), zone:z?z.dataset.z:zoneNames()[0], cat:c?c.dataset.c:'other', desc:($('#rDesc').value||'').trim(), byId:currentUser().id, by:userName(currentUser()), at:Date.now(), status:'open', origin:'club', photo:photo, history:[]});
+    var zoneName=z?z.dataset.z:zoneNames()[0], zRec=STATE.config.zones.filter(function(x){return x.name===zoneName;})[0];
+    var nowTs=Date.now(), cat=c?c.dataset.c:'other', desc=($('#rDesc').value||'').trim();
+    db.anos.unshift({id:id(), establishmentId:EST(), zone:zoneName, zoneId:zRec?zRec.id:null, cat:cat, desc:desc, byId:currentUser().id, by:userName(currentUser()), at:nowTs, createdAt:nowTs, status:'open', origin:'club', photo:photo, history:[]});
+    logAudit('attention.create','attention',null, zoneName+' · '+catName(cat));
     save(); burst('Point d’attention créé','Suivi ouvert · à vérifier'); setTimeout(render,300);
   };
 }
@@ -1292,7 +1393,7 @@ function advanceAno(a){
 }
 function commitAno(a,nstat,logmsg){
   a.history=a.history||[]; a.history.push({s:nstat, byId:currentUser().id, by:userName(currentUser()), at:Date.now(), msg:logmsg});
-  a.status=nstat; save(); closeSheet(); toast(anoStatusLabel(nstat)); setTimeout(function(){ render(); if(route==='home'||route==='attn'){} openAnoDetail(a.id); },260);
+  a.status=nstat; logAudit('attention.'+nstat,'attention',a.id, (a.zone||'—')+' · '+logmsg); save(); closeSheet(); toast(anoStatusLabel(nstat)); setTimeout(function(){ render(); if(route==='home'||route==='attn'){} openAnoDetail(a.id); },260);
 }
 /* generic sub-form sheet used by workflow */
 function sheetForm(kicker,title,bodyHTML,btnLabel,onSave,afterRender,validate){
@@ -1324,7 +1425,9 @@ function openFighterDetail(fid){
   if($('#fTake')) $('#fTake').onclick=function(){ f.status='in_progress'; f.handledById=currentUser().id; f.handledBy=userName(currentUser()); done('Retour pris en charge'); };
   if($('#fNo')) $('#fNo').onclick=function(){ f.status='dismissed'; f.handledById=currentUser().id; f.handledBy=userName(currentUser()); done('Retour marqué non confirmé'); };
   if($('#fAno')) $('#fAno').onclick=function(){
-    db.anos.unshift({id:id(), zone:f.zone, cat:'other', desc:'D’après un retour Fighter : '+f.text, byId:currentUser().id, by:userName(currentUser()), at:Date.now(), status:'open', origin:'fighter', photo:f.photo||null, history:[]});
+    var zRec=STATE.config.zones.filter(function(x){return x.name===f.zone;})[0];
+    db.anos.unshift({id:id(), establishmentId:EST(), zone:f.zone, zoneId:zRec?zRec.id:null, cat:'other', desc:'D’après un retour Fighter : '+f.text, byId:currentUser().id, by:userName(currentUser()), at:Date.now(), createdAt:Date.now(), status:'open', origin:'fighter', photo:f.photo||null, history:[]});
+    logAudit('attention.create','attention',null, f.zone+' · depuis un retour Fighter');
     f.status='converted'; f.handledById=currentUser().id; f.handledBy=userName(currentUser()); done('Point d’attention créé depuis le retour');
   };
   if($('#fClose')) $('#fClose').onclick=closeSheet;
@@ -1346,7 +1449,7 @@ function openCtlDetail(cid){
       '<button class="srow" id="cConf"><span class="sg"><span class="st">Conforme</span><span class="ss">Rien à signaler</span></span></button>'+
       '<button class="srow" id="cNon"><span class="sg"><span class="st">Non conforme</span><span class="ss">Crée un point d’attention</span></span></button></div>';
     $('#shFoot').innerHTML='';
-    function complete(result){ c.status='completed'; c.result=result; c.completedAt=Date.now(); c.lastAt=Date.now(); c.byId=currentUser().id; c.by=userName(currentUser()); if(result==='not_ok'){ db.anos.unshift({id:id(), zone:c.zone||'—', cat:ctlToAnoCat(c.type), desc:'Non-conformité relevée lors du contrôle : '+ctlName(c.type), byId:currentUser().id, by:userName(currentUser()), at:Date.now(), status:'open', origin:'control', history:[]}); } save(); }
+    function complete(result){ c.status='completed'; c.result=result; c.completedAt=Date.now(); c.lastAt=Date.now(); c.byId=currentUser().id; c.by=userName(currentUser()); if(!c.establishmentId)c.establishmentId=EST(); logAudit('control.complete','control',c.id, ctlName(c.type)+' · '+(result==='ok'?'conforme':'non conforme')); if(result==='not_ok'){ var zRec=STATE.config.zones.filter(function(x){return x.name===c.zone;})[0]; db.anos.unshift({id:id(), establishmentId:EST(), zone:c.zone||'—', zoneId:zRec?zRec.id:null, cat:ctlToAnoCat(c.type), desc:'Non-conformité relevée lors du contrôle : '+ctlName(c.type), byId:currentUser().id, by:userName(currentUser()), at:Date.now(), createdAt:Date.now(), status:'open', origin:'control', history:[]}); logAudit('attention.create','attention',null, (c.zone||'—')+' · non-conformité de contrôle'); } save(); }
     $('#cConf').onclick=function(){ complete('ok'); burst('Contrôle enregistré','Conforme'); setTimeout(render,300); };
     $('#cNon').onclick=function(){ complete('not_ok'); closeSheet(); toast('Contrôle · point d’attention créé'); setTimeout(render,200); };
   };
@@ -1362,7 +1465,7 @@ function openCtlPlan(){
   function refresh(){ $('#cpSave').disabled=!($('.choice.sel',$('#cpType'))&&$('#cpDue').value); }
   $('#shBody').addEventListener('click',refresh); $('#cpDue').addEventListener('input',refresh);
   $('#cpSave').onclick=function(){ var t=$('.choice.sel',$('#cpType')), z=$('.choice.sel',$('#cpZone')), due=$('#cpDue').value;
-    db.ctls.push({id:id(), type:t.dataset.t, zone:z?z.dataset.z:null, due:new Date(due).getTime(), status:'scheduled'}); save(); burst('Contrôle planifié',ctlName(t.dataset.t)); setTimeout(render,300); };
+    db.ctls.push({id:id(), establishmentId:EST(), type:t.dataset.t, zone:z?z.dataset.z:null, due:new Date(due).getTime(), status:'scheduled', createdAt:Date.now()}); logAudit('control.plan','control',null, ctlName(t.dataset.t)); save(); burst('Contrôle planifié',ctlName(t.dataset.t)); setTimeout(render,300); };
 }
 
 /* --------------------------- Réglages CRUD --------------------------- */
@@ -1382,10 +1485,14 @@ function openZoneEdit(zid){
     '<div class="fieldlab">Type</div><div class="choices" id="zT">'+typeOpts+'</div>'+
     '<div class="fieldlab">Description <span class="opt">— optionnel</span></div><input type="text" id="zD" value="'+(z?esc(z.desc||''):'')+'" placeholder="Ex. : surface principale">'+
     '<div class="fieldlab">Statut</div><div class="choices" id="zA"><button class="choice '+((!z||z.active)?'sel':'')+'" data-a="1">Active</button><button class="choice '+((z&&!z.active)?'sel':'')+'" data-a="0">Inactive</button></div>',
-    '<div class="btnrow">'+(z?'<button class="btn ghost" id="zDel" style="border:1px solid var(--line-2);color:var(--brand)">Supprimer</button>':'')+'<button class="btn" id="zS">Enregistrer</button></div>');
+    '<div class="btnrow">'+(z?'<button class="btn ghost" id="zDel" style="border:1px solid var(--line-2);color:var(--brand)">'+(zoneHasHistory(z.id)?'Désactiver':'Supprimer')+'</button>':'')+'<button class="btn" id="zS">Enregistrer</button></div>');
   $('#zS').onclick=function(){ var name=($('#zN').value||'').trim(); if(!name){toast('Nom requis');return;} var type=($('.choice.sel',$('#zT'))||{dataset:{t:'other'}}).dataset.t; var active=($('.choice.sel',$('#zA'))||{dataset:{a:'1'}}).dataset.a==='1'; var desc=($('#zD').value||'').trim();
-    if(z){z.name=name; z.type=type; z.desc=desc; z.active=active;} else STATE.config.zones.push({id:id(),name:name,type:type,desc:desc,active:active}); save(); closeSheet(); toast('Zone enregistrée'); render(); };
-  if(z&&$('#zDel'))$('#zDel').onclick=function(){ if(confirm('Supprimer cette zone ? Les événements passés la conservent dans l’historique.')){ STATE.config.zones=STATE.config.zones.filter(function(x){return x.id!==z.id;}); save(); closeSheet(); toast('Zone supprimée'); render(); } };
+    if(z){ z.name=name; z.type=type; z.zoneTypeId='zt_'+type; z.desc=desc; z.description=desc; z.active=active; z.status=active?'active':'inactive'; if(!active&&!z.deactivatedAt)z.deactivatedAt=Date.now(); if(active)z.deactivatedAt=null; logAudit('zone.update','zone',z.id, name); }
+    else { STATE.config.zones.push({id:id(), establishmentId:EST(), zoneTypeId:'zt_'+type, type:type, name:name, description:desc, desc:desc, status:active?'active':'inactive', active:active, createdAt:Date.now(), deactivatedAt:null}); logAudit('zone.create','zone',null, name); }
+    save(); closeSheet(); toast('Zone enregistrée'); render(); };
+  if(z&&$('#zDel'))$('#zDel').onclick=function(){
+    if(zoneHasHistory(z.id)){ z.active=false; z.status='inactive'; z.deactivatedAt=Date.now(); logAudit('zone.deactivate','zone',z.id, z.name); save(); closeSheet(); toast('Zone désactivée — historique conservé'); render(); return; }
+    if(confirm('Supprimer cette zone ? Aucun historique n’y est associé.')){ STATE.config.zones=STATE.config.zones.filter(function(x){return x.id!==z.id;}); logAudit('zone.delete','zone',z.id, z.name); save(); closeSheet(); toast('Zone supprimée'); render(); } };
 }
 function openProtoEdit(pid){
   var p=pid?protocolById(pid):null;
@@ -1402,12 +1509,37 @@ function openProtoEdit(pid){
     if(p)Object.assign(p,data); else STATE.config.protocols.push(Object.assign({id:id()},data)); save(); closeSheet(); toast('Protocole enregistré'); render(); };
   if(p&&$('#pDel'))$('#pDel').onclick=function(){ if(confirm('Supprimer ce protocole ?')){ STATE.config.protocols=STATE.config.protocols.filter(function(x){return x.id!==p.id;}); save(); closeSheet(); toast('Protocole supprimé'); render(); } };
 }
+function openActionEdit(aid){
+  var a=aid?actionById(aid):null, hist=a?actionHasHistory(a.id):false, reco=a&&a.category==='recommended';
+  var curCode=a?a.opTypeCode:'training_surface_cleaning';
+  var typeOpts=OP_TYPES.map(function(o){return '<button class="choice '+(curCode===o.code?'sel':'')+'" data-c="'+o.code+'">'+esc(o.name)+'</button>';}).join('');
+  var recoNote=reco?'<div class="card soft pad" style="padding:11px 13px;color:var(--ink-2);font-size:12px"><span class="pill info"><span class="pd"></span>Recommandée</span> Action de référence MATSAFE. Vous pouvez la renommer ou la désactiver, sa trace reste dans l’historique.</div>':'';
+  openSheet('Action', a?'Modifier l’action':'Nouvelle action',
+    recoNote+
+    '<div class="fieldlab" style="margin-top:8px">Nom de l’action</div><input type="text" id="acN" value="'+(a?esc(a.name):'')+'" placeholder="Ex. : Désinfection des paos après le cours enfants">'+
+    '<div class="fieldlab">Type d’action <span class="opt">— détermine le protocole</span></div><div class="choices" id="acT">'+typeOpts+'</div>'+
+    '<div class="fieldlab">Statut</div><div class="choices" id="acA"><button class="choice '+((!a||a.status!=='inactive')?'sel':'')+'" data-s="active">Active</button><button class="choice '+((a&&a.status==='inactive')?'sel':'')+'" data-s="inactive">Inactive</button></div>',
+    '<div class="btnrow">'+(a?'<button class="btn ghost" id="acDup" style="border:1px solid var(--line-2)">Dupliquer</button>':'')+'<button class="btn" id="acS">Enregistrer</button></div>'+
+    (a?'<button class="btn ghost" id="acDel" style="border:1px solid var(--line-2);color:var(--brand)">'+(hist||reco?'Désactiver':'Supprimer')+'</button>':''));
+  function collect(){ var nm=($('#acN').value||'').trim(); if(!nm){toast('Nom requis');return null;} var code=($('.choice.sel',$('#acT'))||{dataset:{c:'training_surface_cleaning'}}).dataset.c; var status=($('.choice.sel',$('#acA'))||{dataset:{s:'active'}}).dataset.s; return {name:nm, opTypeCode:code, status:status}; }
+  $('#acS').onclick=function(){ var d=collect(); if(!d)return;
+    if(a){ a.name=d.name; a.opTypeCode=d.opTypeCode; if(a.status!==d.status){ a.status=d.status; a.deactivatedAt=(d.status==='inactive'?Date.now():null); } logAudit('action.update','action',a.id, d.name); }
+    else { STATE.config.actions.push({id:'act_'+id(), establishmentId:EST(), name:d.name, category:'custom', opTypeCode:d.opTypeCode, status:d.status, createdAt:Date.now(), deactivatedAt:(d.status==='inactive'?Date.now():null)}); logAudit('action.create','action',null, d.name); }
+    save(); closeSheet(); toast('Action enregistrée'); render(); };
+  if(a&&$('#acDup'))$('#acDup').onclick=function(){ var d=collect(); if(!d)return; STATE.config.actions.push({id:'act_'+id(), establishmentId:EST(), name:d.name+' (copie)', category:'custom', opTypeCode:d.opTypeCode, status:'active', createdAt:Date.now(), deactivatedAt:null}); logAudit('action.create','action',null, d.name+' (copie)'); save(); closeSheet(); toast('Action dupliquée'); render(); };
+  if(a&&$('#acDel'))$('#acDel').onclick=function(){
+    if(hist||reco){ a.status='inactive'; a.deactivatedAt=Date.now(); logAudit('action.deactivate','action',a.id, a.name); save(); closeSheet(); toast('Action désactivée — historique conservé'); render(); return; }
+    if(confirm('Supprimer cette action ? Aucune opération n’y est reliée.')){ STATE.config.actions=STATE.config.actions.filter(function(x){return x.id!==a.id;}); logAudit('action.delete','action',a.id, a.name); save(); closeSheet(); toast('Action supprimée'); render(); } };
+}
 function openPlanEdit(tid){
   var t=tid?(function(){for(var i=0;i<STATE.config.plan.length;i++)if(STATE.config.plan[i].id===tid)return STATE.config.plan[i];})():null;
   var zones=STATE.config.zones.filter(function(z){return z.active||(t&&z.id===t.zoneId);});
   var st={times:(t&&t.times?t.times.slice():[])};
   var zoneOpts=zones.map(function(z){return '<button class="choice '+((t&&t.zoneId===z.id)?'sel':'')+'" data-z="'+z.id+'">'+esc(z.name)+'</button>';}).join('');
-  var otOpts=OP_TYPES.map(function(o){return '<button class="choice '+((t?t.opTypeCode:'training_surface_cleaning')===o.code?'sel':'')+'" data-o="'+o.code+'">'+esc(o.name)+'</button>';}).join('');
+  var curAid = t? (t.actionId||(actionByCode(t.opTypeCode)&&actionByCode(t.opTypeCode).id)) : (activeActions()[0]&&activeActions()[0].id);
+  var actOpts=activeActions().map(function(a){return '<button class="choice '+(curAid===a.id?'sel':'')+'" data-aid="'+a.id+'" data-c="'+a.opTypeCode+'">'+esc(a.name)+'</button>';}).join('')+
+    '<button class="choice" data-newaction="1">＋ Nouvelle action…</button>';
+  var newTypeOpts=OP_TYPES.map(function(o){return '<button class="choice '+(o.code==='training_surface_cleaning'?'sel':'')+'" data-nt="'+o.code+'">'+esc(o.name)+'</button>';}).join('');
   var frOpts=FREQS.map(function(f){return '<button class="choice '+((t?t.frequency:'daily')===f[0]?'sel':'')+'" data-f="'+f[0]+'">'+esc(f[1])+'</button>';}).join('');
   var dayOpts=WEEKDAYS.map(function(w){return '<button class="choice '+((t&&(t.days||[]).indexOf(w[0])>=0)?'sel':'')+'" data-d="'+w[0]+'">'+w[1]+'</button>';}).join('');
   var respOpts='<button class="choice '+((!t||!t.respKind)?'sel':'')+'" data-rnone="1">Aucun</button>'+
@@ -1415,8 +1547,9 @@ function openPlanEdit(tid){
     ROLES.map(function(r){return '<button class="choice '+((t&&t.respKind==='role'&&t.respRole===r)?'sel':'')+'" data-rrole="'+esc(r)+'">'+esc(r)+'</button>';}).join('');
   var protoOpts='<button class="choice '+((!t||!t.protocolId)?'sel':'')+'" data-pid="">Aucun</button>'+STATE.config.protocols.map(function(p){return '<button class="choice '+(t&&t.protocolId===p.id?'sel':'')+'" data-pid="'+p.id+'">'+esc(p.name)+'</button>';}).join('');
   openSheet('Planification', t?'Modifier l’opération':'Nouvelle opération planifiée',
-    '<div class="fieldlab" style="margin-top:8px">Action <span class="opt">— bibliothèque MATSAFE</span></div><div class="choices" id="plO">'+otOpts+'</div>'+
-    '<div class="fieldlab">Nom affiché <span class="opt">— personnalisable</span></div><input type="text" id="plName" value="'+(t?esc(planActionName(t)):'')+'" placeholder="Nom de l’action">'+
+    '<div class="fieldlab" style="margin-top:8px">Action <span class="opt">— bibliothèque du club</span></div><div class="choices" id="plO">'+actOpts+'</div>'+
+    '<div id="plNewRow" hidden><div class="fieldlab">Nom de la nouvelle action</div><input type="text" id="plNewName" placeholder="Ex. : Désinfection des tapis de renfo">'+
+      '<div class="fieldlab">Type d’action <span class="opt">— détermine le protocole</span></div><div class="choices" id="plNewType">'+newTypeOpts+'</div></div>'+
     '<div class="fieldlab">Zone</div><div class="choices" id="plZ">'+zoneOpts+'</div>'+
     '<div class="fieldlab">Fréquence</div><div class="choices" id="plF">'+frOpts+'</div>'+
     '<div id="plDaysRow" hidden><div class="fieldlab">Jours concernés</div><div class="choices" id="plD" data-multi="1">'+dayOpts+'</div></div>'+
@@ -1428,9 +1561,9 @@ function openPlanEdit(tid){
     '<div class="fieldlab">Consigne courte <span class="opt">— optionnel</span></div><input type="text" id="plInstr" value="'+(t?esc(t.instruction||''):'')+'" placeholder="Ex. : balayer puis désinfecter">'+
     '<div class="fieldlab">Protocole <span class="opt">— optionnel</span></div><div class="choices" id="plP">'+protoOpts+'</div>'+
     '<div class="fieldlab">Statut</div><div class="choices" id="plActive"><button class="choice '+((!t||t.active)?'sel':'')+'" data-v="1">Actif</button><button class="choice '+((t&&!t.active)?'sel':'')+'" data-v="0">Suspendu</button></div>',
-    '<div class="btnrow">'+(t?'<button class="btn ghost" id="plDup" style="border:1px solid var(--line-2)">Dupliquer</button>':'')+'<button class="btn" id="plS">Enregistrer</button></div>'+(t?'<button class="btn ghost" id="plDel" style="border:1px solid var(--line-2);color:var(--brand)">Supprimer</button>':''));
-  // Nom auto quand on choisit une action de la bibliothèque
-  $$('#plO .choice').forEach(function(b){b.addEventListener('click',function(){ var nm=$('#plName'); var known=OP_TYPES.some(function(x){return x.name===(nm.value||'').trim();}); if(!(nm.value||'').trim()||known) nm.value=opType(b.dataset.o).name; });});
+    '<div class="btnrow">'+(t?'<button class="btn ghost" id="plDup" style="border:1px solid var(--line-2)">Dupliquer</button>':'')+'<button class="btn" id="plS">Enregistrer</button></div>'+(t?'<button class="btn ghost" id="plDel" style="border:1px solid var(--line-2);color:var(--brand)">'+(db.ops.some(function(o){return o.scheduleId===t.id||o.planId===t.id;})?'Suspendre':'Supprimer')+'</button>':''));
+  // Créer une action personnalisée : révèle le formulaire quand « Nouvelle action » est choisi
+  $$('#plO .choice').forEach(function(b){b.addEventListener('click',function(){ $('#plNewRow').hidden = !b.dataset.newaction; });});
   // Éditeur d'heures
   function drawTimes(){ st.times.sort(); $('#plTimes').innerHTML = st.times.length ? st.times.map(function(tm){return '<button class="choice sel" data-tm="'+tm+'" type="button">'+tm+' ✕</button>';}).join('') : '<span style="color:var(--faint);font-size:13px;align-self:center">Aucune heure — « dans la journée »</span>';
     $$('#plTimes [data-tm]').forEach(function(b){b.onclick=function(){ st.times=st.times.filter(function(x){return x!==b.dataset.tm;}); drawTimes(); };}); }
@@ -1448,20 +1581,30 @@ function openPlanEdit(tid){
   updateFreqUI();
   function collect(){
     var z=$('.choice.sel',$('#plZ')); if(!z){toast('Zone requise');return null;}
-    var o=$('.choice.sel',$('#plO')), f=curFreq(), pd=$('.choice.sel',$('#plP')), rsp=$('.choice.sel',$('#plResp'));
-    var code=o?o.dataset.o:'training_surface_cleaning', name=($('#plName').value||'').trim();
+    var actChip=$('.choice.sel',$('#plO')), f=curFreq(), pd=$('.choice.sel',$('#plP')), rsp=$('.choice.sel',$('#plResp'));
+    var actionId=null, code='training_surface_cleaning';
+    if(actChip && actChip.dataset.newaction){
+      var nm=($('#plNewName').value||'').trim(); if(!nm){toast('Nom de l’action requis');return null;}
+      code=($('.choice.sel',$('#plNewType'))||{dataset:{nt:'training_surface_cleaning'}}).dataset.nt;
+      var na={id:'act_'+id(), establishmentId:EST(), name:nm, category:'custom', opTypeCode:code, status:'active', createdAt:Date.now(), deactivatedAt:null};
+      STATE.config.actions.push(na); logAudit('action.create','action',na.id, nm); actionId=na.id;
+    } else if(actChip && actChip.dataset.aid){ actionId=actChip.dataset.aid; code=actChip.dataset.c||code; }
+    else { toast('Action requise'); return null; }
     var days=$$('#plD .choice.sel').map(function(x){return +x.dataset.d;});
     var active=($('.choice.sel',$('#plActive'))||{dataset:{v:'1'}}).dataset.v==='1';
     var respKind=null, respUserId=null, respRole=null;
     if(rsp){ if(rsp.dataset.ruser){respKind='person'; respUserId=rsp.dataset.ruser;} else if(rsp.dataset.rrole){respKind='role'; respRole=rsp.dataset.rrole;} }
-    var data={zoneId:z.dataset.z, opTypeCode:code, actionName:(name&&name!==opType(code).name?name:''), frequency:f, days:days, times:st.times.slice(), respKind:respKind, respUserId:respUserId, respRole:respRole, assignee:'', instruction:($('#plInstr').value||'').trim(), protocolId:(pd&&pd.dataset.pid)?pd.dataset.pid:null, active:active};
+    var data={zoneId:z.dataset.z, actionId:actionId, opTypeCode:code, actionName:'', frequency:f, days:days, times:st.times.slice(), respKind:respKind, respUserId:respUserId, respRole:respRole, assignee:'', instruction:($('#plInstr').value||'').trim(), protocolId:(pd&&pd.dataset.pid)?pd.dataset.pid:null, active:active, status:active?'active':'inactive'};
     if(f==='monthly') data.monthDay=Math.max(1,Math.min(28,parseInt($('#plMonth').value||'1',10)||1));
     if(f==='once') data.onceAt=$('#plOnce').value? new Date($('#plOnce').value).getTime(): Date.now();
     return data;
   }
-  $('#plS').onclick=function(){ var data=collect(); if(!data)return; if(t)Object.assign(t,data); else STATE.config.plan.push(Object.assign({id:id()},data)); save(); closeSheet(); toast('Planification enregistrée'); render(); };
-  if(t&&$('#plDup'))$('#plDup').onclick=function(){ var data=collect(); if(!data)return; STATE.config.plan.push(Object.assign({id:id()},data)); save(); closeSheet(); toast('Opération dupliquée'); render(); };
-  if(t&&$('#plDel'))$('#plDel').onclick=function(){ if(confirm('Supprimer cette opération planifiée ? Les événements passés restent dans l’historique.')){ STATE.config.plan=STATE.config.plan.filter(function(x){return x.id!==t.id;}); save(); closeSheet(); toast('Opération supprimée'); render(); } };
+  $('#plS').onclick=function(){ var data=collect(); if(!data)return; if(t){Object.assign(t,data); logAudit('schedule.update','schedule',t.id, planActionName(t)+' · '+(zoneById(t.zoneId)||{name:'—'}).name);} else { var ns=Object.assign({id:id(), establishmentId:EST(), createdAt:Date.now()},data); STATE.config.plan.push(ns); logAudit('schedule.create','schedule',ns.id, planActionName(ns)); } save(); closeSheet(); toast('Planification enregistrée'); render(); };
+  if(t&&$('#plDup'))$('#plDup').onclick=function(){ var data=collect(); if(!data)return; var ns=Object.assign({id:id(), establishmentId:EST(), createdAt:Date.now()},data); STATE.config.plan.push(ns); logAudit('schedule.create','schedule',ns.id, planActionName(ns)+' (copie)'); save(); closeSheet(); toast('Opération dupliquée'); render(); };
+  if(t&&$('#plDel'))$('#plDel').onclick=function(){
+    var hasHist=db.ops.some(function(o){return o.scheduleId===t.id||o.planId===t.id;});
+    if(hasHist){ if(confirm('Cette opération a déjà des réalisations : elle sera suspendue (jamais supprimée) pour préserver l’historique.')){ t.active=false; t.status='inactive'; logAudit('schedule.deactivate','schedule',t.id, planActionName(t)); save(); closeSheet(); toast('Opération suspendue — historique conservé'); render(); } return; }
+    if(confirm('Supprimer cette opération planifiée ? Aucune réalisation n’y est associée.')){ STATE.config.plan=STATE.config.plan.filter(function(x){return x.id!==t.id;}); logAudit('schedule.delete','schedule',t.id, planActionName(t)); save(); closeSheet(); toast('Opération supprimée'); render(); } };
 }
 function openUserEdit(uid){
   var u=uid?userById(uid):null;
@@ -1491,6 +1634,29 @@ function openSwitchUser(){
   $$('#shBody [data-su]').forEach(function(b){b.onclick=function(){ STATE.session.userId=b.dataset.su; save(); closeSheet(); toast('Utilisateur changé'); render(); };});
 }
 function switchUser(uid){ STATE.session.userId=uid; save(); toast('Utilisateur changé'); render(); }
+
+/* ------------------------------ Journal d'activité (audit) ------------------------------ */
+var AUDIT_LABELS={
+  'operation.validate':'Opération validée','operation.extra':'Passage supplémentaire',
+  'attention.create':'Point d’attention créé','attention.in_progress':'Point pris en charge','attention.corrected':'Correction effectuée','attention.verified':'Point vérifié','attention.closed':'Point clôturé',
+  'control.plan':'Contrôle planifié','control.complete':'Contrôle réalisé',
+  'zone.create':'Zone créée','zone.update':'Zone modifiée','zone.deactivate':'Zone désactivée','zone.delete':'Zone supprimée',
+  'action.create':'Action créée','action.update':'Action modifiée','action.deactivate':'Action désactivée','action.delete':'Action supprimée',
+  'schedule.create':'Planification créée','schedule.update':'Planification modifiée','schedule.deactivate':'Planification suspendue','schedule.delete':'Planification supprimée'
+};
+function auditLabel(a){ return AUDIT_LABELS[a]||a; }
+function openJournal(){
+  var log=(STATE.records.audit||[]);
+  var rows='',last='';
+  log.slice(0,150).forEach(function(e){ var dl=dayLabel(e.at); if(dl!==last){rows+='<div class="tl-day">'+dl+'</div>'; last=dl;}
+    rows+='<div class="tl-item" style="cursor:default"><span class="tl-rail">'+timeFmt(e.at)+'</span><span class="tl-mid"><span class="n"></span></span>'+
+      '<span class="tl-body"><span class="tl-t">'+esc(auditLabel(e.action))+'</span><span class="tl-d">'+esc(e.detail||'')+'</span><span class="tl-by">'+esc(e.userName||'')+'</span></span></div>'; });
+  var body = log.length
+    ? '<p class="pintro" style="margin:2px 0 10px">Chaque action importante est horodatée et reliée à la personne qui l’a effectuée. Ce journal, non modifiable, prépare la future base de données.</p><div class="tl">'+rows+'</div>'
+    : emptyBox('Journal vide','Les actions réalisées apparaîtront ici.');
+  openSheet('Traçabilité','Journal d’activité', body, '<button class="btn ghost" id="jClose" style="border:1px solid var(--line-2)">Fermer</button>');
+  $('#jClose').onclick=closeSheet;
+}
 
 /* ------------------------------ Bilan ------------------------------ */
 function genBilan(){
@@ -1544,7 +1710,7 @@ function buildAndPrint(from,to,label){
   var anos=db.anos.filter(function(a){return a.at>=from&&a.at<=to;}).sort(function(a,b){return a.at-b.at;});
   var ctls=db.ctls.filter(function(c){return (c.completedAt&&c.completedAt>=from)||(c.status!=='completed'&&c.due>=from&&c.due<=to);});
   function row(cells){return '<tr>'+cells.map(function(c){return '<td style="padding:6px 8px;border-bottom:1px solid #ddd;font-size:12px;vertical-align:top">'+c+'</td>';}).join('')+'</tr>';}
-  var opsT=ops.length?'<table style="width:100%;border-collapse:collapse"><tr>'+['Date','Heure','Zone','Opération','Par','Résultat'].map(function(h){return '<th style="text-align:left;padding:6px 8px;border-bottom:2px solid #111;font-size:11px;text-transform:uppercase">'+h+'</th>';}).join('')+'</tr>'+ops.map(function(o){var t=opType(o.type);return row([new Date(o.at).toLocaleDateString('fr-FR'),timeFmt(o.at),esc(o.zone||''),esc(t.full)+(o.slot?' · '+o.slot:''),esc(o.by||''),o.anomaly?'Anomalie':'Conforme']);}).join('')+'</table>':'<p style="color:#666">Aucune opération.</p>';
+  var opsT=ops.length?'<table style="width:100%;border-collapse:collapse"><tr>'+['Date','Heure','Zone','Opération','Par','Résultat'].map(function(h){return '<th style="text-align:left;padding:6px 8px;border-bottom:2px solid #111;font-size:11px;text-transform:uppercase">'+h+'</th>';}).join('')+'</tr>'+ops.map(function(o){return row([new Date(o.at).toLocaleDateString('fr-FR'),timeFmt(o.at),esc(o.zone||''),esc(opActionFull(o))+(o.slot?' · '+o.slot:'')+(o.extra?' · suppl.':''),esc(o.by||''),o.anomaly?'Anomalie':'Conforme']);}).join('')+'</table>':'<p style="color:#666">Aucune opération.</p>';
   var anoT=anos.length?'<table style="width:100%;border-collapse:collapse"><tr>'+['Date','Zone','Nature','Description','Statut'].map(function(h){return '<th style="text-align:left;padding:6px 8px;border-bottom:2px solid #111;font-size:11px;text-transform:uppercase">'+h+'</th>';}).join('')+'</tr>'+anos.map(function(a){return row([new Date(a.at).toLocaleDateString('fr-FR'),esc(a.zone),catName(a.cat),esc(a.desc),anoStatusLabel(a.status)]);}).join('')+'</table>':'<p style="color:#666">Aucun point d’attention.</p>';
   var ctlT=ctls.length?'<table style="width:100%;border-collapse:collapse"><tr>'+['Échéance','Contrôle','Zone','Statut'].map(function(h){return '<th style="text-align:left;padding:6px 8px;border-bottom:2px solid #111;font-size:11px;text-transform:uppercase">'+h+'</th>';}).join('')+'</tr>'+ctls.map(function(c){return row([new Date(c.completedAt||c.due).toLocaleDateString('fr-FR'),ctlName(c.type),esc(c.zone||'—'),ctlStatus(c)[1]]);}).join('')+'</table>':'<p style="color:#666">Aucun contrôle.</p>';
   $('#printArea').innerHTML='<div class="rp-brand">MATSAFE CLUB</div><h2>Registre — '+esc(label)+'</h2><div class="meta">'+esc(STATE.club.name)+' · '+esc(STATE.club.city||'')+' · édité le '+new Date().toLocaleDateString('fr-FR')+'</div>'+
