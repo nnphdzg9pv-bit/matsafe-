@@ -211,6 +211,41 @@
   .rc-problem{display:block; width:100%; text-align:center; margin-top:15px; background:none; border:0; cursor:pointer; color:var(--ink-2); font-family:var(--cond); font-weight:700; text-transform:uppercase; letter-spacing:.04em; font-size:12px; padding:8px}
   .rc-problem:hover{color:var(--brand)}
 
+  /* En-tête de journée (Aujourd'hui) — bandeau tinté + bloc date (inspiration premium) */
+  .dayhero{background:var(--card-todo); border:1px solid var(--card-todo-line); border-radius:var(--radius); padding:20px 20px 18px; margin-bottom:20px}
+  .dayhero .dh-eyebrow{font-family:var(--cond); font-weight:700; text-transform:uppercase; letter-spacing:.12em; font-size:11px; color:var(--card-todo-ic)}
+  .dayhero .dh-title{font-family:var(--cond); font-weight:900; text-transform:uppercase; letter-spacing:.004em; font-size:clamp(34px,7vw,50px); line-height:.92; margin-top:4px}
+  .dayhero .dh-row{display:flex; gap:12px; margin-top:16px; flex-wrap:wrap}
+  .datechip{flex:none; background:var(--ink); color:#fff; border-radius:16px; padding:13px 17px; display:flex; flex-direction:column; justify-content:center; min-width:86px}
+  .datechip .d{font-family:var(--cond); font-weight:900; font-size:30px; line-height:.86}
+  .datechip .m{font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:rgba(255,255,255,.72); margin-top:5px}
+  .dh-stat{flex:1 1 200px; min-width:170px; background:rgba(255,255,255,.62); border:1px solid rgba(22,21,15,.05); border-radius:16px; padding:12px 16px; display:flex; flex-direction:column; justify-content:center}
+  .dh-stat .k{font-family:var(--cond); font-weight:700; text-transform:uppercase; letter-spacing:.08em; font-size:11px; color:var(--ink-2)}
+  .dh-stat .v{font-family:var(--cond); font-weight:800; font-size:21px; line-height:1; margin-top:4px}
+  .dh-stat .s{font-size:12.5px; color:var(--ink-2); margin-top:4px; line-height:1.4}
+
+  /* En-tête de section avec bouton rond « + » et compteur (Members (2) +) */
+  .shead.hx{align-items:center}
+  .shead .shl{display:flex; align-items:center; gap:10px; min-width:0}
+  .addr{flex:none; width:34px; height:34px; border-radius:50%; display:grid; place-items:center; background:var(--ink); color:#fff; border:0; cursor:pointer}
+  .addr:hover{background:#000} .addr svg{width:17px;height:17px}
+  .mcluster{display:flex; align-items:center}
+  .mcluster .ma{width:30px; height:30px; border-radius:50%; background:var(--ink); color:#fff; display:grid; place-items:center; font-family:var(--cond); font-weight:800; font-size:11.5px; border:2px solid var(--surface); margin-left:-8px}
+  .mcluster .ma:first-child{margin-left:0}
+
+  /* Liste « objectifs » — pastille marqueur + intitulé (Contrôles) */
+  .goalrow{display:flex; align-items:center; gap:15px; width:100%; text-align:left; cursor:pointer; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-sm); padding:15px 16px; box-shadow:var(--shadow)}
+  .goalrow:hover{box-shadow:var(--shadow-lg)}
+  .goalmark{flex:none; width:44px; height:44px; border-radius:50%; display:grid; place-items:center; background:var(--surface-2); border:1px solid var(--line); color:var(--ink)}
+  .goalmark svg{width:20px;height:20px}
+  .goalrow.attn .goalmark{background:var(--brand-soft); border-color:#F0D7D2; color:var(--brand)}
+  .goalrow.warn .goalmark{background:var(--warn-soft); border-color:#EAD9B4; color:var(--warn)}
+  .goalrow.ok .goalmark{background:var(--good-soft); border-color:#CFE4D6; color:var(--good)}
+  .goalg{flex:1 1 auto; min-width:0}
+  .goaleye{display:block; font-family:var(--cond); font-weight:700; text-transform:uppercase; letter-spacing:.05em; font-size:11px; color:var(--faint)}
+  .goalt{display:block; font-family:var(--cond); font-weight:800; text-transform:uppercase; letter-spacing:.01em; font-size:18px; line-height:1.05; margin-top:2px}
+  .goalrow .lchev{color:var(--faint); flex:none}
+
   /* pills (never color-only: dot + label) */
   .pill{display:inline-flex; align-items:center; gap:7px; font-family:var(--cond); font-weight:700; text-transform:uppercase;
     letter-spacing:.04em; font-size:11.5px; padding:5px 11px; border-radius:var(--radius-pill); white-space:nowrap; border:1px solid transparent}
@@ -942,6 +977,13 @@ var ZTYPE_IC={
   other:svgIc('<path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M18 6l-2 2M8 16l-2 2"/>')
 };
 function zoneTypeIconFor(g){ var z=(g&&g.zoneId)?zoneById(g.zoneId):null; return ZTYPE_IC[z?z.type:'other']||ZTYPE_IC.other; }
+var IC_PLUS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+/* En-tête de section : titre + compteur + bouton rond « + » (motif Members (2) +) */
+function sheadAdd(title, count, act, extraLeft){
+  var c=(count||count===0)?'<span class="pill ghost"><span class="pd"></span>'+count+'</span>':'';
+  return '<div class="shead hx rz"><div class="shl"><h2>'+esc(title)+'</h2>'+c+(extraLeft||'')+'</div>'+
+    (act?'<button class="addr" data-act="'+act+'" aria-label="Ajouter">'+IC_PLUS+'</button>':'')+'</div>';
+}
 /* Regroupe la journée par zone + action : une seule carte par zone qui montre
    l'état actuel (dernier passage, nombre de passages) et l'action suivante.
    Les réalisations restent des traces indépendantes ; le détail vit dans le Registre. */
@@ -1057,8 +1099,16 @@ function viewToday(){
   var occ=todayOccurrences(), done=0; occ.forEach(function(o){if(occDone(o.task,o.slot))done++;});
   var total=occ.length, xtra=extraToday();
   var xline = xtra>0 ? ' <b style="color:var(--brand)">+ '+xtra+' passage'+(xtra>1?'s':'')+' supplémentaire'+(xtra>1?'s':'')+'</b>.' : '';
-  var head='<div class="peyebrow rz">'+esc(dateHead(Date.now()))+'</div><h1 class="ptitle rz">Aujourd’hui</h1>'+
-    '<p class="pintro rz">'+ (total? done+' / '+total+' opérations <b>prévues</b> réalisées.'+xline+' Un passage fait&nbsp;? Validez-le — ou ajoutez un passage supplémentaire en deux clics.' : 'Aucune opération planifiée aujourd’hui.') +'</p>';
+  var now=new Date();
+  var statV = total? done+' / '+total+' réalisées' : 'Aucune aujourd’hui';
+  var statS = total? ((total-done)+' encore à faire'+(xtra>0?' · +'+xtra+' supplémentaire'+(xtra>1?'s':''):'')) : 'Ajoutez des opérations dans Planification.';
+  var head='<div class="dayhero rz">'+
+    '<div class="dh-eyebrow">'+esc(dateHead(Date.now()))+'</div>'+
+    '<h1 class="dh-title">Aujourd’hui</h1>'+
+    '<div class="dh-row">'+
+      '<div class="datechip"><span class="d">'+now.getDate()+'</span><span class="m">'+esc(now.toLocaleDateString('fr-FR',{month:'short'}))+' · '+timeFmt(Date.now())+'</span></div>'+
+      '<div class="dh-stat"><span class="k">Opérations prévues</span><span class="v">'+esc(statV)+'</span><span class="s">'+esc(statS)+'</span></div>'+
+    '</div></div>';
   var groups=todayGroups(), gi=groups.map(function(g,i){return {g:g,i:i};});
   var todoG=gi.filter(function(x){return x.g.next;});
   var demandG=gi.filter(function(x){return x.g.onDemand && !x.g.hasSlots;});
@@ -1116,13 +1166,13 @@ function viewAttn(){
   var open=openAnos(), closed=db.anos.filter(function(a){return a.status==='closed';});
   var head='<div class="peyebrow rz">Suivi · hygiène & sécurité</div><h1 class="ptitle rz">Points d’attention</h1>'+
     '<p class="pintro rz">Un point d’attention suit un problème de sa détection à sa résolution. L’historique de chaque correction est conservé.</p>';
-  var openBlock = open.length
-    ? '<div class="shead rz"><h2>À suivre</h2><span class="pill ghost"><span class="pd"></span>'+open.length+'</span></div><div class="stack rz">'+[...open].sort(function(a,b){return b.at-a.at;}).map(attnCardHTML).join('')+'</div>'
-    : '<div class="rz">'+emptyBox('Aucun point ouvert','Tout est en ordre côté hygiène.')+'</div>';
+  var openBlock = sheadAdd('À suivre', open.length, 'report') + (open.length
+    ? '<div class="stack rz">'+[...open].sort(function(a,b){return b.at-a.at;}).map(attnCardHTML).join('')+'</div>'
+    : '<div class="rz">'+emptyBox('Aucun point ouvert','Tout est en ordre côté hygiène.')+'</div>');
   var closedBlock = closed.length
     ? '<div class="shead rz"><h2>Clos récemment</h2></div><div class="stack rz">'+[...closed].sort(function(a,b){return (b.closedAt||b.at)-(a.closedAt||a.at);}).slice(0,6).map(attnCardHTML).join('')+'</div>'
     : '';
-  return head + '<div class="rz" style="margin-top:16px"><button class="btn brand" data-act="report" style="width:auto;padding:13px 20px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg> Signaler un point d’attention</button></div>' + openBlock + closedBlock;
+  return head + openBlock + closedBlock;
 }
 
 /* ------------------------------ FIGHTER ------------------------------ */
@@ -1147,19 +1197,21 @@ function viewCtl(){
   var doneC=ctls.filter(function(c){return c.status==='completed';});
   var head='<div class="peyebrow rz">Prévention</div><h1 class="ptitle rz">Contrôles</h1>'+
     '<p class="pintro rz">Les vérifications périodiques du club. Simple et clair : ce qui est à réaliser, et ce qui est planifié.</p>';
-  function block(title,arr){ return arr.length? '<div class="shead rz"><h2>'+title+'</h2></div><div class="stack rz">'+arr.map(ctlCardHTML).join('')+'</div>' : ''; }
-  return head +
-    (todo.length? block('À réaliser',todo) : '<div class="rz">'+emptyBox('Aucun contrôle à réaliser','Tout est à jour.')+'</div>') +
-    block('Planifiés',planned) + block('Réalisés',doneC) +
-    '<div class="rz" style="margin-top:18px"><button class="btn ghost" data-act="ctlplan" style="width:auto;padding:13px 20px;border:1px solid var(--line-2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg> Planifier un contrôle</button></div>';
+  var todoBlock = sheadAdd('À réaliser', todo.length, 'ctlplan') + (todo.length
+    ? '<div class="stack rz">'+todo.map(ctlGoalHTML).join('')+'</div>'
+    : '<div class="rz">'+emptyBox('Aucun contrôle à réaliser','Tout est à jour.')+'</div>');
+  function block(title,arr){ return arr.length? '<div class="shead rz"><h2>'+title+'</h2><span class="pill ghost"><span class="pd"></span>'+arr.length+'</span></div><div class="stack rz">'+arr.map(ctlGoalHTML).join('')+'</div>' : ''; }
+  return head + todoBlock + block('Planifiés',planned) + block('Réalisés',doneC);
 }
-function ctlCardHTML(c){
+function ctlGoalHTML(c){
   var s=ctlStatus(c);
-  var next = c.status==='completed' ? ('Réalisé le '+shortDate(c.completedAt||c.due)) : ('Échéance '+shortDate(c.due));
-  var lastTxt = c.lastAt ? 'Dernier : '+shortDate(c.lastAt) : 'Premier contrôle';
-  return '<button class="ctlcard" data-ctl="'+c.id+'"><span class="cg"><span class="ct">'+esc(ctlName(c.type))+'</span>'+
-    '<span class="cs"><b>'+esc(c.zone||'—')+'</b> · '+esc(next)+' · '+esc(lastTxt)+'</span></span>'+
-    pill(s[0]==='ok'?'ok':(s[0]==='attn'?'attn':(s[0]==='warn'?'warn':(s[0]==='info'?'info':'mute'))), s[1])+'</button>';
+  var kind=s[0]==='ok'?'ok':(s[0]==='attn'?'attn':(s[0]==='warn'?'warn':'info'));
+  var when = c.status==='completed' ? ('Réalisé le '+shortDate(c.completedAt||c.due)) : ('Échéance '+shortDate(c.due));
+  var mark = c.status==='completed' ? IC_CHECK : IC_CLOCK;
+  return '<button class="goalrow '+kind+'" data-ctl="'+c.id+'">'+
+    '<span class="goalmark">'+mark+'</span>'+
+    '<span class="goalg"><span class="goaleye">'+esc((c.zone||'Général')+' · '+when)+'</span><span class="goalt">'+esc(ctlName(c.type))+'</span></span>'+
+    pill(kind, s[1])+CHEV+'</button>';
 }
 
 /* --------------------------- ÉTABLISSEMENT --------------------------- */
@@ -1168,16 +1220,16 @@ function viewEtab(){
   var zones=STATE.config.zones, protos=STATE.config.protocols, plan=STATE.config.plan;
   var head='<div class="peyebrow rz">Configuration</div><h1 class="ptitle rz">Établissement</h1>';
   var clubCard='<button class="srow rz" data-act="clubedit"><span class="sg"><span class="st">'+esc(cl.name)+'</span><span class="ss">'+esc(cl.city||'')+' · labellisé depuis '+esc(cl.since||'—')+'</span></span>'+CHEV+'</button>';
-  var zonesBlock='<div class="shead rz"><h2>Zones</h2><button class="lk" data-act="zoneadd">+ Ajouter</button></div>'+
+  var zonesBlock=sheadAdd('Zones', zones.length, 'zoneadd')+
     '<div class="rz card soft pad" style="padding:11px 13px;color:var(--ink-2);font-size:12px;margin-bottom:11px">Les zones <b>réelles</b> du club. Chaque zone a un <b>type</b> (tatami, sanitaires…) et reste dans l’historique même si elle est désactivée.</div>'+
     '<div class="stack rz">'+
     zones.map(function(z){return '<button class="srow'+(z.active?'':' off')+'" data-zone="'+z.id+'"><span class="sg"><span class="st">'+esc(z.name)+'</span><span class="ss">'+esc(zoneTypeLabel(z)+(z.desc?' · '+z.desc:''))+'</span></span>'+(z.active?'':pill('mute','Inactive'))+CHEV+'</button>';}).join('')+'</div>';
   var actions=STATE.config.actions||[];
-  var actionsBlock='<div class="shead rz"><h2>Actions</h2><button class="lk" data-act="actionadd">+ Ajouter</button></div>'+
+  var actionsBlock=sheadAdd('Actions', actions.length, 'actionadd')+
     '<div class="rz card soft pad" style="padding:11px 13px;color:var(--ink-2);font-size:12px;margin-bottom:11px">La bibliothèque d’actions : les gestes recommandés MATSAFE et vos actions personnalisées. Chaque opération planifiée ou réalisée y est reliée.</div>'+
     '<div class="stack rz">'+
     actions.map(function(a){return '<button class="srow'+(a.status==='inactive'?' off':'')+'" data-action="'+a.id+'"><span class="sg"><span class="st">'+esc(a.name)+'</span><span class="ss">'+esc(actionCatLabel(a)+' · '+opType(a.opTypeCode).name)+'</span></span>'+(a.status==='inactive'?pill('mute','Inactive'):pill('ok','Active'))+CHEV+'</button>';}).join('')+'</div>';
-  var protoBlock='<div class="shead rz"><h2>Protocoles & produits</h2><button class="lk" data-act="protoadd">+ Ajouter</button></div><div class="stack rz">'+
+  var protoBlock=sheadAdd('Protocoles & produits', protos.length, 'protoadd')+'<div class="stack rz">'+
     (protos.length?protos.map(function(p){return '<button class="srow" data-proto="'+p.id+'"><span class="sg"><span class="st">'+esc(p.name)+'</span><span class="ss">'+esc(p.product||'—')+'</span></span>'+CHEV+'</button>';}).join(''):emptyBox('Aucun protocole'))+'</div>';
   var planLink='<div class="shead rz"><h2>Planification</h2></div><div class="stack rz">'+
     '<button class="srow" data-nav="planif"><span class="li" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);margin-right:2px">'+NAV_IC.planif+'</span><span class="sg"><span class="st">Gérer la planification</span><span class="ss">'+plan.length+' opération'+(plan.length>1?'s':'')+' planifiée'+(plan.length>1?'s':'')+' · fréquences, heures, responsables</span></span>'+CHEV+'</button></div>';
@@ -1193,10 +1245,10 @@ function viewEquipe(){
   var active=activeUsers(), inactive=STATE.users.filter(function(u){return u.status==='inactive';});
   var head='<div class="peyebrow rz">Personnes autorisées</div><h1 class="ptitle rz">Équipe</h1>'+
     '<p class="pintro rz">Les personnes qui participent à la gestion et aux opérations d’hygiène. Chaque action reste associée à qui l’a réellement réalisée — même après un départ. Aucune donnée RH, aucune donnée de pratiquant.</p>';
-  var actBlock='<div class="shead rz"><h2>Membres actifs</h2><span class="pill ghost"><span class="pd"></span>'+active.length+'</span></div><div class="stack rz">'+(active.length?active.map(memRowHTML).join(''):emptyBox('Aucun membre actif'))+'</div>';
+  var cluster='<span class="mcluster">'+active.slice(0,5).map(function(u){return '<span class="ma">'+esc(initialsU(u))+'</span>';}).join('')+'</span>';
+  var actBlock=sheadAdd('Membres actifs', active.length, 'useradd', cluster)+'<div class="stack rz">'+(active.length?active.map(memRowHTML).join(''):emptyBox('Aucun membre actif'))+'</div>';
   var inaBlock=inactive.length?'<div class="shead rz"><h2>Anciens membres</h2></div><div class="rz card soft pad" style="padding:13px;color:var(--ink-2);font-size:12.5px;margin-bottom:11px"><span class="pill mute"><span class="pd"></span>Conservés</span> Leurs actions passées restent à leur nom dans l’historique.</div><div class="stack rz">'+inactive.map(memRowHTML).join('')+'</div>':'';
-  var add='<div class="rz" style="margin-top:16px"><button class="btn brand" data-act="useradd" style="width:auto;padding:13px 20px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg> Ajouter un membre</button></div>';
-  return head+actBlock+inaBlock+add;
+  return head+actBlock+inaBlock;
 }
 function openUserDetail(uid){
   var u=userById(uid); if(!u)return; var s=userStats(uid), off=u.status==='inactive', me=u.id===STATE.session.userId, hist=userHasHistory(uid);
@@ -1256,11 +1308,10 @@ function viewPlanif(){
   var active=STATE.config.plan.filter(function(t){return t.active;});
   var suspended=STATE.config.plan.filter(function(t){return !t.active;});
   var head='<div class="peyebrow rz">Ce qui est prévu</div><h1 class="ptitle rz">Planification</h1>'+
-    '<p class="pintro rz">Définissez ici ce qui <b>doit</b> se produire. <b>Aujourd’hui</b> affiche automatiquement les échéances du jour ; le <b>Registre</b> conserve ce qui a réellement été réalisé.</p>'+
-    '<div class="rz" style="margin-top:16px"><button class="btn brand" data-act="planadd" style="width:auto;padding:13px 20px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg> Nouvelle opération planifiée</button></div>';
-  var act = active.length
-    ? '<div class="shead rz"><h2>Actives</h2><span class="pill ghost"><span class="pd"></span>'+active.length+'</span></div><div class="stack rz">'+active.map(planCardHTML).join('')+'</div>'
-    : '<div class="rz">'+emptyBox('Aucune opération planifiée','Ajoutez votre première opération planifiée.')+'</div>';
+    '<p class="pintro rz">Définissez ici ce qui <b>doit</b> se produire. <b>Aujourd’hui</b> affiche automatiquement les échéances du jour ; le <b>Registre</b> conserve ce qui a réellement été réalisé.</p>';
+  var act = sheadAdd('Actives', active.length, 'planadd') + (active.length
+    ? '<div class="stack rz">'+active.map(planCardHTML).join('')+'</div>'
+    : '<div class="rz">'+emptyBox('Aucune opération planifiée','Ajoutez votre première opération planifiée.')+'</div>');
   var sus = suspended.length ? '<div class="shead rz"><h2>Suspendues</h2></div><div class="stack rz">'+suspended.map(planCardHTML).join('')+'</div>' : '';
   return head+act+sus;
 }
