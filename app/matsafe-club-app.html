@@ -6,8 +6,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#F4F3EF; --surface:#FFFFFF; --surface-2:#FBFAF7;
+    --bg:#0A0A0A; --surface:#FFFFFF; --surface-2:#FBFAF7;
     --ink:#16150F; --ink-2:#605B52; --faint:#928C81;
+    /* coque sombre : fond noir en second plan, contenu clair par-dessus */
+    --chrome:#0A0A0A; --chrome-2:#161514; --chrome-line:#2A2826;
+    --on:#EDEBE6; --on-2:#B7B2A8; --on-faint:#8A857C;
     --line:#E7E3DB; --line-2:#DBD6CC;
     --brand:#C83830; --brand-strong:#AE2E23; --brand-soft:#FBECE9;
     --good:#2E6B4E; --good-soft:#E9F1EC;
@@ -484,6 +487,56 @@
     #printArea .meta{color:#666; font-size:12px}
   }
   @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+
+  /* =========================================================================
+     COQUE SOMBRE — fond noir en second plan, contenu clair en surimpression.
+     Seule la « chrome » (sidebar, barres, canevas) passe en noir ; toutes les
+     cartes, lignes et fiches gardent leurs surfaces claires et flottent dessus.
+     ========================================================================= */
+  body{background:var(--chrome)}
+  /* Sidebar */
+  .sidebar{background:var(--chrome); border-right-color:var(--chrome-line)}
+  .sb-baseline{color:var(--on-faint)}
+  .navgrp .lbl{color:var(--on-faint)}
+  .snav{color:var(--on-2)}
+  .snav:hover{background:rgba(255,255,255,.06); color:#fff}
+  .snav.on{background:#fff; color:var(--chrome)}
+  .snav.on svg{opacity:1}
+  .snav.on .nb{background:var(--brand); color:#fff}
+  .sb-user{border-top-color:var(--chrome-line)}
+  .sb-user .av{background:#fff; color:var(--chrome)}
+  .sb-user .u-n{color:#fff}
+  .sb-user .u-r{color:var(--on-2)}
+  /* Barre du haut (mobile) + barre d'onglets (mobile) */
+  .mtop{background:rgba(10,10,10,.86)}
+  .iconbtn{background:var(--chrome-2); border-color:var(--chrome-line); color:#fff}
+  .tabbar{background:rgba(10,10,10,.92); border-top-color:var(--chrome-line)}
+  .tab{color:var(--on-faint)}
+  .tab.on{color:#fff}
+  .tab.plus .fab{border-color:var(--chrome)}
+  /* Typographie posée directement sur le canevas noir */
+  .hello .hi{color:#fff}
+  .hello .club .cn{color:var(--on)}
+  .hello .sub{color:var(--on-2)}
+  .peyebrow{color:var(--on-faint)}
+  .ptitle{color:#fff}
+  .shead h2{color:#fff}
+  .pintro{color:var(--on-2)} .pintro b{color:#fff}
+  .backlink{color:var(--on-2)}
+  /* Compteur & bouton « + » d'en-tête de section, sur canevas noir */
+  .shead .pill.ghost{color:var(--on-2); border-color:var(--chrome-line)}
+  .addr{background:#fff; color:var(--chrome)} .addr:hover{background:var(--on)}
+  /* Registre — frise chronologique sur canevas */
+  .tl-day{color:var(--on-faint)}
+  .tl-rail{color:var(--on)}
+  .tl-t{color:#fff}
+  .tl-d{color:var(--on-2)}
+  .tl-by{color:var(--on-faint)}
+  .tl-mid .n{background:#fff}
+  .tl-mid::before{background:var(--chrome-line)}
+  .fchip.on{background:#fff; color:var(--chrome); border-color:#fff}
+  /* Bloc hero Accueil (déjà sombre) — bordure pour le détacher du noir */
+  .today{border:1px solid var(--chrome-line)}
 </style>
 
 <div class="app" id="app">
