@@ -109,7 +109,8 @@
 
   .shead{display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:30px 2px 14px}
   .shead h2{font-family:var(--cond); font-weight:800; text-transform:uppercase; letter-spacing:.02em; font-size:22px; line-height:1}
-  .shead .lk{font-family:var(--cond); font-weight:700; text-transform:uppercase; letter-spacing:.05em; font-size:12px; color:var(--brand); background:none; border:0; cursor:pointer; padding:0}
+  .shead .lk{font-family:var(--cond); font-weight:700; text-transform:uppercase; letter-spacing:.05em; font-size:12px; color:var(--brand); background:none; border:0; cursor:pointer; padding:0; white-space:nowrap; flex:0 0 auto}
+  .homecol-side .shead h2{font-size:19px}
   .shead .lk:hover{color:var(--brand-strong)}
   .ptitle{font-family:var(--cond); font-weight:900; text-transform:uppercase; letter-spacing:.004em; font-size:clamp(30px,6vw,44px); line-height:.94}
   .peyebrow{font-family:var(--cond); font-weight:700; text-transform:uppercase; letter-spacing:.12em; font-size:11px; color:var(--faint); margin-bottom:6px}
@@ -213,6 +214,11 @@
   .alertrow .ar-t{display:block; font-family:var(--cond); font-weight:800; text-transform:uppercase; letter-spacing:.01em; font-size:15.5px; line-height:1.05}
   .alertrow .ar-s{display:block; color:var(--ink-2); font-size:12.5px; margin-top:2px}
   .alertrow .lchev{color:var(--faint); flex:none}
+
+  /* Accueil — disposition deux colonnes sur ordinateur (principal / secondaire) */
+  .homegrid{display:grid; grid-template-columns:1fr; gap:2px}
+  .homecol-main,.homecol-side{min-width:0}
+  @media (min-width:1000px){ .homegrid{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:28px; align-items:start} .page.wide{max-width:1140px} }
   .zc-actions{display:flex; gap:9px; margin-top:15px}
   .zc-actions button{flex:1 1 auto; display:inline-flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; font-family:var(--cond); font-weight:800; text-transform:uppercase; letter-spacing:.03em; font-size:13.5px; padding:13px 12px; border-radius:13px; border:1px solid transparent}
   .zc-actions button svg{width:15px;height:15px;flex:none}
@@ -285,6 +291,14 @@
   .keycard .kc-sub{display:block; font-size:12.5px; color:var(--ink-2); margin-top:3px}
   .keycard.over .kc-sub{color:var(--brand); font-weight:600}
   .keycard .lchev{color:var(--faint); flex:none}
+
+  /* bilan — indicateurs du mois */
+  .bilangrid{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:6px 0 4px}
+  @media (min-width:560px){ .bilangrid{grid-template-columns:1fr 1fr 1fr 1fr} }
+  .bilanstat{background:var(--surface-2); border:1px solid var(--line); border-radius:14px; padding:12px 12px 11px}
+  .bilanstat .bs-v{font-family:var(--cond); font-weight:900; font-size:26px; line-height:1; color:var(--ink)}
+  .bilanstat .bs-k{font-family:var(--cond); font-weight:700; text-transform:uppercase; letter-spacing:.03em; font-size:11.5px; color:var(--ink-2); margin-top:6px; line-height:1.2}
+  .bilanstat .bs-s{font-size:11px; color:var(--faint); margin-top:3px; line-height:1.3}
 
   /* pills (never color-only: dot + label) */
   .pill{display:inline-flex; align-items:center; gap:7px; font-family:var(--cond); font-weight:700; text-transform:uppercase;
@@ -419,6 +433,12 @@
   @media (min-width:640px){ .sheet{bottom:auto; top:50%; transform:translate(-50%,-46%) scale(.98); opacity:0; border-radius:24px; max-height:88dvh}
     .sheet.on{transform:translate(-50%,-50%) scale(1); opacity:1} }
   .sh-grab{width:40px;height:5px;border-radius:99px;background:var(--line-2);margin:10px auto 2px}
+  .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+  .sh-close{position:absolute; top:10px; right:12px; z-index:6; width:34px; height:34px; border-radius:50%; display:grid; place-items:center; background:var(--surface-2); border:1px solid var(--line); color:var(--ink-2); cursor:pointer}
+  .sh-close:hover{background:var(--surface); color:var(--ink)}
+  .sh-close svg{width:18px;height:18px}
+  .sh-close:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+  :focus-visible{outline:2px solid var(--ink); outline-offset:2px}
   @media (min-width:640px){ .sh-grab{display:none} }
   .sh-head{padding:12px 24px 8px}
   .sh-k{font-family:var(--cond); font-weight:700; text-transform:uppercase; letter-spacing:.08em; font-size:11px; color:var(--brand)}
@@ -583,12 +603,14 @@
 <div class="scrim" id="scrim"></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="shTitle">
   <div class="sh-grab"></div>
+  <button class="sh-close" id="shClose" type="button" aria-label="Fermer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
   <div class="sh-head"><div class="sh-k" id="shKicker"></div><h3 class="sh-title" id="shTitle">—</h3></div>
   <div class="sh-body" id="shBody"></div>
   <div class="sh-foot" id="shFoot"></div>
   <div class="burst" id="burst"><div class="bring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><div class="btt" id="burstTitle">Enregistré</div><div class="bss" id="burstSub"></div></div>
 </div>
 <div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span id="toastTx"></span></div>
+<div id="ariaLive" class="sr-only" aria-live="polite" role="status"></div>
 <div id="printArea" aria-hidden="true"></div>
 
 <script>
@@ -615,11 +637,23 @@ var FREQS=[['daily','Chaque jour'],['some_days','Certains jours'],['multi_daily'
 var FREQ_NEEDS_DAYS=['some_days','weekly'];
 var ANO_CATS=[['hygiene','Hygiène'],['equipment','Équipement'],['product','Consommable'],['damage','Dégât'],['installation','Installation'],['first_aid','Premiers secours'],['other','Autre']];
 var CTL_TYPES=[['first_aid_kit_check','Trousse de secours'],['products_check','Produits d’entretien'],['equipment_check','Équipements'],['documentation_check','Documentation']];
+var CTL_FREQS=[['once','Ponctuel'],['weekly','Hebdomadaire'],['monthly','Mensuel'],['quarterly','Trimestriel'],['custom','Personnalisée']];
+function ctlFreqLabel(f){for(var i=0;i<CTL_FREQS.length;i++)if(CTL_FREQS[i][0]===f)return CTL_FREQS[i][1];return 'Ponctuel';}
+/* Prochaine échéance d'un contrôle récurrent */
+function ctlNextDue(from, freq, customDays){
+  var d=new Date(from);
+  if(freq==='weekly') d.setDate(d.getDate()+7);
+  else if(freq==='monthly') d.setMonth(d.getMonth()+1);
+  else if(freq==='quarterly') d.setMonth(d.getMonth()+3);
+  else if(freq==='custom') d.setDate(d.getDate()+(parseInt(customDays,10)||30));
+  else return null; // ponctuel : pas de récurrence
+  return d.getTime();
+}
 var ZONE_TYPES=[['training_area','Surface d’entraînement'],['tatami','Tatami'],['ring','Ring'],['cage','Cage MMA'],['heavy_bags','Sacs de frappe'],['strength','Zone musculation'],['changing_room','Vestiaire'],['shower','Douche'],['restroom','Sanitaire'],['shared_equipment','Équipement partagé'],['first_aid','Premiers secours'],['reception','Accueil'],['other','Autre']];
 var DEFAULT_ZONES=[['Tatami principal','tatami'],['Tatami 2','tatami'],['Vestiaires & douches','changing_room'],['Sanitaires','restroom'],['Matériel partagé','shared_equipment'],['Réception','reception'],['Premiers secours','first_aid']];
 var WEEKDAYS=[[1,'Lun'],[2,'Mar'],[3,'Mer'],[4,'Jeu'],[5,'Ven'],[6,'Sam'],[0,'Dim']];
 var FIGHTER_INBOX='matsafe_fighter_inbox';   // clé écrite par l'app MATSAFE Fighter (même origine)
-var STORE='matsafe_club_v4';
+var STORE='matsafe_club_v5';
 
 /* Points d'attention : cycle de vie en vocabulaire clair */
 var ANO_FLOW=[
@@ -663,12 +697,31 @@ function zoneTypeLabel(z){ if(z&&z.zoneTypeId){var zt=zoneTypeById(z.zoneTypeId)
 /* Identité d'une occurrence prévue : schedule|date|heure */
 function occId(scheduleId, ts, slot){ var d=new Date(ts); return scheduleId+'|'+d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate())+'|'+(slot||''); }
 /* Journal d'audit (préparation PostgreSQL) */
-function logAudit(action, entityType, entityId, detail){
+/* Horloge « serveur » simulée : un seul point de vérité temporel, prêt à être
+   remplacé par l'horodatage renvoyé par l'API MATSAFE Network. */
+function serverNow(){ return Date.now(); }
+/* Journal d'audit structuré (préparation API + MATSAFE Network) — non plafonné.
+   extra = { oldValue, newValue, origin } ; origin ∈ 'club' | 'fighter' | 'control'. */
+function logAudit(action, entityType, entityId, detail, extra){
   if(!STATE.records.audit) STATE.records.audit=[];
-  var u=currentUser();
-  STATE.records.audit.unshift({id:id(), establishmentId:EST(), at:Date.now(), userId:u?u.id:null, userName:u?userName(u):'', action:action, entityType:entityType||'', entityId:entityId||'', detail:detail||''});
-  if(STATE.records.audit.length>500) STATE.records.audit.length=500;
+  extra=extra||{}; var u=currentUser(), ts=serverNow();
+  STATE.records.audit.unshift({
+    id:id(), establishmentId:EST(), userId:u?u.id:null, userName:u?userName(u):'',
+    at:ts, serverAt:ts, action:action, entityType:entityType||'', entityId:entityId||'',
+    oldValue:(extra.oldValue!==undefined?extra.oldValue:null), newValue:(extra.newValue!==undefined?extra.newValue:null),
+    origin:extra.origin||'club', detail:detail||''
+  });
 }
+/* Instantané figé d'un protocole appliqué (l'historique ne change jamais si le protocole évolue) */
+function protoSnapshot(pid){ var p=protocolById(pid); if(!p)return null; return {id:p.id, name:p.name||'', product:p.product||'', dilution:p.dilution||'', contactTime:p.contactTime||'', rinse:!!p.rinse, note:p.note||''}; }
+function protocolHasHistory(pid){ return db.ops.some(function(o){return o.protocolId===pid||(o.protocolSnapshot&&o.protocolSnapshot.id===pid);}) || STATE.config.plan.some(function(t){return t.protocolId===pid;}); }
+/* Délai cible d'un point d'attention, calculé selon la nature + la criticité de la zone (jamais choisi à la main) */
+var ANO_TARGET_H={hygiene:24, product:48, damage:72, installation:72, first_aid:6, equipment:48, other:48};
+function zoneCritical(zoneName, zoneId){ var z=zoneId?zoneById(zoneId):null; var t=z?z.type:''; if(!t){ var n=(zoneName||'').toLowerCase(); return /sanitaire|vestiaire|douche|secours/.test(n); } return (t==='restroom'||t==='changing_room'||t==='shower'||t==='first_aid'); }
+function anoTargetHours(a){ var base=ANO_TARGET_H[a.cat]||48; if(zoneCritical(a.zone,a.zoneId)) base=Math.round(base/2); if(a.origin==='control') base=Math.min(base,24); return Math.max(4,base); }
+function anoDueAt(a){ return (a.createdAt||a.at) + anoTargetHours(a)*3600e3; }
+function anoOnTime(a){ var due=anoDueAt(a); var ref=(a.status==='closed')?(a.closedAt||a.at):serverNow(); return ref<=due; }
+function delayTxt(hours){ if(hours<24) return hours+' h'; var d=Math.round(hours/24); return d+' jour'+(d>1?'s':''); }
 function daysLabel(days){ if(!days||!days.length)return ''; return WEEKDAYS.filter(function(w){return days.indexOf(w[0])>=0;}).map(function(w){return w[1];}).join(', '); }
 /* Résumé lisible d'une fréquence de plan (pour l'affichage) */
 function freqSummary(t){
@@ -746,24 +799,31 @@ function fixMojibake(s){if(typeof s!=='string'||!/[ÃÂ]/.test(s))return s;try{v
 function repair(o){if(Array.isArray(o))return o.map(repair);if(o&&typeof o==='object'){for(var k in o)o[k]=repair(o[k]);return o;}return fixMojibake(o);}
 
 /* ------------------------- État & démo ------------------------- */
-function seedRecords(plan, zid, aid){
+function seedRecords(plan, zid, aid, protos){
   var now=Date.now(), H=3600e3, D=24*H, EE='est_cube';
+  var PROTOBYID={}; (protos||[]).forEach(function(p){PROTOBYID[p.id]=p;});
   function at(h,m){var d=new Date();d.setHours(h,m,0,0);return d.getTime();}
   function pe(zoneName,code){var z=zid(zoneName), a=aid(code);for(var i=0;i<plan.length;i++)if(plan[i].zoneId===z&&plan[i].actionId===a)return plan[i];return {};}
   var pT1=pe('Tatami 1','training_surface_cleaning'), pT2=pe('Tatami 2','training_surface_cleaning'), pSan=pe('Sanitaires','restroom_cleaning');
   var SIMON='u_ref', KARIM='u_coach', LUCAS='u_alt', CLAIRE='u_ger';
   var NM={u_ref:'Simon Ehrlacher', u_coach:'Karim Benali', u_alt:'Lucas Martin', u_ger:'Claire Dupont'};
+  var LINK1=id(); // relie l'opération « anomalie constatée » à son point d'attention
   // Réalisation = trace indépendante et immuable. Reliée au user_id + action_id + zone_id,
   // avec instantané du nom (by / action / zone) et occurrence prévue (scheduleOccurrenceId).
+  function protoSnap(pid){ var p=pid?PROTOBYID[pid]:null; return p?{id:pid,name:p.name,product:p.product,dilution:p.dilution,contactTime:p.contactTime,rinse:p.rinse,note:p.note}:null; }
+  function slotTsOn(ts,slot){ if(!slot)return null; var p=slot.split(':'); var d=new Date(ts); d.setHours(+p[0]||0,+p[1]||0,0,0); return d.getTime(); }
   function mk(o){
     o.id=id(); o.establishmentId=EE;
     o.actionId=aid(o.code); o.actionName=o.actionName; delete o.code;
     o.performedById=o.byId; o.performedBy=o.by; o.performedAt=o.at;
-    o.status='done'; o.createdAt=o.at;
+    o.status='done'; o.createdAt=o.at; o.serverAt=o.at;
     o.scheduleId=o.planId||null;
     o.scheduleOccurrenceId=o.planId?occId(o.planId,o.at,o.slot):null;
-    o.scheduledAt=o.planId?o.at:null;
+    o.scheduledAt=o.planId?slotTsOn(o.at,o.slot):null;
     o.source=o.extra?'extra':'planned';
+    o.protocolSnapshot=protoSnap(o.protocolId||null);
+    var pts=o.scheduledAt; o.late = !!(pts && o.at>pts+15*60e3); o.lateMinutes = o.late? Math.round((o.at-pts)/60e3):0;
+    if(!('linkId' in o)) o.linkId=null;
     return o;
   }
   var R={
@@ -774,18 +834,20 @@ function seedRecords(plan, zid, aid){
       mk({code:'training_surface_cleaning', type:'training_surface_cleaning', actionName:'Nettoyage de la cage après sparring', zone:'Zone grappling', zoneId:zid('Zone grappling'), byId:CLAIRE, by:NM[CLAIRE], at:at(15,40), anomaly:false, planId:null, protocolId:null, slot:'', extra:true}),
       mk({code:'training_surface_cleaning', type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Tatami 1', zoneId:zid('Tatami 1'), byId:LUCAS, by:NM[LUCAS], at:now-1*D-4*H, anomaly:false, planId:pT1.id||null, slot:'18:00'}),
       mk({code:'training_surface_cleaning', type:'training_surface_cleaning', actionName:'Nettoyage et désinfection', zone:'Tatami 2', zoneId:zid('Tatami 2'), byId:KARIM, by:NM[KARIM], at:now-1*D-3*H, anomaly:false, planId:pT2.id||null, slot:'20:00'}),
-      mk({code:'restroom_cleaning', type:'restroom_cleaning', actionName:'Nettoyage sanitaires', zone:'Sanitaires', zoneId:zid('Sanitaires'), byId:LUCAS, by:NM[LUCAS], at:now-1*D-6*H, anomaly:true, planId:pSan.id||null, slot:'19:00'})
+      mk({code:'restroom_cleaning', type:'restroom_cleaning', actionName:'Nettoyage sanitaires', zone:'Sanitaires', zoneId:zid('Sanitaires'), byId:LUCAS, by:NM[LUCAS], at:now-1*D-6*H, anomaly:true, planId:pSan.id||null, protocolId:pSan.protocolId||null, slot:'19:00', linkId:LINK1, anoId:LINK1})
     ],
     anos:[
-      {id:id(), zone:'Sanitaires', cat:'product', desc:'Plus de savon dans les sanitaires.', byId:KARIM, by:NM[KARIM], at:now-20*H, status:'open', origin:'club', history:[]},
-      {id:id(), zone:'Tatami 1', cat:'damage', desc:'Angle du tatami légèrement décollé côté cage.', byId:SIMON, by:NM[SIMON], at:now-2*D, status:'in_progress', assignedToId:SIMON, assignedTo:NM[SIMON], origin:'club', history:[{s:'in_progress',by:NM[SIMON],at:now-1.6*D}]},
-      {id:id(), zone:'Vestiaires & douches', cat:'hygiene', desc:'Moisissure visible dans la douche 3.', byId:LUCAS, by:NM[LUCAS], at:now-6*D, status:'closed', assignedToId:SIMON, assignedTo:NM[SIMON], correctiveAction:'Traitement anti-moisissure + reprise du joint.', correctedAt:now-4*D, verifiedById:SIMON, verifiedBy:NM[SIMON], verifiedAt:now-3.5*D, closedAt:now-3*D, origin:'club', history:[]}
+      {id:id(), zone:'Sanitaires', zoneId:zid('Sanitaires'), cat:'product', desc:'Plus de savon dans les sanitaires.', byId:KARIM, by:NM[KARIM], at:now-20*H, createdAt:now-20*H, status:'open', origin:'club', history:[{s:'open', byId:KARIM, by:NM[KARIM], at:now-20*H, msg:'Signalé'}]},
+      {id:LINK1, zone:'Sanitaires', zoneId:zid('Sanitaires'), cat:'hygiene', desc:'Sol glissant constaté pendant le nettoyage du soir.', byId:LUCAS, by:NM[LUCAS], at:now-1*D-6*H, createdAt:now-1*D-6*H, status:'in_progress', assignedToId:LUCAS, assignedTo:NM[LUCAS], origin:'club', linkId:LINK1, history:[{s:'open', byId:LUCAS, by:NM[LUCAS], at:now-1*D-6*H, msg:'Signalé pendant une opération'},{s:'in_progress', byId:LUCAS, by:NM[LUCAS], at:now-1*D-5*H, msg:'Pris en charge — '+NM[LUCAS]}]},
+      {id:id(), zone:'Tatami 1', zoneId:zid('Tatami 1'), cat:'damage', desc:'Angle du tatami légèrement décollé côté cage.', byId:SIMON, by:NM[SIMON], at:now-2*D, createdAt:now-2*D, status:'in_progress', assignedToId:SIMON, assignedTo:NM[SIMON], origin:'club', history:[{s:'open', byId:SIMON, by:NM[SIMON], at:now-2*D, msg:'Signalé'},{s:'in_progress', byId:SIMON, by:NM[SIMON], at:now-1.6*D, msg:'Pris en charge — '+NM[SIMON]}]},
+      {id:id(), zone:'Vestiaires & douches', zoneId:zid('Vestiaires & douches'), cat:'hygiene', desc:'Moisissure visible dans la douche 3.', byId:LUCAS, by:NM[LUCAS], at:now-6*D, createdAt:now-6*D, status:'closed', assignedToId:SIMON, assignedTo:NM[SIMON], correctiveAction:'Traitement anti-moisissure + reprise du joint.', correctedAt:now-4*D, verifiedById:SIMON, verifiedBy:NM[SIMON], verifiedAt:now-3.5*D, closedAt:now-3*D, origin:'club', history:[{s:'open',byId:LUCAS,by:NM[LUCAS],at:now-6*D,msg:'Signalé'},{s:'in_progress',byId:SIMON,by:NM[SIMON],at:now-5.5*D,msg:'Pris en charge — '+NM[SIMON]},{s:'corrected',byId:SIMON,by:NM[SIMON],at:now-4*D,msg:'Correction effectuée'},{s:'verified',byId:SIMON,by:NM[SIMON],at:now-3.5*D,msg:'Vérifié — '+NM[SIMON]},{s:'closed',byId:SIMON,by:NM[SIMON],at:now-3*D,msg:'Clos'}]}
     ],
     ctls:[
-      {id:id(), type:'first_aid_kit_check', zone:'Premiers secours', due:now-1*D, status:'scheduled', lastAt:now-31*D},
-      {id:id(), type:'products_check', zone:'Réserve', due:now+1*D, status:'scheduled', lastAt:now-29*D},
-      {id:id(), type:'equipment_check', zone:'Tatami 1', due:now+5*D, status:'scheduled', lastAt:now-25*D},
-      {id:id(), type:'documentation_check', zone:null, due:now-3*D, status:'completed', result:'ok', completedAt:now-3*D, byId:SIMON, by:NM[SIMON]}
+      {id:id(), seriesId:'ctl_fak', type:'first_aid_kit_check', zone:'Premiers secours', freq:'monthly', due:now-1*D, status:'scheduled', lastAt:now-31*D, createdAt:now-31*D},
+      {id:id(), seriesId:'ctl_prd', type:'products_check', zone:'Réserve', freq:'weekly', due:now+1*D, status:'scheduled', lastAt:now-6*D, createdAt:now-6*D},
+      {id:id(), seriesId:'ctl_equ', type:'equipment_check', zone:'Tatami 1', freq:'quarterly', due:now+20*D, status:'scheduled', lastAt:now-70*D, createdAt:now-70*D},
+      {id:id(), seriesId:'ctl_doc', type:'documentation_check', zone:null, freq:'monthly', due:now-3*D, status:'completed', result:'ok', completedAt:now-3*D, byId:SIMON, by:NM[SIMON], createdAt:now-33*D},
+      {id:id(), seriesId:'ctl_doc', type:'documentation_check', zone:null, freq:'monthly', due:now+27*D, status:'scheduled', lastAt:now-3*D, createdAt:now-3*D}
     ],
     fighter:[
       {id:id(), zone:'Douches', text:'Il n’y avait plus de savon après l’entraînement du soir.', at:now-3*H, status:'to_verify', origin:'fighter', history:[]},
@@ -798,6 +860,41 @@ function seedRecords(plan, zid, aid){
       {id:id(), establishmentId:EE, at:at(8,12),  userId:SIMON, userName:NM[SIMON], action:'operation.validate', entityType:'operationRecord', entityId:'', detail:'Tatami 1 · Nettoyage et désinfection (prévu 08:00)'}
     ]
   };
+  // Historique de démonstration crédible : les jours précédents sont majoritairement réalisés
+  // (traces conformes), avec quelques occurrences non faites qui restent visibles comme « manquées ».
+  (function(){
+    var USERS=[SIMON,LUCAS,KARIM,CLAIRE], ui=0;
+    var ZNM={}; SEED_ZONES.forEach(function(z){ var zi=zid(z[0]); if(zi) ZNM[zi]=z[0]; });
+    var seed=730217; function rnd(){ seed=(seed*1103515245+12345)&0x7fffffff; return seed/0x7fffffff; }
+    var DONE={}; R.ops.forEach(function(o){ if(o.scheduleOccurrenceId) DONE[o.scheduleOccurrenceId]=true; }); // ne pas doubler les traces déjà semées
+    var ms=new Date(); ms.setDate(1); ms.setHours(0,0,0,0); var startTs=Math.max(ms.getTime(), now-20*D);
+    for(var off=1; off<=20; off++){
+      var dts=now-off*D; if(dts<startTs) break;
+      var day=new Date(dts), wd=day.getDay(), dom=day.getDate();
+      for(var pi=0; pi<plan.length; pi++){
+        var t=plan[pi];
+        if(!t.active||t.frequency==='after_use') continue;
+        if(String(t.actionId||'').indexOf('act_')!==0) continue;
+        var f=t.frequency, due=false;
+        if(f==='daily'||f==='multi_daily') due=true;
+        else if(f==='some_days'||f==='weekly') due=(t.days||[]).indexOf(wd)>=0;
+        else if(f==='monthly') due=(t.monthDay||1)===dom;
+        else if(f==='once') due=false;
+        if(!due) continue;
+        var code=t.actionId.slice(4), nm=opType(code).full, znm=ZNM[t.zoneId]||'—';
+        var times=(t.times&&t.times.length)?t.times:[''];
+        for(var si=0; si<times.length; si++){
+          var slot=times[si];
+          if(t.id && DONE[occId(t.id, dts, slot)]) continue;    // occurrence déjà tracée à la main
+          if(rnd()<0.13) continue;                              // ~13% non réalisées → « manquées »
+          var pp=(slot||'08:00').split(':'); var sd=new Date(day); sd.setHours(+pp[0]||0,+pp[1]||0,0,0);
+          var lateMin=(rnd()<0.1)?Math.round(20+rnd()*45):0;    // quelques retards réalistes
+          var by=USERS[ui++%USERS.length];
+          R.ops.push(mk({code:code, type:code, actionName:nm, zone:znm, zoneId:t.zoneId, byId:by, by:NM[by], at:sd.getTime()+lateMin*60e3, anomaly:false, planId:t.id||null, protocolId:t.protocolId||null, slot:slot}));
+        }
+      }
+    }
+  })();
   ['ops','anos','ctls','fighter'].forEach(function(k){R[k].forEach(function(x){if(!x.establishmentId)x.establishmentId=EE;});});
   return R;
 }
@@ -819,8 +916,8 @@ function defaultState(){
   var zoneTypes=ZONE_TYPES.map(function(t){return {id:'zt_'+t[0], code:t[0], name:t[1]};});
   var zones=SEED_ZONES.map(function(z){return {id:id(), establishmentId:EE, zoneTypeId:'zt_'+z[1], type:z[1], name:z[0], description:z[2], desc:z[2], status:'active', active:true, createdAt:CT, deactivatedAt:null};});
   function zByName(n){for(var i=0;i<zones.length;i++)if(zones[i].name===n)return zones[i].id;return null;}
-  var protoTatami={id:id(), name:'Désinfection tatami', product:'Détergent-désinfectant surfaces (EN 14476)', dilution:'20 ml/L', contactTime:'5 min', rinse:false, note:'Balayage puis passage microfibre. Laisser sécher à l’air libre.'};
-  var protoSanit={id:id(), name:'Sanitaires', product:'Nettoyant sanitaire désinfectant', dilution:'Prêt à l’emploi', contactTime:'5 min', rinse:true, note:'Cuvettes, lavabos, poignées. Rincer les surfaces en contact avec la peau.'};
+  var protoTatami={id:id(), name:'Désinfection tatami', product:'Détergent-désinfectant surfaces (EN 14476)', dilution:'20 ml/L', contactTime:'5 min', rinse:false, note:'Balayage puis passage microfibre. Laisser sécher à l’air libre.', status:'active', active:true, createdAt:CT};
+  var protoSanit={id:id(), name:'Sanitaires', product:'Nettoyant sanitaire désinfectant', dilution:'Prêt à l’emploi', contactTime:'5 min', rinse:true, note:'Cuvettes, lavabos, poignées. Rincer les surfaces en contact avec la peau.', status:'active', active:true, createdAt:CT};
   // Bibliothèque d'actions : recommandées MATSAFE (depuis OP_TYPES) + personnalisées du club
   var actions=OP_TYPES.map(function(o){return {id:'act_'+o.code, establishmentId:EE, name:o.full, category:'recommended', opTypeCode:o.code, status:'active', createdAt:CT, deactivatedAt:null};});
   actions.push({id:id(), establishmentId:EE, name:'Nettoyage de la cage après sparring', category:'custom', opTypeCode:'training_surface_cleaning', status:'active', createdAt:CT, deactivatedAt:null});
@@ -848,7 +945,7 @@ function defaultState(){
     ],
     session:{establishmentId:EE, clubId:EE, userId:'u_ref'},
     config:{zoneTypes:zoneTypes, zones:zones, actions:actions, protocols:[protoTatami, protoSanit], plan:plan},
-    records: seedRecords(plan, zByName, aid)
+    records: seedRecords(plan, zByName, aid, [protoTatami, protoSanit])
   };
 }
 var STATE, db;
@@ -905,15 +1002,43 @@ function afterUseTasks(){
 function occDone(task,slot){
   return db.ops.filter(function(o){return isToday(o.at)&&o.planId===task.id&&(o.slot||'')===(slot||'');}).sort(function(a,b){return b.at-a.at;})[0]||null;
 }
+/* Occurrences prévues NON réalisées (manquantes) sur une période — restent visibles dans l'historique */
+function missedOccurrences(fromTs){
+  var out=[], now=serverNow(), doneOcc={};
+  db.ops.forEach(function(o){ if(o.scheduleOccurrenceId) doneOcc[o.scheduleOccurrenceId]=true; });
+  var start=new Date(fromTs); start.setHours(0,0,0,0);
+  for(var d=new Date(start); d.getTime()<=now; d.setDate(d.getDate()+1)){
+    var wd=d.getDay(), dom=d.getDate(), day=new Date(d);
+    STATE.config.plan.forEach(function(t){
+      if(!t.active||t.frequency==='after_use') return;
+      var f=t.frequency, due=false;
+      if(f==='daily'||f==='multi_daily') due=true;
+      else if(f==='some_days'||f==='weekly') due=(t.days||[]).indexOf(wd)>=0;
+      else if(f==='monthly') due=(t.monthDay||1)===dom;
+      else if(f==='once') due=!!t.onceAt && new Date(t.onceAt).toDateString()===day.toDateString();
+      if(!due) return;
+      var z=zoneById(t.zoneId), zoneName=z?z.name:'—';
+      (t.times||[]).forEach(function(slot){ if(!slot)return;
+        var p=slot.split(':'); var st=new Date(day); st.setHours(+p[0]||0,+p[1]||0,0,0); var sts=st.getTime();
+        if(sts>=now-30*60e3) return; // laisser 30 min de tolérance avant de marquer manquée
+        if(doneOcc[occId(t.id,sts,slot)]) return;
+        out.push({at:sts, zoneName:zoneName, actionName:planActionFull(t), scheduleId:t.id, slot:slot});
+      });
+    });
+  }
+  return out;
+}
 function openAnos(){return db.anos.filter(function(a){return a.status!=='closed';});}
 function newFighter(){return db.fighter.filter(function(f){return f.status==='to_verify';});}
 function ctlStatus(c){
   if(c.status==='completed')return['ok','Terminé'];
   if(c.status==='cancelled')return['mute','Annulé'];
-  if(c.due<Date.now())return['attn','En retard'];
-  if(c.due<=Date.now()+2*864e5)return['warn','À réaliser'];
+  if(c.due<serverNow())return['attn','En retard'];
+  if(c.due<=serverNow()+3*864e5)return['warn','Bientôt à réaliser'];
   return['info','Planifié'];
 }
+/* Contrôles à traiter (en retard ou bientôt) */
+function ctlsDue(){ return db.ctls.filter(function(c){ if(c.status==='completed'||c.status==='cancelled')return false; var s=ctlStatus(c); return s[1]==='En retard'||s[1]==='Bientôt à réaliser'; }); }
 
 /* =====================================================================
    NAVIGATION
@@ -967,8 +1092,8 @@ function navBtn(n){
   return '<button class="snav" data-nav="'+n.id+'">'+NAV_IC[n.id]+'<span>'+esc(n.label)+'</span>'+nb+'</button>';
 }
 function setActiveNav(){
-  $$('.snav',$('#sidebar')).forEach(function(b){b.classList.toggle('on', b.dataset.nav===route);});
-  $$('.tab',$('#tabbar')).forEach(function(b){ if(!b.dataset.nav){b.classList.remove('on');return;} var on = b.dataset.nav===route || (b.dataset.nav==='__club' && ['menu','etab','equipe','params','planif','attn','ctl','fighter'].indexOf(route)>=0); b.classList.toggle('on',on); });
+  $$('.snav',$('#sidebar')).forEach(function(b){ var on=b.dataset.nav===route; b.classList.toggle('on', on); if(on)b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current'); });
+  $$('.tab',$('#tabbar')).forEach(function(b){ if(!b.dataset.nav){b.classList.remove('on');b.removeAttribute('aria-current');return;} var on = b.dataset.nav===route || (b.dataset.nav==='__club' && ['menu','etab','equipe','params','planif','attn','ctl','fighter'].indexOf(route)>=0); b.classList.toggle('on',on); if(on)b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current'); });
 }
 function go(r){ route=r; render(); var m=$('#main'); if(m)m.scrollTop=0; window.scrollTo(0,0); }
 
@@ -992,6 +1117,7 @@ function render(){
   else if(route==='etab') html=viewEtab();
   else if(route==='equipe') html=viewEquipe();
   else if(route==='params') html=viewParams();
+  page.className='page'+(route==='home'?' wide':'');
   page.innerHTML='<div class="screen on">'+html+'</div>';
   wire();
   save();
@@ -1034,36 +1160,47 @@ function viewHome(){
       '<div class="rz">'+supInviteCard()+'</div>'
     : '<div class="rz">'+emptyBox('Aucune opération planifiée','Ajoutez des opérations dans Planification.')+'</div>';
 
-  // points d'attention
-  var attn=openAnos().slice(0,3);
+  // colonne secondaire — retards, points d'attention, retours Fighter (par urgence)
+  var overdue=gidx.filter(function(x){return x.g.next && x.g.nextState==='overdue';});
+  var lateBlock = overdue.length
+    ? '<div class="shead rz"><h2>En retard</h2><span class="pill attn"><span class="pd"></span>'+overdue.length+'</span></div><div class="stack rz">'+
+      overdue.map(function(x){var g=x.g; return '<button class="lcard attnbg" data-g-valid="'+x.i+'"><span class="li" style="color:var(--brand)">'+IC_CLOCK+'</span><span class="lg"><span class="lt">'+esc(g.zoneName)+'</span><span class="ld">'+esc(g.actionName)+' · prévu '+esc(g.next.slot)+'</span><span class="lm">'+pill('attn','En retard')+'</span></span>'+CHEV+'</button>';}).join('')+'</div>'
+    : '';
+  var attn=openAnos().sort(function(a,b){return anoDueAt(a)-anoDueAt(b);}).slice(0,4);
   var attnBlock = attn.length
     ? '<div class="shead rz"><h2>Points d’attention</h2><button class="lk" data-nav="attn">Tout voir</button></div>'+
       '<div class="stack rz">'+attn.map(attnCardHTML).join('')+'</div>'
-    : '<div class="shead rz"><h2>Points d’attention</h2></div><div class="rz card soft pad" style="display:flex;align-items:center;gap:12px;color:var(--ink-2)"><span class="pill ok"><span class="pd"></span>Rien à signaler</span><span style="font-size:14px">Aucun point ouvert. Tout est en ordre.</span></div>';
-
-  // fighter
-  var fnew=newFighter().slice(0,2);
+    : '<div class="shead rz"><h2>Points d’attention</h2></div><div class="rz card soft pad" style="display:flex;align-items:center;gap:12px;color:var(--ink-2)"><span class="pill ok"><span class="pd"></span>Rien à signaler</span><span style="font-size:14px">Aucun point ouvert.</span></div>';
+  var fnew=newFighter().slice(0,3);
   var fBlock = fnew.length
-    ? '<div class="shead rz"><h2>Derniers retours Fighter</h2><button class="lk" data-nav="fighter">Tout voir</button></div>'+
+    ? '<div class="shead rz"><h2>Retours Fighter à vérifier</h2><button class="lk" data-nav="fighter">Tout voir</button></div>'+
       '<div class="stack rz">'+fnew.map(fighterCardHTML).join('')+'</div>'
     : '';
+  var side = lateBlock + attnBlock + fBlock;
+  var grid = '<div class="homegrid rz"><div class="homecol-main">'+opsBlock+'</div><div class="homecol-side">'+side+'</div></div>';
 
   // bilan
   var bilan='<div class="shead rz"><h2>Votre bilan</h2></div>'+
     '<button class="bilancard rz" data-act="bilan"><span class="bemblem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg></span>'+
     '<span class="bg"><span class="bk">Bilan MATSAFE · '+esc(bilanMonthName())+'</span><span class="bt">Votre mois en un coup d’œil</span>'+
-    '<span class="bs">Vos opérations sont régulièrement renseignées et les derniers points d’attention ont été traités rapidement.</span></span>'+
+    '<span class="bs">Synthèse du mois : opérations, retards, points d’attention et contrôles.</span></span>'+
     '<span class="bgo pill ghost"><span class="pd"></span>Voir mon bilan</span></button>';
 
   return '<div class="hello rz"><div class="hi">Bonjour '+esc(u.firstName||firstName(userName(u)))+'</div>'+
       '<div class="club"><span class="dot"></span><span class="cn">'+esc(STATE.club.name)+'</span></div>'+
       '<div class="sub">Voici l’essentiel pour aujourd’hui.</div></div>'+
-    todayHero + alertsBlock + opsBlock + attnBlock + fBlock + bilan;
+    todayHero + alertsBlock + grid + bilan;
 }
 /* Bandeau d'alertes prioritaires en tête d'Accueil (anomalies + échéances de conformité proches) */
 function homeAlerts(){
   var anoN=openAnos().length, figN=newFighter().length, cl=STATE.club, SOON=45*864e5, rows='';
+  var overdueOps=todayGroups().filter(function(g){return g.next && g.nextState==='overdue';}).length;
+  var missedN=missedOccurrences(new Date().setHours(0,0,0,0)).length;
+  var lateTotal=overdueOps+missedN;
+  var ctlLate=ctlsDue().filter(function(c){return ctlStatus(c)[1]==='En retard';}).length;
+  if(lateTotal) rows+='<button class="alertrow crit rz" data-nav="today"><span class="ar-ic">'+IC_CLOCK+'</span><span class="ar-g"><span class="ar-t">'+lateTotal+' opération'+(lateTotal>1?'s':'')+' en retard'+(missedN?' ou manquée'+(missedN>1?'s':''):'')+'</span><span class="ar-s">À réaliser sans tarder aujourd’hui</span></span>'+CHEV+'</button>';
   if(anoN) rows+='<button class="alertrow crit rz" data-nav="attn"><span class="ar-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span><span class="ar-g"><span class="ar-t">'+anoN+' point'+(anoN>1?'s':'')+' d’attention à traiter</span><span class="ar-s">Anomalies ouvertes dans le club'+(figN?' · '+figN+' retour'+(figN>1?'s':'')+' Fighter à vérifier':'')+'</span></span>'+CHEV+'</button>';
+  if(ctlLate) rows+='<button class="alertrow warn rz" data-nav="ctl"><span class="ar-ic">'+IC_AUDIT+'</span><span class="ar-g"><span class="ar-t">'+ctlLate+' contrôle'+(ctlLate>1?'s':'')+' en retard</span><span class="ar-s">Vérifications périodiques à réaliser</span></span>'+CHEV+'</button>';
   if(cl.labelRenewalAt && (cl.labelRenewalAt-Date.now())<SOON) rows+='<button class="alertrow warn rz" data-nav="ctl"><span class="ar-ic">'+IC_SHIELD+'</span><span class="ar-g"><span class="ar-t">Label MATSAFE à renouveler</span><span class="ar-s">'+esc(untilTxt(cl.labelRenewalAt))+' · '+esc(fullDateFR(cl.labelRenewalAt))+'</span></span>'+CHEV+'</button>';
   if(cl.auditNextAt && (cl.auditNextAt-Date.now())<SOON) rows+='<button class="alertrow warn rz" data-nav="ctl"><span class="ar-ic">'+IC_AUDIT+'</span><span class="ar-g"><span class="ar-t">Audit général à préparer</span><span class="ar-s">'+esc(untilTxt(cl.auditNextAt))+' · '+esc(fullDateFR(cl.auditNextAt))+'</span></span>'+CHEV+'</button>';
   if(!rows) return '';
@@ -1279,9 +1416,10 @@ function viewReg(){
   var evs=[];
   db.ops.forEach(function(o){var d=opActionFull(o)+(o.slot?' · prévu '+o.slot:'')+(o.extra?' · supplémentaire':''); evs.push({at:o.at, attn:o.anomaly, kind:'op', t:o.zone||opType(o.type).name, zoneName:o.zone||'', byId:o.byId||o.performedById||'', source:o.source||(o.extra?'extra':'planned'), d:d, by:o.by, tag: o.anomaly?pill('attn','Anomalie constatée'):(o.extra?pill('info','Supplémentaire'):pill('ok','Conforme')), ref:{op:o.id}});});
   db.anos.forEach(function(a){ evs.push({at:a.at, attn:true, kind:'attn', t:a.zone, zoneName:a.zone||'', byId:a.byId||'', source:'', d:'Point d’attention — '+catName(a.cat), by:a.by, tag:anoPill(a.status), ref:{ano:a.id}}); });
-  if(regFilter.type==='op') evs=evs.filter(function(e){return e.kind==='op';});
+  missedOccurrences(monthRange(Date.now()).from).forEach(function(m){ evs.push({at:m.at, attn:true, kind:'missed', t:m.zoneName, zoneName:m.zoneName, byId:'', source:'planned', d:m.actionName+' · prévu '+m.slot+' · non réalisée', by:'', tag:pill('attn','Manquée'), ref:{}}); });
+  if(regFilter.type==='op') evs=evs.filter(function(e){return e.kind==='op'||e.kind==='missed';});
   if(regFilter.type==='attn') evs=evs.filter(function(e){return e.kind==='attn';});
-  if(regFilter.source!=='all') evs=evs.filter(function(e){return e.kind==='op'&&e.source===regFilter.source;});
+  if(regFilter.source!=='all') evs=evs.filter(function(e){return (e.kind==='op'||e.kind==='missed')&&e.source===regFilter.source;});
   if(regFilter.zone) evs=evs.filter(function(e){return e.zoneName===regFilter.zone;});
   if(regFilter.person) evs=evs.filter(function(e){return e.byId===regFilter.person;});
   evs.sort(function(a,b){return b.at-a.at;});
@@ -1289,11 +1427,13 @@ function viewReg(){
   var tl='', last='';
   evs.forEach(function(e){
     var dl=dayLabel(e.at); if(dl!==last){tl+='<div class="tl-day">'+dl+'</div>'; last=dl;}
-    var attr = e.ref.op?('data-op="'+e.ref.op+'"'):('data-ano="'+e.ref.ano+'"');
-    tl+='<button class="tl-item" '+attr+'><span class="tl-rail">'+timeFmt(e.at)+'</span>'+
+    var clickable = e.ref.op||e.ref.ano;
+    var tag = clickable?'button':'div';
+    var attr = e.ref.op?('data-op="'+e.ref.op+'"'):(e.ref.ano?('data-ano="'+e.ref.ano+'"'):'style="cursor:default"');
+    tl+='<'+tag+' class="tl-item" '+attr+'><span class="tl-rail">'+timeFmt(e.at)+'</span>'+
       '<span class="tl-mid"><span class="n '+(e.attn?'attn':'')+'"></span></span>'+
       '<span class="tl-body"><span class="tl-t">'+esc(e.t)+'</span><span class="tl-d">'+esc(e.d)+'</span>'+
-      '<span class="tl-by">'+esc(e.by||'')+'</span><span class="tl-tag">'+e.tag+'</span></span></button>';
+      '<span class="tl-by">'+esc(e.by||'')+'</span><span class="tl-tag">'+e.tag+'</span></span></'+tag+'>';
   });
   return head + filters + '<div class="tl rz">'+(tl||emptyBox('Registre vide'))+'</div>';
 }
@@ -1343,11 +1483,30 @@ function viewCtl(){
       '<span class="kc-date">'+(ts?esc(fullDateFR(ts)):'À définir')+'</span>'+
       '<span class="kc-sub">'+(ts?esc(untilTxt(ts)):'Renseignez la date')+'</span></span>'+CHEV+'</button>';
   }
-  var cards='<div class="stack rz" style="margin-top:10px">'+
+  var cards='<div class="shead rz"><h2>Échéances officielles</h2></div><div class="stack rz">'+
     keycard(IC_SHIELD,'Renouvellement du label MATSAFE', lab)+
     keycard(IC_AUDIT,'Audit général', aud)+'</div>';
-  var note='<div class="rz card soft pad" style="padding:13px;margin-top:12px;color:var(--ink-2);font-size:12.5px"><span class="pill mute"><span class="pd"></span>Rappel</span> Ces échéances sont indicatives. Touchez une carte pour mettre à jour la date.</div>';
-  return head + cards + note;
+  var note='<div class="rz card soft pad" style="padding:13px;margin-top:10px;color:var(--ink-2);font-size:12.5px"><span class="pill mute"><span class="pd"></span>Rappel</span> Touchez une carte pour mettre à jour une date.</div>';
+  // Contrôles périodiques (fréquence, statuts, échéances auto)
+  var ctls=[].concat(db.ctls).sort(function(a,b){return a.due-b.due;});
+  function byLabel(lbl){ return ctls.filter(function(c){return c.status!=='completed'&&c.status!=='cancelled'&&ctlStatus(c)[1]===lbl;}); }
+  var late=byLabel('En retard'), soon=byLabel('Bientôt à réaliser'), planned=byLabel('Planifié');
+  var done=ctls.filter(function(c){return c.status==='completed';}).sort(function(a,b){return (b.completedAt||b.due)-(a.completedAt||a.due);});
+  function block(title,arr,kind){ return arr.length?'<div class="shead rz"><h2>'+title+'</h2><span class="pill '+(kind||'ghost')+'"><span class="pd"></span>'+arr.length+'</span></div><div class="stack rz">'+arr.map(ctlGoalHTML).join('')+'</div>':''; }
+  var periodHead=sheadAdd('Contrôles périodiques', (late.length+soon.length+planned.length), 'ctlplan');
+  var periodEmpty=(late.length+soon.length+planned.length+done.length)?'':'<div class="rz">'+emptyBox('Aucun contrôle périodique','Ajoutez une vérification récurrente avec le bouton +.')+'</div>';
+  var period = periodHead + periodEmpty + block('En retard',late,'attn') + block('Bientôt à réaliser',soon,'warn') + block('Planifiés',planned,'info') + block('Réalisés récemment',done.slice(0,6),'ok');
+  return head + cards + note + '<div style="height:6px"></div>' + period;
+}
+function ctlGoalHTML(c){
+  var s=ctlStatus(c);
+  var kind=s[0]==='ok'?'ok':(s[0]==='attn'?'attn':(s[0]==='warn'?'warn':'info'));
+  var when = c.status==='completed' ? ('Réalisé le '+shortDate(c.completedAt||c.due)) : ('Échéance '+shortDate(c.due));
+  var mark = c.status==='completed' ? IC_CHECK : IC_CLOCK;
+  return '<button class="goalrow '+kind+'" data-ctl="'+c.id+'">'+
+    '<span class="goalmark">'+mark+'</span>'+
+    '<span class="goalg"><span class="goaleye">'+esc((c.zone||'Général')+' · '+ctlFreqLabel(c.freq)+' · '+when)+'</span><span class="goalt">'+esc(ctlName(c.type))+'</span></span>'+
+    pill(kind, s[1])+CHEV+'</button>';
 }
 function openCtlDates(){
   var cl=STATE.club;
@@ -1376,8 +1535,11 @@ function viewEtab(){
     '<div class="rz card soft pad" style="padding:11px 13px;color:var(--ink-2);font-size:12px;margin-bottom:11px">La bibliothèque d’actions : les gestes recommandés MATSAFE et vos actions personnalisées. Chaque opération planifiée ou réalisée y est reliée.</div>'+
     '<div class="stack rz">'+
     actions.map(function(a){return '<button class="srow'+(a.status==='inactive'?' off':'')+'" data-action="'+a.id+'"><span class="sg"><span class="st">'+esc(a.name)+'</span><span class="ss">'+esc(actionCatLabel(a)+' · '+opType(a.opTypeCode).name)+'</span></span>'+(a.status==='inactive'?pill('mute','Inactive'):pill('ok','Active'))+CHEV+'</button>';}).join('')+'</div>';
-  var protoBlock=sheadAdd('Protocoles & produits', protos.length, 'protoadd')+'<div class="stack rz">'+
-    (protos.length?protos.map(function(p){return '<button class="srow" data-proto="'+p.id+'"><span class="sg"><span class="st">'+esc(p.name)+'</span><span class="ss">'+esc(p.product||'—')+'</span></span>'+CHEV+'</button>';}).join(''):emptyBox('Aucun protocole'))+'</div>';
+  var protoInactive=function(p){ return p.active===false||p.status==='inactive'; };
+  var protoBlock=sheadAdd('Protocoles & produits', protos.length, 'protoadd')+
+    '<div class="rz card soft pad" style="padding:11px 13px;color:var(--ink-2);font-size:12px;margin-bottom:11px">Un protocole déjà utilisé ne peut pas être supprimé — seulement <b>désactivé</b>. Les opérations passées conservent un instantané figé du protocole appliqué.</div>'+
+    '<div class="stack rz">'+
+    (protos.length?protos.map(function(p){var off=protoInactive(p);return '<button class="srow'+(off?' off':'')+'" data-proto="'+p.id+'"><span class="sg"><span class="st">'+esc(p.name)+'</span><span class="ss">'+esc(p.product||'—')+'</span></span>'+(off?pill('mute','Inactif'):pill('ok','Actif'))+CHEV+'</button>';}).join(''):emptyBox('Aucun protocole'))+'</div>';
   var planLink='<div class="shead rz"><h2>Planification</h2></div><div class="stack rz">'+
     '<button class="srow" data-nav="planif"><span class="li" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);margin-right:2px">'+NAV_IC.planif+'</span><span class="sg"><span class="st">Gérer la planification</span><span class="ss">'+plan.length+' opération'+(plan.length>1?'s':'')+' planifiée'+(plan.length>1?'s':'')+' · fréquences, heures, responsables</span></span>'+CHEV+'</button></div>';
   return head + '<div class="stack rz" style="margin-top:8px">'+clubCard+'</div>' + zonesBlock + actionsBlock + protoBlock + planLink;
@@ -1433,10 +1595,12 @@ function viewParams(){
     '<button class="srow" data-act="switchuser"><span class="sg"><span class="st">Changer d’utilisateur</span><span class="ss">Basculer entre les membres (démo)</span></span>'+CHEV+'</button>'+
     '<button class="srow" data-act="reset"><span class="sg"><span class="st" style="color:var(--brand)">Réinitialiser la démonstration</span><span class="ss">Rétablir les données d’exemple</span></span>'+CHEV+'</button>'+
     '</div>';
+  var demoNote='<div class="shead rz"><h2>Stockage des données</h2></div><div class="card soft pad rz" style="color:var(--ink-2);font-size:12.5px;line-height:1.55">'+
+    '<span class="pill warn"><span class="pd"></span>Mode démonstration</span> Les traces sont enregistrées <b>localement sur cet appareil</b> et ne constituent <b>pas encore une preuve certifiée</b>. Les données sont déjà structurées (identifiant, établissement, utilisateur, date, type d’événement, origine) pour la future base de données et le MATSAFE Network.</div>';
   var about='<div class="shead rz"><h2>À propos</h2></div><div class="card soft pad rz" style="color:var(--ink-2);font-size:13px;line-height:1.55">'+
     '<b style="color:var(--ink)">MATSAFE Club</b> — Pilotage et traçabilité de l’hygiène. Espace du gérant / référent hygiène. '+
-    'Prototype de démonstration (données locales). Fait partie de l’écosystème MatSafe : Club · Fighter · Fondateur.</div>';
-  return head+rows+about;
+    'Prototype de démonstration. Fait partie de l’écosystème MatSafe : Club · Fighter · Fondateur.</div>';
+  return head+rows+demoNote+about;
 }
 
 function bilanMonthName(){ return new Date().toLocaleDateString('fr-FR',{month:'long'}); }
@@ -1486,11 +1650,13 @@ function quickValidate(g){
   else commitPlanned(g,null);
 }
 function commitPlanned(g, photo){
-  var u=currentUser(), nowTs=Date.now();
+  var u=currentUser(), nowTs=serverNow();
   var actId=g.actionId||(actionByCode(g.opTypeCode)&&actionByCode(g.opTypeCode).id)||null, actNm=g.actionName;
-  db.ops.unshift({id:id(), establishmentId:EST(), type:g.opTypeCode, actionId:actId, actionName:actNm, action:actNm, zone:g.zoneName, zoneId:g.zoneId||null, byId:u.id, by:userName(u), performedById:u.id, performedBy:userName(u), plannedResp:g.next.plannedResp||g.plannedResp||'', plannedRespKind:g.next.respKind||g.respKind||null, at:nowTs, performedAt:nowTs, createdAt:nowTs, scheduledAt:nowTs, anomaly:false, planId:g.next.scheduleId||null, scheduleId:g.next.scheduleId||null, scheduleOccurrenceId:g.next.scheduleId?occId(g.next.scheduleId,nowTs,g.next.slot):null, protocolId:g.next.protocolId||g.protocolId||null, slot:g.next.slot||'', slotContext:slotContext(g.next.slot), comment:'', extra:false, source:'planned', status:'done', proof:!!photo, photo:photo||null});
-  logAudit('operation.validate','operationRecord',null, g.zoneName+' · '+actNm+' (prévu '+g.next.slot+')'+(photo?' · avec photo':''));
-  save(); burst('Opération validée', g.zoneName+' · '+g.next.slot+' · '+userName(u)); setTimeout(render,900);
+  var pid=g.next.protocolId||g.protocolId||null;
+  var schedAt=slotTs(g.next.slot), late=!!(schedAt && nowTs>schedAt+15*60e3);
+  db.ops.unshift({id:id(), establishmentId:EST(), type:g.opTypeCode, actionId:actId, actionName:actNm, action:actNm, zone:g.zoneName, zoneId:g.zoneId||null, byId:u.id, by:userName(u), performedById:u.id, performedBy:userName(u), plannedResp:g.next.plannedResp||g.plannedResp||'', plannedRespKind:g.next.respKind||g.respKind||null, at:nowTs, performedAt:nowTs, createdAt:nowTs, serverAt:nowTs, scheduledAt:schedAt, late:late, lateMinutes:late?Math.round((nowTs-schedAt)/60e3):0, anomaly:false, planId:g.next.scheduleId||null, scheduleId:g.next.scheduleId||null, scheduleOccurrenceId:g.next.scheduleId?occId(g.next.scheduleId,nowTs,g.next.slot):null, protocolId:pid, protocolSnapshot:protoSnapshot(pid), slot:g.next.slot||'', slotContext:slotContext(g.next.slot), comment:'', extra:false, source:'planned', status:'done', proof:!!photo, photo:photo||null, linkId:null, anoId:null});
+  logAudit('operation.validate','operationRecord',null, g.zoneName+' · '+actNm+' (prévu '+g.next.slot+')'+(late?' · en retard':'')+(photo?' · avec photo':''), {origin:'club', newValue:'conforme'});
+  save(); burst('Opération validée', g.zoneName+' · '+g.next.slot+' · '+userName(u)+(late?' · en retard':'')); setTimeout(render,900);
 }
 function wire(){
   var groups=todayGroups();
@@ -1532,23 +1698,37 @@ function actionRouter(a){
 }
 
 /* --------------------------- Sheet plumbing --------------------------- */
+var sheetReturnFocus=null;
+function syncAria(root){ $$('.choice',root).forEach(function(c){ if(!c.getAttribute('type'))c.setAttribute('type','button'); c.setAttribute('aria-pressed', c.classList.contains('sel')?'true':'false'); }); }
+function sheetFocusables(){ return $$('#sheet button, #sheet [href], #sheet input, #sheet select, #sheet textarea, #sheet [tabindex]:not([tabindex="-1"])').filter(function(el){return !el.disabled && el.offsetParent!==null;}); }
 function openSheet(kicker,title,body,foot){
+  sheetReturnFocus = document.activeElement;
   $('#shKicker').textContent=kicker||''; $('#shTitle').textContent=title;
   $('#shBody').innerHTML=body; $('#shFoot').innerHTML=foot||'';
   $('#burst').classList.remove('on');
   $('#scrim').classList.add('on'); $('#sheet').classList.add('on');
+  syncAria($('#sheet'));
+  setTimeout(function(){ var f=$('#shBody').querySelector('input, textarea, select, button, [href]') || $('#shFoot').querySelector('button') || $('#shClose'); if(f){ try{f.focus();}catch(e){} } },60);
 }
-function closeSheet(){ $('#scrim').classList.remove('on'); $('#sheet').classList.remove('on'); }
+function closeSheet(){ $('#scrim').classList.remove('on'); $('#sheet').classList.remove('on'); var rf=sheetReturnFocus; sheetReturnFocus=null; if(rf&&rf.focus){ try{rf.focus();}catch(e){} } }
 $('#scrim').addEventListener('click', closeSheet);
-document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeSheet(); } });
-/* single-select choices */
+$('#shClose').addEventListener('click', closeSheet);
+document.addEventListener('keydown', function(e){ if(e.key==='Escape' && $('#sheet').classList.contains('on')){ closeSheet(); } });
+/* piège de focus dans la fiche ouverte (navigation clavier complète) */
+$('#sheet').addEventListener('keydown', function(e){ if(e.key!=='Tab')return; var f=sheetFocusables(); if(!f.length)return; var first=f[0], last=f[f.length-1];
+  if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+  else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); } });
+/* single-select choices + aria-pressed */
 document.addEventListener('click', function(e){ var ch=e.target.closest? e.target.closest('.choice'):null; if(!ch)return; var g=ch.parentElement;
-  if(g&&g.dataset.multi==='1'){ ch.classList.toggle('sel'); } else { $$('.choice',g).forEach(function(c){c.classList.remove('sel');}); ch.classList.add('sel'); } });
+  if(g&&g.dataset.multi==='1'){ ch.classList.toggle('sel'); ch.setAttribute('aria-pressed', ch.classList.contains('sel')?'true':'false'); }
+  else { $$('.choice',g).forEach(function(c){c.classList.remove('sel'); c.setAttribute('aria-pressed','false');}); ch.classList.add('sel'); ch.setAttribute('aria-pressed','true'); } });
 
 var burstT;
-function burst(title,sub){ $('#burstTitle').textContent=title||'Enregistré'; $('#burstSub').textContent=sub||''; $('#burst').classList.add('on'); clearTimeout(burstT); burstT=setTimeout(function(){ closeSheet(); },1100); }
+/* Annonce vocale pour lecteurs d'écran (aria-live) */
+function announce(msg){ var el=$('#ariaLive'); if(!el)return; el.textContent=''; setTimeout(function(){ el.textContent=msg||''; },30); }
+function burst(title,sub){ $('#burstTitle').textContent=title||'Enregistré'; $('#burstSub').textContent=sub||''; $('#burst').classList.add('on'); announce((title||'Enregistré')+(sub?'. '+sub:'')); clearTimeout(burstT); burstT=setTimeout(function(){ closeSheet(); },1100); }
 var toastT;
-function toast(m){ $('#toastTx').textContent=m; $('#toast').classList.add('on'); clearTimeout(toastT); toastT=setTimeout(function(){ $('#toast').classList.remove('on'); },2100); }
+function toast(m){ $('#toastTx').textContent=m; $('#toast').classList.add('on'); announce(m); clearTimeout(toastT); toastT=setTimeout(function(){ $('#toast').classList.remove('on'); },2100); }
 
 /* photo capture -> compressed dataURL */
 function pickPhoto(cb){
@@ -1597,11 +1777,15 @@ function openValidate(opts){
       '<button class="srow" id="vPb"><span class="li" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--brand-soft);border:1px solid #F2D8D3;color:var(--brand);margin-right:2px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span><span class="sg"><span class="st">Problème constaté</span><span class="ss">Créer un point d’attention</span></span></button>'+
       '</div>';
     $('#shFoot').innerHTML='';
-    function record(anomaly){ var byU=userById(byId)||currentUser(); var nowTs=Date.now(); var actId=opts.actionId||(actionByCode(code)&&actionByCode(code).id)||null; var actNm=opts.actionName||opType(code).full;
-      db.ops.unshift({id:id(), establishmentId:EST(), type:code, actionId:actId, actionName:actNm, action:actNm, zone:zone, zoneId:opts.zoneId||null, byId:byId, by:userName(byU), performedById:byId, performedBy:userName(byU), plannedResp:opts.plannedResp||'', plannedRespKind:opts.plannedRespKind||null, at:nowTs, performedAt:nowTs, createdAt:nowTs, scheduledAt:opts.planId?nowTs:null, anomaly:anomaly, planId:opts.planId||null, scheduleId:opts.planId||null, scheduleOccurrenceId:opts.planId?occId(opts.planId,nowTs,opts.slot):null, protocolId:opts.protocolId||null, slot:opts.slot||'', comment:comment, extra:!!opts.extra, source:opts.extra?'extra':'planned', status:'done'});
-      logAudit('operation.validate','operationRecord',null, zone+' · '+actNm+(opts.slot?' (prévu '+opts.slot+')':'')+(byU&&byU.id!==currentUser().id?' · réalisé par '+userName(byU):'')); save(); }
-    $('#vOk').onclick=function(){ record(false); burst('Opération enregistrée', zone+' · '+timeFmt(Date.now())); setTimeout(function(){ render(); },300); };
-    $('#vPb').onclick=function(){ record(true); closeSheet(); setTimeout(function(){ openReport(zone); render(); },200); };
+    function record(anomaly, ano){ var byU=userById(byId)||currentUser(); var nowTs=serverNow(); var actId=opts.actionId||(actionByCode(code)&&actionByCode(code).id)||null; var actNm=opts.actionName||opType(code).full;
+      var schedAt=opts.planId?slotTs(opts.slot):null; var late=!!(schedAt && nowTs>schedAt+15*60e3);
+      var op={id:id(), establishmentId:EST(), type:code, actionId:actId, actionName:actNm, action:actNm, zone:zone, zoneId:opts.zoneId||null, byId:byId, by:userName(byU), performedById:byId, performedBy:userName(byU), plannedResp:opts.plannedResp||'', plannedRespKind:opts.plannedRespKind||null, at:nowTs, performedAt:nowTs, createdAt:nowTs, serverAt:nowTs, scheduledAt:schedAt, late:late, lateMinutes:late?Math.round((nowTs-schedAt)/60e3):0, anomaly:anomaly, planId:opts.planId||null, scheduleId:opts.planId||null, scheduleOccurrenceId:opts.planId?occId(opts.planId,nowTs,opts.slot):null, protocolId:opts.protocolId||null, protocolSnapshot:protoSnapshot(opts.protocolId||null), slot:opts.slot||'', comment:comment, extra:!!opts.extra, source:opts.extra?'extra':'planned', status:'done', linkId:ano?ano.id:null, anoId:ano?ano.id:null};
+      db.ops.unshift(op);
+      if(ano){ ano.opId=op.id; ano.linkId=ano.id; }
+      logAudit('operation.validate','operationRecord',op.id, zone+' · '+actNm+(opts.slot?' (prévu '+opts.slot+')':'')+(late?' · en retard':'')+(anomaly?' · anomalie':'')+(byU&&byU.id!==currentUser().id?' · réalisé par '+userName(byU):''), {origin:'club', newValue:anomaly?'anomaly':'conforme'});
+      save(); return op; }
+    $('#vOk').onclick=function(){ record(false,null); burst('Opération enregistrée', zone+' · '+timeFmt(serverNow())); setTimeout(function(){ render(); },300); };
+    $('#vPb').onclick=function(){ closeSheet(); setTimeout(function(){ openReport({zone:zone, pendingOp:true, onSaved:function(ano){ record(true, ano); save(); burst('Enregistré ensemble', zone+' · opération + point d’attention'); setTimeout(render,300); }}); },180); };
   };
 }
 function protoCardHTML(p){
@@ -1627,9 +1811,9 @@ function openReclean(opts){
     '<div class="wholist">'+whoBtn(me,true)+others.map(function(u){return whoBtn(u,false);}).join('')+'</div>'+
     '<button class="rc-problem" data-rc-problem="1">Un souci constaté&nbsp;? Signaler un point d’attention</button>';
   openSheet('Nettoyer à nouveau', opts.zone, body, '');
-  function rec(byId){ var byU=userById(byId)||currentUser(); var nowTs=Date.now(); var actId=opts.actionId||(actionByCode(opts.code)&&actionByCode(opts.code).id)||null;
-    db.ops.unshift({id:id(), establishmentId:EST(), type:opts.code, actionId:actId, actionName:act, action:act, zone:opts.zone, zoneId:opts.zoneId||null, byId:byId, by:userName(byU), performedById:byId, performedBy:userName(byU), at:nowTs, performedAt:nowTs, createdAt:nowTs, scheduledAt:null, anomaly:false, planId:null, scheduleId:null, scheduleOccurrenceId:null, protocolId:opts.protocolId||null, slot:'', comment:'', extra:true, source:'extra', status:'done'});
-    logAudit('operation.extra','operationRecord',null, opts.zone+' · '+act+' · passage supplémentaire'+(byU&&byU.id!==me.id?' · réalisé par '+userName(byU):'')); save(); return {byU:byU, at:nowTs}; }
+  function rec(byId){ var byU=userById(byId)||currentUser(); var nowTs=serverNow(); var actId=opts.actionId||(actionByCode(opts.code)&&actionByCode(opts.code).id)||null;
+    db.ops.unshift({id:id(), establishmentId:EST(), type:opts.code, actionId:actId, actionName:act, action:act, zone:opts.zone, zoneId:opts.zoneId||null, byId:byId, by:userName(byU), performedById:byId, performedBy:userName(byU), at:nowTs, performedAt:nowTs, createdAt:nowTs, serverAt:nowTs, scheduledAt:null, late:false, lateMinutes:0, anomaly:false, planId:null, scheduleId:null, scheduleOccurrenceId:null, protocolId:opts.protocolId||null, protocolSnapshot:protoSnapshot(opts.protocolId||null), slot:'', comment:'', extra:true, source:'extra', status:'done', linkId:null, anoId:null});
+    logAudit('operation.extra','operationRecord',null, opts.zone+' · '+act+' · passage supplémentaire'+(byU&&byU.id!==me.id?' · réalisé par '+userName(byU):''), {origin:'club', newValue:'conforme'}); save(); return {byU:byU, at:nowTs}; }
   $$('#shBody .whobtn').forEach(function(b){ b.onclick=function(){ var r=rec(b.dataset.who); burst('Nettoyage enregistré', opts.zone+' · '+timeFmt(r.at)+' · '+userName(r.byU)); setTimeout(render,1200); }; });
   var pb=$('#shBody [data-rc-problem]'); if(pb) pb.onclick=function(){ closeSheet(); setTimeout(function(){ openReport(opts.zone); },200); };
 }
@@ -1652,40 +1836,53 @@ function openPick(){
 }
 
 /* ------------------- Signaler un point d'attention ------------------- */
-function openReport(presetZone){
-  var body='<div class="fieldlab" style="margin-top:8px">Zone</div><div class="choices" id="rZone">'+
+function openReport(opts){
+  opts = (typeof opts==='string') ? {zone:opts} : (opts||{});
+  var presetZone=opts.zone, pending=!!opts.pendingOp;
+  var camSvg='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="vertical-align:-3px;margin-right:5px"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>';
+  var body=(pending?'<div class="card soft pad" style="padding:12px 13px;margin:2px 0 6px;color:var(--ink-2);font-size:12.5px"><span class="pill attn"><span class="pd"></span>Problème constaté</span> L’opération et le point d’attention seront enregistrés <b>ensemble</b> une fois ce signalement validé.</div>':'')+
+    '<div class="fieldlab" style="margin-top:8px">Zone</div><div class="choices" id="rZone">'+
     zoneNames().map(function(z){return '<button class="choice '+(z===presetZone?'sel':'')+'" data-z="'+esc(z)+'">'+esc(z)+'</button>';}).join('')+'</div>'+
     '<div class="fieldlab">Nature</div><div class="choices" id="rCat">'+
     ANO_CATS.map(function(c){return '<button class="choice" data-c="'+c[0]+'">'+esc(c[1])+'</button>';}).join('')+'</div>'+
     '<div class="fieldlab">Description</div><textarea id="rDesc" rows="3" placeholder="Décrivez le point d’attention…"></textarea>'+
-    '<div class="fieldlab">Photo <span class="opt">— optionnel</span></div><div id="rPhoto"><button class="choice" id="rAddPhoto"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="vertical-align:-3px;margin-right:5px"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>Ajouter</button></div>';
-  openSheet('Point d’attention','Signaler', body, '<button class="btn brand" id="rSave" disabled>Enregistrer le point</button>');
+    '<div class="fieldlab">Photo <span class="opt">— optionnel</span></div><div id="rPhoto"><button class="choice" id="rAddPhoto">'+camSvg+'Ajouter</button></div>';
+  openSheet('Point d’attention', pending?'Problème constaté':'Signaler', body, '<button class="btn brand" id="rSave" disabled>Enregistrer le point</button>');
   var photo=null;
-  $('#rAddPhoto').onclick=function(){ pickPhoto(function(d){ if(d){ photo=d; $('#rPhoto').innerHTML='<img class="proofimg" src="'+d+'" alt="aperçu"><button class="choice" id="rRm" style="margin-top:8px">Retirer</button>'; $('#rRm').onclick=function(){photo=null; openReportRephoto();}; } }); };
-  function openReportRephoto(){ $('#rPhoto').innerHTML='<button class="choice" id="rAddPhoto"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="vertical-align:-3px;margin-right:5px"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>Ajouter</button>'; $('#rAddPhoto').onclick=arguments.callee; };
+  function bindAddPhoto(){ $('#rAddPhoto').onclick=function(){ pickPhoto(function(d){ if(d){ photo=d; var zn=($('.choice.sel',$('#rZone'))||{dataset:{z:presetZone||'zone'}}).dataset.z; $('#rPhoto').innerHTML='<img class="proofimg" src="'+d+'" alt="Preuve — point d’attention '+esc(zn)+'"><button class="choice" id="rRm" style="margin-top:8px">Retirer la photo</button>'; $('#rRm').onclick=function(){photo=null; resetPhoto();}; refresh(); } }); }; }
+  function resetPhoto(){ $('#rPhoto').innerHTML='<button class="choice" id="rAddPhoto">'+camSvg+'Ajouter</button>'; bindAddPhoto(); }
+  bindAddPhoto();
   function refresh(){ var z=$('.choice.sel',$('#rZone')), c=$('.choice.sel',$('#rCat')), d=($('#rDesc').value||'').trim(); $('#rSave').disabled=!(z&&c&&d.length>2); }
   $('#shBody').addEventListener('click',refresh); $('#rDesc').addEventListener('input',refresh); refresh();
   $('#rSave').onclick=function(){
     var z=$('.choice.sel',$('#rZone')), c=$('.choice.sel',$('#rCat'));
     var zoneName=z?z.dataset.z:zoneNames()[0], zRec=STATE.config.zones.filter(function(x){return x.name===zoneName;})[0];
-    var nowTs=Date.now(), cat=c?c.dataset.c:'other', desc=($('#rDesc').value||'').trim();
-    db.anos.unshift({id:id(), establishmentId:EST(), zone:zoneName, zoneId:zRec?zRec.id:null, cat:cat, desc:desc, byId:currentUser().id, by:userName(currentUser()), at:nowTs, createdAt:nowTs, status:'open', origin:'club', photo:photo, history:[]});
-    logAudit('attention.create','attention',null, zoneName+' · '+catName(cat));
-    save(); burst('Point d’attention créé','Suivi ouvert · à vérifier'); setTimeout(render,300);
+    var nowTs=serverNow(), cat=c?c.dataset.c:'other', desc=($('#rDesc').value||'').trim();
+    var origin=opts.origin||'club', u=currentUser();
+    var ano={id:id(), establishmentId:EST(), zone:zoneName, zoneId:zRec?zRec.id:null, cat:cat, desc:desc, byId:u.id, by:userName(u), at:nowTs, createdAt:nowTs, status:'open', origin:origin, photo:photo, linkId:null, opId:null, controlId:opts.controlId||null, history:[{s:'open', byId:u.id, by:userName(u), at:nowTs, msg:'Signalé'}]};
+    ano.dueAt=anoDueAt(ano);
+    db.anos.unshift(ano);
+    logAudit('attention.create','attention',ano.id, zoneName+' · '+catName(cat), {origin:origin, newValue:'open'});
+    if(opts.onSaved){ opts.onSaved(ano); }
+    else { save(); burst('Point d’attention créé','Suivi ouvert · à vérifier'); setTimeout(render,300); }
   };
 }
 
 /* ----------------------- Détail opération ----------------------- */
 function openOpDetail(opId){
   var o=null; for(var i=0;i<db.ops.length;i++)if(db.ops[i].id===opId)o=db.ops[i]; if(!o)return;
-  var t=opType(o.type), proto=o.protocolId?protocolById(o.protocolId):null;
+  var t=opType(o.type), snap=o.protocolSnapshot||(o.protocolId?protocolById(o.protocolId):null);
+  var punct = o.slot ? (o.late?'<span class="pill attn"><span class="pd"></span>Réalisé en retard'+(o.lateMinutes?' ('+o.lateMinutes+' min)':'')+'</span>':'<span class="pill ok"><span class="pd"></span>Dans les temps</span>') : '';
   var body='<div class="detail-meta">'+
     dm('Zone',o.zone||t.name)+dm('Opération',opActionFull(o))+
     (o.slot?dm('Heure prévue',o.slot):'')+dm('Heure réelle',timeFmt(o.at))+dm('Date',dayLabel(o.at))+dm('Réalisé par',o.by||'—')+
     (o.plannedResp&&o.plannedResp!==o.by?dm('Responsable prévu',o.plannedResp):'')+
     dm('Type',o.extra?'Nettoyage supplémentaire':'Planifié')+dm('Résultat',o.anomaly?'Anomalie constatée':'Conforme')+'</div>'+
+    (punct?'<div class="rz" style="margin:2px 0 2px">'+punct+'</div>':'')+
     (o.comment?'<div class="fieldlab">Remarque</div><div class="card soft pad" style="padding:14px">'+esc(o.comment)+'</div>':'')+
-    (proto?'<div class="fieldlab">Protocole appliqué</div><div class="protobox">'+protoCardHTML(proto)+'</div>':'')+
+    (o.photo?'<div class="fieldlab">Preuve photo</div><img class="proofimg" src="'+o.photo+'" alt="Preuve — '+esc(o.zone||'')+' · '+esc(opActionFull(o))+'">':'')+
+    (snap?'<div class="fieldlab">Protocole appliqué <span class="opt">— instantané figé</span></div><div class="protobox">'+protoCardHTML(snap)+'</div>':'')+
+    (o.anomaly?'<div class="card soft pad" style="padding:11px 13px;margin-top:12px;color:var(--ink-2);font-size:12px"><span class="pill attn"><span class="pd"></span>Point d’attention lié</span> Cette opération a donné lieu à un point d’attention (suivi dans « Points d’attention »).</div>':'')+
     '<div class="card soft pad" style="padding:13px;margin-top:14px;color:var(--ink-2);font-size:12.5px"><span class="pill mute"><span class="pd"></span>Historisé</span> Cet enregistrement est conservé dans le registre et n’est pas modifiable.</div>';
   openSheet('Registre', o.zone||t.name, body, '<button class="btn ghost" id="odClose" style="border:1px solid var(--line-2)">Fermer</button>');
   $('#odClose').onclick=closeSheet;
@@ -1699,19 +1896,47 @@ function openAnoDetail(anoId){
   var steps=ANO_FLOW.map(function(f,i){var cls=i<idx?'done':(i===idx?'cur':'todo');
     return '<div class="fstep '+cls+'"><span class="fb">'+(i<idx?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>':'')+'</span><span><span class="ft">'+esc(f[1])+'</span><span class="fs">'+esc(f[2])+'</span></span></div>';
   }).join('');
+  var due=anoDueAt(a), onTime=anoOnTime(a);
+  var slaPill = a.status==='closed'
+    ? (onTime?pill('ok','Traité dans les délais'):pill('attn','Traité en retard'))
+    : (onTime?pill('info','Dans les délais'):pill('attn','En retard'));
   var meta='<div class="detail-meta">'+dm('Zone',a.zone)+dm('Nature',catName(a.cat))+dm('Signalé',dayLabel(a.at)+' · '+timeFmt(a.at))+dm('Origine',a.origin==='fighter'?'Retour Fighter':(a.origin==='control'?'Contrôle':'Club'))+
+    dm('Délai cible','sous '+delayTxt(anoTargetHours(a)))+dm('Échéance',fullDateFR(due))+
     (a.assignedTo?dm('Pris en charge par',a.assignedTo):'')+(a.verifiedBy?dm('Vérifié par',a.verifiedBy):'')+(a.by?dm('Signalé par',a.by):'')+'</div>';
+  var slaLine='<div class="rz" style="margin:2px 0 4px">'+slaPill+'</div>';
+  var linkNote = (a.opId||a.controlId) ? '<div class="card soft pad" style="padding:11px 13px;margin-top:10px;color:var(--ink-2);font-size:12px"><span class="pill mute"><span class="pd"></span>Lié</span> '+(a.opId?'Rattaché à une opération du registre.':'Issu d’un contrôle périodique.')+'</div>' : '';
   var desc='<div class="fieldlab">Problème</div><div class="card soft pad" style="padding:14px">'+esc(a.desc)+'</div>';
-  var photo=a.photo?'<div class="fieldlab">Photo</div><img class="proofimg" src="'+a.photo+'" alt="preuve">':'';
+  var photo=a.photo?'<div class="fieldlab">Photo</div><img class="proofimg" src="'+a.photo+'" alt="Preuve — '+esc(a.zone)+' · '+esc(catName(a.cat))+'">':'';
   var corr = a.correctiveAction?'<div class="fieldlab">Action corrective</div><div class="card soft pad" style="padding:14px">'+esc(a.correctiveAction)+(a.correctedAt?'<div style="color:var(--faint);font-size:12px;margin-top:6px">Corrigé le '+dayLabel(a.correctedAt)+'</div>':'')+'</div>':'';
-  var proof = a.proofPhoto?'<div class="fieldlab">Preuve de correction</div><img class="proofimg" src="'+a.proofPhoto+'" alt="preuve">':'';
-  var body='<div class="fieldlab" style="margin-top:6px">Statut</div><div class="flow">'+steps+'</div>'+meta+desc+photo+corr+proof;
+  var proof = a.proofPhoto?'<div class="fieldlab">Preuve de correction</div><img class="proofimg" src="'+a.proofPhoto+'" alt="Preuve de correction — '+esc(a.zone)+'">':'';
+  var hist = anoHistoryHTML(a);
+  var body='<div class="fieldlab" style="margin-top:6px">Statut</div>'+slaLine+'<div class="flow">'+steps+'</div>'+meta+linkNote+desc+photo+corr+proof+hist;
   var foot='';
-  if(a.status!=='closed'){ var nextLabel=ANO_FLOW[idx+1]?ANO_FLOW[idx+1][1]:''; foot='<button class="btn" id="adAdvance">Faire avancer → '+esc(nextLabel)+'</button>'; }
-  else foot='<button class="btn ghost" id="adClose" style="border:1px solid var(--line-2)">Fermer</button>';
+  if(a.status==='corrected'){ foot='<div class="btnrow"><button class="btn good" id="adAccept">Valider la correction</button><button class="btn ghost" id="adRefuse" style="border:1px solid var(--line-2);color:var(--brand)">Refuser</button></div>'; }
+  else if(a.status==='closed'){ foot='<div class="btnrow"><button class="btn ghost" id="adReopen" style="border:1px solid var(--line-2)">Rouvrir</button><button class="btn ghost" id="adClose" style="border:1px solid var(--line-2)">Fermer</button></div>'; }
+  else { var nextLabel=ANO_FLOW[idx+1]?ANO_FLOW[idx+1][1]:''; foot='<button class="btn" id="adAdvance">Faire avancer → '+esc(nextLabel)+'</button>'; }
   openSheet('Point d’attention', a.zone, body, foot);
-  if(a.status!=='closed') $('#adAdvance').onclick=function(){ advanceAno(a); };
-  else $('#adClose').onclick=closeSheet;
+  if($('#adAdvance')) $('#adAdvance').onclick=function(){ advanceAno(a); };
+  if($('#adAccept')) $('#adAccept').onclick=function(){ advanceAno(a); };
+  if($('#adRefuse')) $('#adRefuse').onclick=function(){ refuseAno(a); };
+  if($('#adReopen')) $('#adReopen').onclick=function(){ reopenAno(a); };
+  if($('#adClose')) $('#adClose').onclick=closeSheet;
+}
+function anoHistoryHTML(a){
+  var h=(a.history||[]); if(!h.length) return '';
+  return '<div class="fieldlab">Historique</div><div class="tl" style="margin-top:2px">'+h.map(function(e){
+    return '<div class="tl-item" style="cursor:default"><span class="tl-rail">'+timeFmt(e.at)+'</span><span class="tl-mid"><span class="n"></span></span>'+
+      '<span class="tl-body"><span class="tl-t" style="font-size:14px">'+esc(e.msg||anoStatusLabel(e.s))+'</span><span class="tl-d">'+esc(dayLabel(e.at))+'</span><span class="tl-by">'+esc(e.by||'')+'</span></span></div>';
+  }).join('')+'</div>';
+}
+function refuseAno(a){
+  sheetForm('Refuser la correction','Renvoyer à « Pris en charge »',
+    '<div class="fieldlab" style="margin-top:8px">Motif <span class="opt">— optionnel</span></div><textarea id="afReason" rows="2" placeholder="Ce qui reste à faire…"></textarea>',
+    'Renvoyer en cours', function(){ var r=($('#afReason').value||'').trim(); a.correctiveAction=null; a.correctedAt=null; commitAno(a,'in_progress','Correction refusée'+(r?' — '+r:'')); });
+}
+function reopenAno(a){
+  if(!confirm('Rouvrir ce point clôturé ?')) return;
+  a.closedAt=null; a.reopenedAt=serverNow(); commitAno(a,'in_progress','Point rouvert');
 }
 function advanceAno(a){
   var idx=ANO_FLOW.map(function(f){return f[0];}).indexOf(a.status);
@@ -1726,18 +1951,19 @@ function advanceAno(a){
     sheetForm('Correction effectuée','Décrire la correction',
       '<div class="fieldlab">Action corrective</div><textarea id="afAct" rows="3" placeholder="Ce qui a été fait…"></textarea>'+
       '<div class="fieldlab">Preuve <span class="opt">— optionnel</span></div><div id="afPh"><button class="choice" id="afAdd">Ajouter une photo</button></div>',
-      'Enregistrer la correction', function(){ a.correctiveAction=($('#afAct').value||'').trim(); a.correctedAt=Date.now(); if(photo.v)a.proofPhoto=photo.v; commitAno(a,nstat,'Correction effectuée'); },
-      function(){ $('#afAdd').onclick=function(){ pickPhoto(function(d){ if(d){photo.v=d; $('#afPh').innerHTML='<img class="proofimg" src="'+d+'">';} }); }; },
+      'Enregistrer la correction', function(){ a.correctiveAction=($('#afAct').value||'').trim(); a.correctedAt=serverNow(); if(photo.v)a.proofPhoto=photo.v; commitAno(a,nstat,'Correction effectuée'); },
+      function(){ $('#afAdd').onclick=function(){ pickPhoto(function(d){ if(d){photo.v=d; $('#afPh').innerHTML='<img class="proofimg" src="'+d+'" alt="Preuve de correction — '+esc(a.zone)+'">';} }); }; },
       function(){ return ($('#afAct').value||'').trim().length>2; });
   } else if(nstat==='verified'){
-    a.verifiedById=currentUser().id; a.verifiedBy=userName(currentUser()); a.verifiedAt=Date.now(); commitAno(a,nstat,'Vérifié — '+a.verifiedBy);
+    a.verifiedById=currentUser().id; a.verifiedBy=userName(currentUser()); a.verifiedAt=serverNow(); commitAno(a,nstat,'Vérifié — '+a.verifiedBy);
   } else if(nstat==='closed'){
-    a.closedAt=Date.now(); commitAno(a,nstat,'Clos');
+    a.closedAt=serverNow(); commitAno(a,nstat,'Clos');
   } else commitAno(a,nstat,anoStatusLabel(nstat));
 }
 function commitAno(a,nstat,logmsg){
-  a.history=a.history||[]; a.history.push({s:nstat, byId:currentUser().id, by:userName(currentUser()), at:Date.now(), msg:logmsg});
-  a.status=nstat; logAudit('attention.'+nstat,'attention',a.id, (a.zone||'—')+' · '+logmsg); save(); closeSheet(); toast(anoStatusLabel(nstat)); setTimeout(function(){ render(); if(route==='home'||route==='attn'){} openAnoDetail(a.id); },260);
+  var prev=a.status, ts=serverNow(), u=currentUser();
+  a.history=a.history||[]; a.history.push({s:nstat, byId:u.id, by:userName(u), at:ts, msg:logmsg});
+  a.status=nstat; logAudit('attention.'+nstat,'attention',a.id, (a.zone||'—')+' · '+logmsg, {origin:a.origin||'club', oldValue:prev, newValue:nstat}); save(); closeSheet(); toast(logmsg||anoStatusLabel(nstat)); setTimeout(function(){ render(); openAnoDetail(a.id); },260);
 }
 /* generic sub-form sheet used by workflow */
 function sheetForm(kicker,title,bodyHTML,btnLabel,onSave,afterRender,validate){
@@ -1781,7 +2007,7 @@ function openFighterDetail(fid){
 function openCtlDetail(cid){
   var c=null; for(var i=0;i<db.ctls.length;i++)if(db.ctls[i].id===cid)c=db.ctls[i]; if(!c)return;
   var s=ctlStatus(c);
-  var meta='<div class="detail-meta">'+dm('Contrôle',ctlName(c.type))+dm('Zone',c.zone||'—')+dm('Échéance',shortDate(c.due))+(c.lastAt?dm('Dernier',shortDate(c.lastAt)):'')+dm('Statut',s[1])+(c.completedAt?dm('Réalisé',dayLabel(c.completedAt)):'')+'</div>';
+  var meta='<div class="detail-meta">'+dm('Contrôle',ctlName(c.type))+dm('Zone',c.zone||'—')+dm('Fréquence',ctlFreqLabel(c.freq))+dm('Échéance',fullDateFR(c.due))+(c.lastAt?dm('Dernier',shortDate(c.lastAt)):'')+dm('Statut',s[1])+(c.completedAt?dm('Réalisé',dayLabel(c.completedAt)):'')+'</div>';
   var foot;
   if(c.status==='completed'){ foot='<button class="btn ghost" id="cClose" style="border:1px solid var(--line-2)">Fermer</button>'; }
   else { foot='<button class="btn good" id="cOk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Marquer comme réalisé</button>'; }
@@ -1790,11 +2016,20 @@ function openCtlDetail(cid){
   $('#cOk').onclick=function(){
     // conforme / non conforme
     $('#shBody').innerHTML=meta+'<div class="fieldlab">Résultat du contrôle</div><div class="stack">'+
-      '<button class="srow" id="cConf"><span class="sg"><span class="st">Conforme</span><span class="ss">Rien à signaler</span></span></button>'+
-      '<button class="srow" id="cNon"><span class="sg"><span class="st">Non conforme</span><span class="ss">Crée un point d’attention</span></span></button></div>';
+      '<button class="srow" id="cConf"><span class="li" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--good-soft);border:1px solid #CFE4D6;color:var(--good);margin-right:2px">'+IC_CHECK+'</span><span class="sg"><span class="st">Conforme</span><span class="ss">Rien à signaler</span></span></button>'+
+      '<button class="srow" id="cNon"><span class="li" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--brand-soft);border:1px solid #F2D8D3;color:var(--brand);margin-right:2px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span><span class="sg"><span class="st">Non conforme</span><span class="ss">Crée un point d’attention lié</span></span></button></div>';
     $('#shFoot').innerHTML='';
-    function complete(result){ c.status='completed'; c.result=result; c.completedAt=Date.now(); c.lastAt=Date.now(); c.byId=currentUser().id; c.by=userName(currentUser()); if(!c.establishmentId)c.establishmentId=EST(); logAudit('control.complete','control',c.id, ctlName(c.type)+' · '+(result==='ok'?'conforme':'non conforme')); if(result==='not_ok'){ var zRec=STATE.config.zones.filter(function(x){return x.name===c.zone;})[0]; db.anos.unshift({id:id(), establishmentId:EST(), zone:c.zone||'—', zoneId:zRec?zRec.id:null, cat:ctlToAnoCat(c.type), desc:'Non-conformité relevée lors du contrôle : '+ctlName(c.type), byId:currentUser().id, by:userName(currentUser()), at:Date.now(), createdAt:Date.now(), status:'open', origin:'control', history:[]}); logAudit('attention.create','attention',null, (c.zone||'—')+' · non-conformité de contrôle'); } save(); }
-    $('#cConf').onclick=function(){ complete('ok'); burst('Contrôle enregistré','Conforme'); setTimeout(render,300); };
+    function complete(result){
+      c.status='completed'; c.result=result; c.completedAt=serverNow(); c.lastAt=c.completedAt; c.byId=currentUser().id; c.by=userName(currentUser()); if(!c.establishmentId)c.establishmentId=EST();
+      logAudit('control.complete','control',c.id, ctlName(c.type)+' · '+(result==='ok'?'conforme':'non conforme'), {origin:'control', newValue:result});
+      if(c.freq && c.freq!=='once'){ var nd=ctlNextDue(c.completedAt, c.freq, c.customDays); if(nd){ db.ctls.push({id:id(), seriesId:c.seriesId||c.id, establishmentId:EST(), type:c.type, zone:c.zone, freq:c.freq, customDays:c.customDays||null, due:nd, status:'scheduled', lastAt:c.completedAt, createdAt:c.completedAt}); logAudit('control.plan','control',null, ctlName(c.type)+' · prochaine échéance '+shortDate(nd), {origin:'control'}); } }
+      if(result==='not_ok'){ var zRec=STATE.config.zones.filter(function(x){return x.name===c.zone;})[0]; var nowTs=serverNow(); var u=currentUser();
+        var ano={id:id(), establishmentId:EST(), zone:c.zone||'—', zoneId:zRec?zRec.id:null, cat:ctlToAnoCat(c.type), desc:'Non-conformité relevée lors du contrôle : '+ctlName(c.type), byId:u.id, by:userName(u), at:nowTs, createdAt:nowTs, status:'open', origin:'control', controlId:c.id, linkId:c.id, photo:null, history:[{s:'open', byId:u.id, by:userName(u), at:nowTs, msg:'Créé depuis un contrôle non conforme'}]};
+        ano.dueAt=anoDueAt(ano); db.anos.unshift(ano); c.anoId=ano.id;
+        logAudit('attention.create','attention',ano.id, (c.zone||'—')+' · non-conformité de contrôle', {origin:'control', newValue:'open'}); }
+      save();
+    }
+    $('#cConf').onclick=function(){ complete('ok'); burst('Contrôle enregistré','Conforme'+(c.freq&&c.freq!=='once'?' · prochaine échéance planifiée':'')); setTimeout(render,300); };
     $('#cNon').onclick=function(){ complete('not_ok'); closeSheet(); toast('Contrôle · point d’attention créé'); setTimeout(render,200); };
   };
 }
@@ -1804,12 +2039,17 @@ function openCtlPlan(){
     CTL_TYPES.map(function(t){return '<button class="choice" data-t="'+t[0]+'">'+esc(t[1])+'</button>';}).join('')+'</div>'+
     '<div class="fieldlab">Zone <span class="opt">— optionnel</span></div><div class="choices" id="cpZone">'+
     zoneNames().map(function(z){return '<button class="choice" data-z="'+esc(z)+'">'+esc(z)+'</button>';}).join('')+'</div>'+
-    '<div class="fieldlab">Échéance</div><input type="date" id="cpDue">';
+    '<div class="fieldlab">Fréquence</div><div class="choices" id="cpFreq">'+
+    CTL_FREQS.map(function(f){return '<button class="choice '+(f[0]==='monthly'?'sel':'')+'" data-f="'+f[0]+'">'+esc(f[1])+'</button>';}).join('')+'</div>'+
+    '<div id="cpCustomRow" hidden><div class="fieldlab">Tous les combien (jours)</div><input type="text" id="cpCustom" inputmode="numeric" value="30" style="max-width:120px"></div>'+
+    '<div class="fieldlab">Première échéance</div><input type="date" id="cpDue">';
   openSheet('Contrôle','Planifier un contrôle', body, '<button class="btn" id="cpSave" disabled>Planifier</button>');
-  function refresh(){ $('#cpSave').disabled=!($('.choice.sel',$('#cpType'))&&$('#cpDue').value); }
-  $('#shBody').addEventListener('click',refresh); $('#cpDue').addEventListener('input',refresh);
-  $('#cpSave').onclick=function(){ var t=$('.choice.sel',$('#cpType')), z=$('.choice.sel',$('#cpZone')), due=$('#cpDue').value;
-    db.ctls.push({id:id(), establishmentId:EST(), type:t.dataset.t, zone:z?z.dataset.z:null, due:new Date(due).getTime(), status:'scheduled', createdAt:Date.now()}); logAudit('control.plan','control',null, ctlName(t.dataset.t)); save(); burst('Contrôle planifié',ctlName(t.dataset.t)); setTimeout(render,300); };
+  function curFreq(){ var f=$('.choice.sel',$('#cpFreq')); return f?f.dataset.f:'monthly'; }
+  function refresh(){ $('#cpCustomRow').hidden = curFreq()!=='custom'; $('#cpSave').disabled=!($('.choice.sel',$('#cpType'))&&$('#cpDue').value); }
+  $('#shBody').addEventListener('click',refresh); $('#cpDue').addEventListener('input',refresh); refresh();
+  $('#cpSave').onclick=function(){ var t=$('.choice.sel',$('#cpType')), z=$('.choice.sel',$('#cpZone')), due=$('#cpDue').value, f=curFreq();
+    db.ctls.push({id:id(), seriesId:id(), establishmentId:EST(), type:t.dataset.t, zone:z?z.dataset.z:null, freq:f, customDays:(f==='custom'?(parseInt($('#cpCustom').value,10)||30):null), due:new Date(due).getTime(), status:'scheduled', createdAt:serverNow()});
+    logAudit('control.plan','control',null, ctlName(t.dataset.t)+' · '+ctlFreqLabel(f), {origin:'control'}); save(); burst('Contrôle planifié',ctlName(t.dataset.t)+' · '+ctlFreqLabel(f)); setTimeout(render,300); };
 }
 
 /* --------------------------- Réglages CRUD --------------------------- */
@@ -1846,12 +2086,17 @@ function openProtoEdit(pid){
     '<div class="fieldlab">Dilution</div><input type="text" id="pD" value="'+(p?esc(p.dilution||''):'')+'">'+
     '<div class="fieldlab">Temps de contact</div><input type="text" id="pT" value="'+(p?esc(p.contactTime||''):'')+'">'+
     '<div class="fieldlab">Rinçage</div><div class="choices" id="pR"><button class="choice '+(p&&p.rinse?'sel':(!p?'':''))+'" data-r="1">Oui</button><button class="choice '+((p&&!p.rinse)||!p?'sel':'')+'" data-r="0">Non</button></div>'+
-    '<div class="fieldlab">Note</div><textarea id="pNo" rows="2">'+(p?esc(p.note||''):'')+'</textarea>',
-    '<div class="btnrow">'+(p?'<button class="btn ghost" id="pDel" style="border:1px solid var(--line-2);color:var(--brand)">Supprimer</button>':'')+'<button class="btn" id="pS">Enregistrer</button></div>');
+    '<div class="fieldlab">Note</div><textarea id="pNo" rows="2">'+(p?esc(p.note||''):'')+'</textarea>'+
+    '<div class="fieldlab">Statut</div><div class="choices" id="pAct"><button class="choice '+((!p||p.status!=='inactive')?'sel':'')+'" data-s="active">Actif</button><button class="choice '+((p&&p.status==='inactive')?'sel':'')+'" data-s="inactive">Inactif</button></div>'+
+    (p&&protocolHasHistory(p.id)?'<div class="card soft pad" style="padding:11px 13px;margin-top:10px;color:var(--ink-2);font-size:12px"><span class="pill mute"><span class="pd"></span>Utilisé</span> Ce protocole est relié à des opérations ou une planification : il ne peut pas être supprimé, seulement désactivé. Les enregistrements passés gardent leur instantané.</div>':''),
+    '<div class="btnrow">'+(p?'<button class="btn ghost" id="pDel" style="border:1px solid var(--line-2);color:var(--brand)">'+(protocolHasHistory(p.id)?'Désactiver':'Supprimer')+'</button>':'')+'<button class="btn" id="pS">Enregistrer</button></div>');
   $('#pS').onclick=function(){ var name=($('#pN').value||'').trim(); if(!name){toast('Nom requis');return;}
-    var data={name:name, product:($('#pP').value||'').trim(), dilution:($('#pD').value||'').trim(), contactTime:($('#pT').value||'').trim(), rinse:(($('.choice.sel',$('#pR'))||{dataset:{r:'0'}}).dataset.r==='1'), note:($('#pNo').value||'').trim()};
-    if(p)Object.assign(p,data); else STATE.config.protocols.push(Object.assign({id:id()},data)); save(); closeSheet(); toast('Protocole enregistré'); render(); };
-  if(p&&$('#pDel'))$('#pDel').onclick=function(){ if(confirm('Supprimer ce protocole ?')){ STATE.config.protocols=STATE.config.protocols.filter(function(x){return x.id!==p.id;}); save(); closeSheet(); toast('Protocole supprimé'); render(); } };
+    var status=($('.choice.sel',$('#pAct'))||{dataset:{s:'active'}}).dataset.s;
+    var data={name:name, product:($('#pP').value||'').trim(), dilution:($('#pD').value||'').trim(), contactTime:($('#pT').value||'').trim(), rinse:(($('.choice.sel',$('#pR'))||{dataset:{r:'0'}}).dataset.r==='1'), note:($('#pNo').value||'').trim(), status:status, active:status!=='inactive'};
+    if(p){Object.assign(p,data); logAudit('protocol.update','protocol',p.id,name);} else {var np=Object.assign({id:id(), establishmentId:EST(), createdAt:serverNow()},data); STATE.config.protocols.push(np); logAudit('protocol.create','protocol',np.id,name);} save(); closeSheet(); toast('Protocole enregistré'); render(); };
+  if(p&&$('#pDel'))$('#pDel').onclick=function(){
+    if(protocolHasHistory(p.id)){ p.status='inactive'; p.active=false; logAudit('protocol.deactivate','protocol',p.id,p.name); save(); closeSheet(); toast('Protocole désactivé — historique conservé'); render(); return; }
+    if(confirm('Supprimer ce protocole ? Aucune opération n’y est reliée.')){ STATE.config.protocols=STATE.config.protocols.filter(function(x){return x.id!==p.id;}); logAudit('protocol.delete','protocol',p.id,p.name); save(); closeSheet(); toast('Protocole supprimé'); render(); } };
 }
 function openActionEdit(aid){
   var a=aid?actionById(aid):null, hist=a?actionHasHistory(a.id):false, reco=a&&a.category==='recommended';
@@ -1888,7 +2133,7 @@ function openPlanEdit(tid){
   var dayOpts=WEEKDAYS.map(function(w){return '<button class="choice '+((t&&(t.days||[]).indexOf(w[0])>=0)?'sel':'')+'" data-d="'+w[0]+'">'+w[1]+'</button>';}).join('');
   var respOpts=activeUsers().map(function(u){return '<button class="choice '+((t&&t.respKind==='person'&&t.respUserId===u.id)?'sel':'')+'" data-ruser="'+u.id+'">'+esc(userName(u))+'</button>';}).join('')+
     ROLES.map(function(r){return '<button class="choice '+((t&&t.respKind==='role'&&t.respRole===r)?'sel':'')+'" data-rrole="'+esc(r)+'">'+esc(r)+'</button>';}).join('');
-  var protoOpts='<button class="choice '+((!t||!t.protocolId)?'sel':'')+'" data-pid="">Aucun</button>'+STATE.config.protocols.map(function(p){return '<button class="choice '+(t&&t.protocolId===p.id?'sel':'')+'" data-pid="'+p.id+'">'+esc(p.name)+'</button>';}).join('');
+  var protoOpts='<button class="choice '+((!t||!t.protocolId)?'sel':'')+'" data-pid="">Aucun</button>'+STATE.config.protocols.filter(function(p){return (p.active!==false&&p.status!=='inactive')||(t&&t.protocolId===p.id);}).map(function(p){var off=(p.active===false||p.status==='inactive');return '<button class="choice '+(t&&t.protocolId===p.id?'sel':'')+'" data-pid="'+p.id+'">'+esc(p.name)+(off?' (inactif)':'')+'</button>';}).join('');
   openSheet('Planification', t?'Modifier l’opération':'Nouvelle opération planifiée',
     '<div class="fieldlab" style="margin-top:8px">Action <span class="opt">— bibliothèque du club</span></div><div class="choices" id="plO">'+actOpts+'</div>'+
     '<div id="plNewRow" hidden><div class="fieldlab">Nom de la nouvelle action</div><input type="text" id="plNewName" placeholder="Ex. : Désinfection des tapis de renfo">'+
@@ -1997,26 +2242,91 @@ function openJournal(){
   log.slice(0,150).forEach(function(e){ var dl=dayLabel(e.at); if(dl!==last){rows+='<div class="tl-day">'+dl+'</div>'; last=dl;}
     rows+='<div class="tl-item" style="cursor:default"><span class="tl-rail">'+timeFmt(e.at)+'</span><span class="tl-mid"><span class="n"></span></span>'+
       '<span class="tl-body"><span class="tl-t">'+esc(auditLabel(e.action))+'</span><span class="tl-d">'+esc(e.detail||'')+'</span><span class="tl-by">'+esc(e.userName||'')+'</span></span></div>'; });
+  var demoNote='<div class="card soft pad" style="padding:12px;margin:2px 0 10px;color:var(--ink-2);font-size:12.5px;line-height:1.5"><span class="pill warn"><span class="pd"></span>Mode démonstration</span> Les données sont stockées <b>localement sur cet appareil</b>. Ce n’est pas encore une preuve certifiée : la structure prépare la future base de données MATSAFE (synchronisation et horodatage serveur à venir).</div>';
   var body = log.length
-    ? '<p class="pintro" style="margin:2px 0 10px">Chaque action importante est horodatée et reliée à la personne qui l’a effectuée. Ce journal, non modifiable, prépare la future base de données.</p><div class="tl">'+rows+'</div>'
-    : emptyBox('Journal vide','Les actions réalisées apparaîtront ici.');
+    ? demoNote+'<p class="pintro" style="margin:2px 0 10px">Chaque action importante est horodatée et reliée à la personne qui l’a effectuée. Ce journal n’est pas modifiable.</p><div class="tl">'+rows+'</div>'
+    : demoNote+emptyBox('Journal vide','Les actions réalisées apparaîtront ici.');
   openSheet('Traçabilité','Journal d’activité', body, '<button class="btn ghost" id="jClose" style="border:1px solid var(--line-2)">Fermer</button>');
   $('#jClose').onclick=closeSheet;
 }
 
 /* ------------------------------ Bilan ------------------------------ */
-function genBilan(){
-  var occ=todayOccurrences(), doneToday=0; occ.forEach(function(o){if(occDone(o.task,o.slot))doneToday++;});
-  var ops30=db.ops.length, anosClosed=db.anos.filter(function(a){return a.status==='closed';}).length, anosOpen=openAnos().length, fig=db.fighter.length;
-  var month=new Date().toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+/* Bornes du mois de référence (ts) — 1er jour 00:00 → dernier jour 23:59:59.999 */
+function monthRange(ref){ var d=new Date(ref);
+  return { from:new Date(d.getFullYear(), d.getMonth(), 1, 0,0,0,0).getTime(),
+           to:new Date(d.getFullYear(), d.getMonth()+1, 0, 23,59,59,999).getTime() }; }
+/* Occurrences PRÉVUES sur une période (projection du plan actuel) — sert au taux de réalisation. */
+function expectedOccurrences(from,to){
+  var count=0, start=new Date(from); start.setHours(0,0,0,0); var end=new Date(to).getTime();
+  for(var d=new Date(start); d.getTime()<=end; d.setDate(d.getDate()+1)){
+    var wd=d.getDay(), dom=d.getDate(), day=new Date(d);
+    STATE.config.plan.forEach(function(t){
+      if(!t.active||t.frequency==='after_use') return;
+      var f=t.frequency, due=false;
+      if(f==='daily'||f==='multi_daily') due=true;
+      else if(f==='some_days'||f==='weekly') due=(t.days||[]).indexOf(wd)>=0;
+      else if(f==='monthly') due=(t.monthDay||1)===dom;
+      else if(f==='once') due=!!t.onceAt && new Date(t.onceAt).toDateString()===day.toDateString();
+      if(!due) return;
+      var times=(t.times&&t.times.length)?t.times:[''];
+      times.forEach(function(slot){ var ts;
+        if(slot){ var p=slot.split(':'); var st=new Date(day); st.setHours(+p[0]||0,+p[1]||0,0,0); ts=st.getTime(); }
+        else { ts=day.getTime(); }
+        if(ts>=from && ts<=to) count++;
+      });
+    });
+  }
+  return count;
+}
+/* Statistiques du SEUL mois affiché (jamais tout l'historique). */
+function monthStats(ref){
+  var r=monthRange(ref), from=r.from, to=r.to, now=serverNow();
+  var toExp=Math.min(to, now); // le mois en cours ne prévoit pas au-delà d'aujourd'hui
+  function inMonth(ts){ return ts>=from && ts<=to; }
+  var ops=db.ops.filter(function(o){ return inMonth(o.at); });
+  var opsDone=ops.length;
+  var opsLate=ops.filter(function(o){ return o.late; }).length;
+  var opsPlannedDone=ops.filter(function(o){ return o.planId||o.scheduleId; }).length;
+  var expected=expectedOccurrences(from, toExp);
+  var taux = expected ? Math.min(100, Math.round(opsPlannedDone/expected*100)) : null;
+  var anosCreated=db.anos.filter(function(a){ return inMonth(a.createdAt||a.at); }).length;
+  function histAt(a,st){ var h=(a.history||[]).filter(function(e){return e.s===st;}); return h.length?h[0].at:null; }
+  var corrected=0, closed=0, sumDelay=0, delayN=0;
+  db.anos.forEach(function(a){
+    var cAt=histAt(a,'corrected'); if(cAt && inMonth(cAt)){ corrected++; var base=a.createdAt||a.at; if(cAt>=base){ sumDelay+=(cAt-base); delayN++; } }
+    var clAt=histAt(a,'closed'); if(clAt && inMonth(clAt)) closed++;
+  });
+  var avgDelayH = delayN ? Math.round(sumDelay/delayN/3600e3) : null;
+  var ctlsDoneM=db.ctls.filter(function(c){ return c.status==='completed' && c.completedAt && inMonth(c.completedAt); }).length;
+  var figM=db.fighter.filter(function(f){ return inMonth(f.at); }).length;
+  return { from:from, to:to, opsDone:opsDone, opsLate:opsLate, expected:expected, taux:taux,
+    anosCreated:anosCreated, corrected:corrected, closed:closed, avgDelayH:avgDelayH,
+    ctlsDone:ctlsDoneM, fighter:figM };
+}
+function genBilan(ref){
+  ref=ref||serverNow();
+  var s=monthStats(ref);
+  var month=new Date(ref).toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+  var period='Du '+new Date(s.from).toLocaleDateString('fr-FR',{day:'numeric',month:'long'})+' au '+new Date(s.to).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+  var anosOpen=openAnos().length;
+  var metrics=[
+    {k:'Opérations réalisées', v:s.opsDone, s:'tracées ce mois-ci'},
+    {k:'Opérations prévues', v:s.expected, s:(s.taux!==null?('taux de réalisation '+s.taux+' %'):'planning à définir')},
+    {k:'Réalisées en retard', v:s.opsLate, s:(s.opsDone?Math.round(s.opsLate/Math.max(1,s.opsDone)*100)+' % des opérations':'—')},
+    {k:'Points d’attention créés', v:s.anosCreated, s:'signalés sur la période'},
+    {k:'Points corrigés / clôturés', v:s.corrected+' / '+s.closed, s:'traités ce mois-ci'},
+    {k:'Délai moyen de correction', v:(s.avgDelayH!==null?delayTxt(s.avgDelayH):'—'), s:(s.avgDelayH!==null?'entre signalement et correction':'aucune correction ce mois')},
+    {k:'Contrôles effectués', v:s.ctlsDone, s:'contrôles périodiques réalisés'},
+    {k:'Retours Fighter reçus', v:s.fighter, s:'à vérifier, jamais automatiques'}
+  ];
   return {
-    month:month,
+    month:month, period:period, stats:s, metrics:metrics,
     blocks:[
       {t:'Merci pour votre engagement', p:'Merci d’avoir fait vivre la démarche MATSAFE ce mois-ci. En tenant votre registre au quotidien, '+STATE.club.name+' contribue à un environnement plus sain pour ses pratiquants.'},
-      {t:'Votre mois en bref', p:ops30+' opérations tracées, '+anosClosed+' point'+(anosClosed>1?'s':'')+' d’attention traité'+(anosClosed>1?'s':'')+', '+fig+' retour'+(fig>1?'s':'')+' Fighter reçus.'},
+      {t:'Votre mois en bref', p:s.opsDone+' opération'+(s.opsDone>1?'s':'')+' tracée'+(s.opsDone>1?'s':'')+', '+s.closed+' point'+(s.closed>1?'s':'')+' d’attention clôturé'+(s.closed>1?'s':'')+', '+s.ctlsDone+' contrôle'+(s.ctlsDone>1?'s':'')+' réalisé'+(s.ctlsDone>1?'s':'')+', '+s.fighter+' retour'+(s.fighter>1?'s':'')+' Fighter reçu'+(s.fighter>1?'s':'')+'.'},
       {t:'Points forts', list:[
-        'Registre alimenté régulièrement.',
-        (anosClosed?'Points d’attention pris en charge et clôturés.':'Peu de points d’attention — bonne maîtrise.')
+        (s.taux!==null&&s.taux>=80?'Bon taux de réalisation du planning ('+s.taux+' %).':'Registre alimenté sur la période.'),
+        (s.closed?'Points d’attention pris en charge et clôturés.':'Peu de points d’attention — bonne maîtrise.')
       ]},
       {t:'Points à consolider', list: anosOpen? ['Quelques points d’attention restent ouverts : les clôturer maintient la dynamique.'] : ['Aucun axe majeur ce mois-ci — le fonctionnement est maîtrisé.']},
       {t:'Suggestion MATSAFE', list:['Continuer à valider les opérations dès qu’elles sont faites : c’est ce qui donne toute sa valeur au registre.']},
@@ -2026,14 +2336,20 @@ function genBilan(){
 }
 function openBilan(){
   var b=genBilan();
-  var body=b.blocks.map(function(bl){ var inner=bl.list?'<ul style="margin:6px 0 0;padding-left:18px">'+bl.list.map(function(x){return '<li style="font-size:13.5px;line-height:1.5;margin:3px 0">'+esc(x)+'</li>';}).join('')+'</ul>':'<p style="margin:5px 0 0;font-size:14px;line-height:1.55;color:var(--ink)">'+esc(bl.p)+'</p>';
+  var statHTML='<p style="margin:2px 0 8px;font-size:13px;line-height:1.5;color:var(--ink-2)">Période analysée : <b style="color:var(--ink)">'+esc(b.period)+'</b>. Seuls les événements de ce mois sont comptés.</p>'+
+    '<div class="bilangrid">'+b.metrics.map(function(m){
+      return '<div class="bilanstat"><div class="bs-v">'+esc(String(m.v))+'</div><div class="bs-k">'+esc(m.k)+'</div><div class="bs-s">'+esc(m.s)+'</div></div>';
+    }).join('')+'</div>';
+  var body=statHTML+b.blocks.map(function(bl){ var inner=bl.list?'<ul style="margin:6px 0 0;padding-left:18px">'+bl.list.map(function(x){return '<li style="font-size:13.5px;line-height:1.5;margin:3px 0">'+esc(x)+'</li>';}).join('')+'</ul>':'<p style="margin:5px 0 0;font-size:14px;line-height:1.55;color:var(--ink)">'+esc(bl.p)+'</p>';
     return '<div style="padding:14px 0;border-top:1px solid var(--line)"><div style="font-family:var(--cond);font-weight:800;text-transform:uppercase;letter-spacing:.04em;font-size:13px;color:var(--brand)">'+esc(bl.t)+'</div>'+inner+'</div>';
   }).join('');
   openSheet('Bilan MATSAFE · '+esc(b.month), 'Votre bilan', body,
     '<div class="btnrow"><button class="btn ghost" id="blClose" style="border:1px solid var(--line-2)">Fermer</button><button class="btn brand" id="blPrint">Imprimer / PDF</button></div>');
   $('#blClose').onclick=closeSheet;
   $('#blPrint').onclick=function(){
-    $('#printArea').innerHTML='<div class="rp-brand">MATSAFE CLUB</div><h2>Bilan mensuel — '+esc(b.month)+'</h2><div class="meta">'+esc(STATE.club.name)+' · '+esc(STATE.club.city||'')+'</div>'+
+    var statTbl='<table style="width:100%;border-collapse:collapse;margin:6px 0 4px">'+b.metrics.map(function(m){return '<tr><td style="padding:5px 8px;border-bottom:1px solid #ddd;font-size:12px">'+esc(m.k)+'</td><td style="padding:5px 8px;border-bottom:1px solid #ddd;font-size:12px;font-weight:700;text-align:right">'+esc(String(m.v))+'</td></tr>';}).join('')+'</table>';
+    $('#printArea').innerHTML='<div class="rp-brand">MATSAFE CLUB</div><h2>Bilan mensuel — '+esc(b.month)+'</h2><div class="meta">'+esc(STATE.club.name)+' · '+esc(STATE.club.city||'')+' · '+esc(b.period)+'</div>'+
+      '<div class="bt">Indicateurs du mois</div>'+statTbl+
       b.blocks.map(function(bl){var inner=bl.list?'<ul>'+bl.list.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>':'<p class="bp">'+esc(bl.p)+'</p>'; return '<div class="bt">'+esc(bl.t)+'</div>'+inner;}).join('');
     window.print();
   };
@@ -2065,7 +2381,7 @@ function buildAndPrint(from,to,label){
 }
 
 /* ------------------------------- Mobile menu ------------------------------- */
-$('#mMenu').onclick=function(){ openAdd(); };
+$('#mMenu').onclick=function(){ go('menu'); };
 $('#addBtn').onclick=openAdd;
 
 /* ------------------------------- Init ------------------------------- */
