@@ -273,6 +273,19 @@
   .goalt{display:block; font-family:var(--cond); font-weight:800; text-transform:uppercase; letter-spacing:.01em; font-size:18px; line-height:1.05; margin-top:2px}
   .goalrow .lchev{color:var(--faint); flex:none}
 
+  /* Cartes d'échéance (Contrôles = label / audit) */
+  .keycard{display:flex; align-items:center; gap:16px; width:100%; text-align:left; cursor:pointer; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-lg); padding:18px; box-shadow:var(--shadow)}
+  .keycard:hover{box-shadow:var(--shadow-lg)}
+  .keycard .kc-ic{flex:none; width:50px; height:50px; border-radius:15px; display:grid; place-items:center; background:var(--surface-2); border:1px solid var(--line); color:var(--ink)}
+  .keycard .kc-ic svg{width:26px;height:26px}
+  .keycard.over .kc-ic{background:var(--brand-soft); border-color:#F0D7D2; color:var(--brand)}
+  .keycard .kc-g{flex:1 1 auto; min-width:0}
+  .keycard .kc-k{display:block; font-family:var(--cond); font-weight:700; text-transform:uppercase; letter-spacing:.05em; font-size:11.5px; color:var(--faint)}
+  .keycard .kc-date{display:block; font-family:var(--cond); font-weight:900; text-transform:uppercase; letter-spacing:.005em; font-size:24px; line-height:1.05; margin-top:3px}
+  .keycard .kc-sub{display:block; font-size:12.5px; color:var(--ink-2); margin-top:3px}
+  .keycard.over .kc-sub{color:var(--brand); font-weight:600}
+  .keycard .lchev{color:var(--faint); flex:none}
+
   /* pills (never color-only: dot + label) */
   .pill{display:inline-flex; align-items:center; gap:7px; font-family:var(--cond); font-weight:700; text-transform:uppercase;
     letter-spacing:.04em; font-size:11.5px; padding:5px 11px; border-radius:var(--radius-pill); white-space:nowrap; border:1px solid transparent}
@@ -826,7 +839,7 @@ function defaultState(){
     v:4,
     establishmentId:EE,
     establishments:[{id:EE, name:'Cube Fight Club', city:'Paris', since:'Mars 2026', createdAt:CT}],
-    club:{id:EE, name:'Cube Fight Club', city:'Paris', since:'Mars 2026'},
+    club:{id:EE, name:'Cube Fight Club', city:'Paris', since:'Mars 2026', labelRenewalAt:new Date(2027,2,15).getTime(), auditNextAt:new Date(2026,11,10).getTime()},
     users:[
       {id:'u_ref',   establishmentId:EE, firstName:'Simon',  lastName:'Ehrlacher', role:'Référent Hygiène', status:'active', createdAt:CT, deactivatedAt:null},
       {id:'u_coach', establishmentId:EE, firstName:'Karim',  lastName:'Benali',    role:'Coach',            status:'active', createdAt:CT, deactivatedAt:null},
@@ -844,6 +857,8 @@ function load(){
     if(!s.records.fighter)s.records.fighter=[]; if(!s.records.audit)s.records.audit=[];
     if(!s.establishmentId)s.establishmentId=(s.establishments&&s.establishments[0]&&s.establishments[0].id)||'est_cube';
     if(!s.config.actions)s.config.actions=[]; if(!s.config.zoneTypes)s.config.zoneTypes=[];
+    if(s.club&&s.club.labelRenewalAt===undefined)s.club.labelRenewalAt=new Date(2027,2,15).getTime();
+    if(s.club&&s.club.auditNextAt===undefined)s.club.auditNextAt=new Date(2026,11,10).getTime();
     return s;}}catch(e){}
   return defaultState();
 }
@@ -909,7 +924,7 @@ var NAV=[
   {id:'planif',label:'Planification',     grp:'main'},
   {id:'reg',   label:'Registre',          grp:'main'},
   {id:'attn',  label:'Points d’attention',grp:'main', badge:'attn'},
-  {id:'ctl',   label:'Contrôles',         grp:'main', badge:'ctl'},
+  {id:'ctl',   label:'Contrôles',         grp:'main'},
   {id:'fighter',label:'Fighter',          grp:'main', badge:'fighter'},
   {id:'etab',  label:'Établissement',     grp:'sec'},
   {id:'equipe',label:'Équipe',            grp:'sec'},
@@ -1045,13 +1060,13 @@ function viewHome(){
       '<div class="sub">Voici l’essentiel pour aujourd’hui.</div></div>'+
     todayHero + alertsBlock + opsBlock + attnBlock + fBlock + bilan;
 }
-/* Bandeau d'alertes prioritaires en tête d'Accueil (anomalies + contrôles) */
+/* Bandeau d'alertes prioritaires en tête d'Accueil (anomalies + échéances de conformité proches) */
 function homeAlerts(){
-  var anoN=openAnos().length, ctlN=badgeCount('ctl'), figN=newFighter().length;
-  if(!anoN && !ctlN) return '';
-  var rows='';
+  var anoN=openAnos().length, figN=newFighter().length, cl=STATE.club, SOON=45*864e5, rows='';
   if(anoN) rows+='<button class="alertrow crit rz" data-nav="attn"><span class="ar-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span><span class="ar-g"><span class="ar-t">'+anoN+' point'+(anoN>1?'s':'')+' d’attention à traiter</span><span class="ar-s">Anomalies ouvertes dans le club'+(figN?' · '+figN+' retour'+(figN>1?'s':'')+' Fighter à vérifier':'')+'</span></span>'+CHEV+'</button>';
-  if(ctlN) rows+='<button class="alertrow warn rz" data-nav="ctl"><span class="ar-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span><span class="ar-g"><span class="ar-t">'+ctlN+' contrôle'+(ctlN>1?'s':'')+' à réaliser</span><span class="ar-s">Vérifications en retard ou à faire</span></span>'+CHEV+'</button>';
+  if(cl.labelRenewalAt && (cl.labelRenewalAt-Date.now())<SOON) rows+='<button class="alertrow warn rz" data-nav="ctl"><span class="ar-ic">'+IC_SHIELD+'</span><span class="ar-g"><span class="ar-t">Label MATSAFE à renouveler</span><span class="ar-s">'+esc(untilTxt(cl.labelRenewalAt))+' · '+esc(fullDateFR(cl.labelRenewalAt))+'</span></span>'+CHEV+'</button>';
+  if(cl.auditNextAt && (cl.auditNextAt-Date.now())<SOON) rows+='<button class="alertrow warn rz" data-nav="ctl"><span class="ar-ic">'+IC_AUDIT+'</span><span class="ar-g"><span class="ar-t">Audit général à préparer</span><span class="ar-s">'+esc(untilTxt(cl.auditNextAt))+' · '+esc(fullDateFR(cl.auditNextAt))+'</span></span>'+CHEV+'</button>';
+  if(!rows) return '';
   return '<div class="alertband rz"><div class="ab-h"><span class="abx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span><h2>À traiter en priorité</h2></div>'+rows+'</div>';
 }
 
@@ -1312,28 +1327,38 @@ function viewFighter(){
 }
 
 /* ------------------------------ CONTRÔLES ------------------------------ */
+var IC_SHIELD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.6-3.1 7.7-7 9-3.9-1.3-7-4.4-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>';
+var IC_AUDIT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 13l2 2 4-4"/></svg>';
+function fullDateFR(ts){ return new Date(ts).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'}); }
+function untilTxt(ts){ if(!ts) return ''; var days=Math.ceil((ts-Date.now())/864e5); if(days<0) return 'Échéance dépassée'; if(days===0) return "Aujourd’hui"; if(days<31) return 'Dans '+days+' jour'+(days>1?'s':''); var m=Math.round(days/30.4); return 'Dans '+m+' mois'; }
 function viewCtl(){
-  var ctls=[...db.ctls].sort(function(a,b){return a.due-b.due;});
-  var todo=ctls.filter(function(c){var s=ctlStatus(c);return s[1]==='En retard'||s[1]==='À réaliser';});
-  var planned=ctls.filter(function(c){var s=ctlStatus(c);return s[1]==='Planifié';});
-  var doneC=ctls.filter(function(c){return c.status==='completed';});
-  var head='<div class="peyebrow rz">Prévention</div><h1 class="ptitle rz">Contrôles</h1>'+
-    '<p class="pintro rz">Les vérifications périodiques du club. Simple et clair : ce qui est à réaliser, et ce qui est planifié.</p>';
-  var todoBlock = sheadAdd('À réaliser', todo.length, 'ctlplan') + (todo.length
-    ? '<div class="stack rz">'+todo.map(ctlGoalHTML).join('')+'</div>'
-    : '<div class="rz">'+emptyBox('Aucun contrôle à réaliser','Tout est à jour.')+'</div>');
-  function block(title,arr){ return arr.length? '<div class="shead rz"><h2>'+title+'</h2><span class="pill ghost"><span class="pd"></span>'+arr.length+'</span></div><div class="stack rz">'+arr.map(ctlGoalHTML).join('')+'</div>' : ''; }
-  return head + todoBlock + block('Planifiés',planned) + block('Réalisés',doneC);
+  var cl=STATE.club, lab=cl.labelRenewalAt, aud=cl.auditNextAt;
+  var head='<div class="peyebrow rz">Conformité</div><h1 class="ptitle rz">Contrôles</h1>'+
+    '<p class="pintro rz">Les échéances officielles de votre club : le renouvellement de votre label MATSAFE et le prochain audit général.</p>';
+  function keycard(icon, kicker, ts){
+    var over = ts && ts<Date.now();
+    return '<button class="keycard rz'+(over?' over':'')+'" data-act="ctldates">'+
+      '<span class="kc-ic">'+icon+'</span>'+
+      '<span class="kc-g"><span class="kc-k">'+esc(kicker)+'</span>'+
+      '<span class="kc-date">'+(ts?esc(fullDateFR(ts)):'À définir')+'</span>'+
+      '<span class="kc-sub">'+(ts?esc(untilTxt(ts)):'Renseignez la date')+'</span></span>'+CHEV+'</button>';
+  }
+  var cards='<div class="stack rz" style="margin-top:10px">'+
+    keycard(IC_SHIELD,'Renouvellement du label MATSAFE', lab)+
+    keycard(IC_AUDIT,'Audit général', aud)+'</div>';
+  var note='<div class="rz card soft pad" style="padding:13px;margin-top:12px;color:var(--ink-2);font-size:12.5px"><span class="pill mute"><span class="pd"></span>Rappel</span> Ces échéances sont indicatives. Touchez une carte pour mettre à jour la date.</div>';
+  return head + cards + note;
 }
-function ctlGoalHTML(c){
-  var s=ctlStatus(c);
-  var kind=s[0]==='ok'?'ok':(s[0]==='attn'?'attn':(s[0]==='warn'?'warn':'info'));
-  var when = c.status==='completed' ? ('Réalisé le '+shortDate(c.completedAt||c.due)) : ('Échéance '+shortDate(c.due));
-  var mark = c.status==='completed' ? IC_CHECK : IC_CLOCK;
-  return '<button class="goalrow '+kind+'" data-ctl="'+c.id+'">'+
-    '<span class="goalmark">'+mark+'</span>'+
-    '<span class="goalg"><span class="goaleye">'+esc((c.zone||'Général')+' · '+when)+'</span><span class="goalt">'+esc(ctlName(c.type))+'</span></span>'+
-    pill(kind, s[1])+CHEV+'</button>';
+function openCtlDates(){
+  var cl=STATE.club;
+  function val(ts){ return ts? new Date(ts).toISOString().slice(0,10):''; }
+  openSheet('Contrôles','Échéances de conformité',
+    '<div class="fieldlab" style="margin-top:8px">Renouvellement du label MATSAFE</div><input type="date" id="cdLabel" value="'+val(cl.labelRenewalAt)+'">'+
+    '<div class="fieldlab">Audit général</div><input type="date" id="cdAudit" value="'+val(cl.auditNextAt)+'">',
+    '<button class="btn" id="cdSave">Enregistrer</button>');
+  $('#cdSave').onclick=function(){ var l=$('#cdLabel').value, a=$('#cdAudit').value;
+    cl.labelRenewalAt=l?new Date(l).getTime():null; cl.auditNextAt=a?new Date(a).getTime():null;
+    logAudit('label.update','establishment',cl.id,'Échéances de conformité mises à jour'); save(); closeSheet(); toast('Échéances enregistrées'); render(); };
 }
 
 /* --------------------------- ÉTABLISSEMENT --------------------------- */
@@ -1442,8 +1467,8 @@ function viewPlanif(){
 function viewMenu(){
   var head='<div class="peyebrow rz">Mon club</div><h1 class="ptitle rz">Club</h1>'+
     '<p class="pintro rz">Toutes les rubriques de MATSAFE Club.</p>';
-  var items=[['planif','Planification','Ce qui est prévu'],['attn','Points d’attention','Suivi hygiène & sécurité'],['ctl','Contrôles','Vérifications périodiques'],['fighter','Fighter','Retours des pratiquants'],['etab','Établissement','Zones · protocoles · plan'],['equipe','Équipe','Membres autorisés'],['params','Paramètres','Export · bilan · réglages']];
-  var rows=items.map(function(it){var c=0; if(it[0]==='attn')c=openAnos().length; else if(it[0]==='ctl')c=badgeCount('ctl'); else if(it[0]==='fighter')c=newFighter().length;
+  var items=[['planif','Planification','Ce qui est prévu'],['attn','Points d’attention','Suivi hygiène & sécurité'],['ctl','Contrôles','Label & audit général'],['fighter','Fighter','Retours des pratiquants'],['etab','Établissement','Zones · protocoles · plan'],['equipe','Équipe','Membres autorisés'],['params','Paramètres','Export · bilan · réglages']];
+  var rows=items.map(function(it){var c=0; if(it[0]==='attn')c=openAnos().length; else if(it[0]==='fighter')c=newFighter().length;
     return '<button class="srow" data-nav="'+it[0]+'"><span class="li" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);margin-right:2px">'+NAV_IC[it[0]]+'</span><span class="sg"><span class="st">'+esc(it[1])+'</span><span class="ss">'+esc(it[2])+'</span></span>'+(c?'<span class="pill attn"><span class="pd"></span>'+c+'</span>':'')+CHEV+'</button>';
   }).join('');
   var user='<div class="shead rz"><h2>Compte</h2></div><div class="stack rz"><button class="srow" data-act="switchuser"><span class="memav" style="width:38px;height:38px;font-size:14px">'+esc(initialsU(currentUser()))+'</span><span class="sg"><span class="st">'+esc(userName(currentUser()))+'</span><span class="ss">'+esc(currentUser().role)+'</span></span>'+CHEV+'</button></div>';
@@ -1494,6 +1519,7 @@ function actionRouter(a){
   if(a==='export') return openExport();
   if(a==='bilan') return openBilan();
   if(a==='ctlplan') return openCtlPlan();
+  if(a==='ctldates') return openCtlDates();
   if(a==='zoneadd') return openZoneEdit(null);
   if(a==='actionadd') return openActionEdit(null);
   if(a==='journal') return openJournal();
@@ -1541,9 +1567,8 @@ function openAdd(){
     '<div class="stack" style="margin-top:6px">'+
     '<button class="srow" data-add="op"><span class="li" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);margin-right:2px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span><span class="sg"><span class="st">Nettoyage supplémentaire</span><span class="ss">Enregistrer une opération réalisée hors plan</span></span></button>'+
     '<button class="srow" data-add="attn"><span class="li" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--brand-soft);border:1px solid #F2D8D3;color:var(--brand);margin-right:2px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span><span class="sg"><span class="st">Point d’attention</span><span class="ss">Signaler un problème constaté</span></span></button>'+
-    '<button class="srow" data-add="ctl"><span class="li" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);margin-right:2px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><span class="sg"><span class="st">Contrôle</span><span class="ss">Planifier un contrôle périodique</span></span></button>'+
     '</div>','');
-  $$('#shBody [data-add]').forEach(function(b){b.onclick=function(){ var k=b.dataset.add; closeSheet(); setTimeout(function(){ k==='op'?openPick():k==='attn'?openReport():openCtlPlan(); },180); };});
+  $$('#shBody [data-add]').forEach(function(b){b.onclick=function(){ var k=b.dataset.add; closeSheet(); setTimeout(function(){ k==='op'?openPick():openReport(); },180); };});
 }
 
 /* Chips « réalisé par » / « responsable » — parmi les membres actifs */
