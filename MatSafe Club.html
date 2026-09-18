@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#11110f">
+  <title>MatSafe Club — Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --ink:#11110f;--red:#c83a30;--red-deep:#9f291f;--paper:#f2efe8;--sheet:#faf8f2;
+      --muted:#746f64;--line:#d6d0c4;--soft:#e9e5dc;--green:#276149;--green-bg:#e3eee7;
+      --amber:#995812;--amber-bg:#f3e6d1;--blue:#3e4f68;--blue-bg:#e2e7ed;
+      --cond:"Barlow Condensed","Arial Narrow",sans-serif;--sans:"Barlow",sans-serif;
+    }
+    *{box-sizing:border-box}
+    html{background:var(--ink)}
+    body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+    button,input,select,textarea{font:inherit}
+    button{color:inherit}
+    [hidden]{display:none!important}
+    .app{min-height:100dvh;display:grid;grid-template-columns:256px 1fr}
+    .side{position:sticky;top:0;height:100dvh;background:var(--ink);color:var(--paper);padding:28px 20px 22px;display:flex;flex-direction:column;z-index:20}
+    .logo-lockup{position:relative;width:188px;height:68px;overflow:hidden;background:transparent;flex:none}
+    .logo-lockup img{position:absolute;width:220px;max-width:none;height:auto;left:-20px;top:-32px;display:block}
+    .product{margin-top:11px;font:700 11px/1 var(--cond);letter-spacing:.2em;text-transform:uppercase;color:#b6b0a5}
+    .club-id{margin:35px 0 18px;padding:16px 0;border-top:1px solid #363530;border-bottom:1px solid #363530}
+    .club-id small{display:block;color:#89857d;text-transform:uppercase;font:700 10px var(--cond);letter-spacing:.13em}
+    .club-id strong{display:block;margin-top:5px;font:800 18px var(--cond);text-transform:uppercase}
+    .club-id span{font-size:12px;color:#b6b0a5}
+    nav{display:grid;gap:4px}
+    .nav{border:0;background:transparent;color:#aaa69d;display:flex;align-items:center;gap:12px;text-align:left;padding:11px 12px;border-radius:8px;cursor:pointer;font:700 13px var(--cond);text-transform:uppercase;letter-spacing:.07em;transition:.18s ease}
+    .nav:hover{color:#fff;background:#24231f}.nav.active{background:var(--paper);color:var(--ink)}
+    .nav svg{width:17px;height:17px;flex:none}.nav .count{margin-left:auto;background:var(--red);color:white;min-width:20px;height:20px;border-radius:20px;display:grid;place-items:center;font-size:10px}
+    .side-bottom{margin-top:auto}
+    .label-card{border:1px solid #3b3934;border-radius:10px;padding:13px;background:#181815}
+    .label-card .seal{display:flex;align-items:center;gap:9px;color:#d8d3c9}
+    .label-card .seal i{width:28px;height:28px;border:1px solid var(--red);border-radius:50%;display:grid;place-items:center;color:var(--red);font-style:normal;font-weight:800}
+    .label-card strong{font:800 12px var(--cond);letter-spacing:.06em;text-transform:uppercase}
+    .label-card p{margin:8px 0 0;color:#858178;font-size:10.5px;line-height:1.35}
+    .mobile-head{display:none}
+    main{min-width:0;padding:0 38px 56px}
+    .topline{height:78px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(242,239,232,.94);backdrop-filter:blur(12px);z-index:10}
+    .crumb{font:700 11px var(--cond);text-transform:uppercase;letter-spacing:.14em;color:var(--muted)}
+    .top-actions{display:flex;gap:9px;align-items:center}.date{font-size:12px;color:var(--muted);margin-right:8px}
+    .btn{border:1px solid var(--ink);background:var(--ink);color:var(--paper);padding:10px 14px;border-radius:8px;cursor:pointer;font:800 12px var(--cond);text-transform:uppercase;letter-spacing:.07em;transition:.16s ease;display:inline-flex;align-items:center;gap:8px}
+    .btn:hover{transform:translateY(-1px);box-shadow:0 5px 14px #0002}.btn.ghost{background:transparent;color:var(--ink)}.btn.red{background:var(--red);border-color:var(--red)}.btn.sm{padding:7px 10px;font-size:10px}.btn:disabled{opacity:.5;cursor:default;transform:none}
+    .view{max-width:1260px;margin:0 auto;padding-top:34px;animation:enter .34s ease both}
+    @keyframes enter{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+    .hero{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:40px;align-items:end;border-top:4px solid var(--ink);padding-top:18px}
+    .eyebrow{font:700 10px var(--cond);text-transform:uppercase;letter-spacing:.17em;color:var(--red)}
+    h1{font:900 clamp(48px,7vw,86px)/.8 var(--cond);letter-spacing:-.04em;text-transform:uppercase;margin:9px 0 14px}
+    .hero p{margin:0;max-width:600px;color:var(--muted);font-size:15px;line-height:1.5}
+    .hero-progress{padding-bottom:3px}.progress-line{display:flex;justify-content:space-between;align-items:end;margin-bottom:9px}.progress-line strong{font:900 42px/1 var(--cond)}.progress-line span{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+    .track{height:9px;background:var(--soft);overflow:hidden}.track i{height:100%;display:block;background:var(--red);transition:width .35s ease}
+    .progress-note{font-size:11px;color:var(--muted);margin-top:8px}
+    .section-label{display:flex;align-items:center;gap:11px;margin:34px 0 10px;font:800 11px var(--cond);text-transform:uppercase;letter-spacing:.13em;color:var(--muted)}
+    .section-label:after{content:"";height:1px;background:var(--line);flex:1}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);background:var(--line);gap:1px}
+    .stat{background:var(--sheet);padding:18px}.stat .k{font:700 10px var(--cond);text-transform:uppercase;letter-spacing:.11em;color:var(--muted)}.stat .v{font:900 35px/1 var(--cond);margin-top:8px}.stat .s{font-size:11px;color:var(--muted);margin-top:5px}.stat.attn .v{color:var(--red)}
+    .grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,.85fr);gap:24px}
+    .panel{background:var(--sheet);border:1px solid var(--line)}
+    .panel-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 17px;border-bottom:1px solid var(--line)}
+    .panel-head h2{margin:0;font:800 16px var(--cond);text-transform:uppercase;letter-spacing:.04em}.panel-head p{margin:3px 0 0;color:var(--muted);font-size:11px}
+    .task{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:13px;align-items:center;padding:15px 17px;border-bottom:1px solid var(--soft);transition:.2s}.task:last-child{border-bottom:0}.task:hover{background:#fff}.task.done{opacity:.52}.task.done .task-name{text-decoration:line-through}
+    .check{width:31px;height:31px;border:1px solid var(--ink);background:transparent;border-radius:50%;cursor:pointer;display:grid;place-items:center;font-size:0}.check:hover{background:var(--ink)}.check:hover:after,.task.done .check:after{content:"✓";color:white;font-size:14px}.task.done .check{background:var(--green);border-color:var(--green)}
+    .task-name{font-weight:600;font-size:14px}.task-meta{margin-top:4px;color:var(--muted);font-size:11.5px}.time{font:800 12px var(--cond);color:var(--muted);text-align:right}.time.late{color:var(--red)}
+    .signal{padding:16px 17px;border-bottom:1px solid var(--soft)}.signal:last-child{border:0}.signal-top{display:flex;justify-content:space-between;gap:10px}.signal strong{font:700 14px var(--sans)}.signal p{margin:6px 0 11px;font-size:12.5px;line-height:1.4;color:var(--muted)}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:20px;font:700 10px var(--cond);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}.badge:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}.amber{color:var(--amber);background:var(--amber-bg)}.green{color:var(--green);background:var(--green-bg)}.blue{color:var(--blue);background:var(--blue-bg)}.red-b{color:var(--red-deep);background:#f1ddd8}
+    .quick{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.quick button{min-height:104px;text-align:left;background:var(--ink);color:var(--paper);border:0;padding:16px;border-radius:10px;cursor:pointer;transition:.18s}.quick button:hover{background:var(--red);transform:translateY(-2px)}.quick b{display:block;font:800 15px var(--cond);text-transform:uppercase;margin-top:18px}.quick span{color:#aaa69d;font-size:11px}.quick button:hover span{color:#f5ddd9}.quick .plus{font-size:22px;line-height:1}
+    .page-head{border-top:4px solid var(--ink);padding-top:17px;display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:25px}.page-head h1{font-size:clamp(43px,6vw,70px);margin-bottom:8px}.page-head p{margin:0;color:var(--muted);max-width:590px;line-height:1.45;font-size:14px}
+    .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.filter{border:1px solid var(--line);background:transparent;border-radius:30px;padding:8px 12px;cursor:pointer;font:700 10px var(--cond);text-transform:uppercase;letter-spacing:.08em}.filter.active{background:var(--ink);color:white;border-color:var(--ink)}
+    .table{border-top:2px solid var(--ink)}.row{display:grid;grid-template-columns:1.35fr .8fr .75fr .6fr;gap:15px;padding:15px 8px;border-bottom:1px solid var(--line);align-items:center}.row.header{padding-top:10px;padding-bottom:10px;font:700 10px var(--cond);text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}.row strong{font-size:13.5px}.row small{display:block;color:var(--muted);margin-top:4px}.row .cell{font-size:12.5px}
+    .incident{display:grid;grid-template-columns:75px minmax(0,1fr) 160px 110px;gap:16px;padding:18px 8px;border-bottom:1px solid var(--line);align-items:start}.incident .ref{font:800 12px var(--cond);color:var(--muted)}.incident h3{margin:0;font-size:14px}.incident p{margin:5px 0 0;color:var(--muted);font-size:12px;line-height:1.4}.incident .owner{font-size:12px}.incident .owner b{display:block;font-size:11px;text-transform:uppercase;margin-bottom:4px}
+    .funnel{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:22px}.fstep{background:var(--sheet);padding:17px;position:relative}.fstep b{font:900 30px var(--cond)}.fstep span{display:block;margin-top:4px;font:700 10px var(--cond);text-transform:uppercase;color:var(--muted);letter-spacing:.07em}
+    .report{background:var(--ink);color:var(--paper);padding:26px;display:grid;grid-template-columns:1fr 210px;gap:24px;align-items:end}.report h2{font:900 34px/.95 var(--cond);text-transform:uppercase;margin:7px 0 10px}.report p{margin:0;color:#b9b4aa;line-height:1.5;font-size:13px}.report .score{border-left:1px solid #45433d;padding-left:24px}.report .score strong{font:900 58px/.9 var(--cond);color:var(--red)}.report .score span{display:block;margin-top:7px;color:#9c988f;font-size:10px;text-transform:uppercase;letter-spacing:.1em}
+    .empty{padding:50px 20px;text-align:center;color:var(--muted)}
+    .scrim{position:fixed;inset:0;background:#111b;z-index:50;display:none}.scrim.open{display:block}.modal{position:fixed;z-index:51;top:50%;left:50%;transform:translate(-50%,-48%);width:min(620px,calc(100% - 28px));max-height:calc(100dvh - 40px);overflow:auto;background:var(--paper);border-top:5px solid var(--red);box-shadow:0 30px 90px #0007;display:none}.modal.open{display:block;animation:modal .22s ease both}@keyframes modal{from{opacity:0;transform:translate(-50%,-45%)}to{opacity:1;transform:translate(-50%,-48%)}}
+    .modal-head{padding:20px 23px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:20px}.modal-head h2{margin:0;font:900 25px var(--cond);text-transform:uppercase}.close{border:0;background:none;font-size:23px;cursor:pointer}.modal-body{padding:21px 23px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.field{display:grid;gap:6px}.field.full{grid-column:1/-1}.field label{font:700 10px var(--cond);text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}.field input,.field select,.field textarea{border:1px solid var(--line);background:var(--sheet);padding:11px 12px;border-radius:6px;outline:none}.field textarea{min-height:85px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--ink)}.modal-foot{display:flex;justify-content:flex-end;gap:9px;padding:15px 23px;border-top:1px solid var(--line)}
+    .toast{position:fixed;z-index:80;right:24px;bottom:24px;background:var(--green);color:white;padding:13px 17px;border-radius:8px;box-shadow:0 10px 35px #0003;font-size:13px;transform:translateY(90px);opacity:0;transition:.25s}.toast.show{transform:none;opacity:1}
+    .demo-note{margin-top:35px;color:#938e84;font-size:10.5px;line-height:1.4}
+    @media(max-width:980px){.app{grid-template-columns:215px 1fr}.side{padding-left:15px;padding-right:15px}.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.hero{grid-template-columns:1fr}.hero-progress{max-width:420px}.incident{grid-template-columns:60px 1fr 120px}.incident .badge{grid-column:2}.funnel{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:720px){.app{display:block}.side{position:fixed;left:-270px;width:256px;transition:.22s;box-shadow:15px 0 50px #0005}.side.open{left:0}.mobile-head{height:61px;background:var(--ink);display:flex;align-items:center;justify-content:space-between;color:white;padding:0 16px;position:sticky;top:0;z-index:15}.mobile-head .logo-lockup{width:132px;height:48px}.mobile-head .logo-lockup img{width:159px;left:-14px;top:-22px}.menu{border:1px solid #484640;background:none;color:white;width:38px;height:35px;border-radius:7px;font-size:18px}.topline{display:none}main{padding:0 16px 42px}.view{padding-top:25px}.hero{gap:22px}h1{font-size:54px}.stats{grid-template-columns:1fr 1fr}.quick{grid-template-columns:1fr}.page-head{display:block}.page-head .btn{margin-top:17px}.row{grid-template-columns:1fr auto}.row .cell:nth-child(3),.row .cell:nth-child(4),.row.header{display:none}.incident{grid-template-columns:52px 1fr}.incident .owner{grid-column:2}.report{grid-template-columns:1fr}.report .score{border-left:0;border-top:1px solid #45433d;padding:18px 0 0}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}}
+    @media(max-width:430px){.stats{grid-template-columns:1fr}.funnel{grid-template-columns:1fr 1fr}.stat{padding:15px}.hero p{font-size:14px}}
+    @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="side" id="side">
+    <div class="logo-lockup"><img src="matsafe-club-logo-transparent.png" alt="MatSafe Club"></div><div class="product">Espace opérationnel</div>
+    <div class="club-id"><small>Établissement pilote</small><strong>Cube Fight Club</strong><span>Paris · Référent : Samir B.</span></div>
+    <nav id="nav"></nav>
+    <div class="side-bottom"><div class="label-card"><div class="seal"><i>✓</i><strong>Label actif</strong></div><p>Audit initial validé · Prochaine revue : mars 2027</p></div></div>
+  </aside>
+  <div class="mobile-head"><div class="logo-lockup"><img src="matsafe-club-logo-transparent.png" alt="MatSafe Club"></div><button class="menu" id="menu" aria-label="Ouvrir le menu">☰</button></div>
+  <main>
+    <header class="topline"><div class="crumb" id="crumb">MatSafe Club / Aujourd’hui</div><div class="top-actions"><span class="date" id="date"></span><button class="btn ghost" data-action="report">Bilan mensuel</button><button class="btn red" data-action="incident">+ Signaler</button></div></header>
+    <div id="view"></div>
+  </main>
+</div>
+<div class="scrim" id="scrim"></div><div class="modal" id="modal"></div><div class="toast" id="toast"></div>
+
+<script>
+(()=>{
+  'use strict';
+  const icons={
+    today:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v15H4zM8 3v4M16 3v4M4 10h16"/></svg>',
+    plan:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v16H4zM8 8h8M8 12h8M8 16h5"/></svg>',
+    fighter:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v12H8l-4 4zM8 9h8M8 13h5"/></svg>',
+    issues:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 2.8 20h18.4zM12 9v5M12 17h.01"/></svg>',
+    proof:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h10v18H7zM10 7h4M10 11h4M10 15h4"/></svg>'
+  };
+  const pages=[['today','Aujourd’hui'],['plan','Plan d’hygiène'],['fighter','Retours Fighter'],['issues','Anomalies'],['proof','Preuves & bilan']];
+  const state={page:'today',tasks:[
+    {id:1,name:'Ouverture — contrôle visuel',zone:'Tatami principal',time:'08:00',done:true},
+    {id:2,name:'Nettoyage de contact',zone:'Tatami principal',time:'12:30',done:true},
+    {id:3,name:'Contrôle et réassort',zone:'Sanitaires',time:'14:00',done:false,late:true},
+    {id:4,name:'Nettoyage approfondi',zone:'Vestiaires & douches',time:'17:30',done:false},
+    {id:5,name:'Fermeture — désinfection',zone:'Tatami principal',time:'22:15',done:false}
+  ],signals:[
+    {id:1,zone:'Vestiaire hommes',text:'Le distributeur de savon est presque vide.',age:'Il y a 18 min',status:'À vérifier'},
+    {id:2,zone:'Tatami principal',text:'Une bordure du tapis semble légèrement décollée.',age:'Hier · 21:42',status:'Pris en compte'}
+  ],issues:[
+    {ref:'A-024',title:'Angle de tatami à recoller',desc:'Détecté lors du contrôle d’ouverture. Zone sécurisée en attendant l’intervention.',owner:'Samir B.',status:'En cours'},
+    {ref:'A-023',title:'Distributeur de savon vide',desc:'Retour Fighter traité et réassort effectué le jour même.',owner:'Lina M.',status:'Résolu'},
+    {ref:'A-022',title:'Sol de douche glissant',desc:'Nettoyage correctif réalisé, vérification effectuée.',owner:'Samir B.',status:'Vérifié'}
+  ]};
+  const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function nav(){ $('#nav').innerHTML=pages.map(([id,label])=>`<button class="nav ${state.page===id?'active':''}" data-page="${id}">${icons[id]}<span>${label}</span>${id==='fighter'?'<span class="count">2</span>':''}</button>`).join(''); }
+  function badge(status){let c=status==='Résolu'||status==='Vérifié'?'green':status==='Pris en compte'?'blue':status==='En cours'?'amber':'red-b';return `<span class="badge ${c}">${esc(status)}</span>`}
+  function shell(content){$('#view').innerHTML=`<section class="view">${content}<p class="demo-note">Prototype fonctionnel MatSafe Club · Les données affichées sont fictives et servent à tester le parcours produit.</p></section>`;}
+  function today(){
+    let done=state.tasks.filter(t=>t.done).length,pct=Math.round(done/state.tasks.length*100);
+    shell(`<div class="hero"><div><div class="eyebrow">Le terrain, maintenant</div><h1>Bonjour Samir.</h1><p>Votre club est globalement bien tenu. Une opération demande votre attention et deux retours pratiquants attendent une réponse.</p></div><div class="hero-progress"><div class="progress-line"><span>Programme du jour</span><strong>${pct}%</strong></div><div class="track"><i style="width:${pct}%"></i></div><div class="progress-note">${done} opérations validées sur ${state.tasks.length}</div></div></div>
+    <div class="section-label">Situation du club</div><div class="stats"><div class="stat"><div class="k">Réalisation · 30 jours</div><div class="v">95%</div><div class="s">114 opérations sur 120</div></div><div class="stat attn"><div class="k">À traiter aujourd’hui</div><div class="v">${state.tasks.filter(t=>!t.done).length}</div><div class="s">dont 1 en retard</div></div><div class="stat"><div class="k">Délai de prise en compte</div><div class="v">5h</div><div class="s">moyenne sur 30 jours</div></div><div class="stat"><div class="k">Anomalies ouvertes</div><div class="v">1</div><div class="s">aucune depuis plus de 7 jours</div></div></div>
+    <div class="section-label">À faire</div><div class="grid"><div class="panel"><div class="panel-head"><div><h2>Programme du jour</h2><p>Validez au moment de l’action pour préserver la valeur de la trace.</p></div><button class="btn sm ghost" data-page="plan">Voir le plan</button></div>${state.tasks.map(t=>`<div class="task ${t.done?'done':''}"><button class="check" data-check="${t.id}" aria-label="Valider ${esc(t.name)}"></button><div><div class="task-name">${esc(t.name)}</div><div class="task-meta">${esc(t.zone)} · protocole disponible</div></div><div class="time ${t.late&&!t.done?'late':''}">${t.late&&!t.done?'En retard · ':''}${t.time}</div></div>`).join('')}</div>
+    <div><div class="panel"><div class="panel-head"><div><h2>Retours Fighter</h2><p>Informations à vérifier, jamais des non-conformités automatiques.</p></div></div>${state.signals.map(s=>`<div class="signal"><div class="signal-top"><strong>${esc(s.zone)}</strong>${badge(s.status)}</div><p>${esc(s.text)}</p><button class="btn sm ghost" data-handle="${s.id}">Ouvrir le retour</button></div>`).join('')}</div><div class="section-label">Actions rapides</div><div class="quick"><button data-action="incident"><span class="plus">＋</span><b>Déclarer</b><span>Une anomalie terrain</span></button><button data-action="scan"><span class="plus">⌁</span><b>Scanner</b><span>Valider par zone</span></button><button data-action="report"><span class="plus">↗</span><b>Partager</b><span>Le bilan du club</span></button></div></div></div>`);
+  }
+  function plan(){shell(`<div class="page-head"><div><div class="eyebrow">Organisation opérationnelle</div><h1>Plan d’hygiène</h1><p>Chaque zone relie une fréquence, un protocole et une preuve. Le plan reste simple pour l’équipe et robuste pour l’audit.</p></div><button class="btn red" data-action="addtask">+ Ajouter une opération</button></div><div class="filters"><button class="filter active">Toutes les zones</button><button class="filter">Tatamis</button><button class="filter">Vestiaires</button><button class="filter">Sanitaires</button><button class="filter">Accueil</button></div><div class="table"><div class="row header"><div>Opération</div><div>Zone</div><div>Fréquence</div><div>Responsable</div></div>${[
+    ['Contrôle visuel d’ouverture','Tatami principal','Chaque ouverture','Équipe matin'],['Nettoyage de contact','Tatami principal','Après chaque session','Coach référent'],['Nettoyage approfondi','Vestiaires & douches','Chaque jour','Lina M.'],['Contrôle consommables','Sanitaires','2 fois / jour','Équipe accueil'],['Désinfection du matériel','Zone sacs & gants','Chaque soir','Équipe fermeture'],['Ventilation et contrôle odeurs','Vestiaires','Chaque ouverture','Équipe matin']
+  ].map(r=>`<div class="row"><div><strong>${r[0]}</strong><small>Protocole et produits associés</small></div><div class="cell">${r[1]}</div><div class="cell">${r[2]}</div><div class="cell">${r[3]}</div></div>`).join('')}</div>`)}
+  function fighter(){shell(`<div class="page-head"><div><div class="eyebrow">Écouter sans noter</div><h1>Retours Fighter</h1><p>Les retours des pratiquants complètent l’observation terrain. Ils sont qualifiés par le club avant toute action de suivi.</p></div><button class="btn ghost" data-action="qr">Afficher le QR Fighter</button></div><div class="funnel"><div class="fstep"><b>9</b><span>Retours · 30 jours</span></div><div class="fstep"><b>5h</b><span>Prise en compte moyenne</span></div><div class="fstep"><b>8</b><span>Résolus simplement</span></div><div class="fstep"><b>1</b><span>Transformé en anomalie</span></div></div><div class="panel"><div class="panel-head"><div><h2>Boîte de réception</h2><p>Deux retours demandent une action.</p></div></div>${state.signals.map(s=>`<div class="signal"><div class="signal-top"><strong>${esc(s.zone)} · ${esc(s.age)}</strong>${badge(s.status)}</div><p>${esc(s.text)}</p><button class="btn sm" data-handle="${s.id}">Qualifier le retour</button></div>`).join('')}<div class="signal"><div class="signal-top"><strong>Sanitaires · 12 sept.</strong>${badge('Résolu')}</div><p>Le sol avait besoin d’un passage supplémentaire après le cours enfants.</p><button class="btn sm ghost">Voir l’historique</button></div></div>`)}
+  function issues(){shell(`<div class="page-head"><div><div class="eyebrow">Corriger et vérifier</div><h1>Anomalies</h1><p>Une anomalie est suivie jusqu’à sa correction puis sa vérification. Les récidives restent visibles afin d’identifier les causes durables.</p></div><button class="btn red" data-action="incident">+ Déclarer une anomalie</button></div><div class="filters"><button class="filter active">Toutes · 3</button><button class="filter">Ouvertes · 1</button><button class="filter">Résolues · 2</button></div><div class="table">${state.issues.map(i=>`<div class="incident"><div class="ref">${i.ref}</div><div><h3>${esc(i.title)}</h3><p>${esc(i.desc)}</p></div><div class="owner"><b>Responsable</b>${esc(i.owner)}</div><div>${badge(i.status)}</div></div>`).join('')}</div>`)}
+  function proof(){shell(`<div class="page-head"><div><div class="eyebrow">Valoriser le travail réel</div><h1>Preuves & bilan</h1><p>Une synthèse lisible pour le gérant, l’équipe et l’accompagnement MatSafe — sans classement public ni score punitif.</p></div><button class="btn red" data-action="report">Ouvrir le bilan d’août</button></div><div class="report"><div><div class="eyebrow">Août 2026 · Cube Fight Club</div><h2>Une activité régulière et des actions rapides</h2><p>Votre registre montre une bonne continuité. Les retours Fighter ont été pris en compte rapidement et aucune anomalie ancienne ne reste ouverte.</p></div><div class="score"><strong>95%</strong><span>des opérations prévues réalisées</span></div></div><div class="section-label">Historique de preuve</div><div class="stats"><div class="stat"><div class="k">Validations</div><div class="v">114</div><div class="s">qui, quoi, où et quand</div></div><div class="stat"><div class="k">Corrections vérifiées</div><div class="v">6</div><div class="s">sur les 30 derniers jours</div></div><div class="stat"><div class="k">Retours traités</div><div class="v">9/9</div><div class="s">100 % pris en compte</div></div><div class="stat"><div class="k">Récidives</div><div class="v">0</div><div class="s">sur la période</div></div></div><div class="section-label">Documents disponibles</div><div class="table"><div class="row"><div><strong>Bilan mensuel · Août 2026</strong><small>Synthèse constructive et recommandations</small></div><div class="cell">PDF</div><div class="cell">31 août 2026</div><div><button class="btn sm ghost" data-action="report">Consulter</button></div></div><div class="row"><div><strong>Registre de traçabilité</strong><small>Historique détaillé des validations et corrections</small></div><div class="cell">Export</div><div class="cell">Temps réel</div><div><button class="btn sm ghost" data-action="export">Exporter</button></div></div></div>`)}
+  function render(){nav();$('#crumb').textContent='MatSafe Club / '+pages.find(p=>p[0]===state.page)[1];({today,plan,fighter,issues,proof}[state.page])();bind();}
+  function openModal(html){$('#modal').innerHTML=html;$('#modal').classList.add('open');$('#scrim').classList.add('open');bindModal()}
+  function closeModal(){$('#modal').classList.remove('open');$('#scrim').classList.remove('open')}
+  function formModal(kind){const title=kind==='addtask'?'Ajouter une opération':'Déclarer une anomalie';openModal(`<div class="modal-head"><h2>${title}</h2><button class="close" aria-label="Fermer">×</button></div><div class="modal-body"><div class="form-grid"><div class="field full"><label>${kind==='addtask'?'Nom de l’opération':'Point observé'}</label><input id="formTitle" placeholder="Ex. Contrôle du tatami"></div><div class="field"><label>Zone</label><select><option>Tatami principal</option><option>Vestiaires & douches</option><option>Sanitaires</option><option>Accueil</option></select></div><div class="field"><label>${kind==='addtask'?'Fréquence':'Priorité'}</label><select><option>${kind==='addtask'?'Chaque jour':'Normale'}</option><option>${kind==='addtask'?'Après chaque session':'À traiter rapidement'}</option></select></div><div class="field full"><label>Précisions</label><textarea placeholder="Ajoutez uniquement les informations utiles à l’équipe."></textarea></div></div></div><div class="modal-foot"><button class="btn ghost close">Annuler</button><button class="btn red" id="saveForm">Enregistrer</button></div>`);$('#saveForm').onclick=()=>{closeModal();toast(kind==='addtask'?'Opération ajoutée au plan':'Anomalie enregistrée et historisée')};}
+  function reportModal(){openModal(`<div class="modal-head"><div><div class="eyebrow">Bilan MatSafe · Août 2026</div><h2>Cube Fight Club</h2></div><button class="close">×</button></div><div class="modal-body"><p><strong>Merci pour votre engagement.</strong> Votre équipe a maintenu une activité régulière et une bonne réactivité pendant tout le mois.</p><div class="section-label">Votre mois en bref</div><div class="stats"><div class="stat"><div class="k">Réalisation</div><div class="v">95%</div></div><div class="stat"><div class="k">Retours traités</div><div class="v">9/9</div></div></div><div class="section-label">Points forts</div><p>Les opérations quotidiennes sont tracées avec constance. Les remarques concernant les consommables ont été corrigées le jour même.</p><div class="section-label">Point à consolider</div><p>Une opération de contrôle des sanitaires a été validée tardivement à plusieurs reprises. Un rappel simple à l’équipe d’après-midi peut sécuriser ce passage.</p><div class="section-label">Suggestion MatSafe</div><p>Associez le contrôle de 14 h au changement d’équipe afin qu’il devienne un réflexe opérationnel.</p></div><div class="modal-foot"><button class="btn ghost close">Fermer</button><button class="btn" id="printReport">Imprimer / PDF</button></div>`);$('#printReport').onclick=()=>window.print();}
+  function handleSignal(id){let s=state.signals.find(x=>x.id===id);openModal(`<div class="modal-head"><div><div class="eyebrow">Retour Fighter · à vérifier</div><h2>${esc(s.zone)}</h2></div><button class="close">×</button></div><div class="modal-body"><p>« ${esc(s.text)} »</p><div class="section-label">Décision du club</div><div class="quick"><button id="simple"><span class="plus">✓</span><b>Résoudre</b><span>Action simple et immédiate</span></button><button id="convert"><span class="plus">!</span><b>Transformer</b><span>Créer une anomalie suivie</span></button><button id="dismiss"><span class="plus">○</span><b>Classer</b><span>Après vérification terrain</span></button></div></div>`);['simple','dismiss'].forEach(k=>$('#'+k).onclick=()=>{s.status='Résolu';closeModal();toast('Retour traité et historisé');render()});$('#convert').onclick=()=>{closeModal();formModal('incident')};}
+  function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400)}
+  function bindModal(){document.querySelectorAll('.close').forEach(b=>b.onclick=closeModal)}
+  function bind(){
+    document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{state.page=b.dataset.page;$('#side').classList.remove('open');render()});
+    document.querySelectorAll('[data-check]').forEach(b=>b.onclick=()=>{let t=state.tasks.find(x=>x.id===+b.dataset.check);t.done=!t.done;toast(t.done?'Opération validée · trace enregistrée':'Validation annulée · historique conservé');render()});
+    document.querySelectorAll('[data-handle]').forEach(b=>b.onclick=()=>handleSignal(+b.dataset.handle));
+    document.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>{let a=b.dataset.action;if(a==='incident'||a==='addtask')formModal(a);else if(a==='report')reportModal();else if(a==='scan')toast('Mode scan de zone prêt');else if(a==='qr')toast('QR Fighter affichable à l’accueil et dans les vestiaires');else if(a==='export')toast('Export de démonstration préparé')});
+    document.querySelectorAll('.filter').forEach(b=>b.onclick=()=>{b.parentElement.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));b.classList.add('active')});
+  }
+  $('#menu').onclick=()=>$('#side').classList.toggle('open');$('#scrim').onclick=closeModal;
+  $('#date').textContent=new Intl.DateTimeFormat('fr-FR',{weekday:'long',day:'numeric',month:'long'}).format(new Date());
+  render();
+})();
+</script>
+</body>
+</html>
