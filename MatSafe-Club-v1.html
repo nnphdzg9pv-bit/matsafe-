@@ -18,7 +18,7 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html{font-size:16px}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--page);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px}
-.app{width:100%;max-width:1440px;background:var(--panel);border-radius:30px;box-shadow:0 40px 90px -50px rgba(20,20,25,.55);display:grid;grid-template-columns:248px 1fr 356px;overflow:hidden;min-height:860px}
+.app{position:relative;width:100%;max-width:1440px;background:var(--panel);border-radius:30px;box-shadow:0 40px 90px -50px rgba(20,20,25,.55);display:grid;grid-template-columns:248px 1fr 356px;overflow:hidden;min-height:860px}
 svg{display:block}
 .ic{width:20px;height:20px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .chev{width:15px;height:15px;stroke:currentColor;stroke-width:2;fill:none;opacity:.6}
@@ -207,6 +207,16 @@ tbody tr:hover{background:#F7F6F4}
 .cm-meta{font-size:12px;color:var(--muted);margin:0 0 5px 8px}
 .bubble{display:inline-block;background:#E9E9EB;color:#1C1C1E;padding:11px 15px;border-radius:20px;border-bottom-left-radius:6px;font-size:14px;line-height:1.35}
 
+
+.rail-toggle{position:absolute;top:50%;transform:translateY(-50%);right:368px;z-index:40;width:32px;height:32px;border-radius:50%;background:var(--panel);border:1px solid var(--line2);display:grid;place-items:center;cursor:pointer;color:var(--ink2);box-shadow:0 6px 16px -8px rgba(20,20,25,.45);transition:right .28s ease,background .15s,color .15s}
+.rail-toggle:hover{background:#F5F4F2;color:var(--ink)}
+.rail-toggle .rt-ic{width:17px;height:17px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:transform .28s}
+.app.rail-closed{grid-template-columns:248px 1fr}
+.app.rail-closed .rail{display:none}
+.app.rail-closed .rail-toggle{right:22px}
+.app.rail-closed .rail-toggle .rt-ic{transform:rotate(180deg)}
+@media(max-width:1180px){.rail-toggle{display:none}}
+
 /* toast */
 .toast{position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:50;box-shadow:0 16px 40px -16px rgba(0,0,0,.5)}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -364,6 +374,8 @@ tbody tr:hover{background:#F7F6F4}
   </main>
 
   <!-- RIGHT RAIL -->
+  <button id="railToggle" class="rail-toggle" aria-label="Afficher ou masquer le panneau" title="Réduire / agrandir la page"><svg class="rt-ic" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+
   <aside class="rail">
     <div class="prof">
       <div class="dots" data-toast="Options du profil"><svg class="ic" viewBox="0 0 24 24" style="width:22px"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg></div>
@@ -449,6 +461,8 @@ tbody tr:hover{background:#F7F6F4}
     avail.classList.toggle('off');
     document.getElementById('availtx').textContent = avail.classList.contains('off') ? 'Absent' : 'Disponible';
   });
+  var rt=document.getElementById('railToggle');
+  if(rt) rt.addEventListener('click', function(){ document.querySelector('.app').classList.toggle('rail-closed'); });
 })();
 </script>
 </body>
