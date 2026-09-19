@@ -201,6 +201,12 @@ tbody tr:hover{background:#F7F6F4}
 .clients.empty .c-badge{background:#EEECE8}
 .empty-note{color:#B7B2AA;font-size:12px;margin-top:2px}
 
+
+.chat{display:flex;flex-direction:column;gap:15px}
+.cm{max-width:88%}
+.cm-meta{font-size:12px;color:var(--muted);margin:0 0 5px 8px}
+.bubble{display:inline-block;background:#E9E9EB;color:#1C1C1E;padding:11px 15px;border-radius:20px;border-bottom-left-radius:6px;font-size:14px;line-height:1.35}
+
 /* toast */
 .toast{position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:50;box-shadow:0 16px 40px -16px rgba(0,0,0,.5)}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -253,11 +259,11 @@ tbody tr:hover{background:#F7F6F4}
       <div class="row2">
         <div class="block">
           <h3>Messages</h3>
-          
-          <div class="msg"><div class="av md a3">KB</div><div class="m-body"><div class="m-top"><span class="m-name">Kevin Bataille</span><span class="m-time">11:01</span></div><div class="m-prev">Tatami 2 glissant côté nord — à revérifier avant 18h</div></div></div>
-          <div class="msg"><div class="av md a1">LM</div><div class="m-body"><div class="m-top"><span class="m-name">Léa Moreau</span><span class="m-time">09:18</span></div><div class="m-prev">Vestiaires OK, désinfection faite ✔</div></div></div>
-          <div class="msg"><div class="av md a2">TM</div><div class="m-body"><div class="m-top"><span class="m-name">Thomas Morel</span><span class="m-time">08:42</span></div><div class="m-prev">Le distributeur de gel de l'entrée est vide</div></div></div>
-        </div>
+          <div class="chat">
+            <div class="cm"><div class="cm-meta">Kevin Bataille · 11:01</div><div class="bubble">Tatami 2 glissant côté nord — à revérifier avant 18h</div></div>
+            <div class="cm"><div class="cm-meta">Léa Moreau · 09:18</div><div class="bubble">Vestiaires OK, désinfection faite ✔</div></div>
+            <div class="cm"><div class="cm-meta">Thomas Morel · 08:42</div><div class="bubble">Le distributeur de gel de l'entrée est vide</div></div>
+          </div>
         </div>
         <div class="clients empty">
           <div class="c-top"><div class="big">&nbsp;</div><button class="pillbtn">Voir tout</button></div>
