@@ -383,6 +383,42 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .prof .pav{background:linear-gradient(150deg,var(--brand),var(--brand-d))}
 .btn-primary{background:var(--brand)}.btn-primary:hover{background:var(--brand-d)}
 .stars{color:var(--brand)}
+
+/* ===== Espace « Compétition à venir » (avec miniature) ===== */
+.comp-sec{display:flex;flex-direction:column;gap:12px;margin-bottom:2px}
+.comp-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.comp-head h3{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.04em;font-weight:800;font-size:15px}
+.comp-add-link{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-weight:700;font-size:11px;color:var(--brand);background:none;border:0;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:4px 6px;border-radius:var(--r-sm)}
+.comp-add-link:hover{background:rgba(208,64,44,.09)}
+.comp-add-link svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round}
+.comp-cards{display:flex;flex-direction:column;gap:12px}
+.comp-card{display:flex;gap:16px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;position:relative;align-items:center}
+.comp-thumb{width:104px;height:104px;border-radius:var(--r-sm);object-fit:cover;flex-shrink:0;border:1px solid var(--line2);background:#EAE8DF}
+.comp-thumb.ph{display:grid;place-items:center;color:var(--muted)}
+.comp-thumb.ph svg{width:32px;height:32px;stroke:currentColor;stroke-width:1.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.comp-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.comp-tag{align-self:flex-start;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.06em;font-size:10px;font-weight:700;color:var(--brand);background:rgba(208,64,44,.1);border-radius:999px;padding:3px 9px}
+.comp-card h4{font-family:var(--font-disp);font-size:17px;font-weight:800;letter-spacing:-.01em}
+.comp-meta{display:flex;gap:16px;flex-wrap:wrap;color:var(--ink2);font-size:13px}
+.comp-meta span{display:inline-flex;align-items:center;gap:6px}
+.comp-meta svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.comp-link{color:var(--brand);font-weight:700;font-size:12.5px;text-decoration:none;align-self:flex-start}
+.comp-tools{position:absolute;top:10px;right:10px;display:flex;gap:6px;opacity:0;transition:opacity .15s}
+.comp-card:hover .comp-tools{opacity:1}
+.comp-tool{width:28px;height:28px;border-radius:8px;background:#F7F6F1;border:1px solid var(--line2);display:grid;place-items:center;cursor:pointer;color:var(--ink)}
+.comp-tool:hover{background:#fff}
+.comp-tool svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.comp-empty{display:flex;align-items:center;gap:16px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.comp-empty .ce-thumb{width:92px;height:92px;border-radius:var(--r-sm);background:#EAE8DF;display:grid;place-items:center;color:var(--muted);flex-shrink:0;border:1px solid var(--line2)}
+.comp-empty .ce-thumb svg{width:32px;height:32px;stroke:currentColor;stroke-width:1.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.comp-empty .ce-txt{flex:1;min-width:0}
+.comp-empty .ce-txt h4{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.02em;font-size:14px;font-weight:800;margin-bottom:4px}
+.comp-empty .ce-txt p{color:var(--ink2);font-size:13px;line-height:1.45}
+.comp-empty .ce-btn{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-weight:700;font-size:12px;background:var(--brand);color:#fff;border:0;border-radius:var(--r-sm);padding:11px 16px;cursor:pointer;flex-shrink:0}
+.comp-empty .ce-btn:hover{background:var(--brand-d)}
+.comp-imgpick{display:flex;align-items:center;gap:12px}
+.comp-thumb-prev{width:66px;height:66px;border-radius:10px;object-fit:cover;border:1px solid var(--line2);display:none}
+@media(max-width:560px){.comp-empty{flex-wrap:wrap}.comp-empty .ce-btn{width:100%}}
 </style>
 </head>
 <body>
@@ -416,6 +452,12 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
           <button class="iconbtn" data-toast="Aide &amp; support"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .8-1 1.7"/><path d="M12 17h.01"/></svg></button>
           <button class="iconbtn" data-toast="Notifications"><span class="dot"></span><svg class="ic" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></button>
         </div>
+      </div>
+
+      <!-- Espace : compétition à venir (ajout direct par le dirigeant, avec miniature) -->
+      <div class="comp-sec">
+        <div class="comp-head"><h3>Compétition à venir</h3><button class="comp-add-link" data-compadd><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Ajouter</button></div>
+        <div id="compList"></div>
       </div>
 
       <!-- 3 cartes stats — À COMPLÉTER (aucun équivalent MatSafe direct) -->
@@ -794,6 +836,99 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
   var rt=document.getElementById('railToggle');
   if(rt) rt.addEventListener('click', function(){ document.querySelector('.app').classList.toggle('rail-closed'); });
+})();
+</script>
+
+<!-- MODALE : ajouter / modifier une compétition à venir -->
+<div class="modal" id="compModal" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-modal="true" style="max-width:460px">
+    <div class="sheet-h"><h3 id="compTitle">Ajouter une compétition</h3><button class="sheet-x" data-compclose><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <form id="compForm" autocomplete="off">
+      <div class="field"><label>Image de la compétition <span class="opt">(miniature)</span></label>
+        <div class="comp-imgpick"><img id="compThumbPrev" class="comp-thumb-prev" alt=""><button type="button" class="filebtn" id="compImgBtn"><svg class="ic" viewBox="0 0 24 24" style="width:15px;height:15px"><path d="M4 5h16v14H4z"/><path d="m4 15 5-5 4 4 3-3 4 4"/><circle cx="9" cy="9" r="1.5"/></svg>Choisir une image</button></div>
+        <input type="file" id="compImg" accept="image/*" style="display:none">
+      </div>
+      <div class="field"><label>Nom de la compétition</label><input id="compName" class="inp" placeholder="Ex. Open de Lyon — JJB"></div>
+      <div style="display:flex;gap:10px">
+        <div class="field" style="flex:1"><label>Date</label><input id="compDate" class="inp" placeholder="Ex. 28 octobre – 1er novembre 2026"></div>
+        <div class="field" style="flex:1"><label>Ville / lieu <span class="opt">(facultatif)</span></label><input id="compCity" class="inp" placeholder="Ex. Lyon"></div>
+      </div>
+      <div class="field"><label>Lien officiel <span class="opt">(facultatif)</span></label><input id="compLink" class="inp" placeholder="https://…"></div>
+      <button type="submit" class="btn-primary wide" id="compSubmit" style="margin-top:4px">Ajouter</button>
+    </form>
+  </div>
+</div>
+
+<script>
+"use strict";
+(function(){
+  var DEFAULT_DATE='28 octobre – 1er novembre 2026';
+  var LSK='matsafe_comp_v1', list=[];
+  try{ var raw=localStorage.getItem(LSK); if(raw){ var p=JSON.parse(raw); if(Array.isArray(p)) list=p; } }catch(e){}
+  function save(){ try{ localStorage.setItem(LSK, JSON.stringify(list)); }catch(e){} }
+  function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function find(id){ for(var i=0;i<list.length;i++){ if(list[i].id===id) return list[i]; } return null; }
+  var wrap=document.getElementById('compList');
+  var modal=document.getElementById('compModal'), form=document.getElementById('compForm');
+  var curImg=null, editId=null;
+  function ic(p,w){ w=w||14; return '<svg viewBox="0 0 24 24" style="width:'+w+'px;height:'+w+'px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round">'+p+'</svg>'; }
+  var CAL=ic('<rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/>');
+  var PIN=ic('<path d="M12 21s-7-6.5-7-11a7 7 0 0 1 14 0c0 4.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/>');
+  var ED=ic('<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>');
+  var DEL=ic('<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>');
+  function flash(m){ var t=document.getElementById('toast'); if(!t) return; t.textContent=m; t.classList.add('on'); setTimeout(function(){ t.classList.remove('on'); },1800); }
+
+  function render(){
+    if(!wrap) return;
+    if(!list.length){
+      wrap.innerHTML='<div class="comp-empty"><div class="ce-thumb">'+ic('<path d="M4 5h16v14H4z"/><path d="m4 15 5-5 4 4 3-3 4 4"/><circle cx="9" cy="9" r="1.5"/>',32)+'</div><div class="ce-txt"><h4>Aucune compétition à venir</h4><p>Ajoutez une compétition avec sa miniature pour la mettre en avant auprès de vos adhérents.</p></div><button class="ce-btn" data-compadd>Ajouter une compétition</button></div>';
+      return;
+    }
+    wrap.innerHTML='<div class="comp-cards">'+list.map(function(c){
+      var thumb=c.img?'<img class="comp-thumb" src="'+c.img+'" alt="">':'<div class="comp-thumb ph">'+CAL+'</div>';
+      var meta=[]; if(c.date) meta.push('<span>'+CAL+esc(c.date)+'</span>'); if(c.city) meta.push('<span>'+PIN+esc(c.city)+'</span>');
+      var link=c.link?'<a class="comp-link" href="'+esc(c.link)+'" target="_blank" rel="noopener">Voir la compétition ↗</a>':'';
+      return '<div class="comp-card">'+thumb+'<div class="comp-body"><span class="comp-tag">Compétition à venir</span><h4>'+esc(c.name)+'</h4>'+(meta.length?'<div class="comp-meta">'+meta.join('')+'</div>':'')+link+'</div><div class="comp-tools"><button class="comp-tool" data-compedit="'+c.id+'" title="Modifier">'+ED+'</button><button class="comp-tool" data-compdel="'+c.id+'" title="Supprimer">'+DEL+'</button></div></div>';
+    }).join('')+'</div>';
+  }
+
+  function preview(u){ var pv=document.getElementById('compThumbPrev'); if(u){ pv.src=u; pv.style.display='block'; } else { pv.style.display='none'; pv.removeAttribute('src'); } }
+  function openComp(id){
+    editId=id||null; var c=id?find(id):null; curImg=c?c.img||null:null;
+    document.getElementById('compTitle').textContent=id?'Modifier la compétition':'Ajouter une compétition';
+    document.getElementById('compName').value=c?c.name||'':'';
+    document.getElementById('compDate').value=c?(c.date||''):DEFAULT_DATE;
+    document.getElementById('compCity').value=c?c.city||'':'';
+    document.getElementById('compLink').value=c?c.link||'':'';
+    preview(curImg);
+    document.getElementById('compSubmit').textContent=id?'Enregistrer':'Ajouter';
+    modal.classList.add('on');
+  }
+  function closeComp(){ modal.classList.remove('on'); }
+
+  function downscale(src,cb){ var im=new Image(); im.onload=function(){ var mx=760,w=im.width,h=im.height,s=Math.min(1,mx/Math.max(w,h)); w=Math.round(w*s); h=Math.round(h*s); var cv=document.createElement('canvas'); cv.width=w; cv.height=h; try{ cv.getContext('2d').drawImage(im,0,0,w,h); cb(cv.toDataURL('image/jpeg',0.82)); }catch(e){ cb(src); } }; im.onerror=function(){ cb(src); }; im.src=src; }
+  document.getElementById('compImgBtn').addEventListener('click', function(){ document.getElementById('compImg').click(); });
+  document.getElementById('compImg').addEventListener('change', function(){ var f=this.files&&this.files[0]; if(!f) return; var r=new FileReader(); r.onload=function(){ downscale(r.result, function(u){ curImg=u; preview(u); }); }; r.readAsDataURL(f); });
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var name=document.getElementById('compName').value.trim();
+    if(!name){ flash('Ajoutez le nom de la compétition.'); return; }
+    var c={ id:editId||('k'+Date.now()), name:name, date:document.getElementById('compDate').value.trim(), city:document.getElementById('compCity').value.trim(), link:document.getElementById('compLink').value.trim(), img:curImg||null };
+    if(editId){ for(var i=0;i<list.length;i++){ if(list[i].id===editId){ list[i]=c; break; } } } else { list.unshift(c); }
+    save(); render(); closeComp(); editId=null; curImg=null;
+    flash('Compétition enregistrée.');
+  });
+
+  document.addEventListener('click', function(e){
+    if(e.target.closest('[data-compadd]')){ openComp(null); return; }
+    var ed=e.target.closest('[data-compedit]'); if(ed){ openComp(ed.getAttribute('data-compedit')); return; }
+    var dl=e.target.closest('[data-compdel]'); if(dl){ var id=dl.getAttribute('data-compdel'); if(window.confirm('Supprimer cette compétition ?')){ list=list.filter(function(x){return x.id!==id;}); save(); render(); flash('Compétition supprimée.'); } return; }
+    if(e.target.closest('[data-compclose]')){ closeComp(); return; }
+    if(e.target===modal){ closeComp(); return; }
+  });
+
+  render();
 })();
 </script>
 </body>
