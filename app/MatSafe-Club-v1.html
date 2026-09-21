@@ -350,28 +350,48 @@ tbody tr:hover{background:#F7F6F4}
     <!-- ACCUEIL -->
     <section class="screen on" data-screen="accueil">
       <div class="head">
-        <div><h1>Bonjour, Simon&nbsp;!</h1><p>Voici le suivi de l'hygiène du club aujourd'hui.</p></div>
+        <div><h1>Bonjour, Simon&nbsp;!</h1><p>Gérez vos passages et suivez l'hygiène de votre club en un coup d'œil.</p></div>
         <div class="head-actions">
           <button class="iconbtn" data-toast="Aide &amp; support"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .8-1 1.7"/><path d="M12 17h.01"/></svg></button>
           <button class="iconbtn" data-toast="Notifications"><span class="dot"></span><svg class="ic" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></button>
         </div>
       </div>
 
-      <div class="summary">Aujourd'hui : <b>8 cours terminés</b><span class="sdotm"></span><b>7 nettoyages validés</b><span class="sdotm"></span><b>1 nettoyage à vérifier</b></div>
-
-      <!-- 3 indicateurs utiles -->
+      <!-- 3 cartes stats — À COMPLÉTER (aucun équivalent MatSafe direct) -->
       <div class="stats">
-        <div class="stat y" data-go="preuves"><div class="lbl">Nettoyages validés</div><div class="val">7</div><div class="badge-ic"><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M20 6 9 17l-5-5"/></svg></div></div>
-        <div class="stat b" data-go="planning"><div class="lbl">Nettoyages à effectuer</div><div class="val">1</div><div class="badge-ic"><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div></div>
-        <div class="stat l" data-go="signalements"><div class="lbl">Anomalies à traiter</div><div class="val">1</div><div class="badge-ic"><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></div></div>
+        <div class="stat y empty"><div class="lbl"></div><div class="val"></div><div class="badge-ic"><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div></div>
+        <div class="stat b empty"><div class="lbl"></div><div class="val"></div><div class="badge-ic"><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div></div>
+        <div class="stat l empty"><div class="lbl"></div><div class="val"></div><div class="badge-ic"><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div></div>
       </div>
 
-      <!-- À traiter aujourd'hui : uniquement les actions importantes -->
+      <div class="row2">
+        <div class="block">
+          <h3>Messages</h3>
+          <div class="chat">
+            <div class="cm"><div class="cm-meta">Kevin Bataille · 11:01</div><div class="bubble">Tatami 2 glissant côté nord — à revérifier avant 18h</div></div>
+            <div class="cm"><div class="cm-meta">Léa Moreau · 09:18</div><div class="bubble">Vestiaires OK, désinfection faite ✔</div></div>
+            <div class="cm"><div class="cm-meta">Thomas Morel · 08:42</div><div class="bubble">Le distributeur de gel de l'entrée est vide</div></div>
+          </div>
+        </div>
+        <div class="clients empty">
+          <div class="c-top"><div class="big">&nbsp;</div><button class="pillbtn">Voir tout</button></div>
+          <div class="empty-note">à compléter</div>
+          <hr>
+          <div class="c-sess"><span class="c-badge"></span><span class="ph" style="height:11px;width:140px"></span></div>
+          <div class="avstack" style="margin-top:18px"><div class="av md" style="background:#E7E3DC"></div><div class="av md" style="background:#ECEAE6"></div><div class="av md" style="background:#F1EFEB"></div></div>
+        </div>
+      </div>
+
       <div class="block">
-        <h3>À traiter aujourd'hui</h3>
-        <div class="msg" data-validate="No Gi|20:00|MAT 1|Mardi"><div class="av md a2"><svg class="ic" viewBox="0 0 24 24" style="width:19px;height:19px;stroke:#fff"><path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="9"/></svg></div><div class="m-body"><div class="m-top"><span class="m-name">Nettoyage en attente — No Gi (20:00)</span><span class="m-time">Tatami 1</span></div><div class="m-prev">Le cours est terminé : validez le nettoyage du tatami.</div></div><span class="pill-st todo"><span class="d"></span>À valider</span></div>
-        <div class="msg" data-go="signalements"><div class="av md a3"><svg class="ic" viewBox="0 0 24 24" style="width:19px;height:19px;stroke:#fff"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></div><div class="m-body"><div class="m-top"><span class="m-name">Anomalie urgente — Distributeur de gel vide</span><span class="m-time">Entrée MAT 1</span></div><div class="m-prev">Signalée par Nadia R. — à réapprovisionner rapidement.</div></div><span class="pill-st late"><span class="d"></span>Urgent</span></div>
-        <div class="msg" data-go="retours"><div class="av md a5"><svg class="ic" viewBox="0 0 24 24" style="width:19px;height:19px;stroke:#fff"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V6a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg></div><div class="m-body"><div class="m-top"><span class="m-name">Retour adhérent — Vestiaires</span><span class="m-time">Hier</span></div><div class="m-prev">« Douches un peu glissantes le soir » — réponse à donner.</div></div><span class="pill-st prog"><span class="d"></span>À répondre</span></div>
+        <h3>Contrôles</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Zone</th><th>Créneau</th><th>Type</th><th style="text-align:right">Statut</th></tr></thead>
+          <tbody>
+            <tr><td><div class="tr-name"><span class="av sm" style="background:#E7E3DC"></span><span class="ph" style="height:11px;width:110px"></span></div></td><td><span class="ph" style="height:11px;width:80px"></span></td><td><span class="ph" style="height:11px;width:70px"></span></td><td style="text-align:right"><span class="ph" style="height:24px;width:96px;border-radius:999px"></span></td></tr>
+            <tr><td><div class="tr-name"><span class="av sm" style="background:#E7E3DC"></span><span class="ph" style="height:11px;width:110px"></span></div></td><td><span class="ph" style="height:11px;width:80px"></span></td><td><span class="ph" style="height:11px;width:70px"></span></td><td style="text-align:right"><span class="ph" style="height:24px;width:96px;border-radius:999px"></span></td></tr>
+            <tr><td><div class="tr-name"><span class="av sm" style="background:#E7E3DC"></span><span class="ph" style="height:11px;width:110px"></span></div></td><td><span class="ph" style="height:11px;width:80px"></span></td><td><span class="ph" style="height:11px;width:70px"></span></td><td style="text-align:right"><span class="ph" style="height:24px;width:96px;border-radius:999px"></span></td></tr>
+          </tbody>
+        </table></div>
       </div>
     </section>
 
