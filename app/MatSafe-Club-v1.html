@@ -324,31 +324,30 @@ tbody tr:hover{background:#F7F6F4}
 .modal-done p{font-size:15px;color:var(--ink);font-weight:600}
 
 /* ============================================================
-   MATSAFE × UVU — Éditorial grisâtre
-   Ambiance : bleu-gris désaturé (comme l'affiche MatSafe & le hero UVU),
-   surfaces écrues, rouge MatSafe, typo grotesque Archivo en capitales,
-   angles nets, grain filmique léger. Contenu MatSafe conservé.
-   Couleurs relevées sur uvuclub.com + AFFICHE_1_BIS.
+   MATSAFE — DA alignée sur le site officiel matsafe
+   Fond crème du site (#F1F0EC), noir #0B0B0B, rouge MatSafe #D0402C,
+   typo grotesque Archivo en capitales, angles nets. Couleurs relevées
+   directement sur une capture du site. Contenu MatSafe conservé.
    ============================================================ */
 :root{
-  --page:#8F9EA4;            /* fond grisâtre (bleu-gris) */
-  --panel:#F5F4EF;           /* écru chaud (surface app) */
-  --side:#ECEBE3;            /* colonne gauche */
-  --rail:#EFEEE7;            /* rail droit */
-  --ink:#191B1D;             /* quasi-noir cool */
-  --ink2:#5F6669; --muted:#969B9C;
-  --line:#E1DFD6; --line2:#D6D4C9;
-  --yellow:#E5E1D5; --blue:#D6DDDF; --lav:#DFDAD9;  /* pastels désaturés */
+  --page:#E7E6DF;            /* cadre crème (mat, comme le site) */
+  --panel:#F1F0EC;           /* CRÈME DU SITE — fond principal */
+  --side:#ECEBE4;            /* colonne gauche */
+  --rail:#EEEDE6;            /* rail droit */
+  --ink:#0B0B0B;             /* noir du site */
+  --ink2:#5A5351; --muted:#9A968E;   /* gris chauds du site */
+  --line:#E1DFD6; --line2:#D3D1C7;
+  --yellow:#E9E5D9; --blue:#E3E4DD; --lav:#E7E2DD;  /* tons neutres crème */
   --green-d:#3E8E4F; --amber-d:#B87A2C; --red-d:#B23122;
-  --brand:#CB3A2A; --brand-d:#B23122;
+  --brand:#D0402C; --brand-d:#B7351F;   /* rouge du site */
   --r:6px; --r-sm:4px;
   --font-disp:'Archivo','Inter',system-ui,sans-serif;
   --font-body:'Inter',system-ui,sans-serif;
 }
 body{font-family:var(--font-body);background:var(--page);padding:40px}
-body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.06;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.028;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 .app{border-radius:10px;box-shadow:0 34px 90px -44px rgba(18,24,27,.62);position:relative;z-index:1}
-.app::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:60;opacity:.035;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.app::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:60;opacity:.015;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
 /* Typographie éditoriale */
 .head h1{font-family:var(--font-disp);font-weight:800;text-transform:uppercase;letter-spacing:-.005em;font-size:30px;line-height:1.02}
