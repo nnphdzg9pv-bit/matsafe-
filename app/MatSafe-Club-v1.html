@@ -6,7 +6,7 @@
 <title>MatSafe Club</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --page:#AEB0B2; --panel:#FDFDFD; --side:#F3F2F1; --rail:#FAFAF9;
@@ -322,6 +322,68 @@ tbody tr:hover{background:#F7F6F4}
 .modal-done{text-align:center;padding:6px 0 2px}
 .modal-done .mk{width:64px;height:64px;border-radius:50%;background:#EAF6E8;color:var(--green-d);display:grid;place-items:center;margin:0 auto 14px}
 .modal-done p{font-size:15px;color:var(--ink);font-weight:600}
+
+/* ============================================================
+   MATSAFE × UVU — Éditorial grisâtre
+   Ambiance : bleu-gris désaturé (comme l'affiche MatSafe & le hero UVU),
+   surfaces écrues, rouge MatSafe, typo grotesque Archivo en capitales,
+   angles nets, grain filmique léger. Contenu MatSafe conservé.
+   Couleurs relevées sur uvuclub.com + AFFICHE_1_BIS.
+   ============================================================ */
+:root{
+  --page:#8F9EA4;            /* fond grisâtre (bleu-gris) */
+  --panel:#F5F4EF;           /* écru chaud (surface app) */
+  --side:#ECEBE3;            /* colonne gauche */
+  --rail:#EFEEE7;            /* rail droit */
+  --ink:#191B1D;             /* quasi-noir cool */
+  --ink2:#5F6669; --muted:#969B9C;
+  --line:#E1DFD6; --line2:#D6D4C9;
+  --yellow:#E5E1D5; --blue:#D6DDDF; --lav:#DFDAD9;  /* pastels désaturés */
+  --green-d:#3E8E4F; --amber-d:#B87A2C; --red-d:#B23122;
+  --brand:#CB3A2A; --brand-d:#B23122;
+  --r:6px; --r-sm:4px;
+  --font-disp:'Archivo','Inter',system-ui,sans-serif;
+  --font-body:'Inter',system-ui,sans-serif;
+}
+body{font-family:var(--font-body);background:var(--page);padding:40px}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.06;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.app{border-radius:10px;box-shadow:0 34px 90px -44px rgba(18,24,27,.62);position:relative;z-index:1}
+.app::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:60;opacity:.035;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* Typographie éditoriale */
+.head h1{font-family:var(--font-disp);font-weight:800;text-transform:uppercase;letter-spacing:-.005em;font-size:30px;line-height:1.02}
+.block h3,.agenda-head h3,.sheet-h h3,.zone-top .z-name,.clients .big,.rate .num,.prof h2{font-family:var(--font-disp)}
+.block h3,.agenda-head h3{text-transform:uppercase;letter-spacing:.03em;font-weight:700;font-size:14px}
+.clients .big,.rate .num{font-weight:800}
+.nav a{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.055em;font-weight:600;font-size:12.5px}
+.nav .badge{background:var(--brand);color:#fff;font-family:var(--font-disp)}
+.nav a.on .badge{background:#F5F4EF;color:var(--ink)}
+.stat .lbl{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-weight:600;font-size:12px;opacity:.9}
+.stat .val{font-family:var(--font-disp);font-weight:800}
+.status,.pill-st,.slot .sst,.slot .mat,.day h4,.link,.fbtn,.segbtn,.filebtn,.person,.promo-btn,.btn-primary,.btn-ghost,.pillbtn,.m-tag,.summary{font-family:var(--font-disp)}
+.status,.pill-st,.slot .sst{text-transform:uppercase;letter-spacing:.03em;font-weight:600}
+.day h4{letter-spacing:.09em}
+.promo-btn,.btn-primary,.btn-ghost,.pillbtn,.fbtn,.segbtn,.filebtn,.link,.person{text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+
+/* Angles nets */
+.app,.side-promo,.stat,.clients,.table-wrap,.card,.day,.qr-card,.rate,.fb,.form,.sheet,.msg,.evt,.bubble,.rail-btn,.inp,.sel,.ta{border-radius:var(--r)}
+.iconbtn,.pillbtn,.promo-btn,.btn-primary,.btn-ghost,.filebtn,.segbtn,.c-badge,.slot,.mini,.e-ic,.evt .e-ic{border-radius:var(--r-sm)}
+
+/* Accents rouges façon affiche */
+.side{border-right:1px solid var(--line2)}
+.side-promo{background:var(--panel);border:1px solid var(--line2)}
+.promo-mk{background:var(--brand);box-shadow:0 10px 22px -12px rgba(203,58,42,.6)}
+.promo-mk svg{stroke:#F5F4EF !important}
+.promo-btn{background:var(--ink);color:#F5F4EF}
+.iconbtn .dot{background:var(--brand)}
+.bubble{background:#E9E7DE;color:var(--ink)}
+.qr-card{background:linear-gradient(150deg,#EDEBE2,#E7E4DA);border:1px solid var(--line2)}
+.toggle.on,.bar>i{background:var(--brand)}
+.week .d.on,.nav a.on{background:var(--ink);color:#F5F4EF}
+.week .d.on .dn,.week .d.on .dd,.nav a.on .ic{color:#F5F4EF;stroke:#F5F4EF}
+.prof .pav{background:linear-gradient(150deg,var(--brand),var(--brand-d))}
+.btn-primary{background:var(--brand)}.btn-primary:hover{background:var(--brand-d)}
+.stars{color:var(--brand)}
 </style>
 </head>
 <body>
