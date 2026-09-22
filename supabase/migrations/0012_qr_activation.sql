@@ -37,8 +37,8 @@ comment on column public.club_members.display_name is
 
 -- zones : jeton opaque, non devinable, cible du QR code.
 create or replace function public.new_zone_token()
-returns citext language sql volatile set search_path = ''
-as $$ select replace(gen_random_uuid()::text, '-', '')::citext; $$;
+returns extensions.citext language sql volatile set search_path = ''
+as $$ select replace(gen_random_uuid()::text, '-', '')::extensions.citext; $$;
 comment on function public.new_zone_token() is 'Jeton opaque (128 bits) pour une zone (QR).';
 
 alter table public.zones
