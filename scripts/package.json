@@ -1,0 +1,12 @@
+{
+  "name": "matsafe-scripts",
+  "private": true,
+  "type": "module",
+  "description": "Outils MatSafe (génération des QR codes de zones).",
+  "scripts": {
+    "qr": "node generate-qr.mjs"
+  },
+  "dependencies": {
+    "qrcode": "^1.5.4"
+  }
+}

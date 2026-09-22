@@ -1,0 +1,7 @@
+[
+  { "name": "Tatami 1",     "zone_token": "COLLEZ_ICI_LE_ZONE_TOKEN_DU_TATAMI_1" },
+  { "name": "Tatami 2",     "zone_token": "COLLEZ_ICI_LE_ZONE_TOKEN_DU_TATAMI_2" },
+  { "name": "Vestiaires",   "zone_token": "COLLEZ_ICI_LE_ZONE_TOKEN_VESTIAIRES" },
+  { "name": "Sanitaires",   "zone_token": "COLLEZ_ICI_LE_ZONE_TOKEN_SANITAIRES" },
+  { "name": "Zone matériel","zone_token": "COLLEZ_ICI_LE_ZONE_TOKEN_MATERIEL" }
+]

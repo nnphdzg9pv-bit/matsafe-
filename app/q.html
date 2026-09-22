@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MatSafe — Valider un nettoyage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --page:#E7E6DF; --panel:#F1F0EC; --card:#FBFAF6; --ink:#0B0B0B; --ink2:#5A5351;
+  --muted:#9A968E; --line:#E1DFD6; --line2:#D3D1C7; --brand:#D0402C; --brand-d:#B7351F;
+  --green:#2F8F4E; --r:12px; --r-sm:9px;
+  --disp:'Archivo','Inter',system-ui,sans-serif; --body:'Inter',system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--body);background:var(--page);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100dvh;display:flex;justify-content:center;padding:16px}
+.wrap{width:100%;max-width:460px;display:flex;flex-direction:column;min-height:calc(100dvh - 32px)}
+.brand{display:flex;align-items:center;gap:10px;padding:6px 2px 16px}
+.brand .mk{font-family:var(--disp);font-weight:900;font-size:20px;letter-spacing:-.01em;color:var(--brand);text-transform:uppercase}
+.brand .sub{font-family:var(--disp);font-weight:700;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);margin-left:auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:0 20px 50px -34px rgba(18,24,27,.5)}
+.kicker{font-family:var(--disp);text-transform:uppercase;letter-spacing:.14em;font-size:10.5px;font-weight:700;color:var(--brand)}
+h1{font-family:var(--disp);text-transform:uppercase;font-weight:800;font-size:26px;line-height:1.05;letter-spacing:-.01em;margin:4px 0 2px}
+.zone-name{font-family:var(--disp);font-weight:900;font-size:30px;text-transform:uppercase;line-height:1.02;letter-spacing:-.02em}
+.muted{color:var(--ink2);font-size:14px;line-height:1.5}
+.small{color:var(--muted);font-size:12.5px}
+label{display:block;font-family:var(--disp);text-transform:uppercase;letter-spacing:.05em;font-weight:700;font-size:11.5px;color:var(--ink2);margin:16px 0 7px}
+.inp,select.inp{width:100%;font-family:inherit;font-size:16px;color:var(--ink);background:var(--panel);border:1px solid var(--line2);border-radius:var(--r-sm);padding:13px 14px}
+.inp:focus{outline:none;border-color:var(--ink)}
+.code-inp{font-family:var(--disp);font-weight:800;font-size:28px;letter-spacing:.35em;text-align:center}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{flex:1 1 auto;min-width:44%;font-family:var(--disp);text-transform:uppercase;letter-spacing:.03em;font-weight:700;font-size:13px;color:var(--ink);background:var(--panel);border:1.5px solid var(--line2);border-radius:var(--r-sm);padding:14px 12px;cursor:pointer;transition:all .12s}
+.chip.on{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.btn{width:100%;font-family:var(--disp);text-transform:uppercase;letter-spacing:.06em;font-weight:800;font-size:15px;color:#fff;background:var(--brand);border:0;border-radius:var(--r-sm);padding:17px;cursor:pointer;margin-top:20px;transition:background .12s}
+.btn:hover{background:var(--brand-d)} .btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.55;cursor:default}
+.btn-ghost{background:none;color:var(--ink2);border:0;font-family:var(--disp);text-transform:uppercase;letter-spacing:.05em;font-weight:700;font-size:12px;cursor:pointer;padding:12px}
+.row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--line);font-size:14.5px}
+.row:first-child{border-top:0}.row span{color:var(--muted)}.row b{font-weight:700}
+.foot{margin-top:auto;text-align:center;padding-top:18px}
+.hide{display:none!important}
+.spin{width:34px;height:34px;border:3px solid var(--line2);border-top-color:var(--brand);border-radius:50%;animation:sp 1s linear infinite;margin:24px auto}
+@keyframes sp{to{transform:rotate(360deg)}}
+.done-mk{width:72px;height:72px;border-radius:50%;background:rgba(47,143,78,.14);color:var(--green);display:grid;place-items:center;margin:6px auto 14px}
+.done-mk svg{width:38px;height:38px;stroke:currentColor;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.banner{border-radius:var(--r-sm);padding:12px 14px;font-size:13.5px;margin-bottom:14px}
+.banner.err{background:rgba(208,64,44,.1);color:var(--brand-d)}
+.banner.warn{background:rgba(184,122,44,.14);color:#8a5a16}
+.center{text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><span class="mk">MatSafe</span><span class="sub">Traçabilité</span></div>
+
+  <!-- CHARGEMENT -->
+  <div class="card center" id="s-loading">
+    <div class="spin"></div>
+    <p class="muted">Connexion…</p>
+  </div>
+
+  <!-- HORS LIGNE / ERREUR -->
+  <div class="card hide" id="s-error">
+    <div class="kicker">MatSafe</div>
+    <h1 id="err-title">Connexion impossible</h1>
+    <p class="muted" id="err-msg">Vérifiez votre connexion Internet, puis réessayez.</p>
+    <button class="btn" id="err-retry">Réessayer</button>
+  </div>
+
+  <!-- ACTIVATION (1re utilisation) -->
+  <div class="card hide" id="s-activate">
+    <div class="kicker">Première utilisation</div>
+    <h1>Activer ce téléphone</h1>
+    <p class="muted">Zone : <b id="act-zone">—</b> · <span id="act-club">—</span></p>
+    <div class="banner err hide" id="act-err"></div>
+    <label>Code d'activation du club</label>
+    <input class="inp code-inp" id="act-code" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="••••••">
+    <label>Votre prénom</label>
+    <select class="inp" id="act-member"></select>
+    <button class="btn" id="act-go">Activer</button>
+    <div class="foot"><span class="small">Le code n'est demandé qu'une seule fois sur ce téléphone.</span></div>
+  </div>
+
+  <!-- VALIDATION -->
+  <div class="card hide" id="s-validate">
+    <div class="kicker">Scanner · nettoyer · valider</div>
+    <div class="zone-name" id="val-zone">TATAMI 1</div>
+    <div class="banner warn hide" id="val-warn"></div>
+    <label>Cours concerné</label>
+    <select class="inp" id="val-course"></select>
+    <label>Qui a effectué le nettoyage&nbsp;?</label>
+    <div class="chips" id="who-chips">
+      <button class="chip on" data-who="me" id="chip-me">Moi</button>
+      <button class="chip" data-who="other">Une autre personne</button>
+      <button class="chip" data-who="team">Équipe</button>
+    </div>
+    <select class="inp hide" id="val-other" style="margin-top:10px"></select>
+    <button class="btn" id="val-go">Valider le nettoyage</button>
+    <div class="foot"><button class="btn-ghost" id="switch-user">Changer d'utilisateur · réinitialiser l'appareil</button></div>
+  </div>
+
+  <!-- CONFIRMATION -->
+  <div class="card center hide" id="s-done">
+    <div class="done-mk"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div>
+    <h1>Nettoyage validé</h1>
+    <p class="muted" id="done-msg">Enregistré.</p>
+    <button class="btn" id="done-again" style="background:var(--ink)">Valider un autre nettoyage</button>
+    <div class="foot"><span class="small" id="done-who"></span></div>
+  </div>
+</div>
+
+<!-- Config publique (copiez app/config.example.js -> app/config.js) -->
+<script src="./config.js" onerror="window.__noConfig=1"></script>
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+const CFG = window.MATSAFE_CONFIG || {};
+const $ = (id) => document.getElementById(id);
+const show = (id) => { ["s-loading","s-error","s-activate","s-validate","s-done"].forEach(s=>$(s).classList.add("hide")); $(id).classList.remove("hide"); };
+function fail(title, msg){ $("err-title").textContent=title; $("err-msg").textContent=msg; show("s-error"); }
+
+// Jeton de zone : ?z=... ou /q/<token>
+function zoneToken(){
+  const u = new URL(location.href);
+  const q = u.searchParams.get("z");
+  if(q) return q;
+  const m = u.pathname.match(/\/q\/([^/?#]+)/);
+  return m ? decodeURIComponent(m[1]) : null;
+}
+const TOKEN = zoneToken();
+
+if(window.__noConfig || !CFG.SUPABASE_URL || !CFG.SUPABASE_ANON_KEY){
+  fail("Configuration manquante", "Copiez app/config.example.js en app/config.js et renseignez l'URL et la clé publishable Supabase.");
+  throw new Error("no config");
+}
+if(!TOKEN){ fail("QR invalide", "Ce lien ne référence aucune zone. Scannez le QR d'une zone (Tatami 1, Vestiaires…)."); throw new Error("no token"); }
+
+const FBASE = (CFG.FUNCTIONS_BASE || `${CFG.SUPABASE_URL}/functions/v1`).replace(/\/+$/,"");
+const supa = createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY, { auth:{ persistSession:true, autoRefreshToken:true } });
+
+async function fn(name, payload){
+  const { data:{ session } } = await supa.auth.getSession();
+  const token = session?.access_token || CFG.SUPABASE_ANON_KEY;
+  const res = await fetch(`${FBASE}/${name}`, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json", "apikey":CFG.SUPABASE_ANON_KEY, "Authorization":`Bearer ${token}` },
+    body: JSON.stringify(payload||{}),
+  });
+  let body=null; try{ body=await res.json(); }catch{}
+  return { ok:res.ok, status:res.status, body };
+}
+
+// ---- Planning (contexte du cours) — même logique que l'app club --------------
+const SCHED={"Lundi":[{"t":"07:00","d":"JJB","m":"MAT 1"},{"t":"11:00","d":"MMA","m":"MAT 1"},{"t":"11:00","d":"Accès libre / Drills","m":"MAT 2"},{"t":"12:30","d":"Lutte","m":"MAT 1"},{"t":"12:30","d":"Boxe pieds-poings","m":"MAT 2"},{"t":"14:00","d":"Compétition","m":"MAT 1"},{"t":"18:00","d":"MMA","m":"MAT 1"},{"t":"18:45","d":"No Gi","m":"MAT 2"},{"t":"19:00","d":"MMA","m":"MAT 1"},{"t":"19:45","d":"Boxe anglaise","m":"MAT 2"},{"t":"20:00","d":"JJB","m":"MAT 1"}],"Mardi":[{"t":"07:00","d":"No Gi","m":"MAT 1"},{"t":"12:30","d":"JJB","m":"MAT 1"},{"t":"12:30","d":"No Gi","m":"MAT 2"},{"t":"18:00","d":"Accès libre / Drills","m":"MAT 1"},{"t":"19:00","d":"Boxe pieds-poings","m":"MAT 1"},{"t":"19:00","d":"JJB","m":"MAT 2"},{"t":"20:00","d":"No Gi","m":"MAT 1"},{"t":"20:00","d":"Boxe anglaise","m":"MAT 2"}],"Mercredi":[{"t":"07:00","d":"JJB","m":"MAT 1"},{"t":"11:00","d":"MMA","m":"MAT 1"},{"t":"11:00","d":"Accès libre / Drills","m":"MAT 2"},{"t":"12:30","d":"No Gi","m":"MAT 1"},{"t":"12:30","d":"Boxe pieds-poings","m":"MAT 2"},{"t":"14:00","d":"Compétition","m":"MAT 1"},{"t":"16:45","d":"Kids","m":"MAT 1"},{"t":"17:30","d":"Kids","m":"MAT 1"},{"t":"18:30","d":"MMA","m":"MAT 1"},{"t":"18:30","d":"No Gi","m":"MAT 2"},{"t":"19:30","d":"JJB","m":"MAT 1"},{"t":"19:30","d":"MMA","m":"MAT 2"},{"t":"20:30","d":"Compétition","m":"MAT 1"}],"Jeudi":[{"t":"07:00","d":"No Gi","m":"MAT 1"},{"t":"12:30","d":"JJB","m":"MAT 1"},{"t":"12:30","d":"No Gi","m":"MAT 2"},{"t":"17:00","d":"Lutte","m":"MAT 1"},{"t":"17:30","d":"Accès libre / Drills","m":"MAT 2"},{"t":"18:45","d":"No Gi","m":"MAT 1"},{"t":"19:00","d":"Boxe pieds-poings","m":"MAT 2"},{"t":"20:00","d":"Sparring","m":"MAT 1"},{"t":"20:00","d":"JJB","m":"MAT 2"}],"Vendredi":[{"t":"07:00","d":"JJB","m":"MAT 1"},{"t":"12:30","d":"No Gi","m":"MAT 1"},{"t":"12:30","d":"Boxe pieds-poings","m":"MAT 2"},{"t":"17:30","d":"Kids No Gi","m":"MAT 1"},{"t":"18:00","d":"JJB","m":"MAT 2"},{"t":"19:00","d":"Sparring","m":"MAT 1"},{"t":"19:00","d":"Boxe pieds-poings","m":"MAT 2"}],"Samedi":[{"t":"10:00","d":"Kids","m":"MAT 1"},{"t":"10:00","d":"JJB","m":"MAT 2"},{"t":"11:00","d":"No Gi Sparring","m":"MAT 1"},{"t":"11:00","d":"MMA","m":"MAT 2"},{"t":"12:00","d":"MMA","m":"MAT 1"},{"t":"13:15","d":"MMA Sparring","m":"MAT 1"}],"Dimanche":[{"t":"11:00","d":"No Gi","m":"MAT 1"},{"t":"11:00","d":"JJB","m":"MAT 2"},{"t":"12:00","d":"Sparring","m":"MAT 1"}]};
+const DAYS=["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
+const toMin=(t)=>{const p=t.split(":");return (+p[0])*60+(+p[1]);};
+
+let CTX=null, who="me";
+
+function todayCourses(){
+  const now=new Date(); const day=DAYS[now.getDay()]; const nowm=now.getHours()*60+now.getMinutes();
+  const list=(SCHED[day]||[]).map(c=>({...c,day,min:toMin(c.t)}));
+  // dernier cours terminé d'abord (le plus pertinent après une séance), puis les autres.
+  const done=list.filter(c=>c.min<=nowm).sort((a,b)=>b.min-a.min);
+  const rest=list.filter(c=>c.min>nowm).sort((a,b)=>a.min-b.min);
+  return { list:[...done,...rest], proposed: done[0] || rest[0] || null, hasFinished: done.length>0 };
+}
+
+function renderValidate(){
+  $("val-zone").textContent=(CTX.zone.name||"Zone").toUpperCase();
+  const {list, proposed, hasFinished}=todayCourses();
+  const sel=$("val-course"); sel.innerHTML="";
+  if(!list.length){
+    const o=document.createElement("option"); o.value=""; o.textContent="Aucun cours aujourd'hui — nettoyage hors cours"; sel.appendChild(o);
+    $("val-warn").textContent="Aucun cours au planning aujourd'hui. Vous pouvez tout de même enregistrer le nettoyage."; $("val-warn").classList.remove("hide");
+  } else {
+    $("val-warn").classList.add("hide");
+    list.forEach(c=>{ const o=document.createElement("option"); o.value=`${c.day}|${c.t}|${c.m}`; o.dataset.label=c.d; o.dataset.time=c.t;
+      o.textContent=`${c.t} · ${c.d} · ${c.m}`; sel.appendChild(o); });
+    if(proposed) sel.value=`${proposed.day}|${proposed.t}|${proposed.m}`;
+    if(!hasFinished){ $("val-warn").textContent="Aucun cours encore terminé aujourd'hui — le premier créneau est proposé, ajustez si besoin."; $("val-warn").classList.remove("hide"); }
+  }
+  // "autre personne" : membres actifs sauf le membre courant
+  const other=$("val-other"); other.innerHTML="";
+  CTX.members.filter(m=>m.id!==CTX.member?.id).forEach(m=>{ const o=document.createElement("option"); o.value=m.id; o.textContent=m.name||"—"; other.appendChild(o); });
+  who="me"; setWho("me");
+  show("s-validate");
+}
+function setWho(w){ who=w; document.querySelectorAll("#who-chips .chip").forEach(c=>c.classList.toggle("on",c.dataset.who===w)); $("val-other").classList.toggle("hide", w!=="other"); }
+
+function renderActivate(){
+  $("act-zone").textContent=CTX.zone.name||"Zone"; $("act-club").textContent=CTX.club.name||"";
+  const sel=$("act-member"); sel.innerHTML="";
+  const ph=document.createElement("option"); ph.value=""; ph.textContent="— Choisir votre prénom —"; sel.appendChild(ph);
+  CTX.members.forEach(m=>{ const o=document.createElement("option"); o.value=m.id; o.textContent=m.name||"—"; sel.appendChild(o); });
+  show("s-activate");
+}
+
+async function loadContext(){
+  show("s-loading");
+  try{
+    let { data:{ session } } = await supa.auth.getSession();
+    if(!session){
+      const { error } = await supa.auth.signInAnonymously();
+      if(error){ fail("Activation indisponible", "Les connexions anonymes ne sont pas encore activées côté Supabase. (Réglage Auth à activer.)"); return; }
+    }
+    const r = await fn("q-context", { zoneToken: TOKEN });
+    if(r.status===404){ fail("Zone inconnue", "Ce QR ne correspond à aucune zone active. Il a peut-être été régénéré."); return; }
+    if(!r.ok || !r.body){ fail("Service indisponible", "Réessayez dans un instant."); return; }
+    CTX = r.body;
+    CTX.activated ? renderValidate() : renderActivate();
+  }catch(e){
+    fail("Connexion impossible", "Vérifiez votre connexion Internet, puis réessayez.");
+  }
+}
+
+// ---- Activation --------------------------------------------------------------
+$("act-go").addEventListener("click", async ()=>{
+  const code=$("act-code").value.trim(), memberId=$("act-member").value;
+  $("act-err").classList.add("hide");
+  if(!code){ $("act-err").textContent="Saisissez le code d'activation."; $("act-err").classList.remove("hide"); return; }
+  if(!memberId){ $("act-err").textContent="Choisissez votre prénom."; $("act-err").classList.remove("hide"); return; }
+  const btn=$("act-go"); btn.disabled=true; btn.textContent="Activation…";
+  try{
+    const r=await fn("activation-redeem",{ zoneToken:TOKEN, code, memberId });
+    if(r.ok && r.body?.ok){ await loadContext(); }
+    else{
+      const map={ no_active_code:"Aucun code actif pour ce club. Demandez-en un au dirigeant.", code_expired:"Ce code a expiré. Demandez-en un nouveau.", too_many_attempts:"Trop de tentatives. Demandez un nouveau code.", invalid_code:"Code incorrect."+(r.body?.remainingAttempts!=null?` (${r.body.remainingAttempts} essai(s) restant(s))`:""), invalid_member:"Ce membre n'est plus actif." };
+      $("act-err").textContent=map[r.body?.error]||"Activation impossible."; $("act-err").classList.remove("hide");
+    }
+  }catch{ $("act-err").textContent="Connexion impossible."; $("act-err").classList.remove("hide"); }
+  finally{ btn.disabled=false; btn.textContent="Activer"; }
+});
+
+// ---- Validation --------------------------------------------------------------
+document.querySelectorAll("#who-chips .chip").forEach(c=>c.addEventListener("click",()=>setWho(c.dataset.who)));
+let sending=false;
+$("val-go").addEventListener("click", async ()=>{
+  if(sending) return; sending=true;
+  const btn=$("val-go"); btn.disabled=true; btn.textContent="Validation…";
+  const opt=$("val-course").selectedOptions[0];
+  const payload={ zoneToken:TOKEN,
+    courseRef: $("val-course").value || null,
+    courseLabel: opt?.dataset.label || null,
+    courseTime: opt?.dataset.time || null };
+  if(who==="other"){ payload.cleanedByMemberId=$("val-other").value||null; }
+  else if(who==="team"){ payload.cleanedByLabel="Équipe"; }
+  else { payload.cleanedByMemberId=CTX.member?.id||null; } // "Moi"
+  try{
+    const r=await fn("validation-record", payload);
+    if(r.ok && r.body?.ok){
+      const t=new Date(r.body.validation?.validated_at||Date.now());
+      const hh=("0"+t.getHours()).slice(-2)+":"+("0"+t.getMinutes()).slice(-2);
+      $("done-msg").textContent=`${CTX.zone.name} · enregistré à ${hh}.`;
+      $("done-who").textContent=`Validé par ${r.body.validatedBy?.name||CTX.member?.name||"—"}`+(r.body.duplicate?" (déjà enregistré)":"");
+      show("s-done");
+    } else if(r.status===403){ fail("Accès révoqué", "Cet appareil ou ce membre n'est plus autorisé. Réactivez le téléphone."); }
+    else { fail("Enregistrement impossible", "Réessayez dans un instant."); }
+  }catch{ fail("Connexion impossible", "Le nettoyage n'a pas pu être enregistré. Réessayez."); }
+  finally{ sending=false; btn.disabled=false; btn.textContent="Valider le nettoyage"; }
+});
+
+$("done-again").addEventListener("click", ()=>renderValidate());
+$("err-retry").addEventListener("click", loadContext);
+$("switch-user").addEventListener("click", async ()=>{
+  if(!confirm("Réinitialiser cet appareil ? Le code d'activation sera redemandé.")) return;
+  try{ await supa.auth.signOut(); }catch{}
+  location.reload();
+});
+
+loadContext();
+</script>
+</body>
+</html>

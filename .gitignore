@@ -1,0 +1,16 @@
+# Secrets & config locale (ne jamais committer)
+.env
+.env.*
+!.env.example
+app/config.js
+
+# Node / outils
+node_modules/
+scripts/node_modules/
+scripts/out/
+
+# QR générés
+qr-out/
+
+# Divers
+.DS_Store
