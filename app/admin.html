@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MatSafe — Espace dirigeant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --page:#E7E6DF; --panel:#F1F0EC; --card:#FBFAF6; --ink:#0B0B0B; --ink2:#5A5351;
+  --muted:#9A968E; --line:#E1DFD6; --line2:#D3D1C7; --brand:#D0402C; --brand-d:#B7351F;
+  --green:#2F8F4E; --amber:#B87A2C; --r:12px; --r-sm:9px;
+  --disp:'Archivo','Inter',system-ui,sans-serif; --body:'Inter',system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--body);background:var(--page);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100dvh}
+.wrap{max-width:1000px;margin:0 auto;padding:18px 16px 60px}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 2px 16px}
+.brand .mk{font-family:var(--disp);font-weight:900;font-size:22px;letter-spacing:-.01em;color:var(--brand);text-transform:uppercase}
+.brand .sub{font-family:var(--disp);font-weight:700;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);margin-left:auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:0 20px 50px -34px rgba(18,24,27,.5);margin-bottom:16px}
+.kicker{font-family:var(--disp);text-transform:uppercase;letter-spacing:.13em;font-size:10.5px;font-weight:700;color:var(--brand)}
+h1{font-family:var(--disp);text-transform:uppercase;font-weight:800;font-size:24px;line-height:1.05;letter-spacing:-.01em;margin:4px 0}
+h2{font-family:var(--disp);text-transform:uppercase;font-weight:800;font-size:15px;letter-spacing:.02em;margin-bottom:12px}
+.muted{color:var(--ink2);font-size:14px;line-height:1.5}.small{color:var(--muted);font-size:12.5px}
+label{display:block;font-family:var(--disp);text-transform:uppercase;letter-spacing:.05em;font-weight:700;font-size:11px;color:var(--ink2);margin:12px 0 6px}
+.inp,select.inp{width:100%;font-family:inherit;font-size:15px;color:var(--ink);background:var(--panel);border:1px solid var(--line2);border-radius:var(--r-sm);padding:12px 13px}
+.inp:focus{outline:none;border-color:var(--ink)}
+.btn{font-family:var(--disp);text-transform:uppercase;letter-spacing:.06em;font-weight:800;font-size:13.5px;color:#fff;background:var(--brand);border:0;border-radius:var(--r-sm);padding:13px 18px;cursor:pointer;transition:background .12s}
+.btn:hover{background:var(--brand-d)}.btn:disabled{opacity:.55;cursor:default}
+.btn.ink{background:var(--ink)}.btn.ink:hover{background:#000}
+.btn.ghost{background:var(--panel);color:var(--ink);border:1px solid var(--line2)}.btn.ghost:hover{background:#EAE8DF}
+.btn.sm{padding:8px 12px;font-size:11.5px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.row>.f{flex:1;min-width:140px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.tab{font-family:var(--disp);text-transform:uppercase;letter-spacing:.04em;font-weight:700;font-size:12.5px;color:var(--ink2);background:var(--panel);border:1px solid var(--line2);border-radius:999px;padding:9px 15px;cursor:pointer}
+.tab.on{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.panel{display:none}.panel.on{display:block}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-family:var(--disp);text-transform:uppercase;letter-spacing:.04em;font-size:10.5px;color:var(--muted);font-weight:700;padding:10px 12px}
+td{padding:11px 12px;border-top:1px solid var(--line);font-size:14px;vertical-align:middle}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 10px;font-family:var(--disp);text-transform:uppercase;letter-spacing:.03em;font-size:10.5px;font-weight:700}
+.pill.ok{background:rgba(47,143,78,.14);color:var(--green)}
+.pill.off{background:rgba(11,11,11,.07);color:var(--ink2)}
+.pill.tag{background:rgba(208,64,44,.1);color:var(--brand)}
+.hdrow{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.tok{font-family:ui-monospace,monospace;font-size:12px;color:var(--ink2);background:var(--panel);border:1px solid var(--line2);border-radius:6px;padding:3px 7px}
+.codebox{text-align:center;background:#0B0B0B;color:#F5F4EF;border-radius:var(--r);padding:22px;margin-top:12px}
+.codebox .c{font-family:var(--disp);font-weight:900;font-size:46px;letter-spacing:.28em;padding-left:.28em}
+.codebox .m{color:#C7C4BC;font-size:12.5px;margin-top:8px}
+.banner{border-radius:var(--r-sm);padding:11px 14px;font-size:13.5px;margin:10px 0}
+.banner.err{background:rgba(208,64,44,.1);color:var(--brand-d)}
+.banner.ok{background:rgba(47,143,78,.14);color:var(--green)}
+.empty{color:var(--ink2);font-size:13.5px;text-align:center;padding:22px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#F5F4EF;padding:12px 18px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:60}
+.toast.on{opacity:1;transform:translateX(-50%)}
+.hide{display:none!important}
+.userbar{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink2);margin-bottom:8px}
+.userbar b{color:var(--ink);font-family:var(--disp)}
+.tblwrap{overflow-x:auto}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><span class="mk">MatSafe</span><span class="sub">Espace dirigeant</span></div>
+
+  <!-- CONNEXION -->
+  <div class="card" id="s-login">
+    <div class="kicker">Connexion</div><h1>Espace dirigeant</h1>
+    <p class="muted">Connectez-vous avec votre e-mail. Un code à usage unique vous sera envoyé.</p>
+    <div class="banner err hide" id="login-err"></div>
+    <div id="login-step1">
+      <label>Adresse e-mail</label>
+      <input class="inp" id="login-email" type="email" inputmode="email" autocomplete="email" placeholder="vous@club.fr">
+      <button class="btn" id="login-send" style="margin-top:14px">Recevoir un code</button>
+    </div>
+    <div id="login-step2" class="hide">
+      <label>Code reçu par e-mail</label>
+      <input class="inp" id="login-otp" inputmode="numeric" autocomplete="one-time-code" placeholder="Code à 6 chiffres">
+      <div style="display:flex;gap:10px;margin-top:14px">
+        <button class="btn ghost" id="login-back">Retour</button>
+        <button class="btn" id="login-verify" style="flex:1">Se connecter</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ONBOARDING (aucun club) -->
+  <div class="card hide" id="s-onboard">
+    <div class="kicker">Première étape</div><h1>Créer votre club</h1>
+    <p class="muted">Vous n'êtes encore la direction d'aucun club. Créez-le pour commencer.</p>
+    <div class="banner err hide" id="ob-err"></div>
+    <label>Nom du club</label>
+    <input class="inp" id="ob-name" placeholder="Cube Fight Club">
+    <label>Ville <span class="small">(facultatif)</span></label>
+    <input class="inp" id="ob-city" placeholder="Ville">
+    <button class="btn" id="ob-go" style="margin-top:16px">Créer le club</button>
+  </div>
+
+  <!-- APP -->
+  <div class="hide" id="s-app">
+    <div class="userbar"><span>Club : <b id="club-name">—</b></span><button class="btn ghost sm" id="signout" style="margin-left:auto">Déconnexion</button></div>
+    <div class="tabs">
+      <button class="tab on" data-tab="team">Équipe</button>
+      <button class="tab" data-tab="zones">Zones</button>
+      <button class="tab" data-tab="code">Code d'activation</button>
+      <button class="tab" data-tab="devices">Appareils</button>
+      <button class="tab" data-tab="history">Historique</button>
+    </div>
+
+    <!-- ÉQUIPE -->
+    <div class="panel on" id="p-team">
+      <div class="card">
+        <h2>Ajouter un membre</h2>
+        <div class="row">
+          <div class="f"><label>Prénom</label><input class="inp" id="m-name" placeholder="Adam"></div>
+          <div class="f"><label>Rôle</label><select class="inp" id="m-role">
+            <option value="cleaning_staff">Agent d'entretien</option>
+            <option value="coach">Coach</option>
+            <option value="hygiene_referent">Référent hygiène</option>
+            <option value="club_direction">Direction</option>
+          </select></div>
+          <div><button class="btn" id="m-add">Ajouter</button></div>
+        </div>
+      </div>
+      <div class="card"><div class="tblwrap"><table><thead><tr><th>Prénom</th><th>Rôle</th><th>Statut</th><th></th></tr></thead><tbody id="team-body"></tbody></table></div></div>
+    </div>
+
+    <!-- ZONES -->
+    <div class="panel" id="p-zones">
+      <div class="card">
+        <h2>Ajouter une zone</h2>
+        <div class="row">
+          <div class="f"><label>Nom</label><input class="inp" id="z-name" placeholder="Tatami 1"></div>
+          <div class="f"><label>Type</label><select class="inp" id="z-type">
+            <option value="tatami">Tatami</option><option value="changing_room">Vestiaires</option>
+            <option value="restroom">Sanitaires</option><option value="shower">Douches</option>
+            <option value="shared_equipment">Zone matériel</option><option value="reception">Accueil</option>
+            <option value="training_area">Aire d'entraînement</option><option value="other">Autre</option>
+          </select></div>
+          <div><button class="btn" id="z-add">Ajouter</button></div>
+        </div>
+        <p class="small" style="margin-top:10px">Chaque zone reçoit un lien QR unique. Générez les QR avec le script <code>scripts/generate-qr.mjs</code> ou copiez le lien ci-dessous.</p>
+      </div>
+      <div class="card"><div class="tblwrap"><table><thead><tr><th>Zone</th><th>Type</th><th>Lien QR</th><th>Statut</th><th></th></tr></thead><tbody id="zones-body"></tbody></table></div></div>
+    </div>
+
+    <!-- CODE -->
+    <div class="panel" id="p-code">
+      <div class="card">
+        <h2>Code temporaire d'activation</h2>
+        <p class="muted">Un seul code actif à la fois. L'équipe le saisit une fois par téléphone.</p>
+        <div id="code-status"></div>
+        <div class="row" style="margin-top:14px">
+          <div class="f" style="max-width:220px"><label>Durée de validité</label><select class="inp" id="code-ttl">
+            <option value="720">12 heures</option><option value="1440" selected>24 heures</option>
+            <option value="4320">3 jours</option><option value="10080">7 jours</option>
+          </select></div>
+          <div><button class="btn" id="code-gen">Générer / Renouveler</button></div>
+          <div><button class="btn ghost" id="code-off">Désactiver</button></div>
+        </div>
+        <div id="code-out"></div>
+      </div>
+    </div>
+
+    <!-- APPAREILS -->
+    <div class="panel" id="p-devices">
+      <div class="card"><div class="hdrow"><h2>Téléphones rattachés</h2><button class="btn ghost sm" id="dev-refresh">Actualiser</button></div>
+        <div class="tblwrap"><table><thead><tr><th>Membre</th><th>Dernière activité</th><th>Activé le</th><th></th></tr></thead><tbody id="devices-body"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- HISTORIQUE -->
+    <div class="panel" id="p-history">
+      <div class="card">
+        <div class="hdrow"><h2>Historique des validations</h2><button class="btn ghost sm" id="hist-refresh">Actualiser</button></div>
+        <div class="row">
+          <div class="f"><label>Période</label><select class="inp" id="h-date"><option value="all">Tout</option><option value="today">Aujourd'hui</option><option value="7">7 jours</option><option value="30">30 jours</option></select></div>
+          <div class="f"><label>Zone</label><select class="inp" id="h-zone"><option value="">Toutes</option></select></div>
+          <div class="f"><label>Nettoyé par</label><select class="inp" id="h-clean"><option value="">Tous</option></select></div>
+          <div class="f"><label>Validé par</label><select class="inp" id="h-valid"><option value="">Tous</option></select></div>
+        </div>
+      </div>
+      <div class="card"><div class="tblwrap"><table><thead><tr><th>Date</th><th>Zone</th><th>Cours</th><th>Nettoyé par</th><th>Validé par</th><th>Validé à</th></tr></thead><tbody id="hist-body"></tbody></table></div></div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="./config.js" onerror="window.__noConfig=1"></script>
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+const CFG = window.MATSAFE_CONFIG || {};
+const $ = (id) => document.getElementById(id);
+const ROLE = { club_direction:"Direction", hygiene_referent:"Référent hygiène", coach:"Coach", cleaning_staff:"Agent d'entretien" };
+const ZTYPE = { tatami:"Tatami", training_area:"Aire d'entraînement", changing_room:"Vestiaires", shower:"Douches", restroom:"Sanitaires", reception:"Accueil", shared_equipment:"Zone matériel", first_aid:"Premiers secours", other:"Autre" };
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+let tT; function toast(m){ const t=$("toast"); t.textContent=m; t.classList.add("on"); clearTimeout(tT); tT=setTimeout(()=>t.classList.remove("on"),2200); }
+function showScreen(id){ ["s-login","s-onboard","s-app"].forEach(s=>$(s).classList.add("hide")); $(id).classList.remove("hide"); }
+
+if(window.__noConfig || !CFG.SUPABASE_URL || !CFG.SUPABASE_ANON_KEY){
+  $("login-err").textContent="Configuration manquante : créez app/config.js (URL + clé publishable)."; $("login-err").classList.remove("hide");
+  throw new Error("no config");
+}
+const FB = (CFG.FUNCTIONS_BASE || `${CFG.SUPABASE_URL}/functions/v1`).replace(/\/+$/,"");
+const sb = createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY, { auth:{ persistSession:true, autoRefreshToken:true } });
+async function fn(name, payload){
+  const { data:{ session } } = await sb.auth.getSession();
+  const r = await fetch(`${FB}/${name}`, { method:"POST", headers:{ "Content-Type":"application/json", "apikey":CFG.SUPABASE_ANON_KEY, "Authorization":`Bearer ${session?.access_token||CFG.SUPABASE_ANON_KEY}` }, body: JSON.stringify(payload||{}) });
+  let b=null; try{ b=await r.json(); }catch{} return { ok:r.ok, status:r.status, body:b };
+}
+
+const S = { clubId:null, clubName:"", members:[], zones:[], history:[] };
+const mById = {}; const zById = {};
+
+// ---------- Connexion ----------
+let pendingEmail="";
+$("login-send").addEventListener("click", async ()=>{
+  const email=$("login-email").value.trim(); $("login-err").classList.add("hide");
+  if(!email){ $("login-err").textContent="Saisissez votre e-mail."; $("login-err").classList.remove("hide"); return; }
+  const btn=$("login-send"); btn.disabled=true; btn.textContent="Envoi…";
+  const { error } = await sb.auth.signInWithOtp({ email, options:{ shouldCreateUser:true } });
+  btn.disabled=false; btn.textContent="Recevoir un code";
+  if(error){ $("login-err").textContent=error.message; $("login-err").classList.remove("hide"); return; }
+  pendingEmail=email; $("login-step1").classList.add("hide"); $("login-step2").classList.remove("hide");
+});
+$("login-back").addEventListener("click", ()=>{ $("login-step2").classList.add("hide"); $("login-step1").classList.remove("hide"); });
+$("login-verify").addEventListener("click", async ()=>{
+  const token=$("login-otp").value.trim(); $("login-err").classList.add("hide");
+  if(!token){ $("login-err").textContent="Saisissez le code reçu."; $("login-err").classList.remove("hide"); return; }
+  const btn=$("login-verify"); btn.disabled=true; btn.textContent="Connexion…";
+  const { error } = await sb.auth.verifyOtp({ email:pendingEmail, token, type:"email" });
+  btn.disabled=false; btn.textContent="Se connecter";
+  if(error){ $("login-err").textContent=error.message; $("login-err").classList.remove("hide"); return; }
+  init();
+});
+$("signout").addEventListener("click", async ()=>{ await sb.auth.signOut(); location.reload(); });
+
+// ---------- Onboarding ----------
+$("ob-go").addEventListener("click", async ()=>{
+  const name=$("ob-name").value.trim(); $("ob-err").classList.add("hide");
+  if(!name){ $("ob-err").textContent="Nom du club requis."; $("ob-err").classList.remove("hide"); return; }
+  const btn=$("ob-go"); btn.disabled=true; btn.textContent="Création…";
+  const r=await fn("club-bootstrap",{ name, city:$("ob-city").value.trim() });
+  btn.disabled=false; btn.textContent="Créer le club";
+  if(r.ok && r.body?.ok){ toast("Club créé."); init(); }
+  else { $("ob-err").textContent="Création impossible ("+(r.body?.error||r.status)+")."; $("ob-err").classList.remove("hide"); }
+});
+
+// ---------- Init ----------
+async function init(){
+  const { data:{ user } } = await sb.auth.getUser();
+  if(!user){ showScreen("s-login"); return; }
+  const { data: dir } = await sb.from("club_members").select("club_id, clubs(name)")
+    .eq("user_id", user.id).eq("role_in_club","club_direction").eq("active", true).limit(1).maybeSingle();
+  if(!dir){ showScreen("s-onboard"); return; }
+  S.clubId = dir.club_id; S.clubName = dir.clubs?.name || "Club";
+  $("club-name").textContent = S.clubName;
+  showScreen("s-app");
+  await loadAll();
+}
+async function loadAll(){ await Promise.all([loadTeam(), loadZones()]); await Promise.all([loadCode(), loadDevices(), loadHistory()]); }
+
+// ---------- Équipe ----------
+async function loadTeam(){
+  const { data } = await sb.from("club_members").select("id, display_name, role_in_club, active, user_id")
+    .eq("club_id", S.clubId).order("display_name",{ascending:true});
+  S.members = data||[]; Object.keys(mById).forEach(k=>delete mById[k]); S.members.forEach(m=>mById[m.id]=m);
+  const body=$("team-body");
+  body.innerHTML = S.members.length ? S.members.map(m=>`<tr>
+    <td><b>${esc(m.display_name||"—")}</b></td>
+    <td>${ROLE[m.role_in_club]||m.role_in_club}</td>
+    <td>${m.active?'<span class="pill ok">Actif</span>':'<span class="pill off">Désactivé</span>'}</td>
+    <td style="text-align:right"><button class="btn ghost sm" data-mtoggle="${m.id}">${m.active?"Désactiver":"Réactiver"}</button></td>
+  </tr>`).join("") : `<tr><td colspan="4"><div class="empty">Aucun membre. Ajoutez votre équipe ci-dessus.</div></td></tr>`;
+  refreshHistFilters();
+}
+$("m-add").addEventListener("click", async ()=>{
+  const name=$("m-name").value.trim(); if(!name){ toast("Prénom requis."); return; }
+  const { error } = await sb.from("club_members").insert({ club_id:S.clubId, display_name:name, role_in_club:$("m-role").value });
+  if(error){ toast("Erreur : "+error.message); return; }
+  $("m-name").value=""; toast("Membre ajouté."); loadTeam();
+});
+
+// ---------- Zones ----------
+async function loadZones(){
+  const { data } = await sb.from("zones").select("id, name, zone_type, active, zone_token")
+    .eq("club_id", S.clubId).order("name",{ascending:true});
+  S.zones = data||[]; Object.keys(zById).forEach(k=>delete zById[k]); S.zones.forEach(z=>zById[z.id]=z);
+  const base = new URL("q.html", location.href).href.replace(/\/+$/,"");
+  const body=$("zones-body");
+  body.innerHTML = S.zones.length ? S.zones.map(z=>{
+    const link = `${base}?z=${encodeURIComponent(z.zone_token)}`;
+    return `<tr>
+      <td><b>${esc(z.name)}</b></td>
+      <td>${ZTYPE[z.zone_type]||z.zone_type}</td>
+      <td><button class="btn ghost sm" data-zlink="${esc(link)}">Copier le lien</button></td>
+      <td>${z.active?'<span class="pill ok">Active</span>':'<span class="pill off">Inactive</span>'}</td>
+      <td style="text-align:right"><button class="btn ghost sm" data-ztoggle="${z.id}">${z.active?"Désactiver":"Réactiver"}</button></td>
+    </tr>`; }).join("") : `<tr><td colspan="5"><div class="empty">Aucune zone. Ajoutez vos tatamis et espaces.</div></td></tr>`;
+  refreshHistFilters();
+}
+$("z-add").addEventListener("click", async ()=>{
+  const name=$("z-name").value.trim(); if(!name){ toast("Nom de zone requis."); return; }
+  const { error } = await sb.from("zones").insert({ club_id:S.clubId, name, zone_type:$("z-type").value });
+  if(error){ toast("Erreur : "+error.message); return; }
+  $("z-name").value=""; toast("Zone ajoutée."); loadZones();
+});
+
+// ---------- Code d'activation ----------
+async function loadCode(){
+  const { data } = await sb.from("activation_codes")
+    .select("id, label, expires_at, active, attempt_count, max_attempts, created_at")
+    .eq("club_id", S.clubId).eq("active", true).order("created_at",{ascending:false}).limit(1).maybeSingle();
+  const el=$("code-status");
+  if(data){
+    const exp=new Date(data.expires_at); const expired=exp.getTime()<Date.now();
+    el.innerHTML = `<div class="banner ${expired?'err':'ok'}">${expired?'Code expiré':'Code actif'} — expire le ${exp.toLocaleString('fr-FR')} · ${data.attempt_count}/${data.max_attempts} tentative(s).</div>`;
+  } else { el.innerHTML = `<div class="banner">Aucun code actif. Générez-en un pour permettre à l'équipe d'activer ses téléphones.</div>`; }
+}
+$("code-gen").addEventListener("click", async ()=>{
+  const btn=$("code-gen"); btn.disabled=true; btn.textContent="…";
+  const r=await fn("activation-generate",{ clubId:S.clubId, ttlMinutes:parseInt($("code-ttl").value,10) });
+  btn.disabled=false; btn.textContent="Générer / Renouveler";
+  if(r.ok && r.body?.code){
+    $("code-out").innerHTML = `<div class="codebox"><div class="c">${esc(r.body.code)}</div><div class="m">Communiquez ce code à votre équipe. Il ne sera plus affiché.</div></div>`;
+    loadCode();
+  } else { toast("Génération impossible ("+(r.body?.error||r.status)+")."); }
+});
+$("code-off").addEventListener("click", async ()=>{
+  const { error } = await sb.from("activation_codes").update({ active:false, revoked_at:new Date().toISOString() }).eq("club_id",S.clubId).eq("active",true);
+  if(error){ toast("Erreur : "+error.message); return; }
+  $("code-out").innerHTML=""; toast("Code désactivé."); loadCode();
+});
+
+// ---------- Appareils ----------
+async function loadDevices(){
+  const { data } = await sb.from("device_bindings").select("id, member_id, last_seen_at, created_at, active")
+    .eq("club_id", S.clubId).eq("active", true).order("created_at",{ascending:false});
+  const body=$("devices-body"); const list=data||[];
+  body.innerHTML = list.length ? list.map(d=>`<tr>
+    <td><b>${esc(mById[d.member_id]?.display_name||"—")}</b></td>
+    <td>${d.last_seen_at?new Date(d.last_seen_at).toLocaleString('fr-FR'):'—'}</td>
+    <td>${new Date(d.created_at).toLocaleDateString('fr-FR')}</td>
+    <td style="text-align:right"><button class="btn ghost sm" data-drevoke="${d.id}">Révoquer</button></td>
+  </tr>`).join("") : `<tr><td colspan="4"><div class="empty">Aucun téléphone rattaché pour le moment.</div></td></tr>`;
+}
+$("dev-refresh").addEventListener("click", loadDevices);
+
+// ---------- Historique ----------
+async function loadHistory(){
+  const { data } = await sb.from("cleaning_validations")
+    .select("id, zone_id, course_label, course_time, cleaned_by_member_id, cleaned_by_label, validated_by_member_id, validated_at, state, source")
+    .eq("club_id", S.clubId).order("validated_at",{ascending:false}).limit(300);
+  S.history = data||[]; renderHistory();
+}
+function refreshHistFilters(){
+  const zsel=$("h-zone"); if(zsel){ const cur=zsel.value; zsel.innerHTML='<option value="">Toutes</option>'+S.zones.map(z=>`<option value="${z.id}">${esc(z.name)}</option>`).join(""); zsel.value=cur; }
+  ["h-clean","h-valid"].forEach(id=>{ const s=$(id); if(!s) return; const cur=s.value; s.innerHTML='<option value="">Tous</option>'+S.members.map(m=>`<option value="${m.id}">${esc(m.display_name)}</option>`).join(""); s.value=cur; });
+}
+function renderHistory(){
+  const df=$("h-date").value, zf=$("h-zone").value, cf=$("h-clean").value, vf=$("h-valid").value;
+  let cutoff=0; const now=Date.now();
+  if(df==="today"){ const d=new Date(); d.setHours(0,0,0,0); cutoff=d.getTime(); }
+  else if(df==="7"){ cutoff=now-7*864e5; } else if(df==="30"){ cutoff=now-30*864e5; }
+  const rows = S.history.filter(h=>{
+    if(cutoff && new Date(h.validated_at).getTime()<cutoff) return false;
+    if(zf && h.zone_id!==zf) return false;
+    if(cf && h.cleaned_by_member_id!==cf) return false;
+    if(vf && h.validated_by_member_id!==vf) return false;
+    return true;
+  });
+  const body=$("hist-body");
+  body.innerHTML = rows.length ? rows.map(h=>{
+    const t=new Date(h.validated_at); const hh=("0"+t.getHours()).slice(-2)+":"+("0"+t.getMinutes()).slice(-2);
+    const cleaner = h.cleaned_by_member_id ? (mById[h.cleaned_by_member_id]?.display_name||"—") : (h.cleaned_by_label||"—");
+    const validator = mById[h.validated_by_member_id]?.display_name||"—";
+    const course = [h.course_label, h.course_time].filter(Boolean).join(" ");
+    return `<tr>
+      <td>${t.toLocaleDateString('fr-FR')}</td>
+      <td><b>${esc(zById[h.zone_id]?.name||"—")}</b></td>
+      <td>${esc(course||"—")}</td>
+      <td>${esc(cleaner)}</td>
+      <td>${esc(validator)}</td>
+      <td>${hh}${h.state==='corrected'?' <span class="pill tag">corrigé</span>':''}</td>
+    </tr>`; }).join("") : `<tr><td colspan="6"><div class="empty">Aucune validation pour ces filtres.</div></td></tr>`;
+}
+["h-date","h-zone","h-clean","h-valid"].forEach(id=>$(id).addEventListener("change", renderHistory));
+$("hist-refresh").addEventListener("click", loadHistory);
+
+// ---------- Onglets + actions déléguées ----------
+document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click", ()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on")); t.classList.add("on");
+  const name=t.getAttribute("data-tab");
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("on"));
+  $({team:"p-team",zones:"p-zones",code:"p-code",devices:"p-devices",history:"p-history"}[name]).classList.add("on");
+}));
+document.addEventListener("click", async (e)=>{
+  const mt=e.target.closest("[data-mtoggle]"); if(mt){ const m=mById[mt.getAttribute("data-mtoggle")]; const { error }=await sb.from("club_members").update({active:!m.active}).eq("id",m.id); if(error) toast("Erreur : "+error.message); else { toast("Membre mis à jour."); loadTeam().then(loadDevices); } return; }
+  const zt=e.target.closest("[data-ztoggle]"); if(zt){ const z=zById[zt.getAttribute("data-ztoggle")]; const { error }=await sb.from("zones").update({active:!z.active}).eq("id",z.id); if(error) toast("Erreur : "+error.message); else { toast("Zone mise à jour."); loadZones(); } return; }
+  const zl=e.target.closest("[data-zlink]"); if(zl){ const link=zl.getAttribute("data-zlink"); try{ await navigator.clipboard.writeText(link); toast("Lien copié."); }catch{ prompt("Lien du QR :", link); } return; }
+  const dr=e.target.closest("[data-drevoke]"); if(dr){ if(!confirm("Révoquer ce téléphone ? Il devra ré-saisir le code.")) return; const r=await fn("binding-revoke",{ clubId:S.clubId, bindingId:dr.getAttribute("data-drevoke") }); if(r.ok) { toast("Appareil révoqué."); loadDevices(); } else toast("Révocation impossible."); return; }
+});
+
+// ---------- Démarrage ----------
+init();
+</script>
+</body>
+</html>
