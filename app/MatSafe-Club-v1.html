@@ -26,7 +26,7 @@ svg{display:block}
 /* SIDEBAR */
 .side{background:var(--side);padding:28px 18px;display:flex;flex-direction:column;border-right:1px solid var(--line2)}
 .logo{display:flex;align-items:center;gap:11px;padding:2px 8px 26px}
-.logo-img{height:30px;width:auto;display:block}
+.logo-img{height:46px;width:auto;display:block}
 .logo-mk{width:34px;height:34px;border-radius:11px;background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:800;font-size:17px;box-shadow:0 6px 14px -6px rgba(201,62,50,.6)}
 .logo-tx{font-weight:700;font-size:17px;letter-spacing:-.01em}
 .nav{display:flex;flex-direction:column;gap:4px;margin-top:6px}
@@ -376,6 +376,11 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .promo-btn{background:var(--ink);color:#F5F4EF}
 .iconbtn .dot{background:var(--brand)}
 .bubble{background:#E9E7DE;color:var(--ink)}
+.block-msg{margin-top:4px}
+.block-msg h3{font-size:18px}
+.block-msg .chat{gap:18px}
+.block-msg .cm-meta{font-size:13.5px}
+.block-msg .bubble{font-size:16px;padding:14px 18px;line-height:1.42}
 .qr-card{background:linear-gradient(150deg,#EDEBE2,#E7E4DA);border:1px solid var(--line2)}
 .toggle.on,.bar>i{background:var(--brand)}
 .week .d.on,.nav a.on{background:var(--ink);color:#F5F4EF}
@@ -393,7 +398,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .comp-add-link svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round}
 .comp-cards{display:flex;flex-direction:column;gap:12px}
 .comp-card{display:flex;gap:22px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px;position:relative;align-items:center}
-.comp-thumb{width:180px;height:180px;border-radius:var(--r);object-fit:cover;flex-shrink:0;border:1px solid var(--line2);background:#EAE8DF}
+.comp-thumb{width:260px;height:260px;border-radius:var(--r);object-fit:cover;flex-shrink:0;border:1px solid var(--line2);background:#EAE8DF}
 .comp-thumb.ph{display:grid;place-items:center;color:var(--muted)}
 .comp-thumb.ph svg{width:44px;height:44px;stroke:currentColor;stroke-width:1.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .comp-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:9px}
@@ -411,7 +416,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .comp-tool svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .comp-empty{display:flex;align-items:center;gap:16px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px}
 .comp-empty{padding:20px}
-.comp-empty .ce-thumb{width:120px;height:120px;border-radius:var(--r);background:#EAE8DF;display:grid;place-items:center;color:var(--muted);flex-shrink:0;border:1px solid var(--line2)}
+.comp-empty .ce-thumb{width:160px;height:160px;border-radius:var(--r);background:#EAE8DF;display:grid;place-items:center;color:var(--muted);flex-shrink:0;border:1px solid var(--line2)}
 .comp-empty .ce-thumb svg{width:40px;height:40px;stroke:currentColor;stroke-width:1.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .comp-empty .ce-txt{flex:1;min-width:0}
 .comp-empty .ce-txt h4{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.02em;font-size:14px;font-weight:800;margin-bottom:4px}
@@ -469,34 +474,13 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         <div id="compList"></div>
       </div>
 
-      <div class="row2">
-        <div class="block">
-          <h3>Messages</h3>
-          <div class="chat">
-            <div class="cm"><div class="cm-meta">Kevin Bataille · 11:01</div><div class="bubble">Tatami 2 glissant côté nord — à revérifier avant 18h</div></div>
-            <div class="cm"><div class="cm-meta">Léa Moreau · 09:18</div><div class="bubble">Vestiaires OK, désinfection faite ✔</div></div>
-            <div class="cm"><div class="cm-meta">Thomas Morel · 08:42</div><div class="bubble">Le distributeur de gel de l'entrée est vide</div></div>
-          </div>
+      <div class="block block-msg">
+        <h3>Messages</h3>
+        <div class="chat">
+          <div class="cm"><div class="cm-meta">Kevin Bataille · 11:01</div><div class="bubble">Tatami 2 glissant côté nord — à revérifier avant 18h</div></div>
+          <div class="cm"><div class="cm-meta">Léa Moreau · 09:18</div><div class="bubble">Vestiaires OK, désinfection faite ✔</div></div>
+          <div class="cm"><div class="cm-meta">Thomas Morel · 08:42</div><div class="bubble">Le distributeur de gel de l'entrée est vide</div></div>
         </div>
-        <div class="clients empty">
-          <div class="c-top"><div class="big">&nbsp;</div><button class="pillbtn">Voir tout</button></div>
-          <div class="empty-note">à compléter</div>
-          <hr>
-          <div class="c-sess"><span class="c-badge"></span><span class="ph" style="height:11px;width:140px"></span></div>
-          <div class="avstack" style="margin-top:18px"><div class="av md" style="background:#E7E3DC"></div><div class="av md" style="background:#ECEAE6"></div><div class="av md" style="background:#F1EFEB"></div></div>
-        </div>
-      </div>
-
-      <div class="block">
-        <h3>Contrôles</h3>
-        <div class="table-wrap"><table>
-          <thead><tr><th>Zone</th><th>Créneau</th><th>Type</th><th style="text-align:right">Statut</th></tr></thead>
-          <tbody>
-            <tr><td><div class="tr-name"><span class="av sm" style="background:#E7E3DC"></span><span class="ph" style="height:11px;width:110px"></span></div></td><td><span class="ph" style="height:11px;width:80px"></span></td><td><span class="ph" style="height:11px;width:70px"></span></td><td style="text-align:right"><span class="ph" style="height:24px;width:96px;border-radius:999px"></span></td></tr>
-            <tr><td><div class="tr-name"><span class="av sm" style="background:#E7E3DC"></span><span class="ph" style="height:11px;width:110px"></span></div></td><td><span class="ph" style="height:11px;width:80px"></span></td><td><span class="ph" style="height:11px;width:70px"></span></td><td style="text-align:right"><span class="ph" style="height:24px;width:96px;border-radius:999px"></span></td></tr>
-            <tr><td><div class="tr-name"><span class="av sm" style="background:#E7E3DC"></span><span class="ph" style="height:11px;width:110px"></span></div></td><td><span class="ph" style="height:11px;width:80px"></span></td><td><span class="ph" style="height:11px;width:70px"></span></td><td style="text-align:right"><span class="ph" style="height:24px;width:96px;border-radius:999px"></span></td></tr>
-          </tbody>
-        </table></div>
       </div>
     </section>
 
