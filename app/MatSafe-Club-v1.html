@@ -433,6 +433,10 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .fb .fb-name{font-size:16.5px}
 .fb .fb-meta{font-size:13px}
 .fb .fb-txt{font-size:15.5px;line-height:1.55;margin:8px 0 14px}
+.fb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-top:2px}
+.fb-grid .fb{margin-bottom:0;box-shadow:0 12px 28px -22px rgba(20,20,25,.5)}
+.collect{margin-top:24px}
+.collect>h3{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.03em}
 </style>
 </head>
 <body>
@@ -536,21 +540,21 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         <div><div class="num">4,6<small>/5</small></div><div class="stars"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.3 7 .9-5 4.7 1.2 6.9L12 18.5 5.8 20.8 7 13.9 2 9.2l7-.9z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.3 7 .9-5 4.7 1.2 6.9L12 18.5 5.8 20.8 7 13.9 2 9.2l7-.9z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.3 7 .9-5 4.7 1.2 6.9L12 18.5 5.8 20.8 7 13.9 2 9.2l7-.9z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.3 7 .9-5 4.7 1.2 6.9L12 18.5 5.8 20.8 7 13.9 2 9.2l7-.9z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.3 7 .9-5 4.7 1.2 6.9L12 18.5 5.8 20.8 7 13.9 2 9.2l7-.9z" opacity=".4"/></svg></div></div>
         <div style="border-left:1px solid var(--line);padding-left:18px"><div class="rt-sub"><b style="color:var(--ink)">Note moyenne de propreté</b><br>Basée sur 34 retours ce mois-ci.</div></div>
       </div>
-      <div class="row2">
-        <div class="block">
-          <h3>Commentaires récents</h3>
+      <div class="block">
+        <h3>Commentaires récents</h3>
+        <div class="fb-grid">
           <div class="fb"><div class="av md a5">EM</div><div class="fb-body"><div class="fb-top"><span class="fb-name">Émilie M.</span><span class="fb-meta">Vestiaires · aujourd'hui</span></div><div class="fb-txt">« Douches un peu glissantes le soir, sinon tout est nickel. »</div><div class="fb-act"><span class="pill-st soon"><span class="d"></span>À consulter</span><button class="btn-ghost" data-reply>Répondre</button><button class="btn-ghost" data-treat>Marquer traité</button></div></div></div>
           <div class="fb"><div class="av md a6">YK</div><div class="fb-body"><div class="fb-top"><span class="fb-name">Yanis K.</span><span class="fb-meta">Tatami 1 · hier</span></div><div class="fb-txt">« Tapis toujours propres et secs, ça se sent que c'est suivi. »</div><div class="fb-act"><span class="pill-st done"><span class="d"></span>Traité</span></div></div></div>
           <div class="fb"><div class="av md a2">SB</div><div class="fb-body"><div class="fb-top"><span class="fb-name">Sofia B.</span><span class="fb-meta">Sanitaires · 2 j</span></div><div class="fb-txt">« Penser à réapprovisionner le papier plus souvent le week-end. »</div><div class="fb-act"><span class="pill-st soon"><span class="d"></span>À consulter</span><button class="btn-ghost" data-reply>Répondre</button><button class="btn-ghost" data-treat>Marquer traité</button></div></div></div>
         </div>
-        <div>
-          <h3 style="font-size:16px;font-weight:700;margin-bottom:14px">Collecter de nouveaux retours</h3>
+      </div>
+      <div class="collect">
+        <h3 style="font-size:16px;font-weight:700;margin:18px 0 14px">Collecter de nouveaux retours</h3>
           <div class="qr-card">
             <div class="qr"><svg viewBox="0 0 100 100" width="92" height="92" shape-rendering="crispEdges"><rect width="100" height="100" fill="#fff"/><g fill="#1C1C1E"><rect x="6" y="6" width="24" height="24"/><rect x="12" y="12" width="12" height="12" fill="#fff"/><rect x="70" y="6" width="24" height="24"/><rect x="76" y="12" width="12" height="12" fill="#fff"/><rect x="6" y="70" width="24" height="24"/><rect x="12" y="76" width="12" height="12" fill="#fff"/><rect x="38" y="8" width="6" height="6"/><rect x="50" y="8" width="6" height="6"/><rect x="44" y="16" width="6" height="6"/><rect x="56" y="16" width="6" height="6"/><rect x="38" y="24" width="6" height="6"/><rect x="62" y="24" width="6" height="6"/><rect x="8" y="38" width="6" height="6"/><rect x="20" y="38" width="6" height="6"/><rect x="32" y="38" width="6" height="6"/><rect x="44" y="38" width="6" height="6"/><rect x="56" y="38" width="6" height="6"/><rect x="68" y="38" width="6" height="6"/><rect x="80" y="38" width="6" height="6"/><rect x="14" y="50" width="6" height="6"/><rect x="38" y="50" width="6" height="6"/><rect x="50" y="50" width="6" height="6"/><rect x="74" y="50" width="6" height="6"/><rect x="86" y="50" width="6" height="6"/><rect x="8" y="62" width="6" height="6"/><rect x="26" y="62" width="6" height="6"/><rect x="44" y="62" width="6" height="6"/><rect x="62" y="62" width="6" height="6"/><rect x="38" y="70" width="6" height="6"/><rect x="50" y="74" width="6" height="6"/><rect x="62" y="70" width="6" height="6"/><rect x="74" y="66" width="6" height="6"/><rect x="86" y="70" width="6" height="6"/><rect x="44" y="82" width="6" height="6"/><rect x="56" y="86" width="6" height="6"/><rect x="68" y="82" width="6" height="6"/><rect x="80" y="86" width="6" height="6"/></g></svg></div>
             <div><h3>Votre QR code d'avis</h3><p>Les adhérents peuvent scanner ce QR code pour donner leur avis sur la propreté du club.</p></div>
           </div>
         </div>
-      </div>
     </section>
 
     <!-- HISTORIQUE -->
