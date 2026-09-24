@@ -70,20 +70,15 @@ td{padding:11px 12px;border-top:1px solid var(--line);font-size:14px;vertical-al
   <!-- CONNEXION -->
   <div class="card" id="s-login">
     <div class="kicker">Connexion</div><h1>Espace dirigeant</h1>
-    <p class="muted">Connectez-vous avec votre e-mail. Un code à usage unique vous sera envoyé.</p>
+    <p class="muted">Connectez-vous avec votre e-mail. Un lien de connexion vous sera envoyé.</p>
     <div class="banner err hide" id="login-err"></div>
     <div id="login-step1">
       <label>Adresse e-mail</label>
       <input class="inp" id="login-email" type="email" inputmode="email" autocomplete="email" placeholder="vous@club.fr">
-      <button class="btn" id="login-send" style="margin-top:14px">Recevoir un code</button>
+      <button class="btn" id="login-send" style="margin-top:14px">Recevoir un lien de connexion</button>
     </div>
-    <div id="login-step2" class="hide">
-      <label>Code reçu par e-mail</label>
-      <input class="inp" id="login-otp" inputmode="numeric" autocomplete="one-time-code" placeholder="Code à 6 chiffres">
-      <div style="display:flex;gap:10px;margin-top:14px">
-        <button class="btn ghost" id="login-back">Retour</button>
-        <button class="btn" id="login-verify" style="flex:1">Se connecter</button>
-      </div>
+    <div id="login-sent" class="hide">
+      <div class="banner ok">Un lien de connexion vient de vous être envoyé. Ouvrez-le pour accéder à votre espace.</div>
     </div>
   </div>
 
@@ -205,7 +200,7 @@ if(window.__noConfig || !CFG.SUPABASE_URL || !CFG.SUPABASE_ANON_KEY){
   throw new Error("no config");
 }
 const FB = (CFG.FUNCTIONS_BASE || `${CFG.SUPABASE_URL}/functions/v1`).replace(/\/+$/,"");
-const sb = createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY, { auth:{ persistSession:true, autoRefreshToken:true } });
+const sb = createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY, { auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true } });
 async function fn(name, payload){
   const { data:{ session } } = await sb.auth.getSession();
   const r = await fetch(`${FB}/${name}`, { method:"POST", headers:{ "Content-Type":"application/json", "apikey":CFG.SUPABASE_ANON_KEY, "Authorization":`Bearer ${session?.access_token||CFG.SUPABASE_ANON_KEY}` }, body: JSON.stringify(payload||{}) });
@@ -216,25 +211,17 @@ const S = { clubId:null, clubName:"", members:[], zones:[], history:[] };
 const mById = {}; const zById = {};
 
 // ---------- Connexion ----------
-let pendingEmail="";
 $("login-send").addEventListener("click", async ()=>{
   const email=$("login-email").value.trim(); $("login-err").classList.add("hide");
   if(!email){ $("login-err").textContent="Saisissez votre e-mail."; $("login-err").classList.remove("hide"); return; }
   const btn=$("login-send"); btn.disabled=true; btn.textContent="Envoi…";
-  const { error } = await sb.auth.signInWithOtp({ email, options:{ shouldCreateUser:true } });
-  btn.disabled=false; btn.textContent="Recevoir un code";
+  const { error } = await sb.auth.signInWithOtp({
+    email,
+    options:{ shouldCreateUser:true, emailRedirectTo: window.location.origin + "/admin.html" }
+  });
+  btn.disabled=false; btn.textContent="Recevoir un lien de connexion";
   if(error){ $("login-err").textContent=error.message; $("login-err").classList.remove("hide"); return; }
-  pendingEmail=email; $("login-step1").classList.add("hide"); $("login-step2").classList.remove("hide");
-});
-$("login-back").addEventListener("click", ()=>{ $("login-step2").classList.add("hide"); $("login-step1").classList.remove("hide"); });
-$("login-verify").addEventListener("click", async ()=>{
-  const token=$("login-otp").value.trim(); $("login-err").classList.add("hide");
-  if(!token){ $("login-err").textContent="Saisissez le code reçu."; $("login-err").classList.remove("hide"); return; }
-  const btn=$("login-verify"); btn.disabled=true; btn.textContent="Connexion…";
-  const { error } = await sb.auth.verifyOtp({ email:pendingEmail, token, type:"email" });
-  btn.disabled=false; btn.textContent="Se connecter";
-  if(error){ $("login-err").textContent=error.message; $("login-err").classList.remove("hide"); return; }
-  init();
+  $("login-step1").classList.add("hide"); $("login-sent").classList.remove("hide");
 });
 $("signout").addEventListener("click", async ()=>{ await sb.auth.signOut(); location.reload(); });
 
@@ -404,8 +391,26 @@ document.addEventListener("click", async (e)=>{
   const dr=e.target.closest("[data-drevoke]"); if(dr){ if(!confirm("Révoquer ce téléphone ? Il devra ré-saisir le code.")) return; const r=await fn("binding-revoke",{ clubId:S.clubId, bindingId:dr.getAttribute("data-drevoke") }); if(r.ok) { toast("Appareil révoqué."); loadDevices(); } else toast("Révocation impossible."); return; }
 });
 
-// ---------- Démarrage ----------
-init();
+// ---------- Démarrage (retour du lien magique) ----------
+let started=false;
+function cleanAuthUrl(){
+  try{
+    const u=new URL(window.location.href); let changed=false;
+    if(u.hash && /access_token|refresh_token|error|type=/.test(u.hash)){ u.hash=""; changed=true; }
+    ["code","error","error_description","state","token_hash","type"].forEach(k=>{ if(u.searchParams.has(k)){ u.searchParams.delete(k); changed=true; } });
+    if(changed) history.replaceState(null,"", u.pathname + (u.searchParams.toString() ? "?"+u.searchParams.toString() : ""));
+  }catch{}
+}
+// Le lien magique dépose la session dans l'URL (detectSessionInUrl la traite),
+// ce qui déclenche onAuthStateChange : on nettoie l'URL puis on ouvre l'espace.
+sb.auth.onAuthStateChange((_event, session)=>{
+  if(session && !started){ started=true; cleanAuthUrl(); init(); }
+});
+(async ()=>{
+  const { data:{ session } } = await sb.auth.getSession();
+  if(session){ if(!started){ started=true; cleanAuthUrl(); init(); } }
+  else { showScreen("s-login"); }
+})();
 </script>
 </body>
 </html>
