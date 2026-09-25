@@ -159,6 +159,10 @@
 .clubmsg .k .d{width:7px;height:7px;border-radius:50%;background:var(--brand)}
 .clubmsg h3{font-family:var(--cond);text-transform:uppercase;letter-spacing:.01em;font-weight:800;font-size:16px;margin:0 0 5px;color:var(--ink)}
 .clubmsg p{font-size:14.5px;line-height:1.5;color:var(--ink);margin:0;white-space:pre-wrap}
+/* ===== Avis — accroche éditoriale (grand titre centré) ===== */
+.avis-hero{text-align:center;padding:22px 6px 30px}
+.avis-title{font-family:var(--cond);font-weight:700;text-transform:none;letter-spacing:-.015em;font-size:clamp(34px,10vw,46px);line-height:1.02;color:var(--ink);margin:0}
+.avis-lead{max-width:32ch;margin:16px auto 0;color:var(--gray);font-size:14.5px;line-height:1.55}
 </style>
 
 <div class="app">
@@ -311,8 +315,8 @@
     var st={feeling:null, zone:'', comment:''};
     view.innerHTML=
       backBtn()+
-      '<h2 class="h2">Votre ressenti</h2>'+
-      '<p class="sub">Comment trouvez-vous l’hygiène aujourd’hui ? Votre avis reste anonyme et aide le club à s’améliorer.</p>'+
+      '<div class="avis-hero"><h2 class="avis-title">Comment c’était<br>aujourd’hui&nbsp;?</h2>'+
+      '<p class="avis-lead">Votre ressenti sur l’hygiène du club. Anonyme, en quelques secondes — et ça aide vraiment.</p></div>'+
       '<div class="field"><label>Votre ressenti</label><div class="feel" id="feel">'+
         FEELINGS.map(function(f){return '<button class="feelbtn" data-f="'+f.id+'"><span class="fd" style="background:'+f.c+'"></span>'+
           '<span class="ftx"><span class="ft">'+esc(f.t)+'</span><span class="fs">'+esc(f.s)+'</span></span></button>';}).join('')+
