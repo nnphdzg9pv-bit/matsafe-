@@ -470,7 +470,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .gm{background:var(--panel);border:1px solid var(--line2);border-radius:var(--r);padding:30px 30px 34px;margin-bottom:20px}
 .gm-head{border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:24px}
 .msgpub-kick{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.14em;font-size:10.5px;color:var(--brand);font-weight:700}
-.gm-title{font-family:var(--font-disp);font-weight:800;letter-spacing:-.02em;color:var(--ink);font-size:clamp(38px,4.8vw,56px);line-height:.95;margin:8px 0 0;text-transform:none}
+.gm-title{font-family:var(--font-disp);font-weight:600;letter-spacing:-.015em;color:var(--ink);font-size:clamp(26px,3vw,38px);line-height:1;margin:8px 0 0;text-transform:none}
 .gm-body{display:grid;grid-template-columns:230px 1fr;gap:36px;align-items:start}
 .gm-note{font-size:13.5px;color:var(--ink2);line-height:1.55;margin:0 0 14px}
 .msgpub-state{display:inline-block;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-size:11px;font-weight:700;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:5px 11px}
@@ -572,12 +572,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
           <input type="text" class="ano-inp" id="anoBy" placeholder="Votre nom (facultatif)"></div>
         <div class="ano-field"><label>Zone concernée</label>
           <select class="ano-inp ano-sel" id="anoZone"><option>MAT 1</option><option>MAT 2</option><option>Vestiaires &amp; douches</option><option>Sanitaires</option><option>Accueil &amp; couloir</option></select></div>
-        <div class="ano-field"><label>Niveau d'urgence</label>
-          <div class="seg ano-seg" id="anoUrg">
-            <button type="button" class="segbtn on low" data-urg="low">Faible</button>
-            <button type="button" class="segbtn" data-urg="mid">Moyen</button>
-            <button type="button" class="segbtn" data-urg="high">Élevée</button>
-          </div></div>
         <div class="ano-field"><label>Description du problème</label>
           <textarea class="ano-inp ano-ta" id="anoDesc" placeholder="Ex. : Tatami 2 glissant côté nord, à revérifier avant 18h…"></textarea></div>
         <div class="ano-field"><label>Photo <span class="opt">— facultative</span></label>
