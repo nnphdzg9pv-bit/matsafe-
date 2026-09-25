@@ -463,22 +463,36 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .ano-list-wrap{max-width:820px;margin:44px auto 0;border-top:1px solid var(--line);padding-top:26px}
 .ano-list-h{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.03em;font-weight:700;font-size:14px;margin-bottom:14px}
 @media(max-width:560px){.ano-seg{grid-template-columns:1fr}.ano-send{align-self:stretch;text-align:center}}
-/* ===== Message aux adhérents (diffusion MATSAFE Fighter) ===== */
-.msgpub{background:var(--panel);border:1px solid var(--line2);border-radius:var(--r);padding:22px;margin-bottom:20px}
-.msgpub-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}
-.msgpub-kick{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.12em;font-size:10.5px;color:var(--brand);font-weight:700;margin-bottom:4px}
-.msgpub-top h3{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.02em;font-weight:800;font-size:17px}
-.msgpub-state{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-size:11px;font-weight:700;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:5px 11px;white-space:nowrap}
+/* ===== Message aux adhérents — DA « contact » (grand titre + champs soulignés) ===== */
+.gm{background:var(--panel);border:1px solid var(--line2);border-radius:var(--r);padding:30px 30px 34px;margin-bottom:20px}
+.gm-head{border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:24px}
+.msgpub-kick{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.14em;font-size:10.5px;color:var(--brand);font-weight:700}
+.gm-title{font-family:var(--font-disp);font-weight:800;letter-spacing:-.02em;color:var(--ink);font-size:clamp(38px,4.8vw,56px);line-height:.95;margin:8px 0 0;text-transform:none}
+.gm-body{display:grid;grid-template-columns:230px 1fr;gap:36px;align-items:start}
+.gm-note{font-size:13.5px;color:var(--ink2);line-height:1.55;margin:0 0 14px}
+.msgpub-state{display:inline-block;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-size:11px;font-weight:700;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:5px 11px}
 .msgpub-state.on{color:#fff;background:var(--ink);border-color:var(--ink)}
-.msgpub .field{margin-bottom:14px}
-.msgpub-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
-.msgpub-current{border:1px solid var(--line2);border-left:3px solid var(--brand);border-radius:var(--r);background:#FFFFFF;padding:16px 18px;margin-bottom:14px}
+.gm-form{max-width:560px}
+.gm-field{margin-bottom:24px}
+.gm-field>label{display:block;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.gm-field .opt{color:var(--muted);font-weight:500}
+.gm-inp{width:100%;border:0;border-bottom:1.5px solid var(--ink);background:transparent;font-family:var(--font-body);font-size:16px;color:var(--ink);padding:9px 2px;border-radius:0}
+.gm-inp::placeholder{color:var(--muted)}
+.gm-inp:focus{outline:none;border-bottom-color:var(--brand)}
+.gm-ta{min-height:96px;resize:vertical;line-height:1.5}
+.msgpub-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+.gm-submit{font-family:var(--font-body);font-weight:600;font-size:14px;color:#fff;background:var(--ink);border:1px solid var(--ink);border-radius:999px;padding:13px 30px;cursor:pointer;transition:background .15s}
+.gm-submit:hover{background:#000}
+.gm-ghost{font-family:var(--font-body);font-weight:600;font-size:13.5px;color:var(--ink);background:transparent;border:1px solid var(--line2);border-radius:999px;padding:12px 22px;cursor:pointer}
+.gm-ghost:hover{border-color:var(--ink)}
+.gm-current{border-top:1px solid var(--line);padding-top:16px;margin-bottom:14px}
 .msgpub-live{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.06em;font-size:10.5px;font-weight:700;color:var(--ink2);margin-bottom:10px}
 .msgpub-live .d{width:7px;height:7px;border-radius:50%;background:var(--brand)}
-.msgpub-current h4{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.01em;font-weight:800;font-size:16px;margin:0 0 6px}
-.msgpub-current h4[hidden]{display:none}
-.msgpub-current p{font-size:15px;line-height:1.5;color:var(--ink);white-space:pre-wrap;margin:0}
+.gm-current h4{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.01em;font-weight:800;font-size:16px;margin:0 0 6px}
+.gm-current h4[hidden]{display:none}
+.gm-current p{font-size:15px;line-height:1.5;color:var(--ink);white-space:pre-wrap;margin:0}
 .msgpub-meta{font-size:12px;color:var(--muted);margin-top:10px}
+@media(max-width:720px){.gm-body{grid-template-columns:1fr;gap:20px}}
 </style>
 </head>
 <body>
@@ -589,32 +603,40 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         <div style="border-left:1px solid var(--line);padding-left:18px"><div class="rt-sub"><b style="color:var(--ink)">Note moyenne de propreté</b><br>Basée sur 34 retours ce mois-ci.</div></div>
       </div>
 
-      <!-- Message aux adhérents -> publié sur MATSAFE Fighter -->
-      <div class="msgpub">
-        <div class="msgpub-top">
-          <div><div class="msgpub-kick">Diffusion · MATSAFE Fighter</div><h3>Message aux adhérents</h3></div>
-          <span class="msgpub-state" id="msgpubState"></span>
+      <!-- Message aux adhérents -> publié sur MATSAFE Fighter (DA « contact ») -->
+      <div class="gm">
+        <div class="gm-head">
+          <div class="msgpub-kick">Diffusion · MATSAFE Fighter</div>
+          <h2 class="gm-title">Message aux adhérents</h2>
         </div>
-        <div id="msgpubEdit">
-          <div class="field"><label>Titre <span class="opt">— facultatif</span></label>
-            <input type="text" class="ano-inp" id="msgpubTitle" maxlength="60" placeholder="Ex. : Vestiaires"></div>
-          <div class="field"><label>Message</label>
-            <textarea class="ano-inp ano-ta" id="msgpubBody" maxlength="400" placeholder="Écrivez le mot que verront les adhérents sur MATSAFE Fighter…"></textarea></div>
-          <div class="msgpub-actions">
-            <button class="btn-primary" id="msgpubPublish">Publier sur MATSAFE Fighter</button>
-            <button class="btn-ghost" id="msgpubCancel" hidden>Annuler</button>
+        <div class="gm-body">
+          <div class="gm-side">
+            <p class="gm-note">Un mot du gérant, affiché directement sur MATSAFE Fighter. Un seul message actif à la fois — il reste visible jusqu'à ce que vous le modifiiez ou le retiriez.</p>
+            <span class="msgpub-state" id="msgpubState"></span>
           </div>
-        </div>
-        <div id="msgpubView" hidden>
-          <div class="msgpub-current">
-            <span class="msgpub-live"><span class="d"></span>Actuellement visible sur MATSAFE Fighter</span>
-            <h4 id="msgpubCurTitle"></h4>
-            <p id="msgpubCurBody"></p>
-            <div class="msgpub-meta" id="msgpubCurMeta"></div>
-          </div>
-          <div class="msgpub-actions">
-            <button class="btn-ghost" id="msgpubEditBtn">Modifier</button>
-            <button class="btn-ghost" id="msgpubRemove">Retirer</button>
+          <div class="gm-form">
+            <div id="msgpubEdit">
+              <div class="gm-field"><label>Titre <span class="opt">— facultatif</span></label>
+                <input type="text" class="gm-inp" id="msgpubTitle" maxlength="60" placeholder="Ex. : Vestiaires"></div>
+              <div class="gm-field"><label>Message (requis)</label>
+                <textarea class="gm-inp gm-ta" id="msgpubBody" maxlength="400" placeholder="Écrivez le mot que verront les adhérents…"></textarea></div>
+              <div class="msgpub-actions">
+                <button class="gm-submit" id="msgpubPublish">Publier sur MATSAFE Fighter</button>
+                <button class="gm-ghost" id="msgpubCancel" hidden>Annuler</button>
+              </div>
+            </div>
+            <div id="msgpubView" hidden>
+              <div class="gm-current">
+                <span class="msgpub-live"><span class="d"></span>Actuellement visible sur MATSAFE Fighter</span>
+                <h4 id="msgpubCurTitle"></h4>
+                <p id="msgpubCurBody"></p>
+                <div class="msgpub-meta" id="msgpubCurMeta"></div>
+              </div>
+              <div class="msgpub-actions">
+                <button class="gm-ghost" id="msgpubEditBtn">Modifier</button>
+                <button class="gm-ghost" id="msgpubRemove">Retirer</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
