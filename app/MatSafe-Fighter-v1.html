@@ -163,6 +163,11 @@
 .avis-hero{text-align:center;padding:22px 6px 30px}
 .avis-title{font-family:var(--cond);font-weight:800;text-transform:uppercase;letter-spacing:-.005em;font-size:clamp(38px,11vw,54px);line-height:.98;color:var(--ink);margin:0}
 .avis-lead{max-width:32ch;margin:16px auto 0;color:var(--gray);font-size:14.5px;line-height:1.55}
+.avis-field{margin-bottom:22px}
+.avis-field > label{text-align:center;font-size:13px;letter-spacing:.08em}
+.avis-box{display:block;width:100%;min-height:250px;box-sizing:border-box;font-family:var(--sans);font-size:17px;line-height:1.6;color:var(--ink);background:#FFFFFF;border:2px solid var(--ink);border-radius:8px;padding:20px 22px;resize:vertical;box-shadow:0 3px 0 rgba(11,11,11,.05)}
+.avis-box::placeholder{color:var(--gray)}
+.avis-box:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(208,64,44,.14)}
 .fsel{width:100%;font-family:var(--sans);font-size:15px;color:var(--ink);background:#FFFFFF;border:1px solid var(--border);border-radius:6px;padding:13px 14px;padding-right:40px;appearance:none;-webkit-appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230B0B0B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
 .fsel:focus{outline:none;border-color:var(--brand)}
 .done-lead{font-size:15.5px;line-height:1.55;color:var(--ink);max-width:34ch;margin:2px auto 0}
@@ -366,23 +371,16 @@
     var st={feeling:null, zone:'', comment:''};
     view.innerHTML=
       backBtn()+
-      '<div class="avis-hero"><h2 class="avis-title">Votre ressenti</h2>'+
+      '<div class="avis-hero"><h2 class="avis-title">Votre avis</h2>'+
       '<p class="avis-lead">Comment trouvez-vous l’hygiène du club aujourd’hui&nbsp;? Anonyme, en quelques secondes.</p></div>'+
-      '<div class="field"><label>Votre ressenti</label><div class="feel" id="feel">'+
-        FEELINGS.map(function(f){return '<button class="feelbtn" data-f="'+f.id+'"><span class="fd" style="background:'+f.c+'"></span>'+
-          '<span class="ftx"><span class="ft">'+esc(f.t)+'</span></span></button>';}).join('')+
-      '</div></div>'+
-      '<div class="field"><label>Un mot pour préciser <span class="opt">— optionnel</span></label>'+
-        '<textarea id="cmt" rows="3" maxlength="400" placeholder="Ex. : tatami nickel ce soir / vestiaire un peu humide…"></textarea></div>'+
+      '<div class="field avis-field"><label>Votre message</label>'+
+        '<textarea id="cmt" class="avis-box" maxlength="600" placeholder="Dites au club ce que vous avez remarqué : tatamis, vestiaires, douches, sanitaires, hygiène générale…"></textarea></div>'+
       '<div class="cta"><button class="btn" id="send" disabled>Envoyer mon avis</button></div>';
     wireBack();
     if(CTX.zone) st.zone=CTX.zone;
     var send=document.getElementById('send');
-    function refresh(){send.disabled = !st.feeling;}
-    document.getElementById('feel').querySelectorAll('.feelbtn').forEach(function(b){
-      b.onclick=function(){document.querySelectorAll('#feel .feelbtn').forEach(function(x){x.classList.remove('sel');}); b.classList.add('sel'); st.feeling=b.dataset.f; refresh();};
-    });
-    document.getElementById('cmt').oninput=function(){st.comment=this.value.trim();};
+    function refresh(){ send.disabled = st.comment.length < 2; }
+    document.getElementById('cmt').oninput=function(){ st.comment=this.value.trim(); refresh(); };
     send.onclick=function(){
       submit({kind:'avis', feeling:st.feeling, zone:st.zone, description:st.comment, cat:null, photo:null, when:nowStamp()});
       screenDone('avis');
