@@ -471,7 +471,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .gm-head{border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:24px}
 .msgpub-kick{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.14em;font-size:10.5px;color:var(--brand);font-weight:700}
 .gm-title{font-family:var(--font-disp);font-weight:600;letter-spacing:-.015em;color:var(--ink);font-size:clamp(26px,3vw,38px);line-height:1;margin:8px 0 0;text-transform:none}
-.gm-body{display:grid;grid-template-columns:230px 1fr;gap:36px;align-items:start}
+.gm-body{display:block}
 .gm-note{font-size:13.5px;color:var(--ink2);line-height:1.55;margin:0 0 14px}
 .msgpub-state{display:inline-block;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-size:11px;font-weight:700;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:5px 11px}
 .msgpub-state.on{color:#fff;background:var(--ink);border-color:var(--ink)}
@@ -607,10 +607,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
           <h2 class="gm-title">Message aux adhérents</h2>
         </div>
         <div class="gm-body">
-          <div class="gm-side">
-            <p class="gm-note">Un mot du gérant, affiché directement sur MATSAFE Fighter. Un seul message actif à la fois — il reste visible jusqu'à ce que vous le modifiiez ou le retiriez.</p>
-            <span class="msgpub-state" id="msgpubState"></span>
-          </div>
           <div class="gm-form">
             <div id="msgpubEdit">
               <div class="gm-field"><label>Titre <span class="opt">— facultatif</span></label>
@@ -1038,10 +1034,10 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       var t=$('msgpubCurTitle'); t.textContent=m.title||''; t.hidden=!m.title;
       $('msgpubCurBody').textContent=m.body;
       $('msgpubCurMeta').textContent='Publié le '+fmt(m.at);
-      st.textContent='Publié'; st.className='msgpub-state on';
+      if(st){ st.textContent='Publié'; st.className='msgpub-state on'; }
     } else {
       view.hidden=true; edit.hidden=false; $('msgpubCancel').hidden=true;
-      st.textContent='Aucun message'; st.className='msgpub-state';
+      if(st){ st.textContent='Aucun message'; st.className='msgpub-state'; }
     }
   }
   function openEditor(m){ $('msgpubView').hidden=true; $('msgpubEdit').hidden=false; $('msgpubTitle').value=m?(m.title||''):''; $('msgpubBody').value=m?(m.body||''):''; $('msgpubCancel').hidden=!m; $('msgpubBody').focus(); }
