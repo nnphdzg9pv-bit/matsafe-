@@ -437,6 +437,31 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .fb-grid .fb{margin-bottom:0;box-shadow:0 12px 28px -22px rgba(20,20,25,.5)}
 .collect{margin-top:24px}
 .collect>h3{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.03em}
+/* ===== Signaler une anomalie — agencement type « contact » (centré) ===== */
+[data-screen="signalements"] .ano-hero{text-align:center;padding:14px 0 30px}
+.ano-hero h1{font-family:var(--font-disp);font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--brand);font-size:clamp(38px,6vw,64px);line-height:.9;margin:0 auto;max-width:13ch}
+.ano-hero p{max-width:48ch;margin:16px auto 0;color:var(--ink2);font-size:15px;line-height:1.5}
+.ano-form{max-width:600px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+.ano-field{display:flex;flex-direction:column;gap:9px}
+.ano-field>label{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.06em;font-weight:700;font-size:12px;color:var(--ink)}
+.ano-field .opt{color:var(--muted);font-weight:600}
+.ano-inp{width:100%;font-family:var(--font-body);font-size:15px;color:var(--ink);background:#FFFFFF;border:1px solid var(--line2);border-radius:12px;padding:14px 16px}
+.ano-inp::placeholder{color:var(--muted)}
+.ano-inp:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(208,64,44,.14)}
+.ano-sel{appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:44px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230B0B0B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center}
+.ano-ta{min-height:150px;resize:vertical;border-radius:16px;line-height:1.5}
+.ano-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.ano-seg .segbtn{border-radius:999px;padding:12px 8px;text-align:center;font-size:13px}
+.ano-attach{display:inline-flex;align-items:center;gap:10px;align-self:flex-start;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-weight:700;font-size:13px;color:var(--ink);background:#FFFFFF;border:1px dashed var(--line2);border-radius:999px;padding:12px 20px;cursor:pointer;transition:all .15s}
+.ano-attach:hover{border-color:var(--brand);color:var(--brand)}
+.ano-attach svg{width:18px;height:18px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.ano-hint{font-size:12.5px;color:var(--muted);margin:2px 0 0}
+.ano-send{align-self:flex-start;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.06em;font-weight:700;font-size:15px;color:#fff;background:var(--brand);border:1px solid var(--brand);border-radius:999px;padding:14px 44px;cursor:pointer;transition:background .15s}
+.ano-send:hover{background:var(--brand-d);border-color:var(--brand-d)}
+.ano-note{font-size:12.5px;color:var(--muted);margin:2px 0 0;line-height:1.45}
+.ano-list-wrap{max-width:820px;margin:44px auto 0;border-top:1px solid var(--line);padding-top:26px}
+.ano-list-h{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.03em;font-weight:700;font-size:14px;margin-bottom:14px}
+@media(max-width:560px){.ano-seg{grid-template-columns:1fr}.ano-send{align-self:stretch;text-align:center}}
 </style>
 </head>
 <body>
@@ -504,33 +529,39 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
     <!-- SIGNALER UNE ANOMALIE -->
     <section class="screen" data-screen="signalements">
-      <div class="head"><div><h1>Signaler une anomalie</h1><p>Signalez rapidement un problème d'hygiène, de matériel ou de sécurité.</p></div></div>
-      <div class="row2">
-        <form class="form" id="anoForm" onsubmit="return false">
-          <div class="field"><label>Zone concernée</label>
-            <select class="sel" id="anoZone"><option>Tatami 1 (MAT 1)</option><option>Tatami 2 (MAT 2)</option><option>Vestiaires &amp; douches</option><option>Sanitaires</option><option>Accueil &amp; couloir</option></select></div>
-          <div class="field"><label>Description du problème</label>
-            <textarea class="ta" id="anoDesc" placeholder="Décrivez le problème constaté…"></textarea></div>
-          <div class="field"><label>Niveau d'urgence</label>
-            <div class="seg" id="anoUrg">
-              <button type="button" class="segbtn on low" data-urg="low">Faible</button>
-              <button type="button" class="segbtn" data-urg="mid">Moyen</button>
-              <button type="button" class="segbtn" data-urg="high">Urgent</button>
-            </div></div>
-          <div class="field"><label>Photo <span class="opt">— facultative</span></label>
-            <label class="filebtn"><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M4 7h3l2-2h6l2 2h3v12H4z"/><circle cx="12" cy="13" r="3.2"/></svg>Ajouter une photo<input type="file" accept="image/*" hidden id="anoPhoto"></label></div>
-          <button class="btn-primary" id="anoSend">Envoyer le signalement</button>
-        </form>
-        <div class="block">
-          <h3>Anomalies en cours</h3>
-          <div id="anoList">
+      <div class="ano-hero">
+        <h1>Signaler une anomalie</h1>
+        <p>Un problème d'hygiène, de matériel ou de sécurité&nbsp;? Signalez-le en quelques secondes — le club le prend en charge et le corrige.</p>
+      </div>
+      <form class="ano-form" id="anoForm" onsubmit="return false">
+        <div class="ano-field"><label>Signalé par</label>
+          <input type="text" class="ano-inp" id="anoBy" placeholder="Votre nom (facultatif)"></div>
+        <div class="ano-field"><label>Zone concernée</label>
+          <select class="ano-inp ano-sel" id="anoZone"><option>Tatami 1 (MAT 1)</option><option>Tatami 2 (MAT 2)</option><option>Vestiaires &amp; douches</option><option>Sanitaires</option><option>Accueil &amp; couloir</option></select></div>
+        <div class="ano-field"><label>Niveau d'urgence</label>
+          <div class="seg ano-seg" id="anoUrg">
+            <button type="button" class="segbtn on low" data-urg="low">Faible</button>
+            <button type="button" class="segbtn" data-urg="mid">Moyen</button>
+            <button type="button" class="segbtn" data-urg="high">Élevée</button>
+          </div></div>
+        <div class="ano-field"><label>Description du problème</label>
+          <textarea class="ano-inp ano-ta" id="anoDesc" placeholder="Ex. : Tatami 2 glissant côté nord, à revérifier avant 18h…"></textarea></div>
+        <div class="ano-field"><label>Photo <span class="opt">— facultative</span></label>
+          <label class="ano-attach"><svg viewBox="0 0 24 24"><path d="M4 7h3l2-2h6l2 2h3v12H4z"/><circle cx="12" cy="13" r="3.2"/></svg>Ajouter une photo<input type="file" accept="image/*" hidden id="anoPhoto"></label>
+          <p class="ano-hint">Une photo aide l'équipe à corriger plus vite.</p></div>
+        <button class="ano-send" id="anoSend">Signaler</button>
+        <p class="ano-note">Vos signalements sont transmis à l'équipe du club et suivis jusqu'à résolution.</p>
+      </form>
+
+      <div class="ano-list-wrap">
+        <h3 class="ano-list-h">Anomalies en cours</h3>
+        <div id="anoList">
             <div class="msg"><div class="av md a3">TA</div><div class="m-body"><div class="m-top"><span class="m-name">Tatami 2 glissant côté nord</span><span class="m-time">11:01</span></div><div class="m-prev">Hygiène · signalé par Kevin B. · à revérifier avant 18h</div></div><span class="pill-st todo"><span class="d"></span>À traiter</span></div>
             <div class="msg"><div class="av md a1">GE</div><div class="m-body"><div class="m-top"><span class="m-name">Distributeur de gel vide — entrée MAT 1</span><span class="m-time">Hier</span></div><div class="m-prev">Matériel · signalé par Nadia R. · urgent</div></div><span class="pill-st todo"><span class="d"></span>À traiter</span></div>
             <div class="msg"><div class="av md a2">EC</div><div class="m-body"><div class="m-top"><span class="m-name">Éclairage vestiaire défaillant</span><span class="m-time">Lun.</span></div><div class="m-prev">Sécurité · intervention prévue jeudi</div></div><span class="pill-st prog"><span class="d"></span>En cours</span></div>
             <div class="msg"><div class="av md a4">SA</div><div class="m-body"><div class="m-top"><span class="m-name">Fuite robinet sanitaires</span><span class="m-time">Sem. dern.</span></div><div class="m-prev">Matériel · réparé par le prestataire</div></div><span class="pill-st done"><span class="d"></span>Résolue</span></div>
           </div>
         </div>
-      </div>
     </section>
 
     <!-- RETOURS ADHÉRENTS -->
@@ -797,8 +828,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var desc=((document.getElementById('anoDesc')||{}).value||'').trim();
     if(!desc){ toast('Ajoutez une description du problème.'); return; }
     var urgEl=document.querySelector('#anoUrg .segbtn.on'), urg=urgEl?urgEl.getAttribute('data-urg'):'low';
+    var by=((document.getElementById('anoBy')||{}).value||'').trim()||'Simon E.';
     var list=document.getElementById('anoList'), div=document.createElement('div'); div.className='msg';
-    div.innerHTML='<div class="av md a3">NV</div><div class="m-body"><div class="m-top"><span class="m-name">'+esc(desc.slice(0,64))+'</span><span class="m-time">À l\'instant</span></div><div class="m-prev">'+esc(zone)+' · signalé par Simon E.'+(urg==='high'?' · urgent':'')+'</div></div><span class="pill-st todo"><span class="d"></span>À traiter</span>';
+    div.innerHTML='<div class="av md a3">NV</div><div class="m-body"><div class="m-top"><span class="m-name">'+esc(desc.slice(0,64))+'</span><span class="m-time">À l\'instant</span></div><div class="m-prev">'+esc(zone)+' · signalé par '+esc(by)+(urg==='high'?' · urgence élevée':'')+'</div></div><span class="pill-st todo"><span class="d"></span>À traiter</span>';
     list.insertBefore(div, list.firstChild);
     document.getElementById('anoDesc').value='';
     toast('Signalement envoyé.');
