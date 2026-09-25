@@ -496,6 +496,21 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .gm-current p{font-size:15px;line-height:1.5;color:var(--ink);white-space:pre-wrap;margin:0}
 .msgpub-meta{font-size:12px;color:var(--muted);margin-top:10px}
 @media(max-width:720px){.gm-body{grid-template-columns:1fr;gap:20px}}
+/* ===== Prochaines échéances (diffusion MATSAFE Fighter) ===== */
+.evmgr{background:var(--panel);border:1px solid var(--line2);border-radius:var(--r);padding:30px 30px 32px;margin-bottom:20px}
+.evmgr-title{font-family:var(--font-disp);font-weight:600;letter-spacing:-.015em;text-transform:none;color:var(--ink);font-size:clamp(24px,3vw,34px);line-height:1;margin:8px 0 0}
+.evmgr-list{display:flex;flex-direction:column;gap:10px;margin:0 0 20px}
+.evmgr-empty{color:var(--muted);font-size:14px;padding:2px 0 4px}
+.evrow{display:flex;align-items:center;gap:14px;background:#FFFFFF;border:1px solid var(--line2);border-radius:var(--r);padding:12px 14px}
+.evrow .evk{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.1em;font-size:10.5px;font-weight:700;color:var(--ink2);width:100px;flex:none}
+.evrow .evb{flex:1;min-width:0}
+.evrow .evt2{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.01em;font-weight:700;font-size:14.5px;color:var(--ink)}
+.evrow .evd{font-size:12.5px;color:var(--ink2);margin-top:2px}
+.evrow .evx{background:transparent;border:1px solid var(--line2);border-radius:var(--r-sm);width:32px;height:32px;display:grid;place-items:center;color:var(--ink2);cursor:pointer;flex:none;font-size:13px;line-height:1}
+.evrow .evx:hover{border-color:var(--brand);color:var(--brand)}
+.evmgr-row{display:grid;grid-template-columns:150px 1fr 170px;gap:12px;margin-bottom:16px}
+.evmgr .gm-field{margin-bottom:0}
+@media(max-width:640px){.evmgr-row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -630,6 +645,18 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- Prochaines échéances -> publiées sur MATSAFE Fighter -->
+      <div class="evmgr">
+        <div class="gm-head"><div class="msgpub-kick">Diffusion · MATSAFE Fighter</div><h2 class="evmgr-title">Prochaines échéances</h2></div>
+        <div class="evmgr-list" id="evList"></div>
+        <div class="evmgr-row">
+          <div class="gm-field"><label>Type</label><select class="ano-inp ano-sel" id="evKind"><option>Stage</option><option>Compétition</option><option>Autre</option></select></div>
+          <div class="gm-field"><label>Intitulé</label><input type="text" class="ano-inp" id="evTitle" maxlength="70" placeholder="Ex. : Stage No-Gi avec un invité"></div>
+          <div class="gm-field"><label>Date</label><input type="text" class="ano-inp" id="evDate" maxlength="40" placeholder="Ex. : 12 octobre · 14h"></div>
+        </div>
+        <button class="gm-submit" id="evAdd">Ajouter sur MATSAFE Fighter</button>
       </div>
 
       <div class="block">
@@ -1051,6 +1078,42 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(window.confirm('Retirer le message des adhérents ? Il ne sera plus visible sur MATSAFE Fighter.')){
       set(null); $('msgpubTitle').value=''; $('msgpubBody').value=''; render(); flash('Message retiré.');
     }
+  });
+  render();
+})();
+</script>
+<script>
+/* Prochaines échéances : gérées par le gérant, partagées avec MATSAFE Fighter via localStorage (même origine). */
+(function(){
+  var K='matsafe_club_events';
+  var DEFAULTS=[
+    {id:1,kind:'Stage',title:'Stage No-Gi avec un invité',date:'12 octobre · 14h'},
+    {id:2,kind:'Compétition',title:'Open de Paris JJB',date:'26 octobre'},
+    {id:3,kind:'Stage',title:'Sparring MMA encadré',date:'9 novembre · 11h'}
+  ];
+  function $(id){return document.getElementById(id);}
+  function get(){ try{ var r=localStorage.getItem(K); if(r===null) return DEFAULTS.slice(); var a=JSON.parse(r); return Array.isArray(a)?a:[]; }catch(e){ return DEFAULTS.slice(); } }
+  function set(a){ try{ localStorage.setItem(K, JSON.stringify(a)); }catch(e){} }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function flash(m){ var t=$('toast'); if(!t)return; t.textContent=m; t.classList.add('on'); clearTimeout(flash._t); flash._t=setTimeout(function(){t.classList.remove('on');},1800); }
+  if(!$('evAdd')) return;
+  function render(){
+    var a=get(), list=$('evList');
+    if(!a.length){ list.innerHTML='<div class="evmgr-empty">Aucune échéance pour le moment.</div>'; return; }
+    list.innerHTML=a.map(function(e){
+      return '<div class="evrow"><span class="evk">'+esc(e.kind)+'</span><div class="evb"><div class="evt2">'+esc(e.title)+'</div>'+(e.date?'<div class="evd">'+esc(e.date)+'</div>':'')+'</div><button class="evx" data-id="'+esc(e.id)+'" title="Retirer" aria-label="Retirer">&times;</button></div>';
+    }).join('');
+    Array.prototype.forEach.call(list.querySelectorAll('.evx'), function(bn){
+      bn.onclick=function(){ var id=bn.getAttribute('data-id'); set(get().filter(function(x){return String(x.id)!==String(id);})); render(); flash('Échéance retirée.'); };
+    });
+  }
+  $('evAdd').addEventListener('click', function(){
+    var kind=($('evKind').value||'').trim(), title=($('evTitle').value||'').trim(), date=($('evDate').value||'').trim();
+    if(!title){ flash('Ajoutez un intitulé.'); return; }
+    var a=get(); a.push({id:Date.now(), kind:kind||'Événement', title:title, date:date});
+    if(a.length>8) a=a.slice(-8);
+    set(a); $('evTitle').value=''; $('evDate').value=''; render();
+    flash('Échéance publiée sur MATSAFE Fighter.');
   });
   render();
 })();

@@ -191,6 +191,7 @@
   main{padding:26px 32px 46px}
   #view > *:not(.home-grid){max-width:640px;margin-left:auto;margin-right:auto}
   .home-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:38px;align-items:start;max-width:none}
+  .home-grid.solo{grid-template-columns:minmax(0,680px);justify-content:center}
   .home-side{margin-top:6px}
   .cta{position:static;margin:24px 0 0;background:none;padding:0}
 }
@@ -296,11 +297,12 @@
   document.getElementById('whoami').textContent='Retour anonyme';
 
   /* ======================= ÉCRANS ======================= */
-  var EVENTS=[
+  var DEFAULT_EVENTS=[
     {kind:'Stage',       title:'Stage No-Gi avec un invité', date:'12 octobre · 14h'},
     {kind:'Compétition', title:'Open de Paris JJB',          date:'26 octobre'},
     {kind:'Stage',       title:'Sparring MMA encadré',        date:'9 novembre · 11h'}
   ];
+  function getEvents(){ try{ var r=localStorage.getItem('matsafe_club_events'); if(r===null) return DEFAULT_EVENTS.slice(); var a=JSON.parse(r); return Array.isArray(a)?a:[]; }catch(e){ return DEFAULT_EVENTS.slice(); } }
   function getClubMsg(){ try{ var r=localStorage.getItem('matsafe_club_message'); return r?JSON.parse(r):null; }catch(e){ return null; } }
   function screenHome(){
     var mine=load(STORE);
@@ -320,11 +322,12 @@
     var msgHtml = (cm && cm.body)
       ? '<section class="cmsg"><div class="cmsg-k"><span class="d"></span>Message du club</div>'+(cm.title?'<h3 class="cmsg-t">'+esc(cm.title)+'</h3>':'')+'<p class="cmsg-b">'+esc(cm.body)+'</p></section>'
       : '';
-    var eventsHtml = '<aside class="home-side"><div class="ev-k">Prochaines échéances</div><div class="ev-list">'+
-      EVENTS.map(function(e){return '<div class="evt"><span class="evt-kind">'+esc(e.kind)+'</span><div class="evt-t">'+esc(e.title)+'</div><div class="evt-d">'+esc(e.date)+'</div></div>';}).join('')+
-      '</div></aside>';
+    var evs = getEvents();
+    var eventsHtml = evs.length ? '<aside class="home-side"><div class="ev-k">Prochaines échéances</div><div class="ev-list">'+
+      evs.map(function(e){return '<div class="evt"><span class="evt-kind">'+esc(e.kind)+'</span><div class="evt-t">'+esc(e.title)+'</div>'+(e.date?'<div class="evt-d">'+esc(e.date)+'</div>':'')+'</div>';}).join('')+
+      '</div></aside>' : '';
     view.innerHTML=
-      '<div class="home-grid">'+
+      '<div class="home-grid'+(evs.length?'':' solo')+'">'+
         '<div class="home-main">'+
           '<div class="fctx"><span class="fctx-eb">Vous êtes chez</span><h1 class="fctx-club">'+esc(CTX.club)+'</h1><span class="fctx-loc">'+esc(CTX.city)+' · Club labellisé MatSafe</span></div>'+
           msgHtml+
@@ -448,7 +451,7 @@
   }
 
   screenHome();
-  window.addEventListener('storage', function(e){ if(e.key==='matsafe_club_message' && document.querySelector('.home-grid')){ try{ screenHome(); }catch(_){ } } });
+  window.addEventListener('storage', function(e){ if((e.key==='matsafe_club_message'||e.key==='matsafe_club_events') && document.querySelector('.home-grid')){ try{ screenHome(); }catch(_){ } } });
 </script>
 <script>
 /* Message du club : lu depuis localStorage (publié par MATSAFE Club, même origine). */
