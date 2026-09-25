@@ -97,12 +97,12 @@
   .chip{font-family:var(--cond); font-weight:700; text-transform:uppercase; letter-spacing:.03em; font-size:13px;
     padding:10px 14px; border-radius:11px; border:1px solid var(--border); background:var(--paper); cursor:pointer; color:var(--ink)}
   .chip.sel{background:var(--black); color:var(--off); border-color:var(--black)}
-  .feel{display:grid; grid-template-columns:1fr; gap:10px}
-  .feelbtn{display:flex; align-items:center; gap:13px; text-align:left; cursor:pointer; color:var(--ink);
-    background:var(--paper); border:1px solid var(--border); border-radius:13px; padding:14px 15px}
-  .feelbtn .fd{width:14px;height:14px;border-radius:50%;flex:none}
+  .feel{display:grid; grid-template-columns:1fr; gap:16px}
+  .feelbtn{display:flex; align-items:center; gap:18px; text-align:left; cursor:pointer; color:var(--ink);
+    background:var(--paper); border:1px solid var(--border); border-radius:13px; padding:26px 24px}
+  .feelbtn .fd{width:18px;height:18px;border-radius:50%;flex:none}
   .feelbtn .ftx{flex:1 1 auto; min-width:0}
-  .feelbtn .ft{display:block; font-family:var(--cond); font-weight:800; text-transform:uppercase; letter-spacing:.02em; font-size:16px}
+  .feelbtn .ft{display:block; font-family:var(--cond); font-weight:800; text-transform:uppercase; letter-spacing:.02em; font-size:23px; line-height:1}
   .feelbtn .fs{display:block; font-size:12px; color:var(--gray); margin-top:2px}
   .feelbtn.sel{background:var(--black); color:var(--off); border-color:var(--black)}
   .feelbtn.sel .fs{color:rgba(242,240,236,.72)}
@@ -370,7 +370,7 @@
       '<p class="avis-lead">Comment trouvez-vous l’hygiène du club aujourd’hui&nbsp;? Anonyme, en quelques secondes.</p></div>'+
       '<div class="field"><label>Votre ressenti</label><div class="feel" id="feel">'+
         FEELINGS.map(function(f){return '<button class="feelbtn" data-f="'+f.id+'"><span class="fd" style="background:'+f.c+'"></span>'+
-          '<span class="ftx"><span class="ft">'+esc(f.t)+'</span><span class="fs">'+esc(f.s)+'</span></span></button>';}).join('')+
+          '<span class="ftx"><span class="ft">'+esc(f.t)+'</span></span></button>';}).join('')+
       '</div></div>'+
       '<div class="field"><label>Un mot pour préciser <span class="opt">— optionnel</span></label>'+
         '<textarea id="cmt" rows="3" maxlength="400" placeholder="Ex. : tatami nickel ce soir / vestiaire un peu humide…"></textarea></div>'+
