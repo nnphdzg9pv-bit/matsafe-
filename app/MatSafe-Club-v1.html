@@ -215,6 +215,9 @@ tbody tr:hover{background:#F7F6F4}
 .app.rail-closed .rail{display:none}
 .app.rail-closed .rail-toggle{right:22px}
 .app.rail-closed .rail-toggle .rt-ic{transform:rotate(180deg)}
+/* Section Planning : panneau de droite masqué (évite le doublon, plus épuré) */
+.app.rail-hidden{grid-template-columns:248px 1fr}
+.app.rail-hidden .rail,.app.rail-hidden .rail-toggle{display:none}
 @media(max-width:1180px){.rail-toggle{display:none}}
 
 /* toast */
@@ -765,6 +768,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     screens.forEach(function(s){ s.classList.remove('on'); });
     target.classList.add('on');
     navItems.forEach(function(a){ a.classList.toggle('on', a.getAttribute('data-screen')===name); });
+    var app=document.querySelector('.app'); if(app) app.classList.toggle('rail-hidden', name==='planning');
     document.querySelector('.main').scrollTop = 0;
     window.scrollTo(0,0);
   }
