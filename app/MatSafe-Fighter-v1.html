@@ -165,6 +165,9 @@
 .avis-lead{max-width:32ch;margin:16px auto 0;color:var(--gray);font-size:14.5px;line-height:1.55}
 .fsel{width:100%;font-family:var(--sans);font-size:15px;color:var(--ink);background:#FFFFFF;border:1px solid var(--border);border-radius:6px;padding:13px 14px;padding-right:40px;appearance:none;-webkit-appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230B0B0B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
 .fsel:focus{outline:none;border-color:var(--brand)}
+.done-lead{font-size:15.5px;line-height:1.55;color:var(--ink);max-width:34ch;margin:2px auto 0}
+.done-motto{font-family:var(--cond);text-transform:uppercase;letter-spacing:.05em;font-weight:800;font-size:15px;color:var(--ink);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:14px 10px;margin:22px auto;max-width:32ch}
+.done-fine{font-size:12.5px;color:var(--gray);margin-top:2px}
 /* ===== Accueil Fighter : centre (message + hygiène) + colonne droite (échéances) ===== */
 .home-grid{display:block}
 .home-main{min-width:0}
@@ -369,8 +372,6 @@
         FEELINGS.map(function(f){return '<button class="feelbtn" data-f="'+f.id+'"><span class="fd" style="background:'+f.c+'"></span>'+
           '<span class="ftx"><span class="ft">'+esc(f.t)+'</span><span class="fs">'+esc(f.s)+'</span></span></button>';}).join('')+
       '</div></div>'+
-      '<div class="field"><label>Zone concernée <span class="opt">— optionnel</span></label>'+
-        '<select class="fsel" id="zones"><option value="">Toutes zones / hygiène générale</option>'+ZONES.map(function(z){return '<option value="'+esc(z)+'"'+(CTX.zone===z?' selected':'')+'>'+esc(z)+'</option>';}).join('')+'</select></div>'+
       '<div class="field"><label>Un mot pour préciser <span class="opt">— optionnel</span></label>'+
         '<textarea id="cmt" rows="3" maxlength="400" placeholder="Ex. : tatami nickel ce soir / vestiaire un peu humide…"></textarea></div>'+
       '<div class="cta"><button class="btn" id="send" disabled>Envoyer mon avis</button></div>';
@@ -381,9 +382,6 @@
     document.getElementById('feel').querySelectorAll('.feelbtn').forEach(function(b){
       b.onclick=function(){document.querySelectorAll('#feel .feelbtn').forEach(function(x){x.classList.remove('sel');}); b.classList.add('sel'); st.feeling=b.dataset.f; refresh();};
     });
-    var zsel=document.getElementById('zones');
-    if(CTX.zone) st.zone=CTX.zone;
-    zsel.onchange=function(){ st.zone=this.value; };
     document.getElementById('cmt').oninput=function(){st.comment=this.value.trim();};
     send.onclick=function(){
       submit({kind:'avis', feeling:st.feeling, zone:st.zone, description:st.comment, cat:null, photo:null, when:nowStamp()});
@@ -400,8 +398,6 @@
       '<p class="sub">Un point à améliorer ? Décrivez-le simplement. Le club le vérifiera et le traitera — vous ne créez pas de non-conformité, juste une info utile.</p>'+
       '<div class="field"><label>De quoi s’agit-il ?</label><div class="chips" id="cats">'+
         CATS.map(function(c){return '<button class="chip" data-c="'+c.id+'">'+esc(c.t)+'</button>';}).join('')+'</div></div>'+
-      '<div class="field"><label>Zone concernée</label><div class="chips" id="zones">'+
-        ZONES.map(function(z){return '<button class="chip" data-z="'+esc(z)+'">'+esc(z)+'</button>';}).join('')+'</div></div>'+
       '<div class="field"><label>Description</label>'+
         '<textarea id="desc" rows="4" maxlength="600" placeholder="Ex. : plus de savon au lavabo de droite dans le vestiaire."></textarea></div>'+
       '<div class="field"><label>Photo <span class="opt">— optionnel</span></label>'+
@@ -409,13 +405,9 @@
       '<div class="cta"><button class="btn" id="send" disabled>Envoyer au club</button></div>';
     wireBack();
     var send=document.getElementById('send');
-    function refresh(){send.disabled = !(st.cat && st.zone && st.description.length>2);}
+    function refresh(){send.disabled = !(st.cat && st.description.length>2);}
     document.getElementById('cats').querySelectorAll('.chip').forEach(function(b){
       b.onclick=function(){document.querySelectorAll('#cats .chip').forEach(function(x){x.classList.remove('sel');}); b.classList.add('sel'); st.cat=b.dataset.c; refresh();};
-    });
-    document.getElementById('zones').querySelectorAll('.chip').forEach(function(b){
-      if(st.zone && b.dataset.z===st.zone) b.classList.add('sel');
-      b.onclick=function(){document.querySelectorAll('#zones .chip').forEach(function(x){x.classList.remove('sel');}); b.classList.add('sel'); st.zone=b.dataset.z; refresh();};
     });
     document.getElementById('desc').oninput=function(){st.description=this.value.trim(); refresh();};
     document.getElementById('addphoto').onclick=function(){
@@ -436,17 +428,22 @@
 
   /* --- CONFIRMATION --- */
   function screenDone(kind){
-    var msg = kind==='avis'
-      ? 'Votre avis a bien été transmis au club. Merci d’aider <b>'+esc(CTX.club)+'</b> à garder un espace sain.'
-      : 'Votre signalement est arrivé au club avec le statut <b>« à vérifier »</b>. Il sera pris en compte et traité si nécessaire.';
-    view.innerHTML=
-      '<div class="done">'+
-        '<div class="ring">'+ICheck+'</div>'+
-        '<h2>Merci&nbsp;!</h2>'+
-        '<p>'+msg+'</p>'+
-        '<p>Aucun compte, aucune donnée personnelle : votre retour reste anonyme.</p>'+
-        '<div class="again"><button class="btn ghost" id="again" style="width:auto;padding:14px 26px">Faire un autre retour</button></div>'+
-      '</div>';
+    view.innerHTML = (kind==='avis'
+      ? '<div class="done">'+
+          '<div class="ring">'+ICheck+'</div>'+
+          '<h2>Bien joué&nbsp;!</h2>'+
+          '<p class="done-lead">Merci pour ton aide. Ton retour compte vraiment — il aide tout le club à s’entraîner dans un espace propre et sain.</p>'+
+          '<div class="done-motto">L’hygiène fait partie de la discipline.</div>'+
+          '<p class="done-fine">Aucun compte, aucune donnée personnelle : ton retour reste anonyme.</p>'+
+          '<div class="again"><button class="btn ghost" id="again" style="width:auto;padding:14px 26px">Faire un autre retour</button></div>'+
+        '</div>'
+      : '<div class="done">'+
+          '<div class="ring">'+ICheck+'</div>'+
+          '<h2>Merci&nbsp;!</h2>'+
+          '<p>Votre signalement est arrivé au club avec le statut <b>« à vérifier »</b>. Il sera pris en compte et traité si nécessaire.</p>'+
+          '<p class="done-fine">Aucun compte, aucune donnée personnelle : votre retour reste anonyme.</p>'+
+          '<div class="again"><button class="btn ghost" id="again" style="width:auto;padding:14px 26px">Faire un autre retour</button></div>'+
+        '</div>');
     document.getElementById('again').onclick=screenHome;
     toast('Retour transmis');
   }
