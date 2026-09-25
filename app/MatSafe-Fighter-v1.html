@@ -163,6 +163,8 @@
 .avis-hero{text-align:center;padding:22px 6px 30px}
 .avis-title{font-family:var(--cond);font-weight:800;text-transform:uppercase;letter-spacing:-.005em;font-size:clamp(38px,11vw,54px);line-height:.98;color:var(--ink);margin:0}
 .avis-lead{max-width:32ch;margin:16px auto 0;color:var(--gray);font-size:14.5px;line-height:1.55}
+.fsel{width:100%;font-family:var(--sans);font-size:15px;color:var(--ink);background:#FFFFFF;border:1px solid var(--border);border-radius:6px;padding:13px 14px;padding-right:40px;appearance:none;-webkit-appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230B0B0B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.fsel:focus{outline:none;border-color:var(--brand)}
 /* ===== Accueil Fighter : centre (message + hygiène) + colonne droite (échéances) ===== */
 .home-grid{display:block}
 .home-main{min-width:0}
@@ -368,7 +370,7 @@
           '<span class="ftx"><span class="ft">'+esc(f.t)+'</span><span class="fs">'+esc(f.s)+'</span></span></button>';}).join('')+
       '</div></div>'+
       '<div class="field"><label>Zone concernée <span class="opt">— optionnel</span></label>'+
-        '<div class="chips" id="zones">'+ZONES.map(function(z){return '<button class="chip" data-z="'+esc(z)+'">'+esc(z)+'</button>';}).join('')+'</div></div>'+
+        '<select class="fsel" id="zones"><option value="">Toutes zones / hygiène générale</option>'+ZONES.map(function(z){return '<option value="'+esc(z)+'"'+(CTX.zone===z?' selected':'')+'>'+esc(z)+'</option>';}).join('')+'</select></div>'+
       '<div class="field"><label>Un mot pour préciser <span class="opt">— optionnel</span></label>'+
         '<textarea id="cmt" rows="3" maxlength="400" placeholder="Ex. : tatami nickel ce soir / vestiaire un peu humide…"></textarea></div>'+
       '<div class="cta"><button class="btn" id="send" disabled>Envoyer mon avis</button></div>';
@@ -379,10 +381,9 @@
     document.getElementById('feel').querySelectorAll('.feelbtn').forEach(function(b){
       b.onclick=function(){document.querySelectorAll('#feel .feelbtn').forEach(function(x){x.classList.remove('sel');}); b.classList.add('sel'); st.feeling=b.dataset.f; refresh();};
     });
-    document.getElementById('zones').querySelectorAll('.chip').forEach(function(b){
-      if(CTX.zone && b.dataset.z===CTX.zone) b.classList.add('sel');
-      b.onclick=function(){var on=b.classList.contains('sel'); document.querySelectorAll('#zones .chip').forEach(function(x){x.classList.remove('sel');}); if(!on){b.classList.add('sel'); st.zone=b.dataset.z;} else st.zone='';};
-    });
+    var zsel=document.getElementById('zones');
+    if(CTX.zone) st.zone=CTX.zone;
+    zsel.onchange=function(){ st.zone=this.value; };
     document.getElementById('cmt').oninput=function(){st.comment=this.value.trim();};
     send.onclick=function(){
       submit({kind:'avis', feeling:st.feeling, zone:st.zone, description:st.comment, cat:null, photo:null, when:nowStamp()});
