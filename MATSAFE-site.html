@@ -3567,8 +3567,8 @@ const MS_REDUCE = window.matchMedia && window.matchMedia('(prefers-reduced-motio
   const N=cards.length;
   const pad=n=>(n<10?'0':'')+n;
   const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
-  const ROT=[-10,8.5,-7.5,9,-7,8];
-  const OX=[-34,40,-24,34,-20,30];
+  const ROT=[-15,13,-12,14,-11,13];
+  const OX=[-46,52,-34,46,-30,42];
   if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches){
     cards.forEach(c=>{c.style.opacity=1;});return;   // pile statique via CSS
   }
@@ -3597,8 +3597,8 @@ const MS_REDUCE = window.matchMedia && window.matchMedia('(prefers-reduced-motio
       let ty,sc,op,z,pe,rz,dx,bl;
       if(t<=-1){ ty=0.72*vh; sc=.84; op=0; z=i; pe='none'; rz=r; dx=ox; bl=16; }
       else if(t<0){ const k=t+1; ty=0.72*vh*(1-k); sc=.84+.16*k; op=k; z=50+i; pe=k>.5?'auto':'none'; rz=r*(1-k); dx=ox*(1-k); bl=16*(1-k); }
-      else if(t<1){ ty=-0.06*vh*t; sc=1; op=1; z=50+i; pe='auto'; rz=r*0.32*t; dx=ox*0.08*t; bl=0; }
-      else { const e=Math.min(t-1,1); ty=-(0.06+0.62*e)*vh; sc=1-.07*e; op=1-e; z=i; pe='none'; rz=r*(0.32+2.1*e); dx=ox*0.7*e; bl=e*11; }
+      else if(t<1){ ty=-0.06*vh*t; sc=1; op=1; z=50+i; pe='auto'; rz=r*0.4*t; dx=ox*0.1*t; bl=0; }
+      else { const e=Math.min(t-1,1); ty=-(0.06+0.62*e)*vh; sc=1-.07*e; op=1-e; z=i; pe='none'; rz=r*(0.4+2.6*e); dx=ox*0.8*e; bl=e*11; }
       const c=cards[i];
       c.style.transform='translate(calc(-50% + '+dx.toFixed(1)+'px), calc(-50% + '+ty.toFixed(1)+'px)) rotate('+rz.toFixed(2)+'deg) scale('+sc.toFixed(3)+')';
       c.style.opacity=op; c.style.zIndex=z; c.style.pointerEvents=pe;
