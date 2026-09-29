@@ -1,0 +1,60 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MatSafe — Nos services</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#F2F0EC;--ink:#0A0A0A;--muted:#6B6B6B;--red:#C93E32;--line:#E1DCD3;--cond:'Barlow Condensed',sans-serif;--sans:'Manrope',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--cream);color:var(--ink);-webkit-font-smoothing:antialiased}
+.spacer{height:60vh}
+.services{position:relative;overflow:hidden;padding:14vh 0 18vh}
+.bgword{position:absolute;top:20%;left:50%;transform:translateX(-50%);white-space:nowrap;font-family:var(--cond);font-weight:900;font-size:26vw;line-height:.8;letter-spacing:-.02em;color:#E7E2D9;filter:blur(3px);z-index:0;pointer-events:none;text-transform:uppercase;will-change:transform}
+.wrap{position:relative;z-index:2;max-width:1120px;margin:0 auto;padding:0 32px}
+.s-head{margin-bottom:64px}
+.kick{font-family:var(--cond);font-weight:800;font-size:13px;letter-spacing:.28em;text-transform:uppercase;color:var(--red);display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.kick::before{content:'';width:40px;height:2px;background:var(--red)}
+.s-head h2{font-family:var(--cond);font-weight:900;font-size:clamp(2.6rem,7vw,5.2rem);line-height:.92;text-transform:uppercase;letter-spacing:-.02em}
+.cards{display:flex;flex-direction:column;gap:26px}
+.scard{position:relative;background:#fff;border:1px solid var(--line);border-radius:22px;padding:34px 36px;box-shadow:0 30px 60px -40px rgba(10,10,10,.35);
+  opacity:0;transform:translateY(70px) rotate(-2.2deg) scale(.97);filter:blur(7px);
+  transition:opacity .9s ease,transform .9s cubic-bezier(.2,.75,.2,1),filter .9s ease,box-shadow .4s ease}
+.scard.in{opacity:1;transform:none;filter:none}
+.scard:nth-child(even){transform:translateY(70px) rotate(2.2deg) scale(.97)}
+.scard:nth-child(even).in{transform:none}
+.scard:hover{box-shadow:0 40px 80px -38px rgba(10,10,10,.45);transform:translateY(-4px)}
+.scard .idx{position:absolute;top:26px;right:32px;font-family:var(--cond);font-weight:800;font-size:clamp(2.4rem,5vw,3.6rem);color:#EDE8DF;line-height:1}
+.scard h3{font-family:var(--cond);font-weight:900;font-size:clamp(1.7rem,3.2vw,2.4rem);text-transform:uppercase;letter-spacing:-.01em;max-width:78%}
+.scard .desc{color:#4a4740;font-size:15px;line-height:1.55;margin:12px 0 20px;max-width:60ch}
+.tags{display:flex;flex-wrap:wrap;gap:10px}
+.tags span{font-family:var(--cond);font-weight:700;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);background:var(--cream);border:1px solid var(--line);border-radius:999px;padding:7px 14px}
+.scard .go{position:absolute;right:32px;bottom:30px;width:44px;height:44px;border-radius:50%;border:1.5px solid var(--ink);display:grid;place-items:center;font-size:18px;transition:background .2s,color .2s,transform .2s}
+.scard:hover .go{background:var(--red);border-color:var(--red);color:#fff;transform:translateX(4px)}
+@media(max-width:640px){.scard{padding:26px 22px}.scard h3{max-width:70%}.scard .go{position:static;margin-top:18px}}
+</style></head>
+<body>
+<div class="spacer"></div>
+<section class="services">
+  <div class="bgword" id="bgword">Nos&nbsp;services</div>
+  <div class="wrap">
+    <div class="s-head">
+      <div class="kick">Nos services</div>
+      <h2>Ce que<br>nous faisons.</h2>
+    </div>
+    <div class="cards" id="cards">
+      <article class="scard"><span class="idx">01</span><h3>Audit d'hygiène spécialisé</h3><p class="desc">Une évaluation terrain complète pour mesurer vos pratiques et identifier vos priorités, selon un référentiel dédié aux sports de contact.</p><div class="tags"><span>Analyse terrain</span><span>Critères spécialisés</span><span>Priorités identifiées</span></div><div class="go">→</div></article>
+      <article class="scard"><span class="idx">02</span><h3>Plan d'action MatSafe</h3><p class="desc">Des mesures concrètes et hiérarchisées pour combler les écarts, à votre rythme — feuille de route claire, procédures et responsabilités.</p><div class="tags"><span>Feuille de route</span><span>Procédures</span><span>Responsabilités</span></div><div class="go">→</div></article>
+      <article class="scard"><span class="idx">03</span><h3>Formation Hygiène &amp; Prévention</h3><p class="desc">Sensibilisation et formation des encadrants et des adhérents aux bons gestes et aux protocoles, pour ancrer durablement les bonnes pratiques.</p><div class="tags"><span>Encadrants</span><span>Adhérents</span><span>Protocoles</span></div><div class="go">→</div></article>
+      <article class="scard"><span class="idx">04</span><h3>Certification</h3><p class="desc">Le label national indépendant, avec les supports pour l'afficher et l'expliquer à vos adhérents, et l'audit de contrôle qui le maintient.</p><div class="tags"><span>Label MatSafe</span><span>Supports</span><span>Audit de contrôle</span></div><div class="go">→</div></article>
+    </div>
+  </div>
+</section>
+<div class="spacer"></div>
+<script>
+var cards=document.querySelectorAll('.scard');
+var io=new IntersectionObserver(function(es){es.forEach(function(e,i){if(e.isIntersecting){setTimeout(function(){e.target.classList.add('in')}, (Array.prototype.indexOf.call(cards,e.target)%2)*90); io.unobserve(e.target);}})},{threshold:.22});
+cards.forEach(function(c){io.observe(c)});
+var bw=document.getElementById('bgword');
+addEventListener('scroll',function(){var y=scrollY;bw.style.transform='translateX(calc(-50% + '+(y*0.08)+'px))';},{passive:true});
+</script>
+</body></html>
