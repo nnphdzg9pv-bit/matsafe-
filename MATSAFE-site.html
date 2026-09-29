@@ -3579,7 +3579,7 @@ const MS_REDUCE = window.matchMedia && window.matchMedia('(prefers-reduced-motio
     const total=track.offsetHeight-vh;
     if(total<=0)return;                               // route masquée (single-file)
     const p=clamp(-track.getBoundingClientRect().top/total,0,1);
-    const f=p*(N+1)-1;                                // -1 .. N
+    const f=p*N;                                      // 0 .. N : 1re carte déjà centrée et nette à l'arrivée
     // Fond : net à l'intro, flouté/estompé dès que les cartes arrivent.
     const bp=clamp(f+1,0,1);
     if(bg){
