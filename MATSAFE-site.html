@@ -3218,10 +3218,13 @@ p, li, blockquote, .lead, .rich, .prose, dd{font-family:'Manrope','Barlow',syste
 
     <article class="ln-card">
       <div class="ln-cover ln-cover--d">
-        <!-- Image à licencier ou à remplacer avant publication.
-             Santé publique France : aucune couverture forte disponible. Remplacer par une
-             photographie de judo/tatami dont la licence autorise clairement l'usage commercial.
-             Page d'origine : https://www.santepubliquefrance.fr/en/node/7278 -->
+        <!-- Photo illustrative de judo (JO Paris 2024), liée depuis la FFJudo, fournie par l'utilisateur.
+             ⚠ Lien externe (hotlink) : la photo s'affiche via le navigateur du visiteur, elle n'est PAS embarquée.
+             Repli automatique sur la maquette « Judo · 49 cas » si l'image ne charge pas (onerror).
+             Crédit : © FFJudo / photographe — à créditer / licencier avant publication.
+             Texte de l'article : https://www.santepubliquefrance.fr/en/node/7278
+             Photo : https://www.ffjudo.com/photo-actualite/1721777189_a61d69f26118730459ca.jpg/jo-paris-2024-ensemble-pour-lhistoire.webp -->
+        <img class="ln-photo" src="https://www.ffjudo.com/photo-actualite/1721777189_a61d69f26118730459ca.jpg/jo-paris-2024-ensemble-pour-lhistoire.webp" alt="Judokas de l'équipe de France aux Jeux de Paris 2024" loading="lazy" onerror="this.remove()">
         <span class="ln-badge">Épidémie documentée</span>
         <span class="ln-ext">Source externe</span>
         <span class="ln-kicker">Judo · 49 cas</span>
