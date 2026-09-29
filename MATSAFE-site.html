@@ -2602,7 +2602,7 @@ a.svcl-row{color:var(--black)}
 
 /* ── 3. SCROLL (systèmes pilotés au scroll : pfocus, svcx) ───────── */
 .pfocus-list{will-change:transform}
-.svcx-card{will-change:transform,opacity}
+.svcx-card{will-change:transform,opacity,filter}
 
 /* ── 4. MICRO-INTERACTIONS (transform/opacity — jamais 'all') ────── */
 .cta{transition:background var(--motion-fast) var(--ease-standard),
@@ -3567,8 +3567,8 @@ const MS_REDUCE = window.matchMedia && window.matchMedia('(prefers-reduced-motio
   const N=cards.length;
   const pad=n=>(n<10?'0':'')+n;
   const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
-  const ROT=[-2,1.6,-1.4,2,-1.6,1.4];
-  const OX=[-12,14,-8,12,-6,10];
+  const ROT=[-5,4,-3.5,4.5,-3,4];
+  const OX=[-26,30,-18,26,-14,22];
   if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches){
     cards.forEach(c=>{c.style.opacity=1;});return;   // pile statique via CSS
   }
@@ -3583,24 +3583,26 @@ const MS_REDUCE = window.matchMedia && window.matchMedia('(prefers-reduced-motio
     // Fond : net à l'intro, flouté/estompé dès que les cartes arrivent.
     const bp=clamp(f+1,0,1);
     if(bg){
-      bg.style.filter='blur('+(bp*12).toFixed(1)+'px)';
-      bg.style.opacity=(0.9-0.78*bp).toFixed(3);
-      bg.style.transform='scale('+(1+0.06*bp).toFixed(3)+')';
+      bg.style.filter='blur('+(bp*20).toFixed(1)+'px)';
+      bg.style.opacity=(0.95-0.88*bp).toFixed(3);
+      bg.style.transform='scale('+(1+0.14*bp).toFixed(3)+') translate3d(0,'+(-p*8).toFixed(1)+'vh,0)';
     }
     const idx=clamp(Math.round(f),0,N-1);
-    // Succession : une seule carte à la fois. Chaque carte monte depuis le bas,
-    // reste centrée (fenêtre active), puis sort vers le haut à l'arrivée de la suivante.
-    // Même vitesse, même profondeur, même sortie — aucune rotation décorative.
+    // Succession : une seule carte à la fois. Chaque carte surgit de loin, floue et
+    // inclinée, se redresse en se centrant (fenêtre active), puis repart vers le haut
+    // en s'inclinant davantage et en se refloutant. Profondeur + rotation + parallaxe.
     for(let i=0;i<N;i++){
       const t=f-i;                 // <-1 : pas encore | [-1,0) : arrivée | [0,1) : active | >=1 : sortie
-      let ty,sc,op,z,pe;
-      if(t<=-1){ ty=0.5*vh; sc=.96; op=0; z=i; pe='none'; }
-      else if(t<0){ const k=t+1; ty=0.5*vh*(1-k); sc=.96+.04*k; op=k; z=50+i; pe=k>.5?'auto':'none'; }
-      else if(t<1){ ty=-0.05*vh*t; sc=1; op=1; z=50+i; pe='auto'; }
-      else { const e=Math.min(t-1,1); ty=-(0.05+0.5*e)*vh; sc=1-.03*e; op=1-e; z=i; pe='none'; }
+      const r=ROT[i%ROT.length], ox=OX[i%OX.length];
+      let ty,sc,op,z,pe,rz,dx,bl;
+      if(t<=-1){ ty=0.72*vh; sc=.84; op=0; z=i; pe='none'; rz=r; dx=ox; bl=16; }
+      else if(t<0){ const k=t+1; ty=0.72*vh*(1-k); sc=.84+.16*k; op=k; z=50+i; pe=k>.5?'auto':'none'; rz=r*(1-k); dx=ox*(1-k); bl=16*(1-k); }
+      else if(t<1){ ty=-0.06*vh*t; sc=1; op=1; z=50+i; pe='auto'; rz=r*0.2*t; dx=0; bl=0; }
+      else { const e=Math.min(t-1,1); ty=-(0.06+0.62*e)*vh; sc=1-.07*e; op=1-e; z=i; pe='none'; rz=r*(0.2+1.4*e); dx=ox*0.55*e; bl=e*11; }
       const c=cards[i];
-      c.style.transform='translate(-50%, calc(-50% + '+ty.toFixed(1)+'px)) scale('+sc.toFixed(3)+')';
+      c.style.transform='translate(calc(-50% + '+dx.toFixed(1)+'px), calc(-50% + '+ty.toFixed(1)+'px)) rotate('+rz.toFixed(2)+'deg) scale('+sc.toFixed(3)+')';
       c.style.opacity=op; c.style.zIndex=z; c.style.pointerEvents=pe;
+      c.style.filter = bl>0.3 ? 'blur('+bl.toFixed(1)+'px)' : 'none';
       c.classList.toggle('is-active', i===idx);
     }
     if(idx!==cur){cur=idx;if(counter)counter.textContent=pad(idx+1)+' / '+pad(N);}
