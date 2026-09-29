@@ -942,6 +942,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
   --gray:  #6B6B6B;
   --light: #E8E6E1;
   --border:#D8D5CF;
+  /* Rouge MatSafe (échantillonné sur le logo) — accent éditorial. */
+  --red:   #C83E31;
+  --red-d: #A82E24;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{font-size:16px;scroll-behavior:smooth}
@@ -1850,7 +1853,7 @@ footer{
   .label-manifesto p,.label-manifesto .label-lead{max-width:none}
 }
 
-/* ── LE LABEL : bandeau « Articles & actualités » (cartes cliquables) ── */
+/* ── LE LABEL : bandeau « L'hygiène dans l'actualité » (sélection presse) ── */
 .label-news{overflow:visible}
 .ln-rail{
   display:flex;gap:1.4rem;overflow-x:auto;scroll-snap-type:x proximity;
@@ -1861,44 +1864,69 @@ footer{
 .ln-rail::-webkit-scrollbar-track{background:var(--light);border-radius:99px}
 .ln-rail::-webkit-scrollbar-thumb{background:var(--gray);border-radius:99px}
 .ln-card{
-  flex:0 0 340px;scroll-snap-align:start;
+  flex:0 0 344px;scroll-snap-align:start;
   display:flex;flex-direction:column;background:var(--white);
   border:1px solid var(--border);border-radius:16px;overflow:hidden;
-  text-decoration:none;color:inherit;
+  color:inherit;
   transition:transform var(--motion-base) var(--ease-standard),box-shadow var(--motion-base) var(--ease-standard);
 }
 .ln-card:hover{transform:translateY(-4px);box-shadow:0 24px 46px -26px rgba(10,10,10,.45)}
-.ln-cover{position:relative;aspect-ratio:16/10;background:#141414;overflow:hidden}
-.ln-cover img{width:100%;height:100%;object-fit:cover;display:block}
-.ln-cover--a{background:linear-gradient(135deg,#242220,#0A0A0A)}
-.ln-cover--b{background:linear-gradient(135deg,#2A1D1B,#0A0A0A)}
-.ln-cover--c{background:linear-gradient(135deg,#1D2326,#0A0A0A)}
-.ln-cover--d{background:linear-gradient(135deg,#26221A,#0A0A0A)}
+/* Couverture : maquette typographique forte (aucune photo de presse réhébergée). */
+.ln-cover{position:relative;aspect-ratio:16/10;background:#141414;overflow:hidden;
+  display:flex;align-items:flex-end;padding:.9rem}
+.ln-cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.ln-cover::after{content:"";position:absolute;inset:0;
+  background:radial-gradient(120% 90% at 15% 0%,rgba(200,62,49,.22),transparent 55%),
+             linear-gradient(180deg,rgba(10,10,10,.15),rgba(10,10,10,.7));}
+.ln-cover--a{background:linear-gradient(150deg,#2B1512,#0A0A0A)}
+.ln-cover--b{background:linear-gradient(150deg,#241A18,#0A0A0A)}
+.ln-cover--c{background:linear-gradient(150deg,#1B1F22,#0A0A0A)}
+.ln-cover--d{background:linear-gradient(150deg,#241F16,#0A0A0A)}
+.ln-kicker{
+  position:relative;z-index:2;font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  text-transform:uppercase;letter-spacing:.005em;line-height:.92;color:var(--off);
+  font-size:clamp(2rem,4.6vw,3rem);text-shadow:0 2px 20px rgba(0,0,0,.4);
+}
+.ln-kicker::before{content:"";display:block;width:38px;height:4px;background:var(--red);
+  border-radius:2px;margin-bottom:.55rem}
 .ln-badge{
-  position:absolute;top:.85rem;left:.85rem;z-index:2;
-  background:rgba(10,10,10,.82);color:var(--off);
-  font-family:'Barlow',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.13em;
-  font-size:.6rem;padding:.42rem .82rem;border-radius:99px;backdrop-filter:blur(2px);
+  position:absolute;top:.85rem;left:.85rem;z-index:3;
+  background:var(--red);color:#fff;
+  font-family:'Barlow',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.11em;
+  font-size:.6rem;padding:.42rem .82rem;border-radius:99px;
 }
-.ln-pills{position:absolute;left:.85rem;bottom:.85rem;z-index:2;display:flex;flex-wrap:wrap;gap:.4rem}
-.ln-pills span{
-  background:var(--white);color:var(--black);border:1px solid var(--border);
-  font-family:'Barlow',sans-serif;font-weight:600;font-size:.68rem;
-  padding:.3rem .72rem;border-radius:99px;
+.ln-ext{
+  position:absolute;top:.95rem;right:.9rem;z-index:3;
+  font-family:'Barlow',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.1em;
+  font-size:.54rem;color:rgba(242,240,236,.72);
+  display:inline-flex;align-items:center;gap:.34rem;
 }
-.ln-body{padding:1.15rem 1.25rem 1.35rem;display:flex;flex-direction:column;gap:.55rem;flex:1}
+.ln-ext::before{content:"";width:6px;height:6px;border-radius:99px;background:rgba(242,240,236,.6)}
+.ln-body{padding:1.1rem 1.25rem 1.3rem;display:flex;flex-direction:column;gap:.5rem;flex:1}
+.ln-media{
+  display:flex;align-items:center;gap:.5rem;
+  font-family:'Barlow',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
+  font-size:.71rem;color:var(--black);
+}
+.ln-diamond{width:14px;height:14px;background:var(--red);transform:rotate(45deg);border-radius:2px;flex:0 0 auto}
 .ln-title{
   font-family:'Barlow Condensed',sans-serif;font-weight:800;
-  font-size:1.42rem;line-height:1.1;letter-spacing:.005em;color:var(--black);
+  font-size:1.46rem;line-height:1.08;letter-spacing:.005em;color:var(--black);margin-top:.1rem;
 }
-.ln-excerpt{font-size:.92rem;line-height:1.5;color:var(--gray)}
-.ln-meta{font-size:.78rem;color:var(--gray)}
-.ln-source{
-  margin-top:auto;padding-top:.85rem;display:flex;align-items:center;gap:.55rem;
-  font-family:'Barlow',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
-  font-size:.72rem;color:var(--black);
+.ln-excerpt{font-size:.92rem;line-height:1.55;color:var(--gray)}
+.ln-cta{margin-top:auto;padding-top:.9rem;display:flex;align-items:center;flex-wrap:wrap;gap:.4rem 1rem}
+.ln-read{
+  font-family:'Barlow',sans-serif;font-weight:700;font-size:.86rem;letter-spacing:.02em;
+  color:var(--red);text-decoration:none;display:inline-flex;align-items:center;gap:.35rem;
+  transition:color var(--motion-fast) var(--ease-standard),gap var(--motion-fast) var(--ease-standard);
 }
-.ln-diamond{width:17px;height:17px;background:var(--black);transform:rotate(45deg);border-radius:3px;flex:0 0 auto}
+.ln-read:hover{color:var(--red-d);gap:.55rem}
+.ln-alt{
+  font-family:'Barlow',sans-serif;font-weight:600;font-size:.76rem;color:var(--gray);
+  text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px;
+  transition:color var(--motion-fast) var(--ease-standard);
+}
+.ln-alt:hover{color:var(--black)}
 @media(max-width:720px){
   .ln-card{flex-basis:80vw}
 }
@@ -3118,61 +3146,88 @@ p, li, blockquote, .lead, .rich, .prose, dd{font-family:'Manrope','Barlow',syste
 <section class="ed-section label-news">
   <div class="ed-header"><div>
     <div class="eyebrow reveal">Articles &amp; actualités</div>
-    <h2 class="ed-giant ed-giant--md reveal">Ils en <em>parlent</em></h2>
+    <h2 class="ed-giant ed-giant--md reveal">L’hygiène dans <em>l’actualité</em></h2>
   </div></div>
   <div class="ln-rail reveal">
 
-    <a class="ln-card" href="https://example.com" target="_blank" rel="noopener">
+    <article class="ln-card">
       <div class="ln-cover ln-cover--a">
-        <span class="ln-badge">À la une</span>
-        <div class="ln-pills"><span>Hygiène</span><span>Prévention</span></div>
+        <!-- Image à licencier ou à remplacer avant publication.
+             Couverture Open Graph d'origine non vérifiée (egress réseau bloqué) :
+             https://www.eurosport.fr/mixed-martial-arts/fievre-fatigue-antibiotiques-le-staphylocoque-la-terreur-des-combattants_sto20040466/story.shtml -->
+        <span class="ln-badge">Décryptage</span>
+        <span class="ln-ext">Source externe</span>
+        <span class="ln-kicker">Staphylocoque</span>
       </div>
       <div class="ln-body">
-        <h3 class="ln-title">Pourquoi l’hygiène change tout sur le tatami</h3>
-        <p class="ln-excerpt">Contacts répétés, équipements partagés : ce qu’une organisation rigoureuse évite au quotidien dans un club.</p>
-        <div class="ln-meta">Sep. 2026 · 5 min de lecture</div>
-        <div class="ln-source"><span class="ln-diamond" aria-hidden="true"></span> MatSafe</div>
+        <div class="ln-media"><span class="ln-diamond" aria-hidden="true"></span> Eurosport</div>
+        <h3 class="ln-title">Le staphylocoque, la terreur des combattants</h3>
+        <p class="ln-excerpt">Benoît Saint Denis, Oumar Sy et le médecin de la FMMAF Jean-Marc Sène témoignent de la fréquence et des conséquences des infections au staphylocoque dans les salles de MMA.</p>
+        <div class="ln-cta">
+          <a class="ln-read" href="https://www.eurosport.fr/mixed-martial-arts/fievre-fatigue-antibiotiques-le-staphylocoque-la-terreur-des-combattants_sto20040466/story.shtml" target="_blank" rel="noopener noreferrer">Lire l’article <span aria-hidden="true">↗</span></a>
+        </div>
       </div>
-    </a>
+    </article>
 
-    <a class="ln-card" href="https://example.com" target="_blank" rel="noopener">
+    <article class="ln-card">
       <div class="ln-cover ln-cover--b">
-        <span class="ln-badge">Santé</span>
-        <div class="ln-pills"><span>Peau</span><span>Prévention</span></div>
+        <!-- Image à licencier ou à remplacer avant publication.
+             Couverture Open Graph d'origine non vérifiée (egress réseau bloqué) :
+             https://www.lequipe.fr/Mma/Actualites/Mma-ufc-299-victime-d-une-infection-benoit-saint-denis-a-combattu-sous-antibiotiques/1453893 -->
+        <span class="ln-badge">Cas réel</span>
+        <span class="ln-ext">Source externe</span>
+        <span class="ln-kicker">UFC 299</span>
       </div>
       <div class="ln-body">
-        <h3 class="ln-title">Teigne, herpès, impétigo : reconnaître et réagir vite</h3>
-        <p class="ln-excerpt">Les infections cutanées les plus fréquentes en sports de combat, et les bons réflexes pour éviter la propagation.</p>
-        <div class="ln-meta">Août 2026 · 6 min de lecture</div>
-        <div class="ln-source"><span class="ln-diamond" aria-hidden="true"></span> MatSafe</div>
+        <div class="ln-media"><span class="ln-diamond" aria-hidden="true"></span> L’Équipe · Mars 2024</div>
+        <h3 class="ln-title">Benoît Saint Denis : une infection au cœur de l’UFC 299</h3>
+        <p class="ln-excerpt">Avant son combat contre Dustin Poirier, Benoît Saint Denis a suivi une semaine d’antibiotiques pour lutter contre une infection. Il a ensuite confirmé qu’il s’agissait d’une infection au staphylocoque.</p>
+        <div class="ln-cta">
+          <a class="ln-read" href="https://www.lequipe.fr/Mma/Actualites/Mma-ufc-299-victime-d-une-infection-benoit-saint-denis-a-combattu-sous-antibiotiques/1453893" target="_blank" rel="noopener noreferrer">Lire l’article <span aria-hidden="true">↗</span></a>
+          <a class="ln-alt" href="https://www.mmafighting.com/2024/3/21/24107101/benoit-saint-denis-reveals-staph-infection-bad-weight-cut-led-to-worst-fight-week-at-ufc-299" target="_blank" rel="noopener noreferrer">Autre source</a>
+        </div>
       </div>
-    </a>
+    </article>
 
-    <a class="ln-card" href="https://example.com" target="_blank" rel="noopener">
+    <article class="ln-card">
       <div class="ln-cover ln-cover--c">
-        <span class="ln-badge">Le label</span>
-        <div class="ln-pills"><span>Clubs</span><span>Certification</span></div>
+        <!-- Image à licencier ou à remplacer avant publication.
+             Couverture Open Graph d'origine non vérifiée (egress réseau bloqué) :
+             https://www.mmafighting.com/2023/10/11/23913476/paulo-costa-re-hospitalized-needs-third-surgery-for-staph-infection-in-elbow -->
+        <span class="ln-badge">Conséquences</span>
+        <span class="ln-ext">Source externe</span>
+        <span class="ln-kicker">UFC 294</span>
       </div>
       <div class="ln-body">
-        <h3 class="ln-title">Ce que vérifie réellement le label MatSafe</h3>
-        <p class="ln-excerpt">Au-delà d’une salle qui paraît propre : les critères concrets qu’un club doit remplir pour être labellisé.</p>
-        <div class="ln-meta">Juil. 2026 · 4 min de lecture</div>
-        <div class="ln-source"><span class="ln-diamond" aria-hidden="true"></span> MatSafe</div>
+        <div class="ln-media"><span class="ln-diamond" aria-hidden="true"></span> MMA Fighting · Oct. 2023</div>
+        <h3 class="ln-title">Paulo Costa : trois interventions et un combat annulé</h3>
+        <p class="ln-excerpt">Hospitalisé en raison d’une infection au staphylocoque du coude, Paulo Costa a dû subir plusieurs interventions et renoncer à son combat contre Khamzat Chimaev à l’UFC 294.</p>
+        <div class="ln-cta">
+          <a class="ln-read" href="https://www.mmafighting.com/2023/10/11/23913476/paulo-costa-re-hospitalized-needs-third-surgery-for-staph-infection-in-elbow" target="_blank" rel="noopener noreferrer">Lire l’article <span aria-hidden="true">↗</span></a>
+          <a class="ln-alt" href="https://www.espn.co.uk/mma/ufc/story/_/id/38615856/paulo-costa-had-elbow-surgery-says-pull-khamzat-chimaev-bout" target="_blank" rel="noopener noreferrer">Autre source</a>
+        </div>
       </div>
-    </a>
+    </article>
 
-    <a class="ln-card" href="https://example.com" target="_blank" rel="noopener">
+    <article class="ln-card">
       <div class="ln-cover ln-cover--d">
-        <span class="ln-badge">Presse</span>
-        <div class="ln-pills"><span>Média</span></div>
+        <!-- Image à licencier ou à remplacer avant publication.
+             Santé publique France : aucune couverture forte disponible. Remplacer par une
+             photographie de judo/tatami dont la licence autorise clairement l'usage commercial.
+             Page d'origine : https://www.santepubliquefrance.fr/en/node/7278 -->
+        <span class="ln-badge">Épidémie documentée</span>
+        <span class="ln-ext">Source externe</span>
+        <span class="ln-kicker">Judo · 49 cas</span>
       </div>
       <div class="ln-body">
-        <h3 class="ln-title">MatSafe dans la presse spécialisée</h3>
-        <p class="ln-excerpt">Retour sur la démarche qui structure l’hygiène des clubs de sports de combat en France.</p>
-        <div class="ln-meta">Juin 2026 · 3 min de lecture</div>
-        <div class="ln-source"><span class="ln-diamond" aria-hidden="true"></span> Presse</div>
+        <div class="ln-media"><span class="ln-diamond" aria-hidden="true"></span> Santé publique France</div>
+        <h3 class="ln-title">49 cas dans une équipe française de judo de haut niveau</h3>
+        <p class="ln-excerpt">Une épidémie de trichophyties cutanées a touché 49 membres d’une équipe française de judo de haut niveau. L’enquête a mis en évidence plusieurs facteurs liés aux équipements partagés et à l’organisation de l’hygiène.</p>
+        <div class="ln-cta">
+          <a class="ln-read" href="https://www.santepubliquefrance.fr/en/node/7278" target="_blank" rel="noopener noreferrer">Lire l’article <span aria-hidden="true">↗</span></a>
+        </div>
       </div>
-    </a>
+    </article>
 
   </div>
 </section>
