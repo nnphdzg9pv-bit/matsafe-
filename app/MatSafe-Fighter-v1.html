@@ -185,6 +185,17 @@
 .cmsg-k .d{width:7px;height:7px;border-radius:50%;background:var(--brand)}
 .cmsg-t{font-family:var(--cond);text-transform:uppercase;letter-spacing:.01em;font-weight:800;font-size:17px;margin:0 0 6px;color:var(--ink)}
 .cmsg-b{font-size:15.5px;line-height:1.55;color:var(--ink);margin:0;white-space:pre-wrap}
+/* Partenaire santé — Médecin Direct (téléconsultation) */
+.mdr{background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:16px 18px;margin-bottom:24px}
+.mdr-k{display:flex;align-items:center;gap:8px;font-family:var(--cond);text-transform:uppercase;letter-spacing:.12em;font-size:11px;font-weight:800;color:var(--brand);margin-bottom:13px}
+.mdr-k .d{width:7px;height:7px;border-radius:50%;background:var(--brand)}
+.mdr-logo{display:inline-flex;align-items:center;gap:12px;text-decoration:none;background:#FFFFFF;border:1px solid var(--hair);border-radius:8px;padding:11px 16px}
+.mdr-logo svg{width:44px;height:42px;flex:none;display:block}
+.mdr-word{display:flex;flex-direction:column;line-height:.85;font-family:'Archivo','Inter',system-ui,sans-serif;font-weight:700;color:#1E4A47;letter-spacing:-.01em}
+.mdr-word b{font-size:21px;font-weight:700}
+.mdr-p{font-size:14px;line-height:1.5;color:var(--gray);margin:13px 0 0}
+.mdr-cta{margin-top:13px;width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--cond);text-transform:uppercase;letter-spacing:.06em;font-weight:800;font-size:14px;color:#fff;background:var(--brand);border:1px solid var(--brand);border-radius:6px;padding:13px 18px;cursor:pointer;transition:background .15s}
+.mdr-cta:hover{background:var(--brand-strong)}
 .hyg{margin-bottom:24px}
 .hyg-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-bottom:1px solid var(--hair);padding-bottom:10px;margin-bottom:14px}
 .hyg-h{font-family:var(--cond);text-transform:uppercase;letter-spacing:.02em;font-weight:800;font-size:20px;margin:0;color:var(--ink)}
@@ -346,6 +357,15 @@
               '<button class="action primary" id="a-avis"><span class="ico">'+IChat+'</span><span class="txt"><span class="t">Donner mon avis hygiène</span><span class="d">Votre ressenti sur la propreté du jour</span></span><span class="arr">'+IArr+'</span></button>'+
               '<button class="action" id="a-signal"><span class="ico">'+IFlag+'</span><span class="txt"><span class="t">Signaler un point à améliorer</span><span class="d">Un détail à revoir ? Dites-le au club</span></span><span class="arr">'+IArr+'</span></button>'+
             '</div></section>'+
+          '<section class="mdr">'+
+            '<div class="mdr-k"><span class="d"></span>Partenaire santé · Téléconsultation</div>'+
+            '<a class="mdr-logo" id="a-mdr" href="#" role="button" aria-label="Médecin Direct — téléconsultation">'+
+              '<svg viewBox="0 0 64 64" aria-hidden="true"><g fill="#1E4A47"><ellipse cx="37" cy="41" rx="22" ry="19"/><circle cx="21" cy="23" r="10"/></g></svg>'+
+              '<span class="mdr-word"><b>médecin</b><b>direct</b></span>'+
+            '</a>'+
+            '<p class="mdr-p">Coupure, mycose ou doute sur une lésion&nbsp;? Parlez à un médecin en téléconsultation, partenaire de MatSafe.</p>'+
+            '<button class="mdr-cta" id="a-mdr-cta">Consulter un médecin</button>'+
+          '</section>'+
           recent+
           '<div class="note"><div class="h">Comment ça marche</div>'+
             '<p>Vos retours arrivent directement au club, qui les vérifie et agit si besoin. '+
@@ -359,6 +379,9 @@
       '(Control · Fighter · Fondateur). Le club reste responsable du traitement de chaque retour.</div>';
     document.getElementById('a-avis').onclick=screenAvis;
     document.getElementById('a-signal').onclick=screenSignal;
+    var mdrGo=function(e){ if(e){e.preventDefault();} toast('Médecin Direct — téléconsultation bientôt disponible'); };
+    var mdrL=document.getElementById('a-mdr'); if(mdrL) mdrL.onclick=mdrGo;
+    var mdrC=document.getElementById('a-mdr-cta'); if(mdrC) mdrC.onclick=mdrGo;
   }
   function feelOf(id){var f=FEELINGS.filter(function(x){return x.id===id;})[0];return f?f.t:'';}
   function catOf(id){var c=CATS.filter(function(x){return x.id===id;})[0];return c?c.t:'';}
