@@ -1850,15 +1850,7 @@ footer{
 @media(max-width:720px){
   .label-manifesto p,.label-manifesto .label-lead{max-width:none}
 }
-/* ── LE LABEL : typographie suisse néo-grotesque (Helvetica Neue) — réf. fournie ── */
-.label-manifesto,
-.label-manifesto p,
-.label-manifesto .label-lead,
-.label-manifesto .label-chapo,
-.label-manifesto .label-accent,
-.label-manifesto .label-outro{
-  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif !important;
-}
+/* Typographie : désormais gérée par l'override serif global (fin du <head>). */
 .label-manifesto .label-lead{font-weight:700;letter-spacing:-.008em}
 .label-manifesto .label-accent{font-weight:400;letter-spacing:normal}
 
@@ -2894,11 +2886,15 @@ a.svcl-row{color:var(--black)}
   #nav .nav-right{justify-self:end;display:flex}
 }
 </style>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
 <style id="body-font">
-/* Police corporate appliquée aux paragraphes / textes longs.
-   Titres, grands axes de sections et questions restent en Barlow Condensed. */
-p, li, blockquote, .lead, .rich, .prose, dd{font-family:'Manrope','Barlow',system-ui,sans-serif}
+/* ═══ TYPOGRAPHIE GLOBALE — un seul serif (Lora) sur tout le site.
+   Les titres ne se distinguent que par le gras (et la taille existante). ═══ */
+:root{--serif:"Lora",Georgia,"Palatino Linotype",Palatino,"Times New Roman",serif}
+*,*::before,*::after{font-family:var(--serif) !important}
+/* Les gros titres display etaient trop serres pour un serif : on detend le tracking. */
+.hero-title,.ed-giant,.svcx-title,.svcx-action,.label-lead,.prob-h,.map-h,
+h1,h2,h3{letter-spacing:normal}
 </style>
 </head>
 
