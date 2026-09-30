@@ -207,14 +207,91 @@
 .evt-kind{display:inline-block;font-family:var(--cond);text-transform:uppercase;letter-spacing:.1em;font-size:10px;font-weight:800;color:var(--gray);margin-bottom:6px}
 .evt-t{font-family:var(--cond);text-transform:uppercase;letter-spacing:.01em;font-weight:700;font-size:14.5px;line-height:1.12;color:var(--ink)}
 .evt-d{font-size:12.5px;color:var(--gray);margin-top:5px}
+
+/* ===== Sections génériques (compagnon de prévention) ===== */
+.home{display:block}
+.sect{margin-bottom:24px}
+.sect-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-bottom:1px solid var(--hair);padding-bottom:10px;margin-bottom:14px}
+.sect-h{font-family:var(--cond);text-transform:uppercase;letter-spacing:.02em;font-weight:800;font-size:20px;margin:0;color:var(--ink)}
+.sect-sub{font-family:var(--cond);text-transform:uppercase;letter-spacing:.06em;font-size:11px;color:var(--gray);font-weight:700;white-space:nowrap}
+
+/* Statut du club */
+.clubstat{background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:14px 16px;margin-bottom:22px}
+.cs-eng{display:flex;align-items:center;gap:8px;font-family:var(--cond);text-transform:uppercase;letter-spacing:.06em;font-size:11px;font-weight:800;color:var(--brand);margin-bottom:11px}
+.cs-eng .d{width:7px;height:7px;border-radius:50%;background:var(--brand)}
+.cs-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:6px 0;font-size:13.5px}
+.cs-row+.cs-row{border-top:1px solid var(--hair)}
+.cs-row .k{color:var(--gray)}
+.cs-row .v{font-family:var(--cond);text-transform:uppercase;letter-spacing:.02em;font-weight:700;color:var(--ink)}
+.cs-badge{font-family:var(--cond);text-transform:uppercase;letter-spacing:.05em;font-size:11px;font-weight:800;color:var(--ok);background:var(--ok-bg);border-radius:999px;padding:3px 11px}
+.cs-badge.off{color:var(--gray);background:var(--paper-2)}
+
+/* Alerte sanitaire (variante message club) */
+.cmsg.alert{border-left-color:var(--brand);background:#FBEDE9}
+
+/* Lésion */
+.lz-choices{display:flex;flex-direction:column;gap:12px;margin-bottom:18px}
+.lz-choices .action .t{font-size:16.5px}
+.lz-reco{background:var(--paper);border:1px solid var(--border);border-left:4px solid var(--brand);border-radius:6px;padding:16px 18px;margin-bottom:18px}
+.lz-reco p{font-size:14.5px;line-height:1.55;color:var(--ink);margin:0 0 10px}
+.lz-reco p:last-child{margin:0}
+
+/* Check avant l'entraînement */
+.chk-list{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.chk{display:flex;align-items:center;gap:13px;width:100%;text-align:left;cursor:pointer;background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:15px 16px;color:var(--ink)}
+.chk .box{flex:none;width:26px;height:26px;border-radius:6px;border:1.7px solid var(--border);background:#FFF;display:grid;place-items:center;color:transparent}
+.chk .box svg{width:15px;height:15px}
+.chk .lbl{font-family:var(--cond);text-transform:uppercase;letter-spacing:.02em;font-weight:700;font-size:14.5px;line-height:1.15}
+.chk.on{background:var(--black);color:var(--off);border-color:var(--black)}
+.chk.on .box{background:var(--off);border-color:var(--off);color:var(--black)}
+.chk-count{font-family:var(--cond);text-transform:uppercase;letter-spacing:.06em;font-weight:700;font-size:12px;color:var(--gray);margin-bottom:14px}
+.chk-done{background:var(--ok-bg);border:1px solid var(--ok);border-radius:6px;padding:14px 16px;font-size:14px;line-height:1.5;color:var(--ink);margin-bottom:16px}
+
+/* Mes retours (suivi anonyme) */
+.demo-note{background:var(--warn-bg);border:1px solid #E4D3AE;border-radius:6px;padding:11px 13px;font-size:12.5px;line-height:1.5;color:var(--warn);margin-bottom:16px}
+.ret{background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:16px;margin-bottom:14px}
+.ret-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline;margin-bottom:4px}
+.ret-kind{font-family:var(--cond);text-transform:uppercase;letter-spacing:.03em;font-weight:800;font-size:14px;color:var(--ink)}
+.ret-date{font-size:12px;color:var(--gray);white-space:nowrap}
+.ret-meta{font-size:13px;color:var(--gray);margin-bottom:12px}
+.ret-code{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.ret-code code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13.5px;font-weight:700;letter-spacing:.04em;color:var(--ink);background:#FFF;border:1px solid var(--border);border-radius:6px;padding:6px 10px}
+.ret-copy{font-family:var(--cond);text-transform:uppercase;letter-spacing:.05em;font-weight:700;font-size:11px;color:var(--brand);background:none;border:0;cursor:pointer;padding:4px}
+.steps{display:flex;align-items:flex-start}
+.step{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;font-family:var(--cond);text-transform:uppercase;letter-spacing:.01em;font-size:9px;font-weight:700;color:var(--faint);line-height:1.2;padding:0 2px}
+.step .dot{position:relative;z-index:1;width:13px;height:13px;border-radius:50%;background:var(--light);border:2px solid var(--light);margin-bottom:7px}
+.step::before{content:"";position:absolute;top:5px;right:50%;width:100%;height:2px;background:var(--light);z-index:0}
+.step:first-child::before{display:none}
+.step.reached{color:var(--gray)}
+.step.reached .dot{background:var(--brand);border-color:var(--brand)}
+.step.reached::before{background:var(--brand)}
+.step.current{color:var(--ink)}
+.step.current .dot{box-shadow:0 0 0 3px rgba(208,64,44,.18)}
+.ret-reply{margin-top:12px;background:#FFF;border:1px solid var(--hair);border-radius:6px;padding:11px 13px;font-size:13.5px;line-height:1.5;color:var(--ink)}
+.ret-reply .k{font-family:var(--cond);text-transform:uppercase;letter-spacing:.06em;font-size:10.5px;font-weight:800;color:var(--brand);margin-bottom:4px}
+
+/* Entretien de l'équipement (accordéon) */
+.care{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+.care-item{background:var(--paper);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.care-item>summary{list-style:none;cursor:pointer;padding:14px 16px;font-family:var(--cond);text-transform:uppercase;letter-spacing:.02em;font-weight:700;font-size:14px;color:var(--ink);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.care-item>summary::-webkit-details-marker{display:none}
+.care-item>summary::after{content:"+";font-size:20px;line-height:1;color:var(--gray)}
+.care-item[open]>summary::after{content:"\2013"}
+.care-b{padding:0 16px 15px;font-size:13.5px;line-height:1.55;color:var(--gray)}
+
+/* Avertissement photo */
+.warn-note{font-size:12.5px;line-height:1.5;color:var(--warn);background:var(--warn-bg);border:1px solid #E4D3AE;border-radius:6px;padding:10px 12px;margin:0 0 10px}
+
+/* Code de suivi (confirmation) */
+.trackbox{background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:16px;margin:18px auto 4px;max-width:340px;text-align:center}
+.trackbox .tk-k{font-family:var(--cond);text-transform:uppercase;letter-spacing:.08em;font-size:10.5px;font-weight:800;color:var(--gray);margin-bottom:9px}
+.trackbox code{display:inline-block;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:19px;font-weight:700;letter-spacing:.06em;color:var(--ink);background:#FFF;border:1px solid var(--border);border-radius:6px;padding:9px 15px}
+.tk-copy{display:block;margin:11px auto 0;font-family:var(--cond);text-transform:uppercase;letter-spacing:.05em;font-weight:700;font-size:11px;color:var(--brand);background:none;border:0;cursor:pointer}
+.tk-note{font-size:12px;line-height:1.5;color:var(--gray);margin:11px 0 0}
+.done .again{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+
 @media(min-width:960px){
-  .app{max-width:980px}
-  main{padding:26px 32px 46px}
-  #view > *:not(.home-grid){max-width:640px;margin-left:auto;margin-right:auto}
-  .home-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:38px;align-items:start;max-width:none}
-  .home-grid.solo{grid-template-columns:minmax(0,680px);justify-content:center}
-  .home-side{margin-top:6px}
-  .cta{position:static;margin:24px 0 0;background:none;padding:0}
+  main{padding:28px 28px 48px}
 }
 
 /* ===== Harmonisation DA MatSafe Club : cadre panneau, grain, survols, transitions ===== */
@@ -274,8 +351,89 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   var INBOX='matsafe_fighter_inbox';    // file partagée que Control lirait (même origine)
 
   // Zones proposées (alignées sur les zones type d'un club)
-  var ZONES=['Tatami / surface de combat','Vestiaires','Douches','Sanitaires',
-             'Zone premiers secours','Matériel partagé','Accueil / commun','Autre'];
+  var ZONES=['Tatami ou surface de combat','Vestiaires','Douches','Sanitaires',
+             'Zone de premiers secours','Matériel partagé','Accueil ou parties communes','Autre'];
+
+  /* =====================================================================
+     CONSTANTES À BRANCHER SUR LE SERVEUR (démo locale pour l'instant)
+     ===================================================================== */
+
+  // --- Téléconsultation partenaire (Médecin Direct) ---
+  // TODO SERVEUR : renseigner l'URL réelle de téléconsultation fournie par le
+  // partenaire. Tant qu'elle est vide, le bouton informe que le service arrive.
+  // MatSafe ne stocke AUCUNE photo médicale, diagnostic ou donnée médicale :
+  // l'échange médical se déroule directement chez le partenaire.
+  var TELECONSULT_URL = '';
+
+  // --- Statut du club (label MatSafe) ---
+  // TODO SERVEUR : ces informations DOIVENT provenir d'une source sécurisée
+  // MatSafe (API), et NON des paramètres modifiables de l'URL / du QR.
+  // Ci-dessous : données d'exemple clairement identifiées pour la démo.
+  var CLUB_STATUS = {
+    engaged:     true,              // club engagé dans la démarche MatSafe
+    labelStatus: 'Labellisé',       // statut du label
+    lastEval:    'Juin 2026',       // dernière évaluation
+    nextControl: 'Décembre 2026'    // prochain contrôle (si disponible, sinon '')
+  };
+
+  // --- Types de doute sur une lésion (aucun diagnostic, prudence uniquement) ---
+  var LESION_TYPES=[
+    {id:'coupure', t:'Coupure ou plaie',
+     reco:'Couvrez la plaie avec un pansement propre et étanche avant tout contact avec le tatami. Si la plaie est profonde, saigne encore, est très rouge ou ne cicatrise pas, demandez un avis médical.'},
+    {id:'rougeur', t:'Rougeur, bouton ou infection suspecte',
+     reco:'Une rougeur, un bouton ou une zone chaude et douloureuse peut être contagieuse au contact. Évitez le tatami tant que vous n’avez pas demandé un avis médical, et ne touchez pas la zone.'},
+    {id:'mycose',  t:'Démangeaison, plaque ou suspicion de mycose',
+     reco:'Une plaque qui démange ou s’étend peut se transmettre au contact et au partage de matériel. Évitez le tatami jusqu’à un avis médical et lavez votre tenue à haute température.'}
+  ];
+
+  // --- Check personnel avant l'entraînement (rappel préventif, jamais envoyé) ---
+  var CHECK_ITEMS=[
+    'J’ai vérifié ma peau',
+    'Je n’ai pas de lésion suspecte',
+    'Mes plaies éventuelles sont correctement protégées',
+    'Ma tenue est propre',
+    'Mon matériel est propre et sec',
+    'Mes ongles sont courts'
+  ];
+
+  // --- Fiches d'entretien de l'équipement ---
+  var CARE_FICHES=[
+    {t:'Nettoyer son kimono ou son rashguard',
+     b:'Lavez après chaque séance à 30–40 °C, à l’envers. Séchez à l’air libre, jamais roulé en boule dans le sac. Le vinaigre blanc dans le bac aide à neutraliser les odeurs.'},
+    {t:'Nettoyer et sécher ses gants',
+     b:'Aérez et essuyez l’intérieur après chaque usage. Sortez-les du sac en rentrant et laissez-les sécher complètement. Un désodorisant/absorbeur d’humidité prolonge leur vie.'},
+    {t:'Entretenir ses protège-tibias et protections',
+     b:'Essuyez les surfaces au contact de la peau avec une lingette adaptée, puis laissez sécher à l’air. Évitez la machine si le fabricant le déconseille.'},
+    {t:'Éviter de laisser du matériel humide dans le sac',
+     b:'L’humidité + la chaleur = bactéries et champignons. Videz et ouvrez votre sac dès le retour, sortez tout le matériel et laissez-le respirer.'},
+    {t:'Nettoyer son sac, sa gourde et son protège-dents',
+     b:'Rincez la gourde chaque jour, nettoyez le protège-dents à l’eau et dans sa boîte aérée, et aérez le sac régulièrement en retournant l’intérieur.'}
+  ];
+
+  // --- Statuts de suivi d'un retour (progression) ---
+  // TODO SERVEUR : le statut réel sera piloté par le serveur MatSafe via le code
+  // de suivi. En démo, tout nouveau retour démarre à « Transmis ».
+  var RET_STATUSES=[
+    {id:'transmis', t:'Transmis'},
+    {id:'verify',   t:'À vérifier'},
+    {id:'planned',  t:'Action programmée'},
+    {id:'done',     t:'Traité'},
+    {id:'closed',   t:'Clôturé'}
+  ];
+
+  // Générateur de code de suivi aléatoire, difficile à deviner (ex. MS-7K4P-X9Q2).
+  // TODO SERVEUR : en production le code est généré ET vérifié par le serveur.
+  function rndInt(max){
+    try{ if(window.crypto&&crypto.getRandomValues){var a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%max;} }catch(e){}
+    return Math.floor(Math.random()*max);
+  }
+  function genTrackCode(){
+    var A='ABCDEFGHJKMNPQRSTUVWXYZ23456789'; // sans caractères ambigus (0/O/1/I/L)
+    function blk(n){var s='';for(var i=0;i<n;i++)s+=A.charAt(rndInt(A.length));return s;}
+    return 'MS-'+blk(4)+'-'+blk(4);
+  }
+  function statusIndex(id){for(var i=0;i<RET_STATUSES.length;i++){if(RET_STATUSES[i].id===id)return i;}return 0;}
+  function statusLabel(id){var i=statusIndex(id);return RET_STATUSES[i].t;}
   // Catégories d'un signalement (jamais une "note")
   var CATS=[
     {id:'proprete',   t:'Propreté d’une zone'},
@@ -317,9 +475,16 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
   function submit(rec){
     rec.id=uid(); rec.club=CTX.club; rec.clubCode=CTX.code; rec.ts=Date.now();
-    rec.status='to_verify';                       // « Signalement Fighter — à vérifier »
+    rec.code=genTrackCode();          // code de suivi anonyme (démo locale)
+    rec.status='transmis';            // statut de suivi (progression côté pratiquant)
+    rec.controlStatus='to_verify';    // statut côté Control (« à vérifier »)
+    rec.reply='';                     // réponse publique éventuelle du club (pilotée serveur)
+    // DÉMO : on stocke en localStorage sur CE téléphone. Aucune identité n'est
+    // enregistrée. TODO SERVEUR : POST anonyme -> le serveur crée/vérifie le code
+    // de suivi et pilote ensuite le statut + la réponse publique du club.
     var mine=load(STORE); mine.unshift(rec); save(STORE, mine.slice(0,20));
-    var inbox=load(INBOX); inbox.unshift(rec); save(INBOX, inbox.slice(0,200));  // vers Control (même origine)
+    var inbox=load(INBOX); inbox.unshift(rec); save(INBOX, inbox.slice(0,200));  // file lue par Control (même origine), sans identité
+    return rec.code;
   }
 
   var toastT;
@@ -332,6 +497,14 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   var IBack='<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>';
   var ICam='<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>';
   var ICheck='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+  var ILesion='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z"/><path d="M12 9v5M9.5 11.5h5"/></svg>';
+  var IList='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg>';
+
+  function copyText(t){
+    try{ if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t); return true; } }catch(e){}
+    try{ var ta=document.createElement('textarea'); ta.value=t; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); return true; }catch(e){}
+    return false;
+  }
 
   /* --- photo : compression canvas -> JPEG dataURL (comme Control) --- */
   function pickPhoto(cb){
@@ -359,85 +532,124 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   function screenHome(){
     var mine=load(STORE);
     var zoneTag = CTX.zone ? '<span class="zonetag"><span class="dot"></span>'+esc(CTX.zone)+'</span>' : '';
-    var recent='';
-    if(mine.length){
-      recent='<div class="recent"><div class="h">Vos derniers retours (sur ce téléphone)</div>'+
-        mine.slice(0,3).map(function(r){
-          var label = r.kind==='avis' ? 'Avis hygiène' : 'Signalement';
-          var sub = r.kind==='avis' ? (feelOf(r.feeling)||'') : (catOf(r.cat)||'');
-          if(r.zone) sub += (sub?' · ':'')+r.zone;
-          return '<div class="rrow"><div><div class="rt">'+esc(label)+'</div><div class="rs">'+esc(sub)+' · '+esc(r.when||'')+'</div></div>'+
-                 '<span class="rk">Transmis</span></div>';
-        }).join('')+'</div>';
-    }
+
+    // 1. Nom du club + statut MatSafe (statut = source sécurisée en prod, cf. CLUB_STATUS)
+    var headHtml =
+      '<div class="fctx"><span class="fctx-eb">Vous êtes chez</span><h1 class="fctx-club">'+esc(CTX.club)+'</h1>'+
+        '<span class="fctx-loc">'+esc(CTX.city)+'</span>'+zoneTag+'</div>'+
+      '<div class="clubstat">'+
+        '<div class="cs-eng"><span class="d"></span>Club engagé dans la démarche MatSafe</div>'+
+        '<div class="cs-row"><span class="k">Statut du label</span><span class="cs-badge'+(CLUB_STATUS.engaged?'':' off')+'">'+esc(CLUB_STATUS.labelStatus)+'</span></div>'+
+        (CLUB_STATUS.lastEval?'<div class="cs-row"><span class="k">Dernière évaluation</span><span class="v">'+esc(CLUB_STATUS.lastEval)+'</span></div>':'')+
+        (CLUB_STATUS.nextControl?'<div class="cs-row"><span class="k">Prochain contrôle</span><span class="v">'+esc(CLUB_STATUS.nextControl)+'</span></div>':'')+
+      '</div>';
+
+    // 2. Message ou alerte sanitaire du club (publié par MatSafe Club, même origine)
     var cm=getClubMsg();
+    var isAlert = !!(cm && cm.level==='alert');
     var msgHtml = (cm && cm.body)
-      ? '<section class="cmsg"><div class="cmsg-k"><span class="d"></span>Message du club</div>'+(cm.title?'<h3 class="cmsg-t">'+esc(cm.title)+'</h3>':'')+'<p class="cmsg-b">'+esc(cm.body)+'</p></section>'
+      ? '<section class="cmsg'+(isAlert?' alert':'')+'"><div class="cmsg-k"><span class="d"></span>'+(isAlert?'Alerte sanitaire du club':'Message du club')+'</div>'+
+          (cm.title?'<h3 class="cmsg-t">'+esc(cm.title)+'</h3>':'')+'<p class="cmsg-b">'+esc(cm.body)+'</p></section>'
       : '';
-    var evs = getEvents();
-    var eventsHtml = evs.length ? '<aside class="home-side"><div class="ev-k">Prochaines échéances</div><div class="ev-list">'+
-      evs.map(function(e){return '<div class="evt"><span class="evt-kind">'+esc(e.kind)+'</span><div class="evt-t">'+esc(e.title)+'</div>'+(e.date?'<div class="evt-d">'+esc(e.date)+'</div>':'')+'</div>';}).join('')+
-      '</div></aside>' : '';
-    view.innerHTML=
-      '<div class="home-grid'+(evs.length?'':' solo')+'">'+
-        '<div class="home-main">'+
-          '<div class="fctx"><span class="fctx-eb">Vous êtes chez</span><h1 class="fctx-club">'+esc(CTX.club)+'</h1><span class="fctx-loc">'+esc(CTX.city)+' · Club labellisé MatSafe</span></div>'+
-          msgHtml+
-          '<section class="hyg"><div class="hyg-head"><h2 class="hyg-h">Hygiène du club</h2><span class="hyg-sub">Anonyme · quelques secondes</span></div>'+
-            '<div class="actions">'+
-              '<button class="action primary" id="a-avis"><span class="ico">'+IChat+'</span><span class="txt"><span class="t">Donner mon avis hygiène</span><span class="d">Votre ressenti sur la propreté du jour</span></span><span class="arr">'+IArr+'</span></button>'+
-              '<button class="action" id="a-signal"><span class="ico">'+IFlag+'</span><span class="txt"><span class="t">Signaler un point à améliorer</span><span class="d">Un détail à revoir ? Dites-le au club</span></span><span class="arr">'+IArr+'</span></button>'+
-            '</div></section>'+
-          recent+
-          '<section class="mdr">'+
-            '<div class="mdr-k"><span class="d"></span>Partenaire santé · Téléconsultation</div>'+
-            '<a class="mdr-logo" id="a-mdr" href="#" role="button" aria-label="Médecin Direct — téléconsultation">'+
-              '<svg viewBox="0 0 64 64" aria-hidden="true"><g fill="#1E4A47"><ellipse cx="37" cy="41" rx="22" ry="19"/><circle cx="21" cy="23" r="10"/></g></svg>'+
-              '<span class="mdr-word"><b>médecin</b><b>direct</b></span>'+
-            '</a>'+
-            '<p class="mdr-p">Coupure, mycose ou doute sur une lésion&nbsp;? Parlez à un médecin en téléconsultation, partenaire de MatSafe.</p>'+
-            '<button class="mdr-cta" id="a-mdr-cta">Consulter un médecin</button>'+
-          '</section>'+
-          '<div class="note"><div class="h">Comment ça marche</div>'+
-            '<p>Vos retours arrivent directement au club, qui les vérifie et agit si besoin. '+
-            'MatSafe Fighter n’est <b>ni une note publique ni un classement</b> : c’est un canal d’amélioration.</p>'+
-            '<span class="pill">Anonyme</span><span class="pill">Sans compte</span><span class="pill">Aucune donnée médicale</span>'+
-          '</div>'+
+
+    // 3 + 4. Avant l'entraînement : doute lésion (principal) + check perso
+    var preventionHtml =
+      '<section class="sect">'+
+        '<div class="sect-head"><h2 class="sect-h">Avant l’entraînement</h2><span class="sect-sub">Prévention</span></div>'+
+        '<div class="actions">'+
+          '<button class="action primary" id="a-lesion"><span class="ico">'+ILesion+'</span><span class="txt"><span class="t">J’ai un doute sur une lésion</span><span class="d">Conseils de prudence + téléconsultation</span></span><span class="arr">'+IArr+'</span></button>'+
+          '<button class="action" id="a-check"><span class="ico">'+ICheck+'</span><span class="txt"><span class="t">Mon check avant l’entraînement</span><span class="d">Vérification perso en quelques secondes</span></span><span class="arr">'+IArr+'</span></button>'+
         '</div>'+
-        eventsHtml+
-      '</div>'+
+      '</section>';
+
+    // 5. Avis + signalement d'hygiène
+    var hygHtml =
+      '<section class="sect"><div class="sect-head"><h2 class="sect-h">Hygiène du club</h2><span class="sect-sub">Anonyme · quelques secondes</span></div>'+
+        '<div class="actions">'+
+          '<button class="action" id="a-avis"><span class="ico">'+IChat+'</span><span class="txt"><span class="t">Donner mon avis hygiène</span><span class="d">Votre ressenti sur la propreté du jour</span></span><span class="arr">'+IArr+'</span></button>'+
+          '<button class="action" id="a-signal"><span class="ico">'+IFlag+'</span><span class="txt"><span class="t">Signaler un point à améliorer</span><span class="d">Un détail à revoir ? Dites-le au club</span></span><span class="arr">'+IArr+'</span></button>'+
+        '</div></section>';
+
+    // 6. Suivi anonyme des retours (Mes retours)
+    var retSub = mine.length ? (mine.length+' retour'+(mine.length>1?'s':'')+' · dernier : '+esc(statusLabel(mine[0].status||'transmis'))) : 'Suivi anonyme par code, sans compte';
+    var returnsHtml =
+      '<section class="sect"><div class="sect-head"><h2 class="sect-h">Mes retours</h2><span class="sect-sub">Suivi anonyme</span></div>'+
+        '<div class="actions">'+
+          '<button class="action" id="a-returns"><span class="ico">'+IList+'</span><span class="txt"><span class="t">Suivre mes retours</span><span class="d">'+retSub+'</span></span><span class="arr">'+IArr+'</span></button>'+
+        '</div></section>';
+
+    // 7. Conseils d'entretien de l'équipement (accordéon)
+    var careHtml =
+      '<section class="sect"><div class="sect-head"><h2 class="sect-h">Entretien de l’équipement</h2><span class="sect-sub">Conseils</span></div>'+
+        '<div class="care">'+ CARE_FICHES.map(function(f){return '<details class="care-item"><summary>'+esc(f.t)+'</summary><div class="care-b">'+esc(f.b)+'</div></details>';}).join('') +'</div>'+
+      '</section>';
+
+    // 8. Prochains événements du club (publiés par MatSafe Club)
+    var evs = getEvents();
+    var eventsHtml = evs.length
+      ? '<section class="sect"><div class="sect-head"><h2 class="sect-h">Prochains événements</h2><span class="sect-sub">Club</span></div>'+
+          '<div class="ev-list">'+ evs.map(function(e){return '<div class="evt"><span class="evt-kind">'+esc(e.kind)+'</span><div class="evt-t">'+esc(e.title)+'</div>'+(e.date?'<div class="evt-d">'+esc(e.date)+'</div>':'')+'</div>';}).join('') +'</div></section>'
+      : '';
+
+    var noteHtml =
+      '<div class="note"><div class="h">Comment ça marche</div>'+
+        '<p>Vos retours arrivent directement au club, qui les vérifie et agit si besoin. '+
+        'MatSafe Fighter n’est <b>ni une note publique ni un classement</b> : c’est un canal d’amélioration.</p>'+
+        '<span class="pill">Anonyme</span><span class="pill">Sans compte</span><span class="pill">Aucune donnée médicale</span>'+
+      '</div>';
+
+    view.innerHTML=
+      '<div class="home">'+ headHtml + msgHtml + preventionHtml + hygHtml + returnsHtml + careHtml + eventsHtml + noteHtml +'</div>'+
       '<div class="foot"><b>MATSAFE Fighter</b> — canal de retour terrain de l’écosystème MatSafe '+
       '(Control · Fighter · Fondateur). Le club reste responsable du traitement de chaque retour.</div>';
+
+    document.getElementById('a-lesion').onclick=screenLesion;
+    document.getElementById('a-check').onclick=screenCheck;
     document.getElementById('a-avis').onclick=screenAvis;
     document.getElementById('a-signal').onclick=screenSignal;
-    var mdrGo=function(e){ if(e){e.preventDefault();} toast('Médecin Direct — téléconsultation bientôt disponible'); };
-    var mdrL=document.getElementById('a-mdr'); if(mdrL) mdrL.onclick=mdrGo;
-    var mdrC=document.getElementById('a-mdr-cta'); if(mdrC) mdrC.onclick=mdrGo;
+    document.getElementById('a-returns').onclick=screenReturns;
   }
   function feelOf(id){var f=FEELINGS.filter(function(x){return x.id===id;})[0];return f?f.t:'';}
   function catOf(id){var c=CATS.filter(function(x){return x.id===id;})[0];return c?c.t:'';}
 
   function backBtn(){var b='<button class="back" id="back">'+IBack+' Retour</button>'; return b;}
-  function wireBack(){var b=document.getElementById('back'); if(b) b.onclick=screenHome;}
+  function wireBack(fn){var b=document.getElementById('back'); if(b) b.onclick=(fn||screenHome);}
+
+  // Sélecteur de zone — affiché seulement si le QR n'est pas déjà posé sur une zone précise.
+  function zoneField(){
+    if(CTX.zone) return '';
+    return '<div class="field"><label>Zone concernée</label>'+
+      '<select id="zone" class="fsel"><option value="">Choisir une zone…</option>'+
+      ZONES.map(function(z){return '<option value="'+esc(z)+'">'+esc(z)+'</option>';}).join('')+
+      '</select></div>';
+  }
 
   /* --- AVIS HYGIÈNE (ressenti, non une note publique) --- */
   function screenAvis(){
-    var st={feeling:null, zone:'', comment:''};
+    var st={feeling:null, zone:CTX.zone||'', comment:''};
     view.innerHTML=
       backBtn()+
       '<div class="avis-hero"><h2 class="avis-title">Votre avis</h2>'+
       '<p class="avis-lead">Comment trouvez-vous l’hygiène du club aujourd’hui&nbsp;? Anonyme, en quelques secondes.</p></div>'+
-      '<div class="field avis-field"><label>Votre message</label>'+
-        '<textarea id="cmt" class="avis-box" maxlength="600" placeholder="Dites au club ce que vous avez remarqué : tatamis, vestiaires, douches, sanitaires, hygiène générale…"></textarea></div>'+
+      '<div class="field"><label>Votre ressenti</label><div class="feel" id="feel">'+
+        FEELINGS.map(function(f){return '<button class="feelbtn" data-f="'+f.id+'"><span class="fd" style="background:'+f.c+'"></span>'+
+          '<span class="ftx"><span class="ft">'+esc(f.t)+'</span><span class="fs">'+esc(f.s)+'</span></span></button>';}).join('')+
+      '</div></div>'+
+      zoneField()+
+      '<div class="field"><label>Votre message <span class="opt">— optionnel</span></label>'+
+        '<textarea id="cmt" rows="3" maxlength="600" placeholder="Un détail à préciser ? tatamis, vestiaires, douches, sanitaires…"></textarea></div>'+
       '<div class="cta"><button class="btn" id="send" disabled>Envoyer mon avis</button></div>';
     wireBack();
-    if(CTX.zone) st.zone=CTX.zone;
     var send=document.getElementById('send');
-    function refresh(){ send.disabled = st.comment.length < 2; }
-    document.getElementById('cmt').oninput=function(){ st.comment=this.value.trim(); refresh(); };
+    function refresh(){ send.disabled = !st.feeling; }
+    document.getElementById('feel').querySelectorAll('.feelbtn').forEach(function(b){
+      b.onclick=function(){ document.querySelectorAll('#feel .feelbtn').forEach(function(x){x.classList.remove('sel');}); b.classList.add('sel'); st.feeling=b.dataset.f; refresh(); };
+    });
+    var zs=document.getElementById('zone'); if(zs) zs.onchange=function(){ st.zone=this.value; };
+    document.getElementById('cmt').oninput=function(){ st.comment=this.value.trim(); };
     send.onclick=function(){
-      submit({kind:'avis', feeling:st.feeling, zone:st.zone, description:st.comment, cat:null, photo:null, when:nowStamp()});
-      screenDone('avis');
+      var code=submit({kind:'avis', feeling:st.feeling, zone:st.zone, description:st.comment, cat:null, photo:null, when:nowStamp()});
+      screenDone('avis', code);
     };
   }
 
@@ -450,9 +662,11 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       '<p class="sub">Un point à améliorer ? Décrivez-le simplement. Le club le vérifiera et le traitera — vous ne créez pas de non-conformité, juste une info utile.</p>'+
       '<div class="field"><label>De quoi s’agit-il ?</label><div class="chips" id="cats">'+
         CATS.map(function(c){return '<button class="chip" data-c="'+c.id+'">'+esc(c.t)+'</button>';}).join('')+'</div></div>'+
+      zoneField()+
       '<div class="field"><label>Description</label>'+
         '<textarea id="desc" rows="4" maxlength="600" placeholder="Ex. : plus de savon au lavabo de droite dans le vestiaire."></textarea></div>'+
       '<div class="field"><label>Photo <span class="opt">— optionnel</span></label>'+
+        '<p class="warn-note">Ne photographiez aucune personne et ne transmettez aucune information médicale ou permettant d’identifier un pratiquant.</p>'+
         '<div class="photo" id="photo"><button class="photobtn" id="addphoto">'+ICam+' Ajouter une photo</button></div></div>'+
       '<div class="cta"><button class="btn" id="send" disabled>Envoyer au club</button></div>';
     wireBack();
@@ -461,6 +675,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     document.getElementById('cats').querySelectorAll('.chip').forEach(function(b){
       b.onclick=function(){document.querySelectorAll('#cats .chip').forEach(function(x){x.classList.remove('sel');}); b.classList.add('sel'); st.cat=b.dataset.c; refresh();};
     });
+    var zs=document.getElementById('zone'); if(zs) zs.onchange=function(){ st.zone=this.value; };
     document.getElementById('desc').oninput=function(){st.description=this.value.trim(); refresh();};
     document.getElementById('addphoto').onclick=function(){
       pickPhoto(function(data){ if(!data){toast('Photo non ajoutée'); return;} st.photo=data; drawPhoto(); });
@@ -473,35 +688,158 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       document.getElementById('addphoto2').onclick=function(){pickPhoto(function(d){if(d){st.photo=d; drawPhoto();}});};
     }
     send.onclick=function(){
-      submit({kind:'signal', cat:st.cat, zone:st.zone, description:st.description, photo:st.photo, feeling:null, when:nowStamp()});
-      screenDone('signal');
+      var code=submit({kind:'signal', cat:st.cat, zone:st.zone, description:st.description, photo:st.photo, feeling:null, when:nowStamp()});
+      screenDone('signal', code);
     };
   }
 
   /* --- CONFIRMATION --- */
-  function screenDone(kind){
-    view.innerHTML = (kind==='avis'
-      ? '<div class="done">'+
-          '<div class="ring">'+ICheck+'</div>'+
-          '<h2>Bien joué&nbsp;!</h2>'+
-          '<p class="done-lead">Merci pour ton aide. Ton retour compte vraiment — il aide tout le club à s’entraîner dans un espace propre et sain.</p>'+
-          '<div class="done-motto">L’hygiène fait partie de la discipline.</div>'+
-          '<p class="done-fine">Aucun compte, aucune donnée personnelle : ton retour reste anonyme.</p>'+
-          '<div class="again"><button class="btn ghost" id="again" style="width:auto;padding:14px 26px">Faire un autre retour</button></div>'+
+  function screenDone(kind, code){
+    var head = (kind==='avis'
+      ? '<div class="ring">'+ICheck+'</div>'+
+        '<h2>Bien joué&nbsp;!</h2>'+
+        '<p class="done-lead">Merci pour ton aide. Ton retour compte vraiment — il aide tout le club à s’entraîner dans un espace propre et sain.</p>'+
+        '<div class="done-motto">L’hygiène fait partie de la discipline.</div>'
+      : '<div class="ring">'+ICheck+'</div>'+
+        '<h2>Merci&nbsp;!</h2>'+
+        '<p>Votre signalement est arrivé au club avec le statut <b>« à vérifier »</b>. Il sera pris en compte et traité si nécessaire.</p>');
+    var codeBox = code
+      ? '<div class="trackbox"><div class="tk-k">Votre code de suivi</div>'+
+          '<code id="tkcode">'+esc(code)+'</code>'+
+          '<button class="tk-copy" id="tkcopy">Copier le code</button>'+
+          '<p class="tk-note">Conservez ce code pour suivre l’avancement de votre retour, sans compte et sans révéler votre identité.</p>'+
         '</div>'
-      : '<div class="done">'+
-          '<div class="ring">'+ICheck+'</div>'+
-          '<h2>Merci&nbsp;!</h2>'+
-          '<p>Votre signalement est arrivé au club avec le statut <b>« à vérifier »</b>. Il sera pris en compte et traité si nécessaire.</p>'+
-          '<p class="done-fine">Aucun compte, aucune donnée personnelle : votre retour reste anonyme.</p>'+
-          '<div class="again"><button class="btn ghost" id="again" style="width:auto;padding:14px 26px">Faire un autre retour</button></div>'+
-        '</div>');
+      : '';
+    view.innerHTML =
+      '<div class="done">'+ head + codeBox +
+        '<p class="done-fine">Aucun compte, aucune donnée personnelle : votre retour reste anonyme.</p>'+
+        '<div class="again">'+
+          '<button class="btn" id="toreturns" style="width:auto;padding:14px 26px">Voir mes retours</button>'+
+          '<button class="btn ghost" id="again" style="width:auto;padding:14px 26px">Faire un autre retour</button>'+
+        '</div>'+
+      '</div>';
     document.getElementById('again').onclick=screenHome;
+    document.getElementById('toreturns').onclick=screenReturns;
+    var tc=document.getElementById('tkcopy');
+    if(tc) tc.onclick=function(){ if(copyText(code)){ this.textContent='Code copié ✓'; toast('Code de suivi copié'); } };
     toast('Retour transmis');
   }
 
+  /* ================= J'AI UN DOUTE SUR UNE LÉSION ================= */
+  /* Aucun diagnostic : uniquement des conseils de prudence. Aucune photo
+     médicale, diagnostic ou donnée médicale n'est stockée par MatSafe.
+     L'éventuel échange médical se déroule chez le partenaire (Médecin Direct). */
+  function screenLesion(){
+    view.innerHTML=
+      backBtn()+
+      '<h2 class="h2">J’ai un doute sur une lésion</h2>'+
+      '<p class="sub">Sélectionnez ce qui correspond le mieux. MatSafe ne pose aucun diagnostic&nbsp;: vous recevez uniquement des conseils de prudence.</p>'+
+      '<div class="lz-choices">'+
+        LESION_TYPES.map(function(l){return '<button class="action" data-l="'+l.id+'"><span class="txt"><span class="t">'+esc(l.t)+'</span></span><span class="arr">'+IArr+'</span></button>';}).join('')+
+      '</div>'+
+      '<div class="note"><p>En cas de doute, ne prenez pas de risque&nbsp;: demandez un avis médical avant de monter sur le tatami. <b>Aucune donnée médicale n’est enregistrée par MatSafe.</b></p></div>';
+    wireBack();
+    view.querySelectorAll('.lz-choices .action').forEach(function(b){
+      b.onclick=function(){ screenLesionReco(b.getAttribute('data-l')); };
+    });
+  }
+  function screenLesionReco(id){
+    var l=LESION_TYPES.filter(function(x){return x.id===id;})[0]; if(!l){ screenLesion(); return; }
+    var consultLabel = TELECONSULT_URL ? 'Consulter un médecin' : 'Consulter un médecin';
+    view.innerHTML=
+      backBtn()+
+      '<h2 class="h2">'+esc(l.t)+'</h2>'+
+      '<div class="lz-reco">'+
+        '<p>En cas de lésion suspecte, évitez de monter sur le tatami avant d’avoir demandé un avis médical. Ne partagez pas votre équipement et évitez de toucher la zone concernée.</p>'+
+        '<p>'+esc(l.reco)+'</p>'+
+      '</div>'+
+      '<section class="mdr">'+
+        '<div class="mdr-k"><span class="d"></span>Partenaire santé · Téléconsultation</div>'+
+        '<a class="mdr-logo" id="a-mdr" href="#" role="button" aria-label="Médecin Direct — téléconsultation">'+
+          '<svg viewBox="0 0 64 64" aria-hidden="true"><g fill="#1E4A47"><ellipse cx="37" cy="41" rx="22" ry="19"/><circle cx="21" cy="23" r="10"/></g></svg>'+
+          '<span class="mdr-word"><b>médecin</b><b>direct</b></span>'+
+        '</a>'+
+        '<p class="mdr-p">L’échange médical se déroule directement avec le partenaire. MatSafe ne stocke aucune photo ni information médicale.</p>'+
+        '<button class="mdr-cta" id="a-consult">'+consultLabel+'</button>'+
+      '</section>';
+    wireBack(screenLesion);
+    var go=function(e){ if(e){e.preventDefault();}
+      // TODO SERVEUR : rediriger vers TELECONSULT_URL une fois l'URL fournie.
+      if(TELECONSULT_URL){ try{ window.open(TELECONSULT_URL,'_blank','noopener'); }catch(_){ location.href=TELECONSULT_URL; } }
+      else { toast('Téléconsultation Médecin Direct — bientôt disponible'); }
+    };
+    var lg=document.getElementById('a-mdr'); if(lg) lg.onclick=go;
+    var cb=document.getElementById('a-consult'); if(cb) cb.onclick=go;
+  }
+
+  /* ================= MON CHECK AVANT L'ENTRAÎNEMENT ================= */
+  /* Rappel préventif uniquement. Aucune réponse n'est envoyée au club, ni
+     stockée, ni utilisée pour un profil. L'état vit en mémoire et disparaît
+     dès qu'on quitte l'écran (aucune écriture localStorage ici). */
+  function screenCheck(){
+    var done=CHECK_ITEMS.map(function(){return false;});   // état volatile (réinitialisé à chaque venue)
+    function render(){
+      var all=done.every(function(x){return x;});
+      var n=done.filter(function(x){return x;}).length;
+      view.innerHTML=
+        backBtn()+
+        '<h2 class="h2">Mon check</h2>'+
+        '<p class="sub">Un rappel préventif en quelques secondes. Ce check <b>ne remplace pas un avis médical</b> et n’autorise pas à s’entraîner.</p>'+
+        '<div class="chk-list">'+
+          CHECK_ITEMS.map(function(t,i){return '<button class="chk'+(done[i]?' on':'')+'" data-i="'+i+'"><span class="box">'+ICheck+'</span><span class="lbl">'+esc(t)+'</span></button>';}).join('')+
+        '</div>'+
+        '<div class="chk-count">'+n+' / '+CHECK_ITEMS.length+' vérifié'+(n>1?'s':'')+'</div>'+
+        (all?'<div class="chk-done">Votre vérification est terminée. En cas de doute sur une lésion, ne prenez pas de risque et demandez un avis médical.</div>':'')+
+        '<div class="note"><p>Aucune réponse n’est envoyée au club ni enregistrée. Vos réponses sont effacées dès que vous quittez cet écran.</p></div>';
+      wireBack();
+      view.querySelectorAll('.chk').forEach(function(b){
+        b.onclick=function(){ var i=+b.getAttribute('data-i'); done[i]=!done[i]; render(); };
+      });
+    }
+    render();
+  }
+
+  /* ================= MES RETOURS (suivi anonyme) ================= */
+  /* DÉMO : lecture depuis localStorage (ce téléphone). Aucune identité.
+     TODO SERVEUR : consultation réelle via le code de suivi (GET anonyme),
+     le serveur renvoie le statut courant et l'éventuelle réponse du club. */
+  function stepsHtml(statusId){
+    var cur=statusIndex(statusId||'transmis');
+    return '<div class="steps">'+RET_STATUSES.map(function(s,i){
+      var cls=i<cur?'reached':(i===cur?'reached current':'');
+      return '<div class="step '+cls+'"><span class="dot"></span>'+esc(s.t)+'</div>';
+    }).join('')+'</div>';
+  }
+  function screenReturns(){
+    var mine=load(STORE);
+    var list = mine.length
+      ? mine.map(function(r){
+          var kindLabel = r.kind==='avis' ? 'Avis d’hygiène' : 'Signalement';
+          var cat = r.kind==='avis' ? (feelOf(r.feeling)||'') : (catOf(r.cat)||'');
+          var meta=[]; if(cat) meta.push(cat); if(r.zone) meta.push(r.zone);
+          return '<div class="ret">'+
+            '<div class="ret-top"><span class="ret-kind">'+esc(kindLabel)+'</span><span class="ret-date">'+esc(r.when||'')+'</span></div>'+
+            (meta.length?'<div class="ret-meta">'+esc(meta.join(' · '))+'</div>':'')+
+            '<div class="ret-code"><code>'+esc(r.code||'—')+'</code>'+(r.code?'<button class="ret-copy" data-code="'+esc(r.code)+'">Copier</button>':'')+'</div>'+
+            stepsHtml(r.status)+
+            (r.reply?'<div class="ret-reply"><div class="k">Réponse du club</div>'+esc(r.reply)+'</div>':'')+
+          '</div>';
+        }).join('')
+      : '<div class="note"><p>Vous n’avez pas encore envoyé de retour depuis ce téléphone. Vos avis et signalements apparaîtront ici avec leur code de suivi et leur avancement.</p></div>';
+    view.innerHTML=
+      backBtn()+
+      '<h2 class="h2">Mes retours</h2>'+
+      '<p class="sub">Votre code permet de consulter l’avancement de votre retour sans créer de compte et sans révéler votre identité. Si vous effacez les données de votre navigateur sans conserver ce code, le suivi sera perdu.</p>'+
+      '<div class="demo-note">Démo&nbsp;: les retours sont actuellement stockés localement sur ce téléphone. En production, le suivi se fera via le serveur MatSafe à partir de votre code.</div>'+
+      list;
+    wireBack();
+    view.querySelectorAll('.ret-copy').forEach(function(b){
+      b.onclick=function(){ if(copyText(b.getAttribute('data-code'))){ b.textContent='Copié ✓'; toast('Code de suivi copié'); } };
+    });
+  }
+
   screenHome();
-  window.addEventListener('storage', function(e){ if((e.key==='matsafe_club_message'||e.key==='matsafe_club_events') && document.querySelector('.home-grid')){ try{ screenHome(); }catch(_){ } } });
+  window.addEventListener('storage', function(e){ if((e.key==='matsafe_club_message'||e.key==='matsafe_club_events') && document.querySelector('.home')){ try{ screenHome(); }catch(_){ } } });
 </script>
 <script>
 /* Message du club : lu depuis localStorage (publié par MATSAFE Club, même origine). */
