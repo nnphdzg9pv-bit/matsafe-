@@ -352,14 +352,23 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 /* ===== Cinématique d'intro — glitch digital, DA MatSafe (léger, sans dépendance) ===== */
 #intro{position:fixed;inset:0;z-index:9999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px;overflow:hidden}
 #intro.hide{display:none}
-.g-bg{position:absolute;inset:0;z-index:0;opacity:0;pointer-events:none;mix-blend-mode:screen;filter:blur(.5px);
+.g-bg{position:absolute;inset:0;z-index:0;opacity:0;pointer-events:none;mix-blend-mode:screen;filter:blur(.6px);
   background-color:#000;
   background-image:
-    repeating-linear-gradient(0deg, #000 0 2px, rgba(0,0,0,0) 2px 8px),
-    repeating-linear-gradient(90deg, #D0402C 0 3px, #000 3px 7px);
+    repeating-linear-gradient(0deg, #000 0 1px, rgba(0,0,0,0) 1px 6px),
+    repeating-linear-gradient(90deg, #DD611A 0 2px, #000 2px 5px);
   -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.02 0.05' numOctaves='2' seed='6' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='discrete' tableValues='0 0 1 1 0 0 1 0 1 0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E"),radial-gradient(85% 66% at 34% 45%, #000 18%, rgba(0,0,0,.38) 46%, transparent 70%);
   -webkit-mask-size:cover,cover;-webkit-mask-repeat:no-repeat,no-repeat;-webkit-mask-position:center,center;-webkit-mask-composite:source-in;
   mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.02 0.05' numOctaves='2' seed='6' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='discrete' tableValues='0 0 1 1 0 0 1 0 1 0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E"),radial-gradient(85% 66% at 34% 45%, #000 18%, rgba(0,0,0,.38) 46%, transparent 70%);
+  mask-size:cover,cover;mask-repeat:no-repeat,no-repeat;mask-position:center,center;mask-composite:intersect}
+.g-hot{position:absolute;inset:0;z-index:0;opacity:0;pointer-events:none;mix-blend-mode:screen;filter:blur(1.3px);
+  background-color:#000;
+  background-image:
+    repeating-linear-gradient(0deg, #000 0 1px, rgba(0,0,0,0) 1px 6px),
+    repeating-linear-gradient(90deg, #FFE0A8 0 2px, #000 2px 5px);
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='h'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.075' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='discrete' tableValues='0 0 0 0 0 0 0 1 0 1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23h)'/%3E%3C/svg%3E"),radial-gradient(85% 66% at 34% 45%, #000 18%, rgba(0,0,0,.38) 46%, transparent 70%);
+  -webkit-mask-size:cover,cover;-webkit-mask-repeat:no-repeat,no-repeat;-webkit-mask-position:center,center;-webkit-mask-composite:source-in;
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='h'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.075' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='discrete' tableValues='0 0 0 0 0 0 0 1 0 1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23h)'/%3E%3C/svg%3E"),radial-gradient(85% 66% at 34% 45%, #000 18%, rgba(0,0,0,.38) 46%, transparent 70%);
   mask-size:cover,cover;mask-repeat:no-repeat,no-repeat;mask-position:center,center;mask-composite:intersect}
 .g-wrap{position:relative;z-index:1;display:inline-block;width:min(92vw,470px);line-height:0}
 .gl{display:block;width:100%;height:auto}
@@ -376,6 +385,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .intro-tag .l2{font-weight:600;font-size:clamp(15px,4.3vw,19px);margin-top:2px}
 /* état animé : ajouté par JS uniquement si les animations sont autorisées */
 #intro.anim .g-bg{animation:glBg 1.3s linear .02s forwards}
+#intro.anim .g-hot{animation:glBg 1.3s linear .09s forwards}
 #intro.anim .gl-base{animation:glBase .62s linear .04s both}
 #intro.anim .gl-cyan{animation:glCyan .62s linear .04s forwards}
 #intro.anim .gl-red{animation:glRed .62s linear .04s forwards}
@@ -404,6 +414,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 <!-- Cinématique d'intro (couvre l'écran dès le 1er rendu, aucun flash) -->
 <div id="intro" aria-hidden="true">
   <div class="g-bg" aria-hidden="true"></div>
+  <div class="g-hot" aria-hidden="true"></div>
   <div class="g-wrap">
     <img id="introMark" class="gl gl-base" alt="MATSAFE FIGHTER">
     <img id="introMarkC" class="gl gl-cyan" alt="">
