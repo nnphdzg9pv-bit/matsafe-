@@ -391,15 +391,18 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 #intro.anim .gl-red{animation:glRed .62s linear .04s forwards}
 #intro.anim .g-scan{animation:glScan .62s ease .04s forwards}
 #intro.anim .intro-tag{opacity:0;transform:translateY(8px);animation:introTag .4s ease .66s forwards}
-/* sortie : fondu fluide (dissolution douce) révélant l'accueil */
-#intro.out{animation:glOut .55s ease forwards}
+/* sortie en 2 temps : le glitch s'éteint vers le noir, puis le noir se fond vers l'accueil */
+.g-stage{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#intro.out .g-stage{animation:stageOut .42s ease forwards}
+#intro.out{animation:introBlackOut .52s ease .40s forwards}
 @keyframes glBg{0%{opacity:0;background-position:0 0,0 0}7%{opacity:.95}11%{opacity:.6}16%{opacity:1;background-position:0 -7px,0 -7px}30%{opacity:.85;background-position:2px 6px,2px 6px}45%{opacity:1;background-position:-3px -4px,-3px -4px}60%{opacity:.8;background-position:2px 9px,2px 9px}75%{opacity:1;background-position:-2px -6px,-2px -6px}90%{opacity:.92;background-position:0 4px,0 4px}100%{opacity:.85;background-position:0 0,0 0}}
 @keyframes glBase{0%{opacity:0}7%{opacity:1}10%{opacity:.15}13%{opacity:1}20%{opacity:.45}24%{opacity:1}40%{opacity:1}43%{opacity:.3}46%{opacity:1}62%{opacity:1}64%{opacity:.55}66%{opacity:1}100%{opacity:1}}
 @keyframes glCyan{0%{opacity:1;transform:translate(-17px,3px)}10%{transform:translate(14px,-3px)}22%{transform:translate(-11px,2px)}34%{transform:translate(9px,-1px)}48%{transform:translate(-7px,1px)}62%{transform:translate(5px,0)}78%{transform:translate(-3px,0)}100%{transform:translate(2px,0);opacity:.34}}
 @keyframes glRed{0%{opacity:1;transform:translate(17px,-3px)}10%{transform:translate(-14px,3px)}22%{transform:translate(11px,-2px)}34%{transform:translate(-9px,1px)}48%{transform:translate(7px,-1px)}62%{transform:translate(-5px,0)}78%{transform:translate(3px,0)}100%{transform:translate(-2px,0);opacity:.34}}
 @keyframes glScan{0%{opacity:1}100%{opacity:.42}}
 @keyframes introTag{to{opacity:1;transform:none}}
-@keyframes glOut{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.05)}}
+@keyframes stageOut{to{opacity:0}}
+@keyframes introBlackOut{to{opacity:0}}
 </style>
 
 <div class="app">
@@ -413,13 +416,15 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
 <!-- Cinématique d'intro (couvre l'écran dès le 1er rendu, aucun flash) -->
 <div id="intro" aria-hidden="true">
-  <div class="g-bg" aria-hidden="true"></div>
-  <div class="g-hot" aria-hidden="true"></div>
-  <div class="g-wrap">
-    <img id="introMark" class="gl gl-base" alt="MATSAFE FIGHTER">
-    <img id="introMarkC" class="gl gl-cyan" alt="">
-    <img id="introMarkR" class="gl gl-red" alt="">
-    <div class="g-scan"></div>
+  <div class="g-stage">
+    <div class="g-bg" aria-hidden="true"></div>
+    <div class="g-hot" aria-hidden="true"></div>
+    <div class="g-wrap">
+      <img id="introMark" class="gl gl-base" alt="MATSAFE FIGHTER">
+      <img id="introMarkC" class="gl gl-cyan" alt="">
+      <img id="introMarkR" class="gl gl-red" alt="">
+      <div class="g-scan"></div>
+    </div>
   </div>
 </div>
 
@@ -1002,13 +1007,11 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   function T(fn,ms){ timers.push(setTimeout(fn,ms)); }
   function clearAll(){ timers.forEach(clearTimeout); timers=[]; }
 
-  function leave(fast){                    // sortie : léger zoom + fondu -> accueil
+  function leave(fast){                    // sortie : extinction du glitch puis fondu du noir -> accueil
     if(leaving) return; leaving=true; clearAll();
     if(reduce){ finish(); return; }
-    var dur = fast ? 380 : 550;
-    try{ intro.style.animationDuration = (dur/1000)+'s'; }catch(e){}
-    intro.classList.add('out');
-    T(finish, dur+30);
+    intro.classList.add('out');       // sortie CSS en 2 temps : extinction du glitch puis fondu du noir
+    T(finish, 960);
   }
   function onTap(){ leave(true); }
   function onKey(e){ if(e.key===' '||e.key==='Enter'||e.key==='Escape'){ leave(true); } }
@@ -1019,7 +1022,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     T(finish, 700);                        // pas d'animation : maintien bref puis retrait
   } else {
     intro.classList.add('anim');           // déclenche les animations d'entrée
-    T(function(){ leave(false); }, 1350);  // entrée ~1 s, court maintien, puis sortie (~0,46 s)
+    T(function(){ leave(false); }, 1350);  // entrée ~1 s, court maintien, puis sortie fondu-au-noir (~0,96 s)
   }
 })();
 </script>
