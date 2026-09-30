@@ -348,6 +348,24 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     min-height:calc(100dvh - 68px)}
   .cta{position:static;margin:24px 0 0;background:none;padding:0}
 }
+
+/* ===== Cinématique d'intro — signature de marque (léger, sans dépendance) ===== */
+#intro{position:fixed;inset:0;z-index:9999;background:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px;overflow:hidden}
+#intro.hide{display:none}
+.intro-mark{width:min(82vw,380px);height:auto;display:block}
+.intro-mark-txt{font-family:var(--sans);font-weight:800;text-transform:uppercase;letter-spacing:-.02em;font-size:clamp(34px,10vw,60px);line-height:.95;color:var(--brand)}
+.intro-tag{margin-top:26px;max-width:24ch}
+.intro-tag span{display:block;font-family:var(--sans);letter-spacing:-.01em;line-height:1.3;color:var(--cream)}
+.intro-tag .l1{font-weight:400;font-size:clamp(15px,4.3vw,19px);opacity:.82}
+.intro-tag .l2{font-weight:600;font-size:clamp(15px,4.3vw,19px);margin-top:2px}
+.intro-wipe{position:fixed;inset:0;z-index:10000;background:var(--brand);transform:translateY(101%);pointer-events:none}
+/* état animé : ajouté par JS uniquement si les animations sont autorisées */
+#intro.anim .intro-mark,#intro.anim .intro-mark-txt{opacity:0;transform:translateY(16px) scale(.9);animation:introMark .52s cubic-bezier(.2,.8,.2,1) .08s forwards}
+#intro.anim .intro-tag{opacity:0;transform:translateY(10px);animation:introTag .42s ease .54s forwards}
+.intro-wipe.go{animation:introWipe var(--wipe,.46s) cubic-bezier(.5,0,.15,1) forwards}
+@keyframes introMark{to{opacity:1;transform:none}}
+@keyframes introTag{to{opacity:1;transform:none}}
+@keyframes introWipe{0%{transform:translateY(101%)}44%{transform:translateY(0)}56%{transform:translateY(0)}100%{transform:translateY(-101%)}}
 </style>
 
 <div class="app">
@@ -358,6 +376,13 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   <main id="view"></main>
 </div>
 <div class="toast" id="toast"></div>
+
+<!-- Cinématique d'intro (couvre l'écran dès le 1er rendu, aucun flash blanc) -->
+<div id="intro" aria-hidden="true">
+  <img id="introMark" class="intro-mark" alt="MATSAFE FIGHTER">
+  <div class="intro-tag"><span class="l1">Prenez soin de vous.</span><span class="l2">Protégez vos partenaires.</span></div>
+</div>
+<div id="introWipe" class="intro-wipe"></div>
 
 <script>
 "use strict";
@@ -889,5 +914,74 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   }
   render();
   window.addEventListener('storage', function(e){ if(e.key===K) render(); });
+})();
+</script>
+
+<script>
+/* ============================================================
+   CINÉMATIQUE D'INTRO — MatSafe Fighter (prototype)
+   Durée totale ~1,8 s. Aucun son, aucune dépendance.
+   Un toucher / clic passe l'intro immédiatement.
+   Respecte « réduire les animations » (prefers-reduced-motion).
+
+   >>> RÉGLAGE MODE TEST — MODIFIER LA LIGNE CI-DESSOUS <<<
+     'always' : l'intro s'affiche à CHAQUE chargement (pratique pour les tests)
+     'once'   : l'intro s'affiche seulement à la 1re visite sur l'appareil
+   ============================================================ */
+(function(){
+  "use strict";
+  var INTRO_MODE = 'always';          // <— CHANGER ICI : 'always' (tests) ou 'once' (prod)
+
+  var SEEN_KEY = 'matsafe_fighter_intro_seen';
+  var intro = document.getElementById('intro');
+  var wipe  = document.getElementById('introWipe');
+  if(!intro){ return; }
+
+  function markSeen(){ try{ localStorage.setItem(SEEN_KEY,'1'); }catch(e){} }
+  function finish(){
+    markSeen();
+    if(wipe && wipe.parentNode) wipe.parentNode.removeChild(wipe);
+    if(intro && intro.parentNode) intro.parentNode.removeChild(intro);
+    document.removeEventListener('pointerdown', onTap, true);
+    document.removeEventListener('keydown', onKey, true);
+  }
+
+  var seen=false; try{ seen=localStorage.getItem(SEEN_KEY)==='1'; }catch(e){}
+  if(INTRO_MODE==='once' && seen){ finish(); return; }   // déjà vue : on retire l'overlay, l'accueil est prêt
+
+  // Reprend le logo rouge du bandeau (aucune duplication d'image dans le fichier)
+  var mark=document.getElementById('introMark');
+  try{ var bl=document.querySelector('.brandlogo'); if(mark && bl && bl.getAttribute('src')) mark.src=bl.getAttribute('src'); }catch(e){}
+  if(mark && !mark.getAttribute('src')){   // repli texte si le logo n'est pas trouvé
+    var txt=document.createElement('div'); txt.className='intro-mark-txt'; txt.textContent='MATSAFE FIGHTER';
+    if(mark.parentNode) mark.parentNode.replaceChild(txt, mark);
+  }
+
+  var reduce=false; try{ reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+
+  var timers=[], leaving=false;
+  function T(fn,ms){ timers.push(setTimeout(fn,ms)); }
+  function clearAll(){ timers.forEach(clearTimeout); timers=[]; }
+
+  function leave(fast){                    // sortie : balayage rouge -> accueil
+    if(leaving) return; leaving=true; clearAll();
+    if(reduce || !wipe){ finish(); return; }
+    var dur = fast ? 360 : 460;
+    wipe.style.setProperty('--wipe', (dur/1000)+'s');
+    wipe.classList.add('go');
+    T(function(){ intro.classList.add('hide'); }, Math.round(dur*0.5)); // masque le fond quand le rouge couvre
+    T(finish, dur+40);
+  }
+  function onTap(){ leave(true); }
+  function onKey(e){ if(e.key===' '||e.key==='Enter'||e.key==='Escape'){ leave(true); } }
+  document.addEventListener('pointerdown', onTap, true);
+  document.addEventListener('keydown', onKey, true);
+
+  if(reduce){
+    T(finish, 700);                        // pas d'animation : maintien bref puis retrait
+  } else {
+    intro.classList.add('anim');           // déclenche les animations d'entrée
+    T(function(){ leave(false); }, 1350);  // entrée ~1 s, court maintien, puis sortie (~0,46 s)
+  }
 })();
 </script>
