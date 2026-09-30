@@ -238,12 +238,15 @@
 
 /* Check avant l'entraînement */
 .chk-list{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
-.chk{display:flex;align-items:center;gap:13px;width:100%;text-align:left;cursor:pointer;background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:15px 16px;color:var(--ink)}
-.chk .box{flex:none;width:26px;height:26px;border-radius:6px;border:1.7px solid var(--border);background:#FFF;display:grid;place-items:center;color:transparent}
+.chk{display:flex;align-items:flex-start;gap:13px;width:100%;text-align:left;cursor:pointer;background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:15px 16px;color:var(--ink)}
+.chk .box{flex:none;width:26px;height:26px;border-radius:6px;border:1.7px solid var(--border);background:#FFF;display:grid;place-items:center;color:transparent;margin-top:1px}
 .chk .box svg{width:15px;height:15px}
-.chk .lbl{font-family:var(--cond);text-transform:uppercase;letter-spacing:.02em;font-weight:700;font-size:14.5px;line-height:1.15}
+.chk-tx{min-width:0;flex:1 1 auto}
+.chk .lbl{display:block;font-family:var(--cond);text-transform:uppercase;letter-spacing:.02em;font-weight:700;font-size:14.5px;line-height:1.15}
+.chk-d{display:block;font-size:12.5px;line-height:1.4;color:var(--gray);margin-top:4px;text-transform:none;letter-spacing:0}
 .chk.on{background:var(--black);color:var(--off);border-color:var(--black)}
 .chk.on .box{background:var(--off);border-color:var(--off);color:var(--black)}
+.chk.on .chk-d{color:rgba(242,240,236,.74)}
 .chk-count{font-family:var(--cond);text-transform:uppercase;letter-spacing:.06em;font-weight:700;font-size:12px;color:var(--gray);margin-bottom:14px}
 .chk-done{background:var(--ok-bg);border:1px solid var(--ok);border-radius:6px;padding:14px 16px;font-size:14px;line-height:1.5;color:var(--ink);margin-bottom:16px}
 
@@ -388,12 +391,12 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
   // --- Check personnel avant l'entraînement (rappel préventif, jamais envoyé) ---
   var CHECK_ITEMS=[
-    'J’ai vérifié ma peau',
-    'Je n’ai pas de lésion suspecte',
-    'Mes plaies éventuelles sont correctement protégées',
-    'Ma tenue est propre',
-    'Mon matériel est propre et sec',
-    'Mes ongles sont courts'
+    {t:'J’arrive propre',                 d:'Mon corps, mes mains et mes pieds sont propres.'},
+    {t:'Ma tenue est propre et sèche',    d:'Elle a été lavée depuis sa dernière utilisation.'},
+    {t:'J’ai mes claquettes',             d:'Je les porte pour circuler en dehors du tatami.'},
+    {t:'Mes ongles sont courts et propres', d:'Mains et pieds vérifiés, bijoux retirés.'},
+    {t:'J’ai vérifié ma peau',            d:'Je n’ai aucune lésion suspecte, plaie ouverte, zone saignante ou suintante.'},
+    {t:'Mon matériel est propre et sec',  d:'Mes protections ont été nettoyées, aérées et ne sont pas partagées.'}
   ];
 
   // --- Fiches d'entretien de l'équipement ---
@@ -786,7 +789,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         '<h2 class="h2">Mon check</h2>'+
         '<p class="sub">Un rappel préventif en quelques secondes. Ce check <b>ne remplace pas un avis médical</b> et n’autorise pas à s’entraîner.</p>'+
         '<div class="chk-list">'+
-          CHECK_ITEMS.map(function(t,i){return '<button class="chk'+(done[i]?' on':'')+'" data-i="'+i+'"><span class="box">'+ICheck+'</span><span class="lbl">'+esc(t)+'</span></button>';}).join('')+
+          CHECK_ITEMS.map(function(it,i){return '<button class="chk'+(done[i]?' on':'')+'" data-i="'+i+'"><span class="box">'+ICheck+'</span><span class="chk-tx"><span class="lbl">'+esc(it.t)+'</span><span class="chk-d">'+esc(it.d)+'</span></span></button>';}).join('')+
         '</div>'+
         '<div class="chk-count">'+n+' / '+CHECK_ITEMS.length+' vérifié'+(n>1?'s':'')+'</div>'+
         (all?'<div class="chk-done">Votre vérification est terminée. En cas de doute sur une lésion, ne prenez pas de risque et demandez un avis médical.</div>':'')+
