@@ -141,7 +141,7 @@
 
 /* ===== DA MatSafe Club : memes couleurs, typo Archivo+Inter, angles nets ===== */
 :root{
-  --cream:#F1F0EC;--off:#F1F0EC;--paper:#F7F5F0;--paper-2:#ECEBE4;
+  --page:#E7E6DF;--cream:#F1F0EC;--off:#F1F0EC;--paper:#F7F5F0;--paper-2:#ECEBE4;
   --black:#0B0B0B;--ink:#0B0B0B;
   --gray:#5A5351;--faint:#9A968E;--light:#E1DFD6;
   --border:#D3D1C7;--hair:#E1DFD6;
@@ -214,6 +214,37 @@
   .home-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:38px;align-items:start;max-width:none}
   .home-grid.solo{grid-template-columns:minmax(0,680px);justify-content:center}
   .home-side{margin-top:6px}
+  .cta{position:static;margin:24px 0 0;background:none;padding:0}
+}
+
+/* ===== Harmonisation DA MatSafe Club : cadre panneau, grain, survols, transitions ===== */
+body{background:var(--page)}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.03;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.app{z-index:1}
+.app::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:5;opacity:.015;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.topbar,main{position:relative;z-index:2}
+
+/* Transitions d'écran, comme MatSafe Club */
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+#view>*{animation:fade .28s ease both}
+
+/* Titres : même graisse éditoriale que Club (800) */
+.ctx h1,.h2,.done h2{font-weight:800;letter-spacing:-.005em}
+
+/* Survols desktop : cartes qui se soulèvent comme Club */
+@media(hover:hover){
+  .action,.evt,.mdr-logo,.chip{transition:transform .15s,box-shadow .25s,background .15s,color .15s,border-color .15s}
+  .action:hover,.evt:hover,.mdr-logo:hover{transform:translateY(-2px);box-shadow:0 16px 30px -22px rgba(20,20,25,.5)}
+  .chip:hover{border-color:var(--ink)}
+}
+
+/* Cadre panneau sur écran large (comme la carte MatSafe Club) */
+@media(min-width:600px){
+  body{padding:34px 24px}
+  .app{border:1px solid var(--border);border-radius:10px;box-shadow:0 34px 90px -46px rgba(18,24,27,.5);
+    min-height:calc(100dvh - 68px)}
   .cta{position:static;margin:24px 0 0;background:none;padding:0}
 }
 </style>
