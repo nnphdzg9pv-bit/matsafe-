@@ -352,7 +352,14 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 /* ===== Cinématique d'intro — glitch digital, DA MatSafe (léger, sans dépendance) ===== */
 #intro{position:fixed;inset:0;z-index:9999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px;overflow:hidden}
 #intro.hide{display:none}
-.g-wrap{position:relative;display:inline-block;width:min(82vw,380px);line-height:0}
+.g-bg{position:absolute;left:50%;top:50%;transform:translate(-52%,-50%);width:min(94vw,540px);height:min(58vh,440px);z-index:0;opacity:0;pointer-events:none;mix-blend-mode:screen;filter:blur(.4px);
+  background-color:#000;
+  background-image:
+    repeating-linear-gradient(0deg, #000 0 2px, rgba(0,0,0,0) 2px 4px),
+    repeating-linear-gradient(90deg, #DA5A24 0 3px, rgba(0,0,0,0) 3px 8px);
+  -webkit-mask-image:radial-gradient(130% 92% at 44% 48%, #000 34%, rgba(0,0,0,.45) 60%, transparent 78%);
+  mask-image:radial-gradient(130% 92% at 44% 48%, #000 34%, rgba(0,0,0,.45) 60%, transparent 78%)}
+.g-wrap{position:relative;z-index:1;display:inline-block;width:min(82vw,380px);line-height:0}
 .gl{display:block;width:100%;height:auto}
 .gl-base{position:relative;z-index:2}
 .gl-cyan,.gl-red{position:absolute;top:0;left:0;z-index:3;opacity:0;pointer-events:none;will-change:transform,opacity;mix-blend-mode:screen}
@@ -361,11 +368,12 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .g-scan{position:absolute;inset:-10% -5%;z-index:4;opacity:0;pointer-events:none;mix-blend-mode:overlay;
   background:repeating-linear-gradient(0deg,rgba(0,0,0,.6) 0 1px,rgba(0,0,0,0) 1px 3px)}
 .intro-mark-txt{font-family:var(--sans);font-weight:800;text-transform:uppercase;letter-spacing:-.02em;font-size:clamp(34px,10vw,60px);line-height:.95;color:var(--brand)}
-.intro-tag{margin-top:28px;max-width:24ch}
+.intro-tag{position:relative;z-index:1;margin-top:28px;max-width:24ch}
 .intro-tag span{display:block;font-family:var(--sans);letter-spacing:-.01em;line-height:1.3;color:var(--cream)}
 .intro-tag .l1{font-weight:400;font-size:clamp(15px,4.3vw,19px);color:rgba(242,240,236,.66)}
 .intro-tag .l2{font-weight:600;font-size:clamp(15px,4.3vw,19px);margin-top:2px}
 /* état animé : ajouté par JS uniquement si les animations sont autorisées */
+#intro.anim .g-bg{animation:glBg .82s linear .02s forwards}
 #intro.anim .gl-base{animation:glBase .62s linear .04s both}
 #intro.anim .gl-cyan{animation:glCyan .62s linear .04s forwards}
 #intro.anim .gl-red{animation:glRed .62s linear .04s forwards}
@@ -373,6 +381,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 #intro.anim .intro-tag{opacity:0;transform:translateY(8px);animation:introTag .4s ease .66s forwards}
 /* sortie : bref glitch + fondu, révélant l'accueil */
 #intro.out{animation:glOut .4s steps(30) forwards}
+@keyframes glBg{0%{opacity:0;background-position:0 0,0 0}10%{opacity:.85}18%{opacity:.45}27%{opacity:.8;background-position:0 -6px,5px 0}45%{opacity:.6;background-position:0 5px,-7px 0}64%{opacity:.32;background-position:0 -3px,9px 0}82%{opacity:.14;background-position:0 2px,-11px 0}100%{opacity:0;background-position:0 0,-14px 0}}
 @keyframes glBase{0%{opacity:0}8%{opacity:1}11%{opacity:.2}14%{opacity:1}22%{opacity:.5}26%{opacity:1}44%{opacity:1}47%{opacity:.4}50%{opacity:1}100%{opacity:1}}
 @keyframes glCyan{0%{opacity:.85;transform:translate(-10px,2px)}12%{transform:translate(8px,-2px)}24%{transform:translate(-6px,1px)}38%{transform:translate(5px,0)}52%{transform:translate(-3px,0);opacity:.7}72%{transform:translate(2px,0)}100%{transform:translate(0,0);opacity:0}}
 @keyframes glRed{0%{opacity:.85;transform:translate(10px,-2px)}12%{transform:translate(-8px,2px)}24%{transform:translate(6px,-1px)}38%{transform:translate(-5px,0)}52%{transform:translate(3px,0);opacity:.7}72%{transform:translate(-2px,0)}100%{transform:translate(0,0);opacity:0}}
@@ -392,6 +401,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
 <!-- Cinématique d'intro (couvre l'écran dès le 1er rendu, aucun flash) -->
 <div id="intro" aria-hidden="true">
+  <div class="g-bg" aria-hidden="true"></div>
   <div class="g-wrap">
     <img id="introMark" class="gl gl-base" alt="MATSAFE FIGHTER">
     <img id="introMarkC" class="gl gl-cyan" alt="">
