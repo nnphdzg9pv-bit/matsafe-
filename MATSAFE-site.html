@@ -1867,9 +1867,11 @@ footer{
 /* Accroche « Articles & actualités » : même typo que la section (Helvetica), un cran plus grande. */
 .ln-eyebrow{
   font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
-  font-weight:700;font-size:.95rem;letter-spacing:.14em;
+  font-weight:700;font-size:.95rem;letter-spacing:.14em;margin-bottom:.15rem;
 }
 .ln-eyebrow::before{width:30px}
+/* Accroche seule (sans grand titre) : on resserre l'espace avant les cartes. */
+.label-news .ed-header{margin-bottom:.5rem}
 .ln-rail{
   display:flex;gap:1.4rem;overflow-x:auto;scroll-snap-type:x proximity;
   padding:.5rem 2px 1.6rem;margin:0 -2px;
