@@ -88,7 +88,7 @@
   /* --- Form pieces --- */
   .back{display:inline-flex; align-items:center; gap:7px; background:none; border:0; cursor:pointer; color:var(--gray);
     font-family:var(--cond); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:12px; padding:0 0 6px}
-  .h2{font-family:var(--cond); font-weight:900; text-transform:uppercase; letter-spacing:.005em; font-size:clamp(26px,8vw,34px); line-height:1; margin:4px 0 6px}
+  .h2{font-family:var(--sans); font-weight:700; text-transform:uppercase; letter-spacing:-.015em; font-size:clamp(26px,8vw,34px); line-height:1.02; margin:4px 0 6px}
   .sub{font-size:14px; color:var(--gray); line-height:1.45; margin:0 0 22px}
   .field{margin-bottom:20px}
   .field > label{display:block; font-family:var(--cond); font-weight:800; text-transform:uppercase; letter-spacing:.06em; font-size:12px; color:var(--ink); margin-bottom:9px}
@@ -161,7 +161,7 @@
 .clubmsg p{font-size:14.5px;line-height:1.5;color:var(--ink);margin:0;white-space:pre-wrap}
 /* ===== Avis — accroche éditoriale (grand titre centré) ===== */
 .avis-hero{text-align:center;padding:22px 6px 30px}
-.avis-title{font-family:var(--cond);font-weight:800;text-transform:uppercase;letter-spacing:-.005em;font-size:clamp(38px,11vw,54px);line-height:.98;color:var(--ink);margin:0}
+.avis-title{font-family:var(--sans);font-weight:700;text-transform:uppercase;letter-spacing:-.02em;font-size:clamp(38px,11vw,54px);line-height:.98;color:var(--ink);margin:0}
 .avis-lead{max-width:32ch;margin:16px auto 0;color:var(--gray);font-size:14.5px;line-height:1.55}
 .avis-field{margin-bottom:22px}
 .avis-field > label{text-align:center;font-size:13px;letter-spacing:.08em}
@@ -212,7 +212,7 @@
 .home{display:block}
 .fmenu-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;border-top:3px solid var(--ink);padding-top:12px;margin-bottom:8px}
 .fmenu-eb{display:block;font-family:var(--cond);text-transform:uppercase;letter-spacing:.14em;font-size:11px;color:var(--gray);font-weight:700}
-.fmenu-name{font-family:var(--cond);font-weight:800;text-transform:uppercase;letter-spacing:.005em;font-size:clamp(24px,6.5vw,34px);line-height:.98;margin:5px 0 0;color:var(--ink);overflow-wrap:anywhere}
+.fmenu-name{font-family:var(--sans);font-weight:700;text-transform:uppercase;letter-spacing:-.015em;font-size:clamp(24px,6.5vw,34px);line-height:.98;margin:5px 0 0;color:var(--ink);overflow-wrap:anywhere}
 .mini-badge{flex:none;display:inline-flex;align-items:center;gap:6px;margin-top:4px;font-family:var(--cond);text-transform:uppercase;letter-spacing:.05em;font-size:10.5px;font-weight:700;color:var(--ink);background:var(--paper);border:1px solid var(--border);border-radius:999px;padding:6px 11px;white-space:nowrap}
 .mini-badge .d{width:6px;height:6px;border-radius:50%;background:var(--brand)}
 .fmenu-label{font-family:var(--cond);text-transform:uppercase;letter-spacing:.06em;font-size:12px;font-weight:800;color:var(--brand);margin:22px 0 2px}
@@ -220,10 +220,10 @@
 .fmi{display:flex;align-items:flex-start;gap:14px;width:100%;text-align:left;cursor:pointer;background:none;border:0;border-top:1px solid var(--border);padding:17px 2px;color:var(--ink);transition:padding-left .15s,color .15s}
 .fmi:last-child{border-bottom:1px solid var(--border)}
 .fmi:active{background:rgba(11,11,11,.03)}
-.fmi-n{flex:none;font-family:var(--cond);font-weight:700;font-size:12px;color:var(--faint);width:22px;padding-top:6px}
+.fmi-n{flex:none;font-family:var(--sans);font-weight:500;font-size:12px;color:var(--faint);width:22px;padding-top:9px}
 .fmi-b{flex:1 1 auto;min-width:0}
-.fmi-t{display:block;font-family:var(--cond);font-weight:700;letter-spacing:-.01em;font-size:clamp(26px,7.4vw,36px);line-height:1.02;color:var(--ink)}
-.fmi-d{display:block;font-size:12px;color:var(--gray);margin-top:5px}
+.fmi-t{display:block;font-family:var(--sans);font-weight:500;letter-spacing:-.022em;font-size:clamp(27px,7.6vw,37px);line-height:1.04;color:var(--ink)}
+.fmi-d{display:block;font-size:12.5px;color:var(--gray);margin-top:6px}
 .fmi.accent .fmi-t{color:var(--brand)}
 .fmi-badge{display:inline-grid;place-items:center;vertical-align:middle;margin-left:10px;min-width:24px;height:24px;border-radius:50%;border:1.6px solid var(--brand);color:var(--brand);font-family:var(--cond);font-weight:800;font-size:12px;padding:0 5px;transform:translateY(-3px)}
 @media(hover:hover){.fmi:hover{padding-left:8px}.fmi:hover .fmi-t{color:var(--brand)}}
