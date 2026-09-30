@@ -356,17 +356,17 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   background-color:#000;
   background-image:
     repeating-linear-gradient(0deg, #000 0 2px, rgba(0,0,0,0) 2px 8px),
-    repeating-linear-gradient(90deg, #EE6A1E 0 3px, #000 3px 7px);
+    repeating-linear-gradient(90deg, #D0402C 0 3px, #000 3px 7px);
   -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.02 0.05' numOctaves='2' seed='6' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='discrete' tableValues='0 0 1 1 0 0 1 0 1 0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E"),radial-gradient(85% 66% at 34% 45%, #000 18%, rgba(0,0,0,.38) 46%, transparent 70%);
   -webkit-mask-size:cover,cover;-webkit-mask-repeat:no-repeat,no-repeat;-webkit-mask-position:center,center;-webkit-mask-composite:source-in;
   mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.02 0.05' numOctaves='2' seed='6' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='discrete' tableValues='0 0 1 1 0 0 1 0 1 0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E"),radial-gradient(85% 66% at 34% 45%, #000 18%, rgba(0,0,0,.38) 46%, transparent 70%);
   mask-size:cover,cover;mask-repeat:no-repeat,no-repeat;mask-position:center,center;mask-composite:intersect}
-.g-wrap{position:relative;z-index:1;display:inline-block;width:min(82vw,380px);line-height:0}
+.g-wrap{position:relative;z-index:1;display:inline-block;width:min(92vw,470px);line-height:0}
 .gl{display:block;width:100%;height:auto}
 .gl-base{position:relative;z-index:2}
 .gl-cyan,.gl-red{position:absolute;top:0;left:0;z-index:3;opacity:0;pointer-events:none;will-change:transform,opacity;mix-blend-mode:screen}
-.gl-cyan{filter:hue-rotate(165deg) saturate(2.4)}
-.gl-red{filter:saturate(2.2) brightness(1.15)}
+.gl-cyan{filter:brightness(1.5) saturate(1.25)}
+.gl-red{filter:brightness(.5) saturate(1.5)}
 .g-scan{position:absolute;inset:-14% -7%;z-index:4;opacity:0;pointer-events:none;mix-blend-mode:overlay;
   background:repeating-linear-gradient(0deg,rgba(0,0,0,.82) 0 1px,rgba(0,0,0,0) 1px 3px)}
 .intro-mark-txt{font-family:var(--sans);font-weight:800;text-transform:uppercase;letter-spacing:-.02em;font-size:clamp(34px,10vw,60px);line-height:.95;color:var(--brand)}
