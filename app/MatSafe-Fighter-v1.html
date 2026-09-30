@@ -776,26 +776,35 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
      dès qu'on quitte l'écran (aucune écriture localStorage ici). */
   function screenCheck(){
     var done=CHECK_ITEMS.map(function(){return false;});   // état volatile (réinitialisé à chaque venue)
-    function render(){
-      var all=done.every(function(x){return x;});
+    // Rendu UNE seule fois : cocher/décocher bascule juste la case concernée,
+    // sans reconstruire l'écran à chaque tap (pas de re-validation / flash).
+    view.innerHTML=
+      backBtn()+
+      '<h2 class="h2">Faire mon check</h2>'+
+      '<p class="sub">Un rappel préventif en quelques secondes. Ce check <b>ne remplace pas un avis médical</b> et n’autorise pas à s’entraîner.</p>'+
+      '<div class="chk-list">'+
+        CHECK_ITEMS.map(function(it,i){return '<button class="chk" data-i="'+i+'" aria-pressed="false"><span class="box">'+ICheck+'</span><span class="chk-tx"><span class="lbl">'+esc(it.t)+'</span><span class="chk-d">'+esc(it.d)+'</span></span></button>';}).join('')+
+      '</div>'+
+      '<div class="chk-warn">Un doute sur votre santé&nbsp;? Ne vous entraînez pas.</div>'+
+      '<div class="chk-count" id="chkCount">0 / '+CHECK_ITEMS.length+' vérifié</div>'+
+      '<div class="chk-done" id="chkDone" hidden>Check terminé. Restez attentif à tout changement.</div>'+
+      '<div class="note"><p>Aucune réponse n’est envoyée au club ni enregistrée. Vos réponses sont effacées dès que vous quittez cet écran.</p></div>';
+    wireBack();
+    var countEl=document.getElementById('chkCount'), doneEl=document.getElementById('chkDone');
+    function refresh(){
       var n=done.filter(function(x){return x;}).length;
-      view.innerHTML=
-        backBtn()+
-        '<h2 class="h2">Faire mon check</h2>'+
-        '<p class="sub">Un rappel préventif en quelques secondes. Ce check <b>ne remplace pas un avis médical</b> et n’autorise pas à s’entraîner.</p>'+
-        '<div class="chk-list">'+
-          CHECK_ITEMS.map(function(it,i){return '<button class="chk'+(done[i]?' on':'')+'" data-i="'+i+'"><span class="box">'+ICheck+'</span><span class="chk-tx"><span class="lbl">'+esc(it.t)+'</span><span class="chk-d">'+esc(it.d)+'</span></span></button>';}).join('')+
-        '</div>'+
-        '<div class="chk-warn">Un doute sur votre santé&nbsp;? Ne vous entraînez pas.</div>'+
-        '<div class="chk-count">'+n+' / '+CHECK_ITEMS.length+' vérifié'+(n>1?'s':'')+'</div>'+
-        (all?'<div class="chk-done">Check terminé. Restez attentif à tout changement.</div>':'')+
-        '<div class="note"><p>Aucune réponse n’est envoyée au club ni enregistrée. Vos réponses sont effacées dès que vous quittez cet écran.</p></div>';
-      wireBack();
-      view.querySelectorAll('.chk').forEach(function(b){
-        b.onclick=function(){ var i=+b.getAttribute('data-i'); done[i]=!done[i]; render(); };
-      });
+      countEl.textContent = n+' / '+CHECK_ITEMS.length+' vérifié'+(n>1?'s':'');
+      doneEl.hidden = (n!==CHECK_ITEMS.length);
     }
-    render();
+    view.querySelectorAll('.chk').forEach(function(b){
+      b.onclick=function(){
+        var i=+b.getAttribute('data-i');
+        done[i]=!done[i];
+        b.classList.toggle('on', done[i]);
+        b.setAttribute('aria-pressed', done[i]?'true':'false');
+        refresh();
+      };
+    });
   }
 
   /* ================= MES RETOURS (suivi anonyme) ================= */
