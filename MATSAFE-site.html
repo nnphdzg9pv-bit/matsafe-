@@ -1864,6 +1864,12 @@ footer{
 
 /* ── LE LABEL : bandeau « L'hygiène dans l'actualité » (sélection presse) ── */
 .label-news{overflow:visible}
+/* Accroche « Articles & actualités » : même typo que la section (Helvetica), un cran plus grande. */
+.ln-eyebrow{
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-weight:700;font-size:.95rem;letter-spacing:.14em;
+}
+.ln-eyebrow::before{width:30px}
 .ln-rail{
   display:flex;gap:1.4rem;overflow-x:auto;scroll-snap-type:x proximity;
   padding:.5rem 2px 1.6rem;margin:0 -2px;
@@ -3158,8 +3164,7 @@ p, li, blockquote, .lead, .rich, .prose, dd{font-family:'Manrope','Barlow',syste
 
 <section class="ed-section label-news">
   <div class="ed-header"><div>
-    <div class="eyebrow reveal">Articles &amp; actualités</div>
-    <h2 class="ed-giant ed-giant--md reveal">L’hygiène dans <em>l’actualité</em></h2>
+    <div class="eyebrow reveal ln-eyebrow">Articles &amp; actualités</div>
   </div></div>
   <div class="ln-rail reveal">
 
