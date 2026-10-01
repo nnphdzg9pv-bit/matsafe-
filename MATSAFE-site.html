@@ -2886,19 +2886,33 @@ a.svcl-row{color:var(--black)}
   #nav .nav-right{justify-self:end;display:flex}
 }
 </style>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400..900;1,700..900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,600..900;1,700..900&family=Inter:wght@400..700&display=swap" rel="stylesheet">
 <style id="body-font">
-/* ═══ TYPOGRAPHIE GLOBALE — Archivo (grotesque variable, alternative libre à Base Neue) ═══
-   Base Neue étant une police commerciale (Lineto) non licenciée dans le projet, on ne
-   télécharge ni n'intègre aucune copie non licenciée : on utilise Archivo (SIL OFL, libre
-   d'usage commercial), grotesque industriel aux axes de graisse (jusqu'au Black 900) et
-   d'italique. Il restitue au mieux le rendu « Base Neue Black Italic » visé sur les grands
-   titres : capitales noires, italiques, très resserrées, interligne court, bloc compact et
-   éditorial façon « LA / PETITE / BOISSON ». Corps de texte conservé lisible (régulier).
-   Chargement optimisé : deux fichiers variables (romain 400–900, italique 700–900). */
-:root{--font:"Archivo","Helvetica Neue","Arial Narrow",Arial,system-ui,sans-serif}
-*,*::before,*::after{font-family:var(--font) !important}
-body{font-weight:400;letter-spacing:0}
+/* ═══ TYPOGRAPHIE — deux familles, deux rôles ═══
+   • CORPS / SOUS-TEXTES : Inter (SIL OFL, libre) — grotesque neutre, très lisible,
+     proche du rendu demandé (réf. UVU). Appliqué par défaut à tout le texte courant :
+     paragraphes, descriptions, sous-titres de cartes, réponses FAQ, listes, formulaires…
+   • TITRES / TITRES DE SECTION / QUESTIONS / LABELS DE MARQUE : Archivo Black Italic
+     (alternative libre à Base Neue, commerciale non licenciée) — conservé tel quel sur
+     les grands titres, titres de section, questions FAQ, CTA et libellés d'identité.
+   Chargement optimisé : Inter (variable 400–700) + Archivo (variable romain 600–900,
+   italique 700–900). */
+:root{
+  --font-body:"Inter","Helvetica Neue",Arial,system-ui,sans-serif;
+  --font-title:"Archivo","Helvetica Neue","Arial Narrow",Arial,system-ui,sans-serif;
+}
+/* Par défaut : corps de texte / sous-textes en Inter. */
+*,*::before,*::after{font-family:var(--font-body) !important}
+body{font-weight:400;letter-spacing:-.005em}
+
+/* ——— Éléments d'identité conservés en Archivo (titres, titres de section, questions, labels, CTA) ——— */
+h1,h2,h3,h4,h1 *,h2 *,h3 *,h4 *,
+.hero-title,.svcx-title,.label-lead,.label-finale-title,
+.modal-nm,.modal-lvl,.pm-head,
+.faq-item summary,
+.eyebrow,.ln-eyebrow,.ln-badge,.svcx-action,.svcx-num,
+.nav-links a,.nav-cta,.cta,.btn-white,.btn-ghost,.btn-hero,.hero-scroll,
+.ln-read,.ln-ext,.ln-media{font-family:var(--font-title) !important}
 
 /* ——— GRANDS TITRES : Black italique, capitales très serrées, interligne court (bloc compact) ——— */
 .hero-title,.ed-giant,.ed-giant em,.label-lead,.label-finale-title{
