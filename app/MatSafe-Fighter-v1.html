@@ -24,7 +24,7 @@
     -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; overflow-x:hidden}
   img{max-width:100%}
   [hidden]{display:none!important}
-  .app{position:relative; display:flex; flex-direction:column; min-height:100dvh; max-width:520px; margin:0 auto;
+  .app{position:relative; display:flex; flex-direction:column; min-height:100dvh; max-width:960px; margin:0 auto;
     background:var(--cream); border-left:1px solid var(--border); border-right:1px solid var(--border); overflow:hidden}
 
   /* --- Topbar --- */
@@ -249,6 +249,18 @@
 .fcard-ic svg{width:24px;height:24px;display:block}
 .fcard-t{margin-top:auto;padding-top:14px;font-family:var(--sans);font-weight:700;letter-spacing:-.01em;font-size:15.5px;line-height:1.14;color:var(--ink)}
 .fcard-badge{display:inline-grid;place-items:center;vertical-align:middle;margin-left:7px;min-width:20px;height:20px;border-radius:50%;border:1.5px solid var(--brand);color:var(--brand);font-family:var(--cond);font-weight:800;font-size:11px;padding:0 4px;transform:translateY(-2px)}
+/* App élargie : les écrans de contenu gardent une colonne lisible centrée ; l'accueil (hub) utilise toute la largeur. */
+main:not(:has(.fhome)){max-width:660px;margin-left:auto;margin-right:auto;width:100%}
+/* Accueil large : CTA central encadré par de vraies colonnes gauche/droite. */
+@media(min-width:780px){
+  .fgrid{grid-template-columns:minmax(200px,1fr) minmax(0,1.6fr) minmax(200px,1fr);grid-template-rows:auto auto;gap:16px;align-content:center;align-items:stretch}
+  .fhero{grid-column:2;grid-row:1 / span 2;justify-content:center}
+  #a-check  {grid-column:1;grid-row:1}
+  #a-lesion {grid-column:1;grid-row:2}
+  #a-returns{grid-column:3;grid-row:1}
+  #a-care   {grid-column:3;grid-row:2}
+  .fcard{min-height:154px}
+}
 .chk-warn{font-family:var(--cond);text-transform:uppercase;letter-spacing:.03em;font-weight:800;font-size:13px;color:var(--brand);background:rgba(208,64,44,.07);border:1px solid rgba(208,64,44,.2);border-radius:6px;padding:12px 14px;margin:2px 0 14px;text-align:center}
 
 /* ===== Sections génériques (compagnon de prévention) ===== */
