@@ -365,11 +365,10 @@ body.fdark{background:#0C0D10}
 .care-item[open]>summary::after{content:"\2013"}
 .care-b{padding:0 16px 15px;font-size:13.5px;line-height:1.55;color:var(--gray)}
 /* La routine MatSafe (texte éditorial dans Conseils d'hygiène) */
-.routine{margin:2px 0 26px}
-.routine-h{font-family:var(--cond);text-transform:uppercase;letter-spacing:.01em;font-weight:800;font-size:21px;line-height:1.05;margin:0 0 12px;color:var(--ink)}
-.routine-h--sub{margin:28px 0 12px;padding-top:16px;border-top:1px solid var(--hair)}
-.routine p{font-size:15px;line-height:1.6;color:var(--ink);margin:0 0 14px}
-.routine-key{font-weight:700;font-size:15.5px;line-height:1.5;color:var(--ink);background:var(--paper);border:1px solid var(--border);border-left:4px solid var(--brand);border-radius:6px;padding:15px 17px;margin:18px 0 0}
+.routine{margin:6px 0 20px}
+.routine-h{font-family:var(--cond);text-transform:uppercase;letter-spacing:.005em;font-weight:800;font-size:clamp(26px,7vw,32px);line-height:1.02;margin:4px 0 16px;color:var(--ink)}
+.routine p{font-size:clamp(17px,4.6vw,19px);line-height:1.6;color:var(--ink);margin:0 0 18px}
+.routine-key{font-weight:800;font-size:clamp(19px,5vw,22px);line-height:1.45;color:var(--ink);background:var(--paper);border:1px solid var(--border);border-left:5px solid var(--brand);border-radius:6px;padding:20px 22px;margin:22px 0 0}
 
 /* Avertissement photo */
 .warn-note{font-size:12.5px;line-height:1.5;color:var(--warn);background:var(--warn-bg);border:1px solid #E4D3AE;border-radius:6px;padding:10px 12px;margin:0 0 10px}
@@ -1030,9 +1029,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         '<p>Nettoyez vos gants, protections, protège-dents, gourde et sac, puis laissez tout sécher dans un endroit ventilé. Rien d’humide ne doit rester enfermé et les objets en contact avec la peau ne doivent pas être partagés.</p>'+
         '<p>Enfin, soyez attentif aux plaques, rougeurs, boutons, croûtes, démangeaisons ou écoulements. En cas de doute ou de plaie ouverte, interrompez les contacts et demandez un avis médical.</p>'+
         '<p class="routine-key">Propre avant. Douche après. Une séance, un lavage. Rien d’humide dans le sac. Un doute, pas de tatami.</p>'+
-      '</section>'+
-      '<h3 class="routine-h routine-h--sub">Fiches pratiques</h3>'+
-      '<div class="care">'+ CARE_FICHES.map(function(f){return '<details class="care-item"><summary>'+esc(f.t)+'</summary><div class="care-b">'+esc(f.b)+'</div></details>';}).join('') +'</div>';
+      '</section>';
     wireBack();
   }
 
