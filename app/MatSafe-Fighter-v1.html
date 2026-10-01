@@ -364,6 +364,12 @@ body.fdark{background:#0C0D10}
 .care-item>summary::after{content:"+";font-size:20px;line-height:1;color:var(--gray)}
 .care-item[open]>summary::after{content:"\2013"}
 .care-b{padding:0 16px 15px;font-size:13.5px;line-height:1.55;color:var(--gray)}
+/* La routine MatSafe (texte éditorial dans Conseils d'hygiène) */
+.routine{margin:2px 0 26px}
+.routine-h{font-family:var(--cond);text-transform:uppercase;letter-spacing:.01em;font-weight:800;font-size:21px;line-height:1.05;margin:0 0 12px;color:var(--ink)}
+.routine-h--sub{margin:28px 0 12px;padding-top:16px;border-top:1px solid var(--hair)}
+.routine p{font-size:15px;line-height:1.6;color:var(--ink);margin:0 0 14px}
+.routine-key{font-weight:700;font-size:15.5px;line-height:1.5;color:var(--ink);background:var(--paper);border:1px solid var(--border);border-left:4px solid var(--brand);border-radius:6px;padding:15px 17px;margin:18px 0 0}
 
 /* Avertissement photo */
 .warn-note{font-size:12.5px;line-height:1.5;color:var(--warn);background:var(--warn-bg);border:1px solid #E4D3AE;border-radius:6px;padding:10px 12px;margin:0 0 10px}
@@ -1016,6 +1022,16 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       backBtn()+
       '<h2 class="h2">Conseils d’hygiène</h2>'+
       '<p class="sub">Entretenir son équipement, c’est protéger sa peau et celle des autres. Quelques gestes simples.</p>'+
+      '<section class="routine">'+
+        '<h3 class="routine-h">La routine MatSafe</h3>'+
+        '<p>Avant de monter sur le tatami, arrivez propre, avec une tenue lavée et parfaitement sèche. Vérifiez votre peau, gardez vos ongles courts, retirez vos bijoux et portez des claquettes en dehors de la zone d’entraînement.</p>'+
+        '<p>Après chaque séance, douchez-vous rapidement avec un savon doux, utilisez une serviette personnelle et enfilez des vêtements propres.</p>'+
+        '<p>Lavez systématiquement votre gi, rashguard, short, bandes et serviette en respectant leur étiquette — généralement 30 °C pour les textiles techniques et 40 °C pour le coton. Un désinfectant du linge peut compléter la lessive à basse température.</p>'+
+        '<p>Nettoyez vos gants, protections, protège-dents, gourde et sac, puis laissez tout sécher dans un endroit ventilé. Rien d’humide ne doit rester enfermé et les objets en contact avec la peau ne doivent pas être partagés.</p>'+
+        '<p>Enfin, soyez attentif aux plaques, rougeurs, boutons, croûtes, démangeaisons ou écoulements. En cas de doute ou de plaie ouverte, interrompez les contacts et demandez un avis médical.</p>'+
+        '<p class="routine-key">Propre avant. Douche après. Une séance, un lavage. Rien d’humide dans le sac. Un doute, pas de tatami.</p>'+
+      '</section>'+
+      '<h3 class="routine-h routine-h--sub">Fiches pratiques</h3>'+
       '<div class="care">'+ CARE_FICHES.map(function(f){return '<details class="care-item"><summary>'+esc(f.t)+'</summary><div class="care-b">'+esc(f.b)+'</div></details>';}).join('') +'</div>';
     wireBack();
   }
