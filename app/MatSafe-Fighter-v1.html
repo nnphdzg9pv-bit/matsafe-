@@ -382,6 +382,16 @@ body.fdark{background:#0C0D10}
 @media(hover:hover){.contact-send:hover{gap:16px;background:#000}}
 .contact-send:disabled{opacity:.38;cursor:not-allowed}
 .contact-note{margin-top:14px;font-family:var(--cond);text-transform:uppercase;letter-spacing:.06em;font-size:11px;font-weight:700;color:var(--faint)}
+/* Check-list « poster » — démonstration non interactive (noir sur crème) */
+.ckl{max-width:600px;margin:0 auto;color:var(--ink)}
+.ckl-head,.ckl-foot{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-family:var(--sans);text-transform:uppercase;letter-spacing:.11em;font-size:11px;font-weight:700;color:var(--ink)}
+.ckl-head{border-top:2px solid var(--ink);padding-top:12px}
+.ckl-foot{border-top:1px solid var(--ink);padding-top:12px;margin-top:clamp(28px,8vw,46px)}
+.ckl-title{text-align:center;font-family:var(--sans);font-weight:800;text-transform:uppercase;letter-spacing:-.005em;font-size:clamp(32px,8vw,48px);line-height:1.02;margin:clamp(42px,12vw,70px) 0}
+.ckl-rows{border-top:1px solid var(--ink)}
+.ckl-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 1px;border-bottom:1px solid var(--ink)}
+.ckl-lbl{font-family:var(--sans);text-transform:uppercase;letter-spacing:.03em;font-weight:600;font-size:clamp(13.5px,3.7vw,16px);line-height:1.1}
+.ckl-box{flex:none;width:22px;height:22px;border:1.6px solid var(--ink);border-radius:3px}
 
 /* Avertissement photo */
 .warn-note{font-size:12.5px;line-height:1.5;color:var(--warn);background:var(--warn-bg);border:1px solid #E4D3AE;border-radius:6px;padding:10px 12px;margin:0 0 10px}
@@ -942,36 +952,29 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
      stockée, ni utilisée pour un profil. L'état vit en mémoire et disparaît
      dès qu'on quitte l'écran (aucune écriture localStorage ici). */
   function screenCheck(){
-    var done=CHECK_ITEMS.map(function(){return false;});   // état volatile (réinitialisé à chaque venue)
-    // Rendu UNE seule fois : cocher/décocher bascule juste la case concernée,
-    // sans reconstruire l'écran à chaque tap (pas de re-validation / flash).
+    // Check-list « poster » éditoriale — DÉMONSTRATION uniquement : cases vides, non cochables.
+    var club = CTX.club || 'MatSafe';
+    var items=[
+      '01. J’arrive propre',
+      '02. Ma tenue est propre et sèche',
+      '03. J’ai mes claquettes',
+      '04. Mes ongles sont courts et propres',
+      '05. J’ai vérifié ma peau',
+      '06. Mon matériel est propre et sec'
+    ];
     view.innerHTML=
       backBtn()+
-      '<h2 class="h2">Faire mon check</h2>'+
-      '<p class="sub">Un rappel préventif en quelques secondes. Ce check <b>ne remplace pas un avis médical</b> et n’autorise pas à s’entraîner.</p>'+
-      '<div class="chk-list">'+
-        CHECK_ITEMS.map(function(it,i){return '<button class="chk" data-i="'+i+'" aria-pressed="false"><span class="box">'+ICheck+'</span><span class="chk-tx"><span class="lbl">'+esc(it.t)+'</span></span></button>';}).join('')+
-      '</div>'+
-      '<div class="chk-warn">Un doute sur votre santé&nbsp;? Ne vous entraînez pas.</div>'+
-      '<div class="chk-count" id="chkCount">0 / '+CHECK_ITEMS.length+' vérifié</div>'+
-      '<div class="chk-done" id="chkDone" hidden>Check terminé. Restez attentif à tout changement.</div>'+
-      '<div class="note"><p>Aucune réponse n’est envoyée au club ni enregistrée. Vos réponses sont effacées dès que vous quittez cet écran.</p></div>';
+      '<section class="ckl">'+
+        '<div class="ckl-head"><span>Routine MatSafe</span><span>'+esc(club)+'</span></div>'+
+        '<h2 class="ckl-title">Check-list<br>avant le tatami</h2>'+
+        '<div class="ckl-rows">'+
+          items.map(function(t){
+            return '<div class="ckl-row"><span class="ckl-lbl">'+esc(t)+'</span><span class="ckl-box" aria-hidden="true"></span></div>';
+          }).join('')+
+        '</div>'+
+        '<div class="ckl-foot"><span>Routine MatSafe</span><span>'+esc(club)+'</span></div>'+
+      '</section>';
     wireBack();
-    var countEl=document.getElementById('chkCount'), doneEl=document.getElementById('chkDone');
-    function refresh(){
-      var n=done.filter(function(x){return x;}).length;
-      countEl.textContent = n+' / '+CHECK_ITEMS.length+' vérifié'+(n>1?'s':'');
-      doneEl.hidden = (n!==CHECK_ITEMS.length);
-    }
-    view.querySelectorAll('.chk').forEach(function(b){
-      b.onclick=function(){
-        var i=+b.getAttribute('data-i');
-        done[i]=!done[i];
-        b.classList.toggle('on', done[i]);
-        b.setAttribute('aria-pressed', done[i]?'true':'false');
-        refresh();
-      };
-    });
   }
 
   /* ================= MES RETOURS (suivi anonyme) ================= */
