@@ -369,6 +369,7 @@ body.fdark{background:#0C0D10}
 .routine-h{font-family:var(--cond);text-transform:uppercase;letter-spacing:.005em;font-weight:800;font-size:clamp(26px,7vw,32px);line-height:1.02;margin:4px 0 16px;color:var(--ink)}
 .routine p{font-size:clamp(17px,4.6vw,19px);line-height:1.6;color:var(--ink);margin:0 0 18px}
 .routine-key{font-weight:800;font-size:clamp(19px,5vw,22px);line-height:1.45;color:var(--ink);background:var(--paper);border:1px solid var(--border);border-left:5px solid var(--brand);border-radius:6px;padding:20px 22px;margin:22px 0 0}
+.soon{margin-top:48px;text-align:center;font-family:var(--cond);text-transform:uppercase;letter-spacing:.06em;font-size:13px;font-weight:700;color:var(--faint)}
 
 /* Avertissement photo */
 .warn-note{font-size:12.5px;line-height:1.5;color:var(--warn);background:var(--warn-bg);border:1px solid #E4D3AE;border-radius:6px;padding:10px 12px;margin:0 0 10px}
@@ -1002,17 +1003,11 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
   /* ================= FAIRE UN RETOUR (choix avis / signalement) ================= */
   function screenFeedback(){
+    // Section vidée : nouveau design « Donner mon avis » à venir (fourni par l'utilisateur).
     view.innerHTML=
       backBtn()+
-      '<h2 class="h2">Faire un retour</h2>'+
-      '<p class="sub">Votre retour est anonyme et aide le club à s’améliorer. Que souhaitez-vous faire&nbsp;?</p>'+
-      '<div class="actions">'+
-        '<button class="action primary" id="f-avis"><span class="ico">'+IChat+'</span><span class="txt"><span class="t">Donner mon avis sur l’hygiène</span><span class="d">Votre ressenti sur la propreté du jour</span></span><span class="arr">'+IArr+'</span></button>'+
-        '<button class="action" id="f-signal"><span class="ico">'+IFlag+'</span><span class="txt"><span class="t">Signaler un problème précis</span><span class="d">Un point à améliorer ? Dites-le au club</span></span><span class="arr">'+IArr+'</span></button>'+
-      '</div>';
+      '<div class="soon">Nouvelle section « Donner mon avis » en préparation.</div>';
     wireBack();
-    document.getElementById('f-avis').onclick=screenAvis;
-    document.getElementById('f-signal').onclick=screenSignal;
   }
 
   /* ================= CONSEILS D'HYGIÈNE (entretien de l'équipement) ================= */
