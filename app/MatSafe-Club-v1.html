@@ -492,6 +492,42 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .msgpub-live{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.06em;font-size:10.5px;font-weight:700;color:var(--ink2);margin-bottom:10px}
 .msgpub-live .d{width:7px;height:7px;border-radius:50%;background:var(--brand)}
 .gm-current h4{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.01em;font-weight:800;font-size:16px;margin:0 0 6px}
+
+/* ===== La vie du club (admin) — publier / gérer les infos officielles ===== */
+.vdc-admin{max-width:620px}
+.vdca-head{margin-bottom:22px}
+.vdca-kick{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.14em;font-size:10.5px;color:var(--brand);font-weight:700}
+.vdca-cats{display:flex;flex-wrap:wrap;gap:8px}
+.vdca-cat{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-weight:700;font-size:12px;color:var(--ink2);background:transparent;border:1.5px solid var(--line2);border-radius:999px;padding:9px 16px;cursor:pointer;transition:.15s}
+.vdca-cat:hover{border-color:var(--ink)}
+.vdca-cat.on{color:#fff;background:var(--ink);border-color:var(--ink)}
+.vdca-hint{font-size:12px;color:var(--muted);margin:7px 0 0}
+.vdca-toggle{display:inline-flex;align-items:center;gap:11px;font-size:14px;font-weight:600;color:var(--ink);cursor:pointer;user-select:none}
+.vdca-toggle input{position:absolute;opacity:0;width:0;height:0}
+.vdca-sw{position:relative;width:44px;height:25px;border-radius:999px;background:var(--line2);transition:background .18s;flex:none}
+.vdca-sw::after{content:"";position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:#fff;transition:transform .18s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.vdca-toggle input:checked+.vdca-sw{background:var(--brand)}
+.vdca-toggle input:checked+.vdca-sw::after{transform:translateX(19px)}
+.vdca-listwrap{border-top:1px solid var(--line);margin-top:30px;padding-top:22px}
+.vdca-listh{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.02em;font-weight:800;font-size:15px;margin:0 0 6px;color:var(--ink)}
+.vdca-empty{color:var(--muted);font-size:14px;padding:16px 0}
+.vdca-item{border-top:1px solid var(--line);padding:18px 0}
+.vdca-it-top{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:7px}
+.vdca-it-cat{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.08em;font-size:10.5px;font-weight:800;color:var(--ink)}
+.vdca-it-cat.acc{color:var(--brand)}
+.vdca-tag{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-size:9.5px;font-weight:800;border-radius:999px;padding:2px 8px}
+.vdca-tag.pin{color:var(--brand);border:1px solid var(--brand)}
+.vdca-tag.off{color:var(--muted);border:1px solid var(--line2)}
+.vdca-tag.exp{color:#9C403C;border:1px solid #d8b3b0}
+.vdca-it-date{margin-left:auto;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.04em;font-size:10.5px;font-weight:700;color:var(--muted);white-space:nowrap}
+.vdca-it-t{font-family:var(--font-body);font-weight:700;letter-spacing:-.01em;font-size:17px;line-height:1.2;margin:0;color:var(--ink)}
+.vdca-it-c{font-size:14px;line-height:1.5;color:var(--ink2);margin:6px 0 0}
+.vdca-it-auth{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-size:10.5px;font-weight:700;color:var(--muted);margin-top:9px}
+.vdca-it-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.vdca-act{font-family:var(--font-body);font-weight:600;font-size:12.5px;color:var(--ink);background:transparent;border:1px solid var(--line2);border-radius:999px;padding:7px 14px;cursor:pointer;transition:.15s}
+.vdca-act:hover{border-color:var(--ink)}
+.vdca-act.danger{color:#9C403C}
+.vdca-act.danger:hover{border-color:#9C403C}
 .gm-current h4[hidden]{display:none}
 .gm-current p{font-size:15px;line-height:1.5;color:var(--ink);white-space:pre-wrap;margin:0}
 .msgpub-meta{font-size:12px;color:var(--muted);margin-top:10px}
@@ -565,6 +601,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <a data-screen="planning"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Planning</a>
       <a data-screen="signalements"><svg class="ic" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg>Signaler une anomalie<span class="badge">2</span></a>
       <a data-screen="retours"><svg class="ic" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V6a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/><path d="M8 10h8M8 13h5"/></svg>Retours adhérents</a>
+      <a data-screen="vieduclub"><svg class="ic" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>La vie du club</a>
       <a data-screen="serie"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3c.5 3.6 4 4.9 4 8.6a4.2 4.2 0 0 1-8.4 0c0-1.9 1-3.1 1-3.1.3 1.7 1.9 1.8 1.9.1C10.5 6.7 11 5 12 3Z"/></svg>Série de nettoyage</a>
       <a data-screen="preuves"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Historique</a>
     </nav>
@@ -777,6 +814,44 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
             <div><h3>Votre QR code d'avis</h3><p>Les adhérents peuvent scanner ce QR code pour donner leur avis sur la propreté du club.</p></div>
           </div>
         </div>
+    </section>
+
+    <!-- LA VIE DU CLUB -->
+    <section class="screen" data-screen="vieduclub">
+      <div class="vdc-admin">
+        <header class="vdca-head">
+          <div class="vdca-kick">La vie du club</div>
+          <h1 class="gm-title">Publier une information</h1>
+          <p class="gm-note">Le fil d'information officiel de votre club : hygiène, fonctionnement, urgences. Ce n'est pas un réseau social — ni like, ni commentaire.</p>
+        </header>
+        <form class="gm-form" id="vdcaForm" onsubmit="return false">
+          <div class="gm-field"><label>Catégorie</label>
+            <div class="vdca-cats" id="vdcaCats">
+              <button type="button" class="vdca-cat on" data-cat="hygiene">Hygiène</button>
+              <button type="button" class="vdca-cat" data-cat="club">Club</button>
+              <button type="button" class="vdca-cat" data-cat="important">Important</button>
+            </div>
+          </div>
+          <div class="gm-field"><label>Titre</label>
+            <input class="gm-inp" id="vdcaTitle" maxlength="120" placeholder="Ex. : Les tapis doivent être désinfectés après chaque séance"></div>
+          <div class="gm-field"><label>Message <span class="opt">— court</span></label>
+            <textarea class="gm-inp gm-ta" id="vdcaBody" maxlength="400" placeholder="Une ou deux phrases suffisent."></textarea></div>
+          <div class="gm-field"><label>Expiration <span class="opt">— facultatif</span></label>
+            <input type="date" class="gm-inp" id="vdcaExp">
+            <p class="vdca-hint">La publication disparaît automatiquement après cette date. Laissez vide pour un rappel permanent.</p></div>
+          <div class="gm-field">
+            <label class="vdca-toggle"><input type="checkbox" id="vdcaPin"><span class="vdca-sw"></span>Épingler cette publication</label>
+          </div>
+          <div class="msgpub-actions">
+            <button class="gm-submit" id="vdcaPublish">Publier</button>
+            <button class="gm-ghost" id="vdcaCancel" hidden>Annuler</button>
+          </div>
+        </form>
+        <div class="vdca-listwrap">
+          <h3 class="vdca-listh">Publications</h3>
+          <div id="vdcaList"></div>
+        </div>
+      </div>
     </section>
 
     <!-- HISTORIQUE -->
@@ -1209,6 +1284,85 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(window.confirm('Retirer le message des adhérents ? Il ne sera plus visible sur MATSAFE Fighter.')){
       set(null); $('msgpubTitle').value=''; $('msgpubBody').value=''; render(); flash('Message retiré.');
     }
+  });
+  render();
+})();
+</script>
+<script>
+/* LA VIE DU CLUB — publication des infos officielles du club.
+   Écrit matsafe_club_posts (même origine), lu par MATSAFE Fighter. */
+(function(){
+  var K='matsafe_club_posts';
+  if(!document.getElementById('vdcaPublish')) return;
+  function $(id){return document.getElementById(id);}
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function flash(m){var t=$('toast');if(!t)return;t.textContent=m;t.classList.add('on');clearTimeout(flash._t);flash._t=setTimeout(function(){t.classList.remove('on');},1800);}
+  function load(){try{var r=localStorage.getItem(K);var a=r?JSON.parse(r):[];return Array.isArray(a)?a:[];}catch(e){return [];}}
+  function save(a){try{localStorage.setItem(K,JSON.stringify(a));}catch(e){}}
+  function uid(){return 'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+  function author(){
+    var nm=((document.querySelector('.prof h2')||{}).textContent||'Responsable').trim();
+    var rl=(((document.querySelector('.prof .role')||{}).textContent||'').split('·')[0]||'Responsable').trim();
+    return {id:'u-'+nm.toLowerCase().replace(/\s+/g,'-'), name:nm, role:rl};
+  }
+  var CATS={hygiene:'Hygiène',club:'Club',important:'Important'};
+  var editingId=null, cat='hygiene';
+  function setCat(c){ cat=c; Array.prototype.forEach.call(document.querySelectorAll('#vdcaCats .vdca-cat'),function(x){ x.classList.toggle('on', x.getAttribute('data-cat')===c); }); }
+  Array.prototype.forEach.call(document.querySelectorAll('#vdcaCats .vdca-cat'),function(b){ b.addEventListener('click',function(){ setCat(b.getAttribute('data-cat')); }); });
+  function resetForm(){ editingId=null; setCat('hygiene'); $('vdcaTitle').value=''; $('vdcaBody').value=''; $('vdcaExp').value=''; $('vdcaPin').checked=false; $('vdcaPublish').textContent='Publier'; $('vdcaCancel').hidden=true; }
+  function fmtDate(iso){ if(!iso) return ''; try{var d=new Date(iso); return d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});}catch(e){return '';} }
+  function sortPosts(a){ return a.slice().sort(function(x,y){ var px=x.is_pinned?1:0,py=y.is_pinned?1:0; if(px!==py)return py-px; return new Date(y.published_at||y.created_at)-new Date(x.published_at||x.created_at); }); }
+  function render(){
+    var posts=sortPosts(load()), el=$('vdcaList'), now=Date.now();
+    if(!posts.length){ el.innerHTML='<div class="vdca-empty">Aucune publication pour le moment. Créez la première ci-dessus.</div>'; return; }
+    el.innerHTML=posts.map(function(p){
+      var expired=p.expires_at && (function(){var e=new Date(p.expires_at);e.setHours(23,59,59,999);return e.getTime()<now;})();
+      var tags='';
+      if(p.is_pinned) tags+='<span class="vdca-tag pin">Épinglé</span>';
+      if(p.status!=='published') tags+='<span class="vdca-tag off">Dépublié</span>';
+      if(expired) tags+='<span class="vdca-tag exp">Expiré</span>';
+      return '<article class="vdca-item" data-id="'+esc(p.id)+'">'+
+        '<div class="vdca-it-top"><span class="vdca-it-cat'+(p.category==='club'?'':' acc')+'">'+esc(CATS[p.category]||p.category)+'</span>'+tags+
+          '<span class="vdca-it-date">'+esc(fmtDate(p.published_at||p.created_at))+(p.expires_at?' → '+esc(fmtDate(p.expires_at)):'')+'</span></div>'+
+        '<h4 class="vdca-it-t">'+esc(p.title)+'</h4>'+
+        (p.content?'<p class="vdca-it-c">'+esc(p.content)+'</p>':'')+
+        '<div class="vdca-it-auth">'+esc(p.author_name||'')+' · '+esc(p.author_role||'')+'</div>'+
+        '<div class="vdca-it-acts">'+
+          '<button class="vdca-act" data-act="edit">Modifier</button>'+
+          '<button class="vdca-act" data-act="pin">'+(p.is_pinned?'Désépingler':'Épingler')+'</button>'+
+          '<button class="vdca-act" data-act="toggle">'+(p.status==='published'?'Dépublier':'Publier')+'</button>'+
+          '<button class="vdca-act danger" data-act="del">Supprimer</button>'+
+        '</div>'+
+      '</article>';
+    }).join('');
+  }
+  $('vdcaPublish').addEventListener('click',function(){
+    var title=($('vdcaTitle').value||'').trim(), body=($('vdcaBody').value||'').trim();
+    if(!title){ flash('Ajoutez un titre avant de publier.'); return; }
+    var exp=$('vdcaExp').value||null, pin=!!$('vdcaPin').checked, posts=load();
+    if(pin){ posts.forEach(function(p){ p.is_pinned=false; }); }           // une seule publication épinglée à la fois
+    if(editingId){
+      var p=posts.filter(function(x){return x.id===editingId;})[0];
+      if(p){ p.category=cat; p.title=title; p.content=body; p.expires_at=exp; p.is_pinned=pin; p.status='published'; }
+      flash('Publication mise à jour.');
+    } else {
+      var a=author(), nowIso=new Date().toISOString();
+      posts.unshift({id:uid(),club_id:'cube',author_id:a.id,author_name:a.name,author_role:a.role,
+        category:cat,title:title,content:body,created_at:nowIso,published_at:nowIso,expires_at:exp,is_pinned:pin,status:'published'});
+      flash('Publié sur MATSAFE Fighter.');
+    }
+    save(posts); resetForm(); render();
+  });
+  $('vdcaCancel').addEventListener('click', resetForm);
+  $('vdcaList').addEventListener('click',function(e){
+    var btn=e.target.closest('.vdca-act'); if(!btn) return;
+    var item=e.target.closest('.vdca-item'), id=item&&item.getAttribute('data-id'); if(!id) return;
+    var act=btn.getAttribute('data-act'), posts=load(), p=posts.filter(function(x){return x.id===id;})[0]; if(!p) return;
+    if(act==='edit'){ editingId=id; setCat(p.category); $('vdcaTitle').value=p.title||''; $('vdcaBody').value=p.content||''; $('vdcaExp').value=p.expires_at||''; $('vdcaPin').checked=!!p.is_pinned; $('vdcaPublish').textContent='Mettre à jour'; $('vdcaCancel').hidden=false; try{document.querySelector('.main').scrollTop=0;}catch(_){ } window.scrollTo(0,0); return; }
+    if(act==='pin'){ var willPin=!p.is_pinned; if(willPin){ posts.forEach(function(x){x.is_pinned=false;}); } p.is_pinned=willPin; flash(willPin?'Publication épinglée.':'Publication désépinglée.'); }
+    else if(act==='toggle'){ p.status=(p.status==='published')?'unpublished':'published'; flash(p.status==='published'?'Republiée.':'Dépubliée (masquée des adhérents).'); }
+    else if(act==='del'){ if(!window.confirm('Supprimer définitivement cette publication ?')) return; posts=posts.filter(function(x){return x.id!==id;}); flash('Publication supprimée.'); }
+    save(posts); render();
   });
   render();
 })();
