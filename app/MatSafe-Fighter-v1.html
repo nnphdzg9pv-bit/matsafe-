@@ -228,6 +228,30 @@
 .fmi-badge{display:inline-grid;place-items:center;vertical-align:middle;margin-left:10px;min-width:24px;height:24px;border-radius:50%;border:1.6px solid var(--brand);color:var(--brand);font-family:var(--cond);font-weight:800;font-size:12px;padding:0 5px;transform:translateY(-3px)}
 @media(hover:hover){.fmi:hover{padding-left:8px}.fmi:hover .fmi-t{color:var(--brand)}}
 .foot-min{margin-top:26px;padding-top:14px;border-top:1px solid var(--hair);font-family:var(--cond);text-transform:uppercase;letter-spacing:.06em;font-size:10.5px;font-weight:700;color:var(--faint);text-align:center}
+
+/* ===== Accueil : CTA central « cœur de l'app » — donner mon avis ===== */
+.fhome{display:flex;flex-direction:column;min-height:calc(100dvh - 128px)}
+.fhero-wrap{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;padding:22px 0 10px}
+.fhero{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;width:100%;cursor:pointer;border:0;border-radius:8px;background:var(--brand);color:#fff;padding:clamp(34px,9vw,48px) 26px clamp(26px,6vw,32px);box-shadow:0 24px 54px -32px rgba(174,46,35,.95);transition:transform .14s ease,box-shadow .14s ease}
+.fhero:active{transform:translateY(1px)}
+@media(hover:hover){.fhero:hover{box-shadow:0 30px 64px -30px rgba(174,46,35,1)}.fhero:hover .fhero-cta{gap:13px}}
+.fhero-k{display:inline-flex;align-items:center;gap:8px;font-family:var(--cond);text-transform:uppercase;letter-spacing:.16em;font-size:11.5px;font-weight:700;color:rgba(255,255,255,.85);margin-bottom:clamp(16px,4vw,22px)}
+.fhero-k .d{width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px rgba(255,255,255,.22)}
+.fhero-t{font-family:var(--sans);font-weight:800;letter-spacing:-.03em;font-size:clamp(42px,13vw,60px);line-height:.94;color:#fff;margin:0}
+.fhero-d{max-width:28ch;margin:clamp(15px,4vw,18px) auto 0;font-size:14.5px;line-height:1.5;color:rgba(255,255,255,.92)}
+.fhero-cta{display:inline-flex;align-items:center;gap:9px;margin-top:clamp(22px,6vw,28px);font-family:var(--cond);text-transform:uppercase;letter-spacing:.1em;font-weight:800;font-size:13px;color:var(--brand);background:#fff;border-radius:999px;padding:12px 22px;transition:gap .14s ease}
+.fhero-cta svg{width:17px;height:17px;display:block}
+.fsec{margin-top:clamp(18px,5vw,26px)}
+.fsec-label{font-family:var(--cond);text-transform:uppercase;letter-spacing:.12em;font-size:11px;font-weight:800;color:var(--faint);margin:0 0 2px}
+.fsrow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;cursor:pointer;background:none;border:0;border-top:1px solid var(--border);padding:14px 2px;color:var(--ink);transition:padding-left .15s,color .15s}
+.fsrow:last-child{border-bottom:1px solid var(--border)}
+.fsrow:active{background:rgba(10,10,10,.03)}
+.fsrow-b{flex:1 1 auto;min-width:0}
+.fsrow-t{display:block;font-family:var(--sans);font-weight:600;letter-spacing:-.012em;font-size:17.5px;line-height:1.1;color:var(--ink)}
+.fsrow-d{display:block;font-size:12px;color:var(--gray);margin-top:3px}
+.fsrow .chev{flex:none;color:var(--faint);display:flex}
+.fsrow-badge{display:inline-grid;place-items:center;vertical-align:middle;margin-left:8px;min-width:22px;height:22px;border-radius:50%;border:1.6px solid var(--brand);color:var(--brand);font-family:var(--cond);font-weight:800;font-size:11px;padding:0 5px;transform:translateY(-1px)}
+@media(hover:hover){.fsrow:hover{padding-left:7px}.fsrow:hover .fsrow-t{color:var(--brand)}.fsrow:hover .chev{color:var(--brand)}}
 .chk-warn{font-family:var(--cond);text-transform:uppercase;letter-spacing:.03em;font-weight:800;font-size:13px;color:var(--brand);background:rgba(208,64,44,.07);border:1px solid rgba(208,64,44,.2);border-radius:6px;padding:12px 14px;margin:2px 0 14px;text-align:center}
 
 /* ===== Sections génériques (compagnon de prévention) ===== */
@@ -644,35 +668,46 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
           (cm.title?'<h3 class="cmsg-t">'+esc(cm.title)+'</h3>':'')+'<p class="cmsg-b">'+esc(cm.body)+'</p></section>'
       : '';
 
-    var retBadge = mine.length ? '<span class="fmi-badge">'+mine.length+'</span>' : '';
+    var retBadge = mine.length ? '<span class="fsrow-badge">'+mine.length+'</span>' : '';
 
-    // Items du menu : [id, n°, titre, sous-texte court, classe accent, badge]
-    var items=[
-      ['a-check',   '01','Faire mon check',        'Les 6 vérifications avant le tatami', ' accent', ''],
-      ['a-lesion',  '02','J’ai un doute sur ma peau','Les signes à surveiller, quoi faire', '', ''],
-      ['a-feedback','03','Faire un retour au club', 'Donner un avis ou signaler',          '', ''],
-      ['a-returns', '04','Suivre mes retours',      'Suivi anonyme par code',              '', retBadge],
-      ['a-care',    '05','Conseils d’hygiène',      'Entretenir son équipement',           '', '']
+    // CŒUR DE L'APP — un CTA central unique : donner son avis / signaler (anonyme).
+    var IArrowR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>';
+    var heroHtml =
+      '<div class="fhero-wrap">'+
+        '<button class="fhero" id="a-feedback">'+
+          '<span class="fhero-k"><span class="d"></span>Votre voix · 100 % anonyme</span>'+
+          '<span class="fhero-t">Donner mon avis</span>'+
+          '<span class="fhero-d">Un avis sur l’hygiène ou un problème à signaler au club — en moins d’une minute, sans compte.</span>'+
+          '<span class="fhero-cta">Commencer '+IArrowR+'</span>'+
+        '</button>'+
+      '</div>';
+
+    // Actions secondaires, nettement sous le CTA central.
+    var sec=[
+      ['a-check',  'Faire mon check',          'Les 6 vérifications avant le tatami', ''],
+      ['a-lesion', 'J’ai un doute sur ma peau','Les signes à surveiller, quoi faire', ''],
+      ['a-returns','Suivre mes retours',       'Suivi anonyme par code',              retBadge],
+      ['a-care',   'Conseils d’hygiène',       'Entretenir son équipement',           '']
     ];
-    var menuHtml =
-      '<div class="fmenu-label">Que voulez-vous faire ?</div>'+
-      '<nav class="fmenu">'+
-        items.map(function(it){
-          return '<button class="fmi'+it[4]+'" id="'+it[0]+'">'+
-            '<span class="fmi-n">'+it[1]+'</span>'+
-            '<span class="fmi-b"><span class="fmi-t">'+esc(it[2])+(it[5]||'')+'</span><span class="fmi-d">'+esc(it[3])+'</span></span>'+
+    var secHtml =
+      '<div class="fsec">'+
+        '<div class="fsec-label">Et aussi</div>'+
+        sec.map(function(it){
+          return '<button class="fsrow" id="'+it[0]+'">'+
+            '<span class="fsrow-b"><span class="fsrow-t">'+esc(it[1])+(it[3]||'')+'</span><span class="fsrow-d">'+esc(it[2])+'</span></span>'+
+            '<span class="chev">'+IArr+'</span>'+
           '</button>';
         }).join('')+
-      '</nav>';
+      '</div>';
 
     view.innerHTML=
-      '<div class="home">'+ headHtml + msgHtml + menuHtml +
+      '<div class="home fhome">'+ headHtml + msgHtml + heroHtml + secHtml +
         '<div class="foot-min">Anonyme · Sans compte · Aucune donnée médicale</div>'+
       '</div>';
 
+    document.getElementById('a-feedback').onclick=screenFeedback;
     document.getElementById('a-check').onclick=screenCheck;
     document.getElementById('a-lesion').onclick=screenLesion;
-    document.getElementById('a-feedback').onclick=screenFeedback;
     document.getElementById('a-returns').onclick=screenReturns;
     document.getElementById('a-care').onclick=screenCare;
   }
