@@ -924,8 +924,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         '<div class="foot-min">Anonyme · Sans compte · Aucune donnée médicale</div>'+
       '</div>';
 
-    // Thème sombre « dashboard » réservé à l'accueil ; on le retire en quittant vers un écran de contenu.
-    document.body.classList.add('fdark');
+    // Accueil en thème clair (crème), cohérent avec le reste de l'app et avec MATSAFE Club.
+    document.body.classList.remove('fdark');
     function leaveHome(fn){ return function(){ document.body.classList.remove('fdark'); fn(); }; }
     document.getElementById('a-feedback').onclick=leaveHome(screenFeedback);
     document.getElementById('a-check').onclick=leaveHome(screenCheck);
