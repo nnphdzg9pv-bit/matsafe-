@@ -261,6 +261,28 @@ main:not(:has(.fhome)){max-width:660px;margin-left:auto;margin-right:auto;width:
   #a-care   {grid-column:3;grid-row:2}
   .fcard{min-height:154px}
 }
+
+/* ===== Variante accueil : thème « dashboard » sombre, cartes arrondies, épuré ===== */
+body.fdark{background:#0C0D10}
+.fdark .app{background:#141519;border-left-color:rgba(255,255,255,.06);border-right-color:rgba(255,255,255,.06)}
+.fdark .app::after{opacity:0}
+.fdark .topbar{background:#141519;border-bottom-color:rgba(255,255,255,.07)}
+.fdark .topbar .whoami{color:#8B8D95}
+.fdark .fmenu-top{border-top:1px solid rgba(255,255,255,.12)}
+.fdark .fmenu-eb{color:#8B8D95}
+.fdark .fmenu-name{color:#F4F3EF}
+.fdark .mini-badge{color:#ECEBE7;background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.12)}
+.fdark .foot-min{color:#696B72;border-top-color:rgba(255,255,255,.07)}
+/* cartes secondaires sombres très arrondies */
+.fdark .fcard{background:#1D1F25;border:1px solid rgba(255,255,255,.07);border-radius:22px;color:#F4F3EF}
+.fdark .fcard-t{color:#F4F3EF}
+.fdark .fcard-ic{color:var(--brand)}
+.fdark .fcard-badge{border-color:var(--brand);color:#fff}
+@media(hover:hover){.fdark .fcard:hover{border-color:rgba(255,255,255,.2);background:#24262D;box-shadow:0 20px 44px -28px rgba(0,0,0,.85)}.fdark .fcard:hover .fcard-t{color:#fff}}
+/* CTA central rouge, arrondi généreux */
+.fdark .fhero{border-radius:26px;box-shadow:0 34px 80px -38px rgba(200,56,48,.7)}
+@media(hover:hover){.fdark .fhero:hover{box-shadow:0 40px 92px -36px rgba(200,56,48,.85)}}
+
 .chk-warn{font-family:var(--cond);text-transform:uppercase;letter-spacing:.03em;font-weight:800;font-size:13px;color:var(--brand);background:rgba(208,64,44,.07);border:1px solid rgba(208,64,44,.2);border-radius:6px;padding:12px 14px;margin:2px 0 14px;text-align:center}
 
 /* ===== Sections génériques (compagnon de prévention) ===== */
@@ -711,11 +733,14 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         '<div class="foot-min">Anonyme · Sans compte · Aucune donnée médicale</div>'+
       '</div>';
 
-    document.getElementById('a-feedback').onclick=screenFeedback;
-    document.getElementById('a-check').onclick=screenCheck;
-    document.getElementById('a-lesion').onclick=screenLesion;
-    document.getElementById('a-returns').onclick=screenReturns;
-    document.getElementById('a-care').onclick=screenCare;
+    // Thème sombre « dashboard » réservé à l'accueil ; on le retire en quittant vers un écran de contenu.
+    document.body.classList.add('fdark');
+    function leaveHome(fn){ return function(){ document.body.classList.remove('fdark'); fn(); }; }
+    document.getElementById('a-feedback').onclick=leaveHome(screenFeedback);
+    document.getElementById('a-check').onclick=leaveHome(screenCheck);
+    document.getElementById('a-lesion').onclick=leaveHome(screenLesion);
+    document.getElementById('a-returns').onclick=leaveHome(screenReturns);
+    document.getElementById('a-care').onclick=leaveHome(screenCare);
   }
   function feelOf(id){var f=FEELINGS.filter(function(x){return x.id===id;})[0];return f?f.t:'';}
   function catOf(id){var c=CATS.filter(function(x){return x.id===id;})[0];return c?c.t:'';}
