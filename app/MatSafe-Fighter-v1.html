@@ -389,9 +389,10 @@ body.fdark{background:#0C0D10}
 .ckl-foot{border-top:1px solid var(--ink);padding-top:12px;margin-top:clamp(28px,8vw,46px)}
 .ckl-title{text-align:center;font-family:var(--sans);font-weight:800;text-transform:uppercase;letter-spacing:-.005em;font-size:clamp(32px,8vw,48px);line-height:1.02;margin:clamp(42px,12vw,70px) 0}
 .ckl-rows{border-top:1px solid var(--ink)}
-.ckl-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 1px;border-bottom:1px solid var(--ink)}
+.ckl-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 1px;border-bottom:1px solid var(--ink);cursor:default}
 .ckl-lbl{font-family:var(--sans);text-transform:uppercase;letter-spacing:.03em;font-weight:600;font-size:clamp(13.5px,3.7vw,16px);line-height:1.1}
-.ckl-box{flex:none;width:22px;height:22px;border:1.6px solid var(--ink);border-radius:3px}
+/* case purement décorative : jamais cliquable / cochable (démonstration) */
+.ckl-box{flex:none;width:22px;height:22px;border:1.6px solid var(--ink);border-radius:3px;pointer-events:none}
 
 /* Avertissement photo */
 .warn-note{font-size:12.5px;line-height:1.5;color:var(--warn);background:var(--warn-bg);border:1px solid #E4D3AE;border-radius:6px;padding:10px 12px;margin:0 0 10px}
