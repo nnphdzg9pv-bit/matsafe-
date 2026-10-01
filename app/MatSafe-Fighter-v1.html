@@ -388,8 +388,9 @@ body.fdark{background:#0C0D10}
 .ckl-head{border-top:2px solid var(--ink);padding-top:12px}
 .ckl-foot{border-top:1px solid var(--ink);padding-top:12px;margin-top:clamp(28px,8vw,46px)}
 .ckl-title{text-align:center;font-family:var(--sans);font-weight:800;text-transform:uppercase;letter-spacing:-.005em;font-size:clamp(32px,8vw,48px);line-height:1.02;margin:clamp(42px,12vw,70px) 0}
-.ckl-rows{border-top:1px solid var(--ink)}
-.ckl-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 1px;border-bottom:1px solid var(--ink);cursor:default}
+.ckl-rows{margin-top:4px}
+.ckl-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 1px;border-bottom:1px solid var(--hair);cursor:default}
+.ckl-row:last-child{border-bottom:0}
 .ckl-lbl{font-family:var(--sans);text-transform:uppercase;letter-spacing:.03em;font-weight:600;font-size:clamp(13.5px,3.7vw,16px);line-height:1.1}
 /* case purement décorative : jamais cliquable / cochable (démonstration) */
 .ckl-box{flex:none;width:22px;height:22px;border:1.6px solid var(--ink);border-radius:3px;pointer-events:none}
@@ -953,8 +954,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
      stockée, ni utilisée pour un profil. L'état vit en mémoire et disparaît
      dès qu'on quitte l'écran (aucune écriture localStorage ici). */
   function screenCheck(){
-    // Check-list « poster » éditoriale — DÉMONSTRATION uniquement : cases vides, non cochables.
-    var club = CTX.club || 'MatSafe';
+    // Check-list « poster » éditoriale — DÉMONSTRATION uniquement (pas d'en-tête, pas de pied, pas de case).
     var items=[
       '01. J’arrive propre',
       '02. Ma tenue est propre et sèche',
@@ -966,14 +966,12 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     view.innerHTML=
       backBtn()+
       '<section class="ckl">'+
-        '<div class="ckl-head"><span>Routine MatSafe</span><span>'+esc(club)+'</span></div>'+
         '<h2 class="ckl-title">Check-list<br>avant le tatami</h2>'+
         '<div class="ckl-rows">'+
           items.map(function(t){
             return '<div class="ckl-row"><span class="ckl-lbl">'+esc(t)+'</span></div>';
           }).join('')+
         '</div>'+
-        '<div class="ckl-foot"><span>Routine MatSafe</span><span>'+esc(club)+'</span></div>'+
       '</section>';
     wireBack();
   }
