@@ -2886,29 +2886,42 @@ a.svcl-row{color:var(--black)}
   #nav .nav-right{justify-self:end;display:flex}
 }
 </style>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400..900;1,700..900&display=swap" rel="stylesheet">
 <style id="body-font">
-/* ═══ TYPOGRAPHIE GLOBALE — Jost (géométrique, proche Futura / LL Supreme) ═══
-   Rendu éditorial/mode : grandes capitales medium à tracking serré, corps régulier. */
-:root{--font:"Jost",system-ui,"Helvetica Neue",Arial,sans-serif}
+/* ═══ TYPOGRAPHIE GLOBALE — Archivo (grotesque variable, alternative libre à Base Neue) ═══
+   Base Neue étant une police commerciale (Lineto) non licenciée dans le projet, on ne
+   télécharge ni n'intègre aucune copie non licenciée : on utilise Archivo (SIL OFL, libre
+   d'usage commercial), grotesque industriel aux axes de graisse (jusqu'au Black 900) et
+   d'italique. Il restitue au mieux le rendu « Base Neue Black Italic » visé sur les grands
+   titres : capitales noires, italiques, très resserrées, interligne court, bloc compact et
+   éditorial façon « LA / PETITE / BOISSON ». Corps de texte conservé lisible (régulier).
+   Chargement optimisé : deux fichiers variables (romain 400–900, italique 700–900). */
+:root{--font:"Archivo","Helvetica Neue","Arial Narrow",Arial,system-ui,sans-serif}
 *,*::before,*::after{font-family:var(--font) !important}
-body{font-weight:400;letter-spacing:.005em}
+body{font-weight:400;letter-spacing:0}
 
-/* Grands titres : grandes capitales géométriques, medium, tracking serré, interligne court. */
-.hero-title,.ed-giant,.label-lead,.label-finale-title{
-  font-weight:500 !important;text-transform:uppercase !important;
-  letter-spacing:-.025em !important;line-height:.92 !important;
+/* ——— GRANDS TITRES : Black italique, capitales très serrées, interligne court (bloc compact) ——— */
+.hero-title,.ed-giant,.ed-giant em,.label-lead,.label-finale-title{
+  font-weight:900 !important;font-style:italic !important;
+  text-transform:uppercase !important;
+  letter-spacing:-.035em !important;line-height:.86 !important;
 }
-/* Titres de cartes service : capitales un cran plus présentes. */
+/* Titres de cartes service : Extra-Bold italique, même logique graphique. */
 .svcx-title{
-  font-weight:600 !important;text-transform:uppercase !important;
-  letter-spacing:-.02em !important;line-height:.98 !important;
+  font-weight:800 !important;font-style:italic !important;
+  text-transform:uppercase !important;
+  letter-spacing:-.03em !important;line-height:.92 !important;
 }
-/* Titres d'articles / questions FAQ : medium, casse conservée pour la lisibilité. */
-.ln-title,.faq-item summary{font-weight:600 !important;letter-spacing:-.01em}
-/* Accroches, labels, boutons, navigation : medium géométrique. */
+/* CTA importants : capitales italiques affirmées. */
+.nav-cta,.btn-hero,.cta{
+  font-weight:800 !important;font-style:italic !important;
+  text-transform:uppercase !important;letter-spacing:-.01em !important;
+}
+/* Titres d'articles / questions FAQ : bold, casse conservée pour la lisibilité. */
+.ln-title,.faq-item summary{font-weight:700 !important;letter-spacing:-.015em}
+/* Accroches, labels, navigation, boutons secondaires : semi-bold grotesque. */
 .eyebrow,.ln-eyebrow,.svcx-action,.ln-badge,.ln-media,.ln-read,.ln-ext,
-.nav-links a,.nav-cta,.cta,.btn-white,.btn-ghost,.btn-hero{font-weight:500}
+.nav-links a,.btn-white,.btn-ghost,.hero-scroll{font-weight:600}
 </style>
 </head>
 
