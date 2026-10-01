@@ -255,6 +255,58 @@
 .md-logo{display:block;width:100%;height:auto}
 .md-cap{font-size:11.5px;line-height:1.35;color:var(--gray)}
 .fdark .md-cap{color:#A2A4AB}
+
+/* ===== Accueil vertical : CTA pleine largeur + actions secondaires + Mes retours ===== */
+.fhome .fhero{width:100%;margin:0 0 12px}
+.fsub{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fsub #a-care{grid-column:1 / -1}
+@media(min-width:780px){ .fsub{grid-template-columns:1fr 1fr 1fr} .fsub #a-care{grid-column:auto} }
+.fretours{display:flex;align-items:center;gap:10px;width:100%;margin-top:16px;background:none;border:0;border-top:1px solid var(--hair);padding:16px 2px 0;color:var(--ink);cursor:pointer}
+.fr-t{font-family:var(--sans);font-weight:600;font-size:15px;letter-spacing:-.01em}
+.fr-n{display:inline-grid;place-items:center;min-width:21px;height:21px;padding:0 6px;border-radius:999px;background:var(--brand);color:#fff;font-family:var(--cond);font-weight:800;font-size:11px}
+.fr-ar{margin-left:auto;display:flex;color:var(--faint)}
+.fr-ar svg{width:16px;height:16px}
+@media(hover:hover){.fretours:hover .fr-t{color:var(--brand)}.fretours:hover .fr-ar{color:var(--brand)}}
+.fdark .fretours{color:#F4F3EF;border-top-color:rgba(255,255,255,.12)}
+.fdark .fr-ar{color:#8B8D95}
+
+/* ===== La vie du club — fil d'info éditorial (sobre, brutaliste léger) ===== */
+.vdc{margin:6px 0 30px}
+.vdc-eb{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:0 0 16px}
+.vdc-k{font-family:var(--sans);font-weight:800;text-transform:uppercase;letter-spacing:-.015em;font-size:clamp(23px,6.4vw,32px);line-height:1;color:var(--ink)}
+.vdc-sub{font-family:var(--cond);text-transform:uppercase;letter-spacing:.08em;font-size:11px;font-weight:700;color:var(--faint)}
+.vdc-feat{border-top:2px solid var(--ink);padding-top:18px}
+.post{padding:18px 0;border-top:1px solid var(--hair)}
+.vdc-feat>.post{border-top:0;padding-top:0}
+.post-top{display:flex;align-items:baseline;gap:11px;margin-bottom:9px}
+.pc{font-family:var(--sans);font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:11px;color:var(--ink)}
+.pc.acc{color:var(--brand)}
+.pc-pin{font-family:var(--cond);text-transform:uppercase;letter-spacing:.07em;font-size:10px;font-weight:800;color:var(--brand);border:1px solid var(--brand);border-radius:999px;padding:2px 8px}
+.post-date{margin-left:auto;font-family:var(--cond);text-transform:uppercase;letter-spacing:.05em;font-size:11px;font-weight:700;color:var(--faint);white-space:nowrap}
+.post-t{font-family:var(--sans);font-weight:700;letter-spacing:-.02em;font-size:clamp(18.5px,4.8vw,22px);line-height:1.14;margin:0;color:var(--ink)}
+.post-big .post-t{font-size:clamp(26px,7vw,36px);line-height:1.04;letter-spacing:-.028em}
+.post-c{font-size:14.5px;line-height:1.55;color:var(--gray);margin:9px 0 0}
+.post-big .post-c{font-size:16px;margin-top:11px}
+.post-auth{display:flex;align-items:baseline;gap:9px;margin-top:13px}
+.pa-name{font-family:var(--sans);font-weight:700;font-size:13px;color:var(--ink)}
+.pa-role{font-family:var(--cond);text-transform:uppercase;letter-spacing:.06em;font-size:10.5px;font-weight:700;color:var(--faint)}
+.vdc-all{display:flex;align-items:center;justify-content:space-between;gap:9px;width:100%;margin-top:4px;background:none;border:0;border-top:1px solid var(--hair);padding:16px 0 0;font-family:var(--cond);text-transform:uppercase;letter-spacing:.08em;font-weight:800;font-size:12.5px;color:var(--ink);cursor:pointer}
+.vdc-all svg{width:17px;height:17px;flex:none}
+@media(hover:hover){.vdc-all:hover{color:var(--brand)}}
+.vdc-empty{font-family:var(--cond);text-transform:uppercase;letter-spacing:.05em;font-size:13px;font-weight:700;color:var(--faint);padding:20px 0;border-top:1px solid var(--hair)}
+.vdc-full .post:first-child{border-top:2px solid var(--ink)}
+.fdark .vdc-k{color:#F4F3EF}
+.fdark .vdc-sub{color:#8B8D95}
+.fdark .vdc-feat{border-top-color:rgba(255,255,255,.7)}
+.fdark .post{border-top-color:rgba(255,255,255,.12)}
+.fdark .pc{color:#F4F3EF}
+.fdark .post-date{color:#8B8D95}
+.fdark .post-t{color:#F4F3EF}
+.fdark .post-c{color:#B8BAC1}
+.fdark .pa-name{color:#F4F3EF}
+.fdark .pa-role{color:#8B8D95}
+.fdark .vdc-all{color:#F4F3EF;border-top-color:rgba(255,255,255,.7)}
+.fdark .vdc-empty{color:#8B8D95;border-top-color:rgba(255,255,255,.12)}
 /* App élargie : les écrans de contenu gardent une colonne lisible centrée ; l'accueil (hub) utilise toute la largeur. */
 main:not(:has(.fhome)){max-width:660px;margin-left:auto;margin-right:auto;width:100%}
 /* Accueil large : CTA central encadré par de vraies colonnes gauche/droite. */
@@ -715,6 +767,92 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   ];
   function getEvents(){ try{ var r=localStorage.getItem('matsafe_club_events'); if(r===null) return DEFAULT_EVENTS.slice(); var a=JSON.parse(r); return Array.isArray(a)?a:[]; }catch(e){ return DEFAULT_EVENTS.slice(); } }
   function getClubMsg(){ try{ var r=localStorage.getItem('matsafe_club_message'); return r?JSON.parse(r):null; }catch(e){ return null; } }
+
+  /* ===== LA VIE DU CLUB — fil d'information officiel (publié côté Club, lu ici) =====
+     Lecture seule côté Fighter : un adhérent ne peut jamais publier. */
+  var POSTS_KEY='matsafe_club_posts';
+  var POST_CATS={ hygiene:{label:'Hygiène',acc:true}, club:{label:'Club',acc:false}, important:{label:'Important',acc:true} };
+  function catLabel(c){ var m=POST_CATS[c]; return m?m.label:(c||''); }
+  function catAcc(c){ var m=POST_CATS[c]; return !!(m&&m.acc); }
+  function isoDays(n){ var d=new Date(); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
+  function seedPosts(){
+    return [
+      {id:'p-seed-1',club_id:'cube',author_id:'a-thomas',author_name:'Thomas',author_role:'Référent hygiène',
+       category:'hygiene',title:'Les tapis doivent être désinfectés après chaque séance',
+       content:'Petit rappel : merci de ne pas quitter la salle avant le nettoyage collectif.',
+       created_at:isoDays(0)+'T08:00:00',published_at:isoDays(0)+'T08:00:00',expires_at:null,is_pinned:true,status:'published'},
+      {id:'p-seed-2',club_id:'cube',author_id:'a-coach',author_name:'Marc',author_role:'Coach',
+       category:'club',title:'Open régional — inscriptions avant vendredi',
+       content:'Les compétiteurs intéressés doivent se rapprocher du coach.',
+       created_at:isoDays(-2)+'T18:00:00',published_at:isoDays(-2)+'T18:00:00',expires_at:isoDays(11),is_pinned:false,status:'published'},
+      {id:'p-seed-3',club_id:'cube',author_id:'a-gerant',author_name:'Karim',author_role:'Gérant',
+       category:'club',title:'Encore trop de retards cette semaine',
+       content:'On reprend à l’heure lundi. Soyez prêts 10 minutes avant le début du cours.',
+       created_at:isoDays(-1)+'T20:00:00',published_at:isoDays(-1)+'T20:00:00',expires_at:null,is_pinned:false,status:'published'}
+    ];
+  }
+  function getPosts(){
+    try{
+      var r=localStorage.getItem(POSTS_KEY);
+      if(r===null){ var s=seedPosts(); try{ localStorage.setItem(POSTS_KEY,JSON.stringify(s)); }catch(e){} return s; }
+      var a=JSON.parse(r); return Array.isArray(a)?a:[];
+    }catch(e){ return []; }
+  }
+  function activePosts(){
+    var now=Date.now();
+    return getPosts().filter(function(p){
+      if(!p||p.status!=='published') return false;
+      if(p.published_at && new Date(p.published_at).getTime()>now) return false;     // programmé, pas encore publié
+      if(p.expires_at){ var e=new Date(p.expires_at); e.setHours(23,59,59,999); if(e.getTime()<now) return false; } // expiré
+      return true;
+    }).sort(function(a,b){
+      var pa=a.is_pinned?1:0, pb=b.is_pinned?1:0; if(pa!==pb) return pb-pa;
+      return new Date(b.published_at||b.created_at)-new Date(a.published_at||a.created_at);
+    });
+  }
+  function postDate(p){
+    var d=new Date(p.published_at||p.created_at); if(isNaN(d)) return '';
+    var now=new Date();
+    var diff=Math.round((new Date(now.getFullYear(),now.getMonth(),now.getDate())-new Date(d.getFullYear(),d.getMonth(),d.getDate()))/86400000);
+    if(diff===0) return 'Aujourd’hui';
+    if(diff===1) return 'Hier';
+    var mois=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
+    return d.getDate()+' '+mois[d.getMonth()];
+  }
+  var IArrR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>';
+  function postEditorial(p,big){
+    var cat='<span class="pc'+(catAcc(p.category)?' acc':'')+'">'+esc(catLabel(p.category))+'</span>';
+    var pin=(big&&p.is_pinned)?'<span class="pc-pin">Épinglé</span>':'';
+    return '<article class="post'+(big?' post-big':'')+'">'+
+      '<div class="post-top">'+cat+pin+'<span class="post-date">'+esc(postDate(p))+'</span></div>'+
+      '<h3 class="post-t">'+esc(p.title)+'</h3>'+
+      (p.content?'<p class="post-c">'+esc(p.content)+'</p>':'')+
+      '<div class="post-auth"><span class="pa-name">'+esc(p.author_name||'')+'</span>'+(p.author_role?'<span class="pa-role">'+esc(p.author_role)+'</span>':'')+'</div>'+
+    '</article>';
+  }
+  function clubLifeHome(){
+    var posts=activePosts();
+    var head='<div class="vdc-eb"><span class="vdc-k">La vie du club</span><span class="vdc-sub">Les infos à ne pas manquer</span></div>';
+    if(!posts.length){ return '<section class="vdc">'+head+'<div class="vdc-empty">Rien de nouveau au club pour le moment.</div></section>'; }
+    var feat=posts[0], rest=posts.slice(1,3);
+    return '<section class="vdc">'+head+
+      '<div class="vdc-feat" id="vdc-feat">'+postEditorial(feat,true)+'</div>'+
+      (rest.length?'<div class="vdc-list">'+rest.map(function(p){return postEditorial(p,false);}).join('')+'</div>':'')+
+      '<button class="vdc-all" id="vdc-all"><span>Voir toutes les infos du club</span>'+IArrR+'</button>'+
+    '</section>';
+  }
+  function screenClubLife(){
+    document.body.classList.remove('fdark');          // écran de contenu : thème clair
+    var posts=activePosts();
+    view.innerHTML=
+      backBtn()+
+      '<h2 class="h2">La vie du club</h2>'+
+      '<p class="sub">Les informations officielles de votre club.</p>'+
+      (posts.length
+        ? '<div class="vdc-full">'+posts.map(function(p){return postEditorial(p,false);}).join('')+'</div>'
+        : '<div class="vdc-empty">Rien de nouveau au club pour le moment.</div>');
+    wireBack();
+  }
   /* ACCUEIL — menu éditorial numéroté (court, direct, DA MatSafe).
      Le statut détaillé du label reste dans CLUB_STATUS (futur écran serveur) ;
      l'accueil n'affiche qu'un petit badge « engagé MatSafe ».
@@ -763,17 +901,26 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         '<span class="md-chip"><img class="md-logo" src="'+MD_LOGO+'" alt="médecin direct" loading="lazy"></span>'+
         '<span class="md-cap">Votre téléconsultation médicale disponible 24 h/24, 7 j/7.</span>'+
       '</button>';
-    var gridHtml =
-      '<div class="fgrid">'+
+    // Actions : CTA « Donner mon avis » (pleine largeur) + 3 cartes secondaires.
+    var subHtml =
+      '<div class="fsub">'+
         card('a-check',  ICheck,  'Faire mon check', '')+
         lesionCard+
-        heroHtml+
-        card('a-returns',IList,   'Suivre mes retours', retBadge)+
         card('a-care',   ICare,   'Conseils d’hygiène', '')+
       '</div>';
 
+    // « Mes retours » : entrée secondaire discrète (suivi personnel), avec compteur.
+    var retoursHtml =
+      '<button class="fretours" id="a-returns"><span class="fr-t">Mes retours</span>'+
+        (mine.length?'<span class="fr-n">'+mine.length+'</span>':'')+
+        '<span class="fr-ar">'+IArrR+'</span></button>';
+
     view.innerHTML=
-      '<div class="home fhome">'+ headHtml + msgHtml + gridHtml +
+      '<div class="home fhome">'+ headHtml + msgHtml +
+        clubLifeHome() +
+        heroHtml +
+        subHtml +
+        retoursHtml +
         '<div class="foot-min">Anonyme · Sans compte · Aucune donnée médicale</div>'+
       '</div>';
 
@@ -783,8 +930,10 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     document.getElementById('a-feedback').onclick=leaveHome(screenFeedback);
     document.getElementById('a-check').onclick=leaveHome(screenCheck);
     document.getElementById('a-lesion').onclick=leaveHome(screenLesion);
-    document.getElementById('a-returns').onclick=leaveHome(screenReturns);
     document.getElementById('a-care').onclick=leaveHome(screenCare);
+    document.getElementById('a-returns').onclick=leaveHome(screenReturns);
+    var va=document.getElementById('vdc-all'); if(va) va.onclick=leaveHome(screenClubLife);
+    var vf=document.getElementById('vdc-feat'); if(vf){ vf.style.cursor='pointer'; vf.onclick=leaveHome(screenClubLife); }
   }
   function feelOf(id){var f=FEELINGS.filter(function(x){return x.id===id;})[0];return f?f.t:'';}
   function catOf(id){var c=CATS.filter(function(x){return x.id===id;})[0];return c?c.t:'';}
@@ -1054,7 +1203,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   }
 
   screenHome();
-  window.addEventListener('storage', function(e){ if((e.key==='matsafe_club_message'||e.key==='matsafe_club_events') && document.querySelector('.home')){ try{ screenHome(); }catch(_){ } } });
+  window.addEventListener('storage', function(e){ if((e.key==='matsafe_club_message'||e.key==='matsafe_club_events'||e.key==='matsafe_club_posts') && document.querySelector('.home')){ try{ screenHome(); }catch(_){ } } });
 </script>
 <script>
 /* Message du club : lu depuis localStorage (publié par MATSAFE Club, même origine). */
