@@ -321,16 +321,17 @@ body.fdark{background:#0C0D10}
 .lz-reco p:last-child{margin:0}
 
 /* Check avant l'entraînement */
-.chk-list{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
-.chk{display:flex;align-items:flex-start;gap:13px;width:100%;text-align:left;cursor:pointer;background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:15px 16px;color:var(--ink)}
-.chk .box{flex:none;width:26px;height:26px;border-radius:6px;border:1.7px solid var(--border);background:#FFF;display:grid;place-items:center;color:transparent;margin-top:1px}
-.chk .box svg{width:15px;height:15px}
+/* Check : liste minimale « étape par étape » — grosse typo, case à cocher, barré une fois fait */
+.chk-list{display:flex;flex-direction:column;margin:8px 0 20px}
+.chk{display:flex;align-items:center;gap:16px;width:100%;text-align:left;cursor:pointer;background:none;border:0;border-top:1px solid var(--hair);padding:17px 2px;color:var(--ink)}
+.chk:last-of-type{border-bottom:1px solid var(--hair)}
+.chk .box{flex:none;width:28px;height:28px;border-radius:8px;border:2px solid var(--border);background:transparent;display:grid;place-items:center;color:transparent;transition:background .15s,border-color .15s,color .15s}
+.chk .box svg{width:17px;height:17px}
 .chk-tx{min-width:0;flex:1 1 auto}
-.chk .lbl{display:block;font-family:var(--cond);text-transform:uppercase;letter-spacing:.02em;font-weight:700;font-size:14.5px;line-height:1.15}
-.chk-d{display:block;font-size:12.5px;line-height:1.4;color:var(--gray);margin-top:4px;text-transform:none;letter-spacing:0}
-.chk.on{background:var(--black);color:var(--off);border-color:var(--black)}
-.chk.on .box{background:var(--off);border-color:var(--off);color:var(--black)}
-.chk.on .chk-d{color:rgba(242,240,236,.74)}
+.chk .lbl{display:block;font-family:var(--sans);font-weight:700;letter-spacing:-.02em;font-size:clamp(20px,5.4vw,25px);line-height:1.12;color:var(--ink);transition:color .15s}
+.chk.on .box{background:var(--brand);border-color:var(--brand);color:#fff}
+.chk.on .lbl{text-decoration:line-through;text-decoration-thickness:2px;color:var(--faint)}
+@media(hover:hover){.chk:hover .box{border-color:var(--brand)}}
 .chk-count{font-family:var(--cond);text-transform:uppercase;letter-spacing:.06em;font-weight:700;font-size:12px;color:var(--gray);margin-bottom:14px}
 .chk-done{background:var(--ok-bg);border:1px solid var(--ok);border-radius:6px;padding:14px 16px;font-size:14px;line-height:1.5;color:var(--ink);margin-bottom:16px}
 
@@ -939,7 +940,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       '<h2 class="h2">Faire mon check</h2>'+
       '<p class="sub">Un rappel préventif en quelques secondes. Ce check <b>ne remplace pas un avis médical</b> et n’autorise pas à s’entraîner.</p>'+
       '<div class="chk-list">'+
-        CHECK_ITEMS.map(function(it,i){return '<button class="chk" data-i="'+i+'" aria-pressed="false"><span class="box">'+ICheck+'</span><span class="chk-tx"><span class="lbl">'+esc(it.t)+'</span><span class="chk-d">'+esc(it.d)+'</span></span></button>';}).join('')+
+        CHECK_ITEMS.map(function(it,i){return '<button class="chk" data-i="'+i+'" aria-pressed="false"><span class="box">'+ICheck+'</span><span class="chk-tx"><span class="lbl">'+esc(it.t)+'</span></span></button>';}).join('')+
       '</div>'+
       '<div class="chk-warn">Un doute sur votre santé&nbsp;? Ne vous entraînez pas.</div>'+
       '<div class="chk-count" id="chkCount">0 / '+CHECK_ITEMS.length+' vérifié</div>'+
