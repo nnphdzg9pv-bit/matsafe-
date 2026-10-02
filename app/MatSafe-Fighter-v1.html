@@ -462,9 +462,9 @@ body.fdark{background:#0C0D10}
 .md-roles li{position:relative;padding-left:22px;font-size:clamp(17px,4.6vw,19px);line-height:1.5;color:var(--ink)}
 .md-roles li::before{content:"";position:absolute;left:3px;top:.6em;width:7px;height:7px;border-radius:50%;background:var(--brand)}
 .soon{margin-top:48px;text-align:center;font-family:var(--cond);text-transform:uppercase;letter-spacing:.06em;font-size:13px;font-weight:700;color:var(--faint)}
-/* « Contact us » — Donner mon avis : accroche éditoriale + un seul champ */
+/* « Contactez-nous » — Donner mon avis : accroche éditoriale + un seul champ */
 .contact{max-width:640px;margin:0 auto;padding-top:6px}
-.contact-h{font-family:var(--cond);font-weight:800;letter-spacing:-.02em;font-size:clamp(52px,14vw,96px);line-height:.9;color:var(--brand);margin:4px 0 0}
+.contact-h{font-family:var(--cond);font-weight:900;letter-spacing:-.02em;font-size:clamp(52px,14vw,96px);line-height:.9;color:var(--ink);margin:4px 0 0}
 .contact-sub{font-size:16px;line-height:1.55;color:var(--gray);margin:16px 0 24px;max-width:46ch}
 .contact-ta{width:100%;box-sizing:border-box;min-height:210px;resize:vertical;font-family:var(--sans);font-size:16px;line-height:1.55;color:var(--ink);background:var(--paper);border:1px solid var(--border);border-radius:8px;padding:16px 18px}
 .contact-ta::placeholder{color:var(--faint)}
@@ -1187,12 +1187,12 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
   /* ================= FAIRE UN RETOUR (choix avis / signalement) ================= */
   function screenFeedback(){
-    // « Contact us » : une grande accroche + un seul champ pour l'avis (anonyme).
+    // « Contactez-nous » : une grande accroche + un seul champ pour l'avis (anonyme).
     var IArrowR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>';
     view.innerHTML=
       backBtn()+
       '<section class="contact">'+
-        '<h1 class="contact-h">Contact us</h1>'+
+        '<h1 class="contact-h">Contactez-nous</h1>'+
         '<p class="contact-sub">Un mot sur l’hygiène du club&nbsp;? Laissez votre avis — anonyme, sans compte, aucune donnée personnelle.</p>'+
         '<textarea class="contact-ta" id="avisText" maxlength="1000" placeholder="Votre avis…"></textarea>'+
         '<button class="contact-send" id="avisSend" disabled>Envoyer '+IArrowR+'</button>'+
