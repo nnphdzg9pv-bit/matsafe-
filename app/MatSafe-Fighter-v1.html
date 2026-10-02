@@ -406,13 +406,6 @@ body.fdark{background:#0C0D10}
 /* Alerte sanitaire (variante message club) */
 .cmsg.alert{border-left-color:var(--brand);background:#FBEDE9}
 
-/* Lésion */
-.lz-choices{display:flex;flex-direction:column;gap:12px;margin-bottom:18px}
-.lz-choices .action .t{font-size:16.5px}
-.lz-reco{background:var(--paper);border:1px solid var(--border);border-left:4px solid var(--brand);border-radius:6px;padding:16px 18px;margin-bottom:18px}
-.lz-reco p{font-size:14.5px;line-height:1.55;color:var(--ink);margin:0 0 10px}
-.lz-reco p:last-child{margin:0}
-
 /* Check avant l'entraînement */
 /* Check : liste minimale « étape par étape » — grosse typo, case à cocher, barré une fois fait */
 .chk-list{display:flex;flex-direction:column;margin:8px 0 20px}
@@ -464,6 +457,10 @@ body.fdark{background:#0C0D10}
 .routine-h{font-family:var(--cond);text-transform:uppercase;letter-spacing:.005em;font-weight:800;font-size:clamp(26px,7vw,32px);line-height:1.02;margin:4px 0 16px;color:var(--ink)}
 .routine p{font-size:clamp(17px,4.6vw,19px);line-height:1.6;color:var(--ink);margin:0 0 18px}
 .routine-key{font-weight:800;font-size:clamp(19px,5vw,22px);line-height:1.45;color:var(--ink);background:var(--paper);border:1px solid var(--border);border-left:5px solid var(--brand);border-radius:6px;padding:20px 22px;margin:22px 0 0}
+/* Médecin Direct — liste des rôles (puce rouge en accent) */
+.md-roles{list-style:none;margin:0 0 18px;padding:0;display:flex;flex-direction:column;gap:12px}
+.md-roles li{position:relative;padding-left:22px;font-size:clamp(17px,4.6vw,19px);line-height:1.5;color:var(--ink)}
+.md-roles li::before{content:"";position:absolute;left:3px;top:.6em;width:7px;height:7px;border-radius:50%;background:var(--brand)}
 .soon{margin-top:48px;text-align:center;font-family:var(--cond);text-transform:uppercase;letter-spacing:.06em;font-size:13px;font-weight:700;color:var(--faint)}
 /* « Contact us » — Donner mon avis : accroche éditoriale + un seul champ */
 .contact{max-width:640px;margin:0 auto;padding-top:6px}
@@ -639,13 +636,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
      CONSTANTES À BRANCHER SUR LE SERVEUR (démo locale pour l'instant)
      ===================================================================== */
 
-  // --- Téléconsultation partenaire (Médecin Direct) ---
-  // TODO SERVEUR : renseigner l'URL réelle de téléconsultation fournie par le
-  // partenaire. Tant qu'elle est vide, le bouton informe que le service arrive.
-  // MatSafe ne stocke AUCUNE photo médicale, diagnostic ou donnée médicale :
-  // l'échange médical se déroule directement chez le partenaire.
-  var TELECONSULT_URL = '';
-
   // --- Statut du club (label MatSafe) ---
   // TODO SERVEUR : ces informations DOIVENT provenir d'une source sécurisée
   // MatSafe (API), et NON des paramètres modifiables de l'URL / du QR.
@@ -656,16 +646,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     lastEval:    'Juin 2026',       // dernière évaluation
     nextControl: 'Décembre 2026'    // prochain contrôle (si disponible, sinon '')
   };
-
-  // --- Types de doute sur une lésion (aucun diagnostic, prudence uniquement) ---
-  var LESION_TYPES=[
-    {id:'coupure', t:'Coupure ou plaie',
-     reco:'Une plaie ouverte, qui saigne ou suinte n’a pas sa place sur le tatami, même recouverte d’un pansement : le risque de contamination reste. Attendez qu’elle soit refermée et sèche. En cas de plaie profonde, très rouge ou qui ne cicatrise pas, demandez un avis médical. Ne partagez pas votre équipement.'},
-    {id:'rougeur', t:'Rougeur, bouton ou infection suspecte',
-     reco:'Une rougeur, un bouton ou une zone chaude et douloureuse peut être contagieuse au contact — un pansement ne supprime pas ce risque. Ne montez pas sur le tatami avant d’avoir demandé un avis médical, ne touchez pas la zone et ne partagez pas votre matériel.'},
-    {id:'mycose',  t:'Démangeaison, plaque ou suspicion de mycose',
-     reco:'Une plaque qui démange ou s’étend peut se transmettre au contact et au partage de matériel, même couverte. Évitez le tatami jusqu’à un avis médical et lavez votre tenue à haute température.'}
-  ];
 
   // --- Check personnel avant l'entraînement (rappel préventif, jamais envoyé) ---
   var CHECK_ITEMS=[
@@ -1114,51 +1094,29 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     toast('Retour transmis');
   }
 
-  /* ================= J'AI UN DOUTE SUR UNE LÉSION ================= */
-  /* Aucun diagnostic : uniquement des conseils de prudence. Aucune photo
-     médicale, diagnostic ou donnée médicale n'est stockée par MatSafe.
-     L'éventuel échange médical se déroule chez le partenaire (Médecin Direct). */
+  /* ================= MÉDECIN DIRECT ================= */
+  /* Présentation du dispositif de téléconsultation partenaire : rôles,
+     prise en charge sans avance de frais et formulation de communication.
+     MatSafe ne stocke aucune donnée médicale. */
   function screenLesion(){
     view.innerHTML=
       backBtn()+
-      '<h2 class="h2">J’ai un doute sur ma peau</h2>'+
-      '<p class="sub">Sélectionnez ce qui correspond le mieux. MatSafe ne pose aucun diagnostic et ne conserve aucune donnée médicale&nbsp;: vous recevez uniquement des conseils de prudence.</p>'+
-      '<div class="lz-choices">'+
-        LESION_TYPES.map(function(l){return '<button class="action" data-l="'+l.id+'"><span class="txt"><span class="t">'+esc(l.t)+'</span></span><span class="arr">'+IArr+'</span></button>';}).join('')+
-      '</div>'+
-      '<div class="note"><p>En cas de doute, ne prenez pas de risque&nbsp;: demandez un avis médical avant de monter sur le tatami. <b>Aucune donnée médicale n’est enregistrée par MatSafe.</b></p></div>';
-    wireBack();
-    view.querySelectorAll('.lz-choices .action').forEach(function(b){
-      b.onclick=function(){ screenLesionReco(b.getAttribute('data-l')); };
-    });
-  }
-  function screenLesionReco(id){
-    var l=LESION_TYPES.filter(function(x){return x.id===id;})[0]; if(!l){ screenLesion(); return; }
-    var consultLabel = TELECONSULT_URL ? 'Consulter un médecin' : 'Consulter un médecin';
-    view.innerHTML=
-      backBtn()+
-      '<h2 class="h2">'+esc(l.t)+'</h2>'+
-      '<div class="lz-reco">'+
-        '<p>En cas de lésion suspecte, évitez de monter sur le tatami avant d’avoir demandé un avis médical. Ne partagez pas votre équipement et évitez de toucher la zone concernée.</p>'+
-        '<p>'+esc(l.reco)+'</p>'+
-      '</div>'+
-      '<section class="mdr">'+
-        '<div class="mdr-k"><span class="d"></span>Partenaire santé · Téléconsultation</div>'+
-        '<a class="mdr-logo" id="a-mdr" href="#" role="button" aria-label="Médecin Direct — téléconsultation">'+
-          '<svg viewBox="0 0 64 64" aria-hidden="true"><g fill="#1E4A47"><ellipse cx="37" cy="41" rx="22" ry="19"/><circle cx="21" cy="23" r="10"/></g></svg>'+
-          '<span class="mdr-word"><b>médecin</b><b>direct</b></span>'+
-        '</a>'+
-        '<p class="mdr-p">L’échange médical se déroule directement avec le partenaire. MatSafe ne stocke aucune photo ni information médicale.</p>'+
-        '<button class="mdr-cta" id="a-consult">'+consultLabel+'</button>'+
+      '<section class="routine">'+
+        '<h3 class="routine-h">Médecin Direct</h3>'+
+        '<p>Dans le cadre du dispositif MatSafe, l’objectif est de permettre aux adhérents des salles partenaires d’accéder à une téléconsultation sans avance de frais.</p>'+
+        '<p>Le fonctionnement envisagé repose sur une séparation claire des rôles&nbsp;:</p>'+
+        '<ul class="md-roles">'+
+          '<li>MatSafe identifie et oriente l’adhérent vers la plateforme de téléconsultation&nbsp;;</li>'+
+          '<li>Médecin Direct assure la prise en charge médicale et adapte son parcours aux demandes transmises par MatSafe&nbsp;;</li>'+
+          '<li>la salle finance l’accès au dispositif MatSafe au moyen d’un abonnement&nbsp;;</li>'+
+          '<li>la téléconsultation est facturée directement par la plateforme à l’Assurance Maladie et, lorsque cela est possible, à la complémentaire santé grâce au tiers payant.</li>'+
+        '</ul>'+
+        '<p>La communication destinée aux adhérents devra utiliser la formulation suivante&nbsp;:</p>'+
+        '<p class="routine-key">«&nbsp;Téléconsultation sans avance de frais avec votre carte Vitale et votre complémentaire santé.&nbsp;»</p>'+
+        '<div class="note"><p>«&nbsp;Sous réserve d’éligibilité, de la compatibilité avec le tiers payant et hors participation forfaitaire légale éventuelle.&nbsp;»</p></div>'+
+        '<p>MatSafe ne revend pas l’acte médical et ne perçoit pas de pourcentage sur les honoraires du médecin. MatSafe facture aux salles un service d’accès, d’orientation, de coordination et d’intégration avec la plateforme médicale.</p>'+
       '</section>';
-    wireBack(screenLesion);
-    var go=function(e){ if(e){e.preventDefault();}
-      // TODO SERVEUR : rediriger vers TELECONSULT_URL une fois l'URL fournie.
-      if(TELECONSULT_URL){ try{ window.open(TELECONSULT_URL,'_blank','noopener'); }catch(_){ location.href=TELECONSULT_URL; } }
-      else { toast('Téléconsultation Médecin Direct — bientôt disponible'); }
-    };
-    var lg=document.getElementById('a-mdr'); if(lg) lg.onclick=go;
-    var cb=document.getElementById('a-consult'); if(cb) cb.onclick=go;
+    wireBack();
   }
 
   /* ================= MON CHECK AVANT L'ENTRAÎNEMENT ================= */
