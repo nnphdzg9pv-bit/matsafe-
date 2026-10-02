@@ -6,7 +6,7 @@
 <title>MatSafe Club</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Kanit:ital,wght@1,700;1,800&display=swap" rel="stylesheet">
 <style>
 :root{
   --page:#AEB0B2; --panel:#FDFDFD; --side:#F3F2F1; --rail:#FAFAF9;
@@ -17,7 +17,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{font-size:16px}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--page);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px}
+body{font-family:'Barlow','Segoe UI',system-ui,sans-serif;background:var(--page);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px}
 .app{position:relative;width:100%;max-width:1440px;background:var(--panel);border-radius:30px;box-shadow:0 40px 90px -50px rgba(20,20,25,.55);display:grid;grid-template-columns:248px 1fr 356px;overflow:hidden;min-height:860px}
 svg{display:block}
 .ic{width:20px;height:20px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
@@ -128,7 +128,7 @@ tbody tr:hover{background:#F7F6F4}
 .slot .st{font-weight:700;font-size:13.5px}
 .slot .sd{color:var(--ink2);font-size:12px;margin-top:1px}
 .slot{position:relative;padding-right:46px}
-.slot .mat{position:absolute;top:8px;right:8px;font:700 9px/1 'Inter';color:#77706A;background:#F1EEE9;border-radius:5px;padding:3px 5px;letter-spacing:.03em}
+.slot .mat{position:absolute;top:8px;right:8px;font:700 9px/1 'Barlow';color:#77706A;background:#F1EEE9;border-radius:5px;padding:3px 5px;letter-spacing:.03em}
 .slot.mma{border-color:#C79A00}
 .slot.boxe{border-color:#1682B3}.slot.boxe .mat{background:#E4EEF3;color:#35667A}
 .slot.lutte{border-color:#1F9E72}
@@ -249,7 +249,7 @@ tbody tr:hover{background:#F7F6F4}
 
 /* statut sur créneau du planning */
 .slot{cursor:pointer}
-.slot .sst{position:absolute;right:8px;bottom:7px;font:600 9.5px/1 'Inter';padding:3px 6px;border-radius:6px;letter-spacing:.01em}
+.slot .sst{position:absolute;right:8px;bottom:7px;font:600 9.5px/1 'Barlow';padding:3px 6px;border-radius:6px;letter-spacing:.01em}
 .slot .sst.todo{background:#FBF0DF;color:var(--amber-d)}
 .slot .sst.done{background:#EAF6E8;color:var(--green-d)}
 .slot .sst.late{background:#F7E7E6;color:var(--red-d)}
@@ -329,7 +329,7 @@ tbody tr:hover{background:#F7F6F4}
 /* ============================================================
    MATSAFE — DA alignée sur le site officiel matsafe
    Fond crème du site (#F1F0EC), noir #0B0B0B, rouge MatSafe #D0402C,
-   typo grotesque Archivo en capitales, angles nets. Couleurs relevées
+   typo du site (Barlow Condensed + Barlow) en capitales, angles nets. Couleurs relevées
    directement sur une capture du site. Contenu MatSafe conservé.
    ============================================================ */
 :root{
@@ -344,8 +344,8 @@ tbody tr:hover{background:#F7F6F4}
   --green-d:#3E8E4F; --amber-d:#B87A2C; --red-d:#B23122;
   --brand:#D0402C; --brand-d:#B7351F;   /* rouge du site */
   --r:6px; --r-sm:4px;
-  --font-disp:'Archivo','Inter',system-ui,sans-serif;
-  --font-body:'Inter',system-ui,sans-serif;
+  --font-disp:'Barlow Condensed','Arial Narrow',system-ui,sans-serif;
+  --font-body:'Barlow','Segoe UI',system-ui,sans-serif;
 }
 body{font-family:var(--font-body);background:var(--page);padding:40px}
 body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.028;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
