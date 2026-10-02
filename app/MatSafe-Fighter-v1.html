@@ -349,6 +349,12 @@ body.homebento .topbar .brandlogo{display:none}
 .t-vt.muted{color:var(--faint);font-weight:600;font-size:15px}
 .tile.md .md-chip{display:inline-flex;width:auto;max-width:100%;align-self:flex-start;padding:9px 12px;border-radius:11px}
 .tile.md .md-logo{height:30px;width:auto;display:block}
+/* La vie du club — défilé des messages (case accueil) */
+.vdc-vp{overflow:hidden;height:78px;margin-top:6px}
+.vdc-track{will-change:transform}
+.vdc-slide{height:78px;display:flex;flex-direction:column;justify-content:center;gap:5px;box-sizing:border-box}
+.vdc-slide .t-vt{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.t-count{margin-left:auto;font-family:var(--cond);text-transform:uppercase;letter-spacing:.06em;font-size:10px;font-weight:700;color:var(--faint)}
 /* App élargie : les écrans de contenu gardent une colonne lisible centrée ; l'accueil (hub) utilise toute la largeur. */
 main:not(:has(.fhome)){max-width:660px;margin-left:auto;margin-right:auto;width:100%}
 
@@ -807,20 +813,21 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   function catLabel(c){ var m=POST_CATS[c]; return m?m.label:(c||''); }
   function catAcc(c){ var m=POST_CATS[c]; return !!(m&&m.acc); }
   function isoDays(n){ var d=new Date(); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
+  function hoursAgo(h){ return new Date(Date.now()-h*3600000).toISOString(); }   // toujours dans le passé
   function seedPosts(){
     return [
       {id:'p-seed-1',club_id:'cube',author_id:'a-thomas',author_name:'Thomas',author_role:'Référent hygiène',
        category:'hygiene',title:'Les tapis doivent être désinfectés après chaque séance',
        content:'Petit rappel : merci de ne pas quitter la salle avant le nettoyage collectif.',
-       created_at:isoDays(0)+'T08:00:00',published_at:isoDays(0)+'T08:00:00',expires_at:null,is_pinned:true,status:'published'},
+       created_at:hoursAgo(3),published_at:hoursAgo(3),expires_at:null,is_pinned:true,status:'published'},
       {id:'p-seed-2',club_id:'cube',author_id:'a-coach',author_name:'Marc',author_role:'Coach',
        category:'club',title:'Open régional — inscriptions avant vendredi',
        content:'Les compétiteurs intéressés doivent se rapprocher du coach.',
-       created_at:isoDays(-2)+'T18:00:00',published_at:isoDays(-2)+'T18:00:00',expires_at:isoDays(11),is_pinned:false,status:'published'},
+       created_at:hoursAgo(50),published_at:hoursAgo(50),expires_at:isoDays(10),is_pinned:false,status:'published'},
       {id:'p-seed-3',club_id:'cube',author_id:'a-gerant',author_name:'Karim',author_role:'Gérant',
        category:'club',title:'Encore trop de retards cette semaine',
        content:'On reprend à l’heure lundi. Soyez prêts 10 minutes avant le début du cours.',
-       created_at:isoDays(-1)+'T20:00:00',published_at:isoDays(-1)+'T20:00:00',expires_at:null,is_pinned:false,status:'published'}
+       created_at:hoursAgo(28),published_at:hoursAgo(28),expires_at:null,is_pinned:false,status:'published'}
     ];
   }
   function getPosts(){
@@ -926,10 +933,17 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
     // La vie du club — case large avec aperçu de l'info épinglée.
     var posts=activePosts(), vdcInner;
-    if(posts.length){ var fp=posts[0];
-      vdcInner='<div class="t-eb"><span class="t-k">La vie du club</span><span class="t-ar">'+IArrR+'</span></div>'+
-        '<div class="t-vdc"><span class="t-vcat'+(catAcc(fp.category)?' acc':'')+'">'+esc(catLabel(fp.category))+'</span>'+
-        '<span class="t-vt">'+esc(fp.title)+'</span></div>';
+    if(posts.length){
+      var slides=posts.map(function(p){
+        return '<div class="vdc-slide"><span class="t-vcat'+(catAcc(p.category)?' acc':'')+'">'+esc(catLabel(p.category))+'</span>'+
+          '<span class="t-vt">'+esc(p.title)+'</span></div>';
+      });
+      // on clone le 1er à la fin pour une boucle sans saut.
+      var trackHtml=slides.join('')+(posts.length>1?slides[0]:'');
+      vdcInner='<div class="t-eb"><span class="t-k">La vie du club</span>'+
+          (posts.length>1?'<span class="t-count">'+posts.length+' infos</span>':'')+
+          '<span class="t-ar">'+IArrR+'</span></div>'+
+        '<div class="vdc-vp"><div class="vdc-track" id="vdcTrack">'+trackHtml+'</div></div>';
     } else {
       vdcInner='<div class="t-eb"><span class="t-k">La vie du club</span><span class="t-ar">'+IArrR+'</span></div>'+
         '<div class="t-vdc"><span class="t-vt muted">Rien de nouveau au club pour le moment.</span></div>';
@@ -954,13 +968,30 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     // Thème clair (crème). On masque le logo du bandeau sur l'accueil (le wordmark hero fait office de marque).
     document.body.classList.remove('fdark');
     document.body.classList.add('homebento');
-    function leaveHome(fn){ return function(){ document.body.classList.remove('homebento'); fn(); }; }
+    function leaveHome(fn){ return function(){ if(window._vdcTimer){clearInterval(window._vdcTimer);window._vdcTimer=null;} document.body.classList.remove('homebento'); fn(); }; }
     document.getElementById('a-feedback').onclick=leaveHome(screenFeedback);
     document.getElementById('a-check').onclick=leaveHome(screenCheck);
     document.getElementById('a-lesion').onclick=leaveHome(screenLesion);
     document.getElementById('a-care').onclick=leaveHome(screenCare);
     document.getElementById('a-returns').onclick=leaveHome(screenReturns);
     document.getElementById('a-vdc').onclick=leaveHome(screenClubLife);
+    startVdcCarousel();
+  }
+  // Défilé des messages « La vie du club » sur l'accueil (boucle, respecte reduced-motion).
+  function startVdcCarousel(){
+    if(window._vdcTimer){ clearInterval(window._vdcTimer); window._vdcTimer=null; }
+    var track=document.getElementById('vdcTrack'); if(!track) return;
+    var n=track.children.length; if(n<3) return;                 // >=2 messages + clone
+    var reduce=false; try{ reduce=window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+    if(reduce) return;
+    var H=track.children[0].offsetHeight||78, i=0, clone=n-1;
+    window._vdcTimer=setInterval(function(){
+      if(!document.body.contains(track)){ clearInterval(window._vdcTimer); window._vdcTimer=null; return; }
+      i++;
+      track.style.transition='transform .6s cubic-bezier(.4,0,.2,1)';
+      track.style.transform='translateY(-'+(i*H)+'px)';
+      if(i===clone){ setTimeout(function(){ if(!document.body.contains(track)) return; track.style.transition='none'; track.style.transform='translateY(0)'; i=0; }, 640); }
+    }, 3600);
   }
   function feelOf(id){var f=FEELINGS.filter(function(x){return x.id===id;})[0];return f?f.t:'';}
   function catOf(id){var c=CATS.filter(function(x){return x.id===id;})[0];return c?c.t:'';}
