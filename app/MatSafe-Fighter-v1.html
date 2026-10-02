@@ -413,12 +413,12 @@ body.homebento .topbar .brandlogo{display:none}
 .tile.big .t-kick{color:var(--ink)}
 .tile.big .t-kick .d{background:#D0402C}
 .tile.big .tile-t{color:var(--ink)}
-.tile.big .t-cta{background:var(--ink);color:#fff}
+.tile.big .t-cta{background:var(--ink);color:#fff;align-self:center}
 .tile.wide{grid-column:1 / -1;min-height:auto;gap:12px}
-.tile.big{grid-column:1 / -1;min-height:206px;justify-content:space-between}
+.tile.big{grid-column:1 / -1;min-height:230px;justify-content:space-between;align-items:center;text-align:center;gap:18px}
 .tile.md{justify-content:space-between;gap:12px}
 .tile-t{display:block;font-family:var(--cond);text-transform:uppercase;font-weight:900;letter-spacing:-.005em;font-size:24px;line-height:.98}
-.tile.big .tile-t{font-size:clamp(44px,13vw,62px);line-height:.9;letter-spacing:-.01em}
+.tile.big .tile-t{font-size:clamp(46px,14vw,66px);line-height:.82;letter-spacing:-.01em}
 .tile-s{display:block;font-family:var(--cond);text-transform:uppercase;letter-spacing:.05em;font-size:11px;font-weight:700;margin-top:5px;opacity:.72}
 .t-ic{display:flex;color:#D0402C}
 .tile.noir .t-ic{color:var(--off)}
@@ -1020,7 +1020,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var tiles =
       tile('a-vdc','creme wide', vdcInner)+
       tile('a-feedback','creme big',
-        '<span class="tile-t">Donner mon avis</span>'+
+        '<span class="tile-t">Donner<br>mon<br>avis</span>'+
         '<span class="t-cta">Commencer '+IArrowR+'</span>')+
       tile('a-check','creme','<span class="t-ic">'+ICheck+'</span><span class="t-b"><span class="tile-t">Faire mon check</span><span class="tile-s">Avant l’entraînement</span></span>')+
       tile('a-lesion','creme md','<span class="md-chip"><img class="md-logo" src="'+MD_LOGO+'" alt="médecin direct" loading="lazy"></span><span class="tile-s">Téléconsultation 24 h/24, 7 j/7</span>')+
