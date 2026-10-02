@@ -88,7 +88,7 @@
   /* --- Form pieces --- */
   .back{display:inline-flex; align-items:center; gap:7px; background:none; border:0; cursor:pointer; color:var(--gray);
     font-family:var(--cond); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:12px; padding:0 0 6px}
-  .h2{font-family:var(--cond); font-weight:900; text-transform:uppercase; letter-spacing:-.01em; font-size:clamp(28px,8.5vw,38px); line-height:.96; margin:4px 0 6px}
+  .h2{font-family:var(--cond); font-weight:900; text-transform:uppercase; letter-spacing:-.01em; font-size:clamp(28px,8.5vw,38px); line-height:.96; margin:4px 0 6px; text-align:center}
   .sub{font-size:14px; color:var(--gray); line-height:1.45; margin:0 0 22px}
   .field{margin-bottom:20px}
   .field > label{display:block; font-family:var(--cond); font-weight:800; text-transform:uppercase; letter-spacing:.06em; font-size:12px; color:var(--ink); margin-bottom:9px}
@@ -455,7 +455,7 @@ body.fdark{background:#0C0D10}
 .care-b{padding:0 16px 15px;font-size:13.5px;line-height:1.55;color:var(--gray)}
 /* La routine MatSafe (texte éditorial dans Conseils d'hygiène) */
 .routine{margin:6px 0 20px}
-.routine-h{font-family:var(--cond);text-transform:uppercase;letter-spacing:-.005em;font-weight:900;font-size:clamp(28px,7.5vw,36px);line-height:.96;margin:4px 0 16px;color:var(--ink)}
+.routine-h{font-family:var(--cond);text-transform:uppercase;letter-spacing:-.005em;font-weight:900;font-size:clamp(28px,7.5vw,36px);line-height:.96;margin:4px 0 16px;color:var(--ink);text-align:center}
 .routine p{font-size:clamp(17px,4.6vw,19px);line-height:1.6;color:var(--ink);margin:0 0 18px}
 .routine-key{font-weight:800;font-size:clamp(19px,5vw,22px);line-height:1.45;color:var(--ink);background:var(--paper);border:1px solid var(--border);border-left:5px solid var(--brand);border-radius:6px;padding:20px 22px;margin:22px 0 0}
 /* Médecin Direct — liste des rôles (puce rouge en accent) */
@@ -465,7 +465,7 @@ body.fdark{background:#0C0D10}
 .soon{margin-top:48px;text-align:center;font-family:var(--cond);text-transform:uppercase;letter-spacing:.06em;font-size:13px;font-weight:700;color:var(--faint)}
 /* « Contactez-nous » — Donner mon avis : accroche éditoriale + un seul champ */
 .contact{max-width:640px;margin:0 auto;padding-top:6px}
-.contact-h{font-family:var(--cond);font-weight:900;letter-spacing:-.02em;font-size:clamp(52px,14vw,96px);line-height:.9;color:var(--ink);margin:4px 0 0}
+.contact-h{font-family:var(--cond);font-weight:900;letter-spacing:-.02em;font-size:clamp(52px,14vw,96px);line-height:.9;color:var(--ink);margin:4px 0 0;text-align:center}
 .contact-sub{font-size:16px;line-height:1.55;color:var(--gray);margin:16px 0 24px;max-width:46ch}
 .contact-ta{width:100%;box-sizing:border-box;min-height:210px;resize:vertical;font-family:var(--sans);font-size:16px;line-height:1.55;color:var(--ink);background:var(--paper);border:1px solid var(--border);border-radius:8px;padding:16px 18px}
 .contact-ta::placeholder{color:var(--faint)}
@@ -872,7 +872,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     view.innerHTML=
       backBtn()+
       '<h2 class="h2">La vie du club</h2>'+
-      '<p class="sub">Les informations officielles de votre club.</p>'+
       (posts.length
         ? '<div class="vdc-full">'+posts.map(function(p){return postEditorial(p,false);}).join('')+'</div>'
         : '<div class="vdc-empty">Rien de nouveau au club pour le moment.</div>');
