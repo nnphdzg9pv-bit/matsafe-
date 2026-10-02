@@ -313,22 +313,22 @@ body.homebento .topbar .brandlogo{display:none}
 .bento-hero{position:relative;text-align:center;padding:22px 12px 22px}
 .bh-mark{height:clamp(52px,16vw,90px);width:auto;display:block;margin:0 auto}
 .bh-txt{font-family:var(--sans);font-weight:800;letter-spacing:-.02em;font-size:clamp(34px,10vw,56px);color:#D0402C;line-height:1}
-.bh-sub{font-family:var(--cond);text-transform:uppercase;letter-spacing:.2em;font-size:12px;font-weight:700;color:#D0402C;margin-top:12px}
-.bh-fine{font-family:var(--cond);text-transform:uppercase;letter-spacing:.12em;font-size:9.5px;font-weight:600;color:#D0402C;opacity:.62;margin-top:7px}
-.bento-hero::before,.bento-hero::after{content:"+";position:absolute;top:4px;font-family:var(--sans);font-weight:400;font-size:16px;color:#D0402C;opacity:.5;line-height:1}
+.bh-sub{font-family:var(--cond);text-transform:uppercase;letter-spacing:.2em;font-size:12px;font-weight:700;color:var(--ink);margin-top:12px}
+.bh-fine{font-family:var(--cond);text-transform:uppercase;letter-spacing:.12em;font-size:9.5px;font-weight:600;color:var(--ink);opacity:.6;margin-top:7px}
+.bento-hero::before,.bento-hero::after{content:"+";position:absolute;top:4px;font-family:var(--sans);font-weight:400;font-size:16px;color:var(--faint);line-height:1}
 .bento-hero::before{left:2px}.bento-hero::after{right:2px}
 .bento-home{max-width:500px;margin:0 auto;width:100%}
 .bento{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
 .tile{position:relative;display:flex;flex-direction:column;border-radius:18px;overflow:hidden;cursor:pointer;text-align:left;border:0;padding:18px;min-height:150px;font-family:var(--sans);transition:transform .14s}
 .tile:active{transform:translateY(1px)}
 .tile.noir{background:var(--black);color:var(--off)}
-.tile.creme{background:var(--paper);color:#D0402C;border:1px solid var(--border)}
+.tile.creme{background:var(--paper);color:var(--ink);border:1px solid var(--border)}
 .tile.rouge{background:#D0402C;color:#fff}
 .tile.rouge .t-cta{color:#D0402C}
-/* Typo uniforme : rouge (logo) sur crème, blanc uniquement sur la pastille rouge */
-.tile.big .t-kick{color:#D0402C}
+/* Écritures en noir ; rouge réservé au logo, aux icônes et à la pastille d'action */
+.tile.big .t-kick{color:var(--ink)}
 .tile.big .t-kick .d{background:#D0402C}
-.tile.big .tile-t{color:#D0402C}
+.tile.big .tile-t{color:var(--ink)}
 .tile.big .t-cta{background:#D0402C;color:#fff}
 .tile.wide{grid-column:1 / -1;min-height:auto;gap:12px}
 .tile.big{grid-column:1 / -1;min-height:206px;justify-content:space-between}
@@ -345,13 +345,13 @@ body.homebento .topbar .brandlogo{display:none}
 .t-cta{display:inline-flex;align-items:center;gap:9px;align-self:flex-start;font-family:var(--cond);text-transform:uppercase;letter-spacing:.1em;font-weight:800;font-size:13px;color:var(--brand);background:#fff;border-radius:999px;padding:11px 20px}
 .t-cta svg{width:16px;height:16px}
 .t-eb{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.t-k{font-family:var(--sans);font-weight:800;text-transform:uppercase;letter-spacing:.02em;font-size:15px;color:#D0402C}
-.t-ar{display:flex;color:#D0402C;opacity:.6}.t-ar svg{width:18px;height:18px}
+.t-k{font-family:var(--sans);font-weight:800;text-transform:uppercase;letter-spacing:.02em;font-size:15px;color:var(--ink)}
+.t-ar{display:flex;color:var(--ink);opacity:.45}.t-ar svg{width:18px;height:18px}
 .t-vdc{display:flex;flex-direction:column;gap:5px}
-.t-vcat{font-family:var(--sans);font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:10.5px;color:#D0402C}
-.t-vcat.acc{color:#D0402C}
-.t-vt{font-family:var(--sans);font-weight:700;letter-spacing:-.015em;font-size:17.5px;line-height:1.14;color:#D0402C}
-.t-vt.muted{color:#D0402C;opacity:.55;font-weight:600;font-size:15px}
+.t-vcat{font-family:var(--sans);font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:10.5px;color:var(--ink)}
+.t-vcat.acc{color:var(--ink)}
+.t-vt{font-family:var(--sans);font-weight:700;letter-spacing:-.015em;font-size:17.5px;line-height:1.14;color:var(--ink)}
+.t-vt.muted{color:var(--ink);opacity:.5;font-weight:600;font-size:15px}
 .tile.md .md-chip{display:inline-flex;width:auto;max-width:100%;align-self:flex-start;padding:9px 12px;border-radius:11px}
 .tile.md .md-logo{height:30px;width:auto;display:block}
 /* La vie du club — défilé des messages (case accueil) */
@@ -359,7 +359,7 @@ body.homebento .topbar .brandlogo{display:none}
 .vdc-track{will-change:transform}
 .vdc-slide{height:78px;display:flex;flex-direction:column;justify-content:center;gap:5px;box-sizing:border-box}
 .vdc-slide .t-vt{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.t-count{margin-left:auto;font-family:var(--cond);text-transform:uppercase;letter-spacing:.06em;font-size:10px;font-weight:700;color:#D0402C;opacity:.7}
+.t-count{margin-left:auto;font-family:var(--cond);text-transform:uppercase;letter-spacing:.06em;font-size:10px;font-weight:700;color:var(--ink);opacity:.5}
 /* App élargie : les écrans de contenu gardent une colonne lisible centrée ; l'accueil (hub) utilise toute la largeur. */
 main:not(:has(.fhome)){max-width:660px;margin-left:auto;margin-right:auto;width:100%}
 
