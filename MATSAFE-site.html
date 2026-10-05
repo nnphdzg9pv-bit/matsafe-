@@ -1980,6 +1980,12 @@ footer{
   color:rgba(10,10,10,var(--pf-o,.2));transition:color .12s linear;
 }
 .pf-btn:focus-visible{outline:2px solid var(--black);outline-offset:4px}
+/* Mot centré (actif) : rouge MatSafe exact. Le fondu est assuré par la
+   transition de couleur du .pf-btn. Gaté sur « no-preference » pour que le
+   mode animations réduites conserve la liste statique en noir (lisibilité). */
+@media(prefers-reduced-motion:no-preference){
+  .pf-word.is-active .pf-btn{color:#C83F32}
+}
 /* Vignette attachée au mot (à gauche) : elle voyage avec lui. */
 .pf-thumb{
   position:absolute;left:3.2%;top:50%;transform:translateY(-50%) translateX(-12px);
