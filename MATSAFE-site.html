@@ -1980,12 +1980,10 @@ footer{
   color:rgba(10,10,10,var(--pf-o,.2));transition:color .12s linear;
 }
 .pf-btn:focus-visible{outline:2px solid var(--black);outline-offset:4px}
-/* Mot centré (actif) : rouge MatSafe exact. Le fondu est assuré par la
-   transition de couleur du .pf-btn. Gaté sur « no-preference » pour que le
-   mode animations réduites conserve la liste statique en noir (lisibilité). */
-@media(prefers-reduced-motion:no-preference){
-  .pf-word.is-active .pf-btn{color:#C83F32}
-}
+/* Les couleurs des enjeux forment un dégradé piloté au scroll (voir le JS plus bas) :
+   gris clair au loin → teinte propre à chaque enjeu près du centre (rouge chaud en
+   haut, rouge MatSafe #C83F32 au milieu, rouge profond en bas). Repli avant JS : gris
+   clair ; en « animations réduites » : liste statique noire (bloc reduced-motion). */
 /* Vignette attachée au mot (à gauche) : elle voyage avec lui. */
 .pf-thumb{
   position:absolute;left:3.2%;top:50%;transform:translateY(-50%) translateX(-12px);
@@ -3795,6 +3793,20 @@ const MS_REDUCE = window.matchMedia && window.matchMedia('(prefers-reduced-motio
   if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches){
     words.forEach(w=>w.classList.add('is-active'));return;
   }
+  // ——— Dégradé de couleurs piloté au scroll ———
+  // Chaque enjeu possède sa teinte-cible le long d'un dégradé qui « descend » :
+  // rouge chaud (haut) → rouge MatSafe #C83F32 (milieu) → rouge profond (bas).
+  // Un mot s'y colore d'autant plus qu'il approche du centre ; au loin il reste
+  // gris clair. Le fondu est lissé par la transition de couleur du .pf-btn.
+  const btns=words.map(w=>w.querySelector('.pf-btn'));
+  const GREY=[193,191,186];                              // gris clair (mot éloigné)
+  const STOPS=[[232,98,58],[200,63,50],[138,29,24]];     // chaud → #C83F32 → profond
+  function grad(t){
+    t=t<0?0:t>1?1:t;
+    const seg=STOPS.length-1,x=t*seg,i=Math.min(seg-1,Math.floor(x)),f=x-i,a=STOPS[i],b=STOPS[i+1];
+    return [a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f,a[2]+(b[2]-a[2])*f];
+  }
+  const BASE=words.map((w,i)=>grad(N>1?i/(N-1):0));      // teinte-cible de chaque enjeu
   let active=-1,ticking=false;
   function update(){
     ticking=false;
@@ -3810,12 +3822,15 @@ const MS_REDUCE = window.matchMedia && window.matchMedia('(prefers-reduced-motio
     let best=1e9,bi=0;
     for(let i=0;i<N;i++){
       const d=Math.abs(C[i]-off);
-      // Couleur du mot : gris clair au loin -> noir près du centre (chute nette
-      // pour que seul le mot centré ressorte en noir, comme la référence).
-      const o=Math.max(.18,1-d/(vh*0.2));
+      // Proximité du centre (0 loin → 1 au centre) : pilote le fondu gris → teinte.
+      const prox=Math.max(0,1-d/(vh*0.30));
+      const bc=BASE[i];
+      btns[i].style.color='rgb('
+        +Math.round(GREY[0]+(bc[0]-GREY[0])*prox)+','
+        +Math.round(GREY[1]+(bc[1]-GREY[1])*prox)+','
+        +Math.round(GREY[2]+(bc[2]-GREY[2])*prox)+')';
       // Mot-clé : n'apparaît que lorsque le mot est proche du centre.
       const t=Math.max(0,1-d/(vh*0.15));
-      words[i].style.setProperty('--pf-o',o.toFixed(3));
       words[i].style.setProperty('--pf-t',t.toFixed(3));
       if(d<best){best=d;bi=i;}
     }
