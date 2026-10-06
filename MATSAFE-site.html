@@ -1875,11 +1875,11 @@ footer{
 .ln-card{
   flex:0 0 344px;scroll-snap-align:start;
   display:flex;flex-direction:column;background:var(--white);
-  border:1px solid var(--border);border-radius:16px;overflow:hidden;
+  border:1px solid var(--border);border-radius:3px;overflow:hidden;
   color:inherit;
   transition:transform var(--motion-base) var(--ease-standard),box-shadow var(--motion-base) var(--ease-standard);
 }
-.ln-card:hover{transform:translateY(-4px);box-shadow:0 24px 46px -26px rgba(10,10,10,.45)}
+.ln-card:hover{transform:translateY(-2px);box-shadow:0 10px 24px -16px rgba(10,10,10,.28)}
 /* Couverture : maquette typographique forte (aucune photo de presse réhébergée). */
 .ln-cover{position:relative;aspect-ratio:16/10;background:#141414;overflow:hidden;
   display:flex;align-items:flex-end;padding:.9rem}
@@ -2591,7 +2591,7 @@ a.svcl-row{color:var(--black)}
   font-size:.82rem;letter-spacing:.05em;color:var(--black);border:1.5px solid var(--black);border-radius:999px;padding:.55rem 1.1rem}
 .ref-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-top:1.5rem}
 @media(max-width:760px){.ref-steps{grid-template-columns:1fr}}
-.ref-card{background:var(--white);border:1px solid var(--border);border-radius:6px;padding:1.5rem}
+.ref-card{background:var(--white);border:1px solid var(--border);border-radius:3px;padding:1.5rem}
 .ref-card h3{font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;font-size:1.1rem;margin:0 0 .5rem;color:var(--black)}
 .ref-card p{font-size:.92rem;line-height:1.55;color:var(--gray);margin:0}
 
@@ -2640,8 +2640,8 @@ a.svcl-row{color:var(--black)}
   width:min(440px,86vw);min-height:min(74vh,460px);
   transform:translate(-50%,-50%);opacity:0;
   display:flex;flex-direction:column;justify-content:space-between;text-align:left;
-  background:var(--light);color:var(--black);border:1px solid var(--border);border-radius:10px;
-  box-shadow:0 34px 70px -26px rgba(10,10,10,.42);
+  background:var(--light);color:var(--black);border:1px solid var(--border);border-radius:4px;
+  box-shadow:0 26px 54px -30px rgba(10,10,10,.34);
   padding:2.3rem 2.1rem;cursor:pointer;
   will-change:transform,opacity;
 }
@@ -2881,6 +2881,17 @@ a.svcl-row{color:var(--black)}
   .partner-card:hover,.poster-box:hover{transform:none !important}
 }
 
+/* ——— Écrans tactiles : pas d'effet de survol (évite cartes/boutons « collés »
+   en position levée après un tap, et les mouvements de survol hors sujet sur mobile).
+   Le retour tactile est assuré par les états :active. ——— */
+@media (hover:none){
+  .ln-card:hover,.btn-white:hover,.cta:hover,.f-submit:hover,.c2-submit:hover,
+  .svc-pill:hover,.nav-cta:hover,.btn-ghost:hover,.btn-hero:hover,.mp-btn:hover,
+  .hero-scroll:hover span,.ed-row:hover .ed-media > img,
+  .svcl-row:hover .svcl-name,.svcl-row:hover .svcl-name::after{
+    transform:none !important;box-shadow:none !important;
+  }
+}
 </style>
 <style id="nav-centered">
 @media(min-width:821px){
