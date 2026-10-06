@@ -95,7 +95,7 @@
   --page:#AEB0B2; --panel:#FDFDFD; --side:#F3F2F1; --rail:#FAFAF9;
   --ink:#1C1C1E; --ink2:#6B6B70; --muted:#9A9A9F; --line:#EDECEA; --line2:#E7E6E3;
   --yellow:#F5D479; --blue:#C9DAE4; --lav:#E1D6E7;
-  --green-d:#3E8E4F; --amber-d:#C07A2E; --red-d:#9C403C; --brand:#C83F32;
+  --green-d:#3E8E4F; --amber-d:#C07A2E; --red-d:#C83F32; --brand:#C83F32;
   --r:20px; --r-sm:14px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -376,7 +376,7 @@ tbody tr:hover{background:#F7F6F4}
 .filebtn{display:inline-flex;align-items:center;gap:9px;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--ink2);background:#FAF9F7;border:1px dashed var(--line2);border-radius:12px;padding:12px 15px;cursor:pointer;align-self:flex-start}
 .filebtn:hover{background:#F2F0EC;color:var(--ink)}
 .btn-primary{font-family:inherit;font-size:14.5px;font-weight:700;color:#fff;background:var(--brand);border:0;border-radius:13px;padding:13px 18px;cursor:pointer;align-self:flex-start;transition:background .15s,transform .12s;box-shadow:0 12px 26px -14px rgba(201,62,50,.6)}
-.btn-primary:hover{background:#B4352A}.btn-primary:active{transform:scale(.98)}
+.btn-primary:hover{background:var(--brand-d)}.btn-primary:active{transform:scale(.98)}
 .btn-primary.wide{align-self:stretch;text-align:center}
 .btn-ghost{font-family:inherit;font-size:13.5px;font-weight:600;color:var(--ink);background:var(--panel);border:1px solid var(--line2);border-radius:12px;padding:11px 15px;cursor:pointer}
 .btn-ghost:hover{background:#F5F4F2}
@@ -443,7 +443,7 @@ tbody tr:hover{background:#F7F6F4}
   --ink2:#5A5351; --muted:#9A968E;   /* gris chauds du site */
   --line:#E1DFD6; --line2:#D3D1C7;
   --yellow:#E9E5D9; --blue:#E3E4DD; --lav:#E7E2DD;  /* tons neutres crème */
-  --green-d:#3E8E4F; --amber-d:#B87A2C; --red-d:#B23122;
+  --green-d:#3E8E4F; --amber-d:#B87A2C; --red-d:#C83F32;
   --brand:#C83F32; --brand-d:#B7351F;   /* rouge du site */
   --r:6px; --r-sm:4px;
   --font-disp:'Barlow Condensed','Arial Narrow',system-ui,sans-serif;
@@ -620,7 +620,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .vdca-tag{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-size:9.5px;font-weight:800;border-radius:999px;padding:2px 8px}
 .vdca-tag.pin{color:var(--brand);border:1px solid var(--brand)}
 .vdca-tag.off{color:var(--muted);border:1px solid var(--line2)}
-.vdca-tag.exp{color:#9C403C;border:1px solid #d8b3b0}
+.vdca-tag.exp{color:#C83F32;border:1px solid #d8b3b0}
 .vdca-it-date{margin-left:auto;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.04em;font-size:10.5px;font-weight:700;color:var(--muted);white-space:nowrap}
 .vdca-it-t{font-family:var(--font-body);font-weight:700;letter-spacing:-.01em;font-size:17px;line-height:1.2;margin:0;color:var(--ink)}
 .vdca-it-c{font-size:14px;line-height:1.5;color:var(--ink2);margin:6px 0 0}
@@ -628,8 +628,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .vdca-it-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .vdca-act{font-family:var(--font-body);font-weight:600;font-size:12.5px;color:var(--ink);background:transparent;border:1px solid var(--line2);border-radius:999px;padding:7px 14px;cursor:pointer;transition:.15s}
 .vdca-act:hover{border-color:var(--ink)}
-.vdca-act.danger{color:#9C403C}
-.vdca-act.danger:hover{border-color:#9C403C}
+.vdca-act.danger{color:#C83F32}
+.vdca-act.danger:hover{border-color:#C83F32}
 .gm-current h4[hidden]{display:none}
 .gm-current p{font-size:15px;line-height:1.5;color:var(--ink);white-space:pre-wrap;margin:0}
 .msgpub-meta{font-size:12px;color:var(--muted);margin-top:10px}
@@ -1120,7 +1120,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   var TODAY='Mardi', NOWM=21*60+40, PENDKEY='Mardi|20:00|MAT 1';
   var validated=Object.create(null);
   (SCHED[TODAY]||[]).forEach(function(c){ var k=TODAY+'|'+c.t+'|'+c.m; if(k!==PENDKEY) validated[k]=true; });
-  var SCOL={done:'#3E8E4F',todo:'#C07A2E',late:'#9C403C',soon:'#9A9A9F'};
+  var SCOL={done:'#3E8E4F',todo:'#C07A2E',late:'#C83F32',soon:'#9A9A9F'};
   function statusOf(day,t,m){
     var k=day+'|'+t+'|'+m;
     if(validated[k]) return {cls:'done',label:'Validé'};
