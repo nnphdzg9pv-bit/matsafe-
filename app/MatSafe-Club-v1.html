@@ -134,7 +134,16 @@ svg{display:block}
 .head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
 .head h1{font-size:27px;font-weight:800;letter-spacing:-.02em}
 .head p{color:var(--ink2);font-size:14px;margin-top:5px}
-.head-actions{display:flex;gap:10px;flex-shrink:0}
+.head-actions{display:flex;gap:10px;flex-shrink:0;align-items:center}
+/* Badge flamme « série de nettoyage » dans l'en-tête — rendu public, en évidence */
+.streak-hb{display:inline-flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line2);border-radius:var(--r-sm);padding:7px 14px 7px 10px;cursor:pointer;text-align:left;font-family:inherit;box-shadow:0 8px 20px -14px rgba(208,64,44,.55);transition:transform .14s,box-shadow .2s}
+.streak-hb:hover{box-shadow:0 12px 24px -14px rgba(208,64,44,.72)}
+.streak-hb:active{transform:scale(.97)}
+.streak-hb .shb-f{display:flex;width:20px;height:24px;flex:none}
+.streak-hb .shb-f svg{width:100%;height:100%;display:block}
+.streak-hb .shb-t{display:flex;flex-direction:column;line-height:1.02}
+.streak-hb .shb-t b{font-family:var(--font-disp);font-weight:900;font-size:17px;color:var(--ink)}
+.streak-hb .shb-t span{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.04em;font-size:9px;font-weight:700;color:var(--ink2)}
 .iconbtn{width:42px;height:42px;border-radius:13px;background:var(--panel);border:1px solid var(--line2);display:grid;place-items:center;color:var(--ink);cursor:pointer;position:relative;transition:background .15s,transform .15s}
 .iconbtn:hover{background:#F5F4F2}
 .iconbtn:active{transform:scale(.93)}
@@ -701,6 +710,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <div class="head">
         <div><h1>Bonjour, Simon&nbsp;!</h1><p>Gérez vos passages et suivez l'hygiène de votre club en un coup d'œil.</p></div>
         <div class="head-actions">
+          <button class="streak-hb" data-go="serie" aria-label="Série de nettoyage de la salle"><span class="shb-f"><svg viewBox="0 0 24 28" aria-hidden="true"><path d="M13 1c.6 4.2 5 5.6 5 10.8A6 6 0 0 1 6 12c0-2.6 1.5-4.1 1.5-4.1.2 2 2.3 2.2 2.3.2 0-3 1.3-5 3.2-7z" fill="#D0402C"/><path d="M12 12c.3 2 2.4 2.6 2.4 5.1a2.6 2.6 0 0 1-5.2 0c0-1.3.8-2 .8-2 .1 1 1.2 1.1 1.2.1 0-1.4.4-2.4.8-3.2z" fill="#F3B14C"/></svg></span><span class="shb-t"><b id="streakBadgeN">7</b><span>jours nettoyée</span></span></button>
           <button class="iconbtn" data-toast="Aide &amp; support"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .8-1 1.7"/><path d="M12 17h.01"/></svg></button>
           <button class="iconbtn" data-toast="Notifications"><span class="dot"></span><svg class="ic" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></button>
         </div>
@@ -1076,6 +1086,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var flame='<svg class="srk-day-f" viewBox="0 0 24 28"><path d="M13 1c.6 4.2 5 5.6 5 10.8A6 6 0 0 1 6 12c0-2.6 1.5-4.1 1.5-4.1.2 2 2.3 2.2 2.3.2 0-3 1.3-5 3.2-7z" fill="#D0402C"/><path d="M12 12c.3 2 2.4 2.6 2.4 5.1a2.6 2.6 0 0 1-5.2 0c0-1.3.8-2 .8-2 .1 1 1.2 1.1 1.2.1 0-1.4.4-2.4.8-3.2z" fill="#F3B14C"/></svg>';
     var wk=document.getElementById('srkWeek');
     if(wk){ var h=''; for(var i=0;i<7;i++){ var done=i<=ti; h+='<div class="srk-day'+(i===ti?' today':'')+'"><span class="srk-day-d">'+DAYS[i]+'</span>'+(done?flame:'<span class="srk-day-c"></span>')+'</div>'; } wk.innerHTML=h; }
+    // Rendre la série publique : publiée sur le pont localStorage, lue par MatSafe Fighter (adhérents).
+    try{ localStorage.setItem('matsafe_club_streak', JSON.stringify({ streak:s, max:STREAK.max, start:(d.getDate()+' '+MO[d.getMonth()]+' '+d.getFullYear()), updated:Date.now() })); }catch(_){}
+    var hb=document.getElementById('streakBadgeN'); if(hb) hb.textContent=s;
   }
   renderStreak();
 

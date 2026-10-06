@@ -402,6 +402,16 @@ body.homebento .topbar .brandlogo{display:none}
 .bento-hero::before,.bento-hero::after{content:"+";position:absolute;top:4px;font-family:var(--sans);font-weight:400;font-size:16px;color:var(--faint);line-height:1}
 .bento-hero::before{left:2px}.bento-hero::after{right:2px}
 .bento-home{max-width:500px;margin:0 auto;width:100%}
+/* Flamme « série de nettoyage » de la salle — signal public, en haut à droite de l'accueil */
+.streak-pub{display:flex;justify-content:flex-end;margin:0 0 2px}
+.streak-pill{display:inline-flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--border);border-radius:999px;padding:6px 14px 6px 9px;cursor:pointer;text-align:left;box-shadow:0 6px 18px -12px rgba(208,64,44,.5);transition:transform .14s,box-shadow .2s}
+.streak-pill:active{transform:translateY(1px)}
+@media(hover:hover){.streak-pill:hover{box-shadow:0 10px 22px -12px rgba(208,64,44,.65)}}
+.streak-pill .sp-f{display:flex;width:21px;height:25px;flex:none}
+.streak-pill .sp-f svg{width:100%;height:100%;display:block}
+.streak-pill .sp-txt{display:flex;flex-direction:column;line-height:1.02}
+.streak-pill .sp-txt b{font-family:var(--cond);font-weight:900;text-transform:uppercase;letter-spacing:-.01em;font-size:15px;color:var(--ink)}
+.streak-pill .sp-txt span{font-family:var(--cond);text-transform:uppercase;letter-spacing:.04em;font-size:9px;font-weight:700;color:var(--gray)}
 .bento{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
 .tile{position:relative;display:flex;flex-direction:column;border-radius:18px;overflow:hidden;cursor:pointer;text-align:left;border:0;padding:18px;min-height:150px;font-family:var(--sans);transition:transform .14s}
 .tile:active{transform:translateY(1px)}
@@ -876,6 +886,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   ];
   function getEvents(){ try{ var r=localStorage.getItem('matsafe_club_events'); if(r===null) return DEFAULT_EVENTS.slice(); var a=JSON.parse(r); return Array.isArray(a)?a:[]; }catch(e){ return DEFAULT_EVENTS.slice(); } }
   function getClubMsg(){ try{ var r=localStorage.getItem('matsafe_club_message'); return r?JSON.parse(r):null; }catch(e){ return null; } }
+  // Série de nettoyage de la salle (flamme) — publiée par MatSafe Club, lue ici (lecture seule).
+  function getStreak(){ try{ var r=localStorage.getItem('matsafe_club_streak'); if(r){ var s=JSON.parse(r); if(s && typeof s.streak==='number') return s; } }catch(e){} return { streak:7, max:7, start:'20 sept. 2026' }; }
 
   /* ===== LA VIE DU CLUB — fil d'information officiel (publié côté Club, lu ici) =====
      Lecture seule côté Fighter : un adhérent ne peut jamais publier. */
@@ -1030,8 +1042,12 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       tile('a-care','creme','<span class="t-ic">'+ICare+'</span><span class="t-b"><span class="tile-t">Conseils</span><span class="tile-s">La routine MatSafe</span></span>')+
       tile('a-returns','creme','<span class="t-ic">'+IList+'</span><span class="t-b"><span class="tile-t">Mes retours</span><span class="tile-s">Suivi anonyme'+(mine.length?' · '+mine.length:'')+'</span></span>');
 
+    // Série de nettoyage de la salle (flamme) — signal public de traçabilité, visible par l'adhérent.
+    var st=getStreak();
+    var IFlame='<svg viewBox="0 0 24 28" aria-hidden="true"><path d="M13 1c.6 4.2 5 5.6 5 10.8A6 6 0 0 1 6 12c0-2.6 1.5-4.1 1.5-4.1.2 2 2.3 2.2 2.3.2 0-3 1.3-5 3.2-7z" fill="#D0402C"/><path d="M12 12c.3 2 2.4 2.6 2.4 5.1a2.6 2.6 0 0 1-5.2 0c0-1.3.8-2 .8-2 .1 1 1.2 1.1 1.2.1 0-1.4.4-2.4.8-3.2z" fill="#F3B14C"/></svg>';
+    var streakHtml='<div class="streak-pub"><button class="streak-pill" id="a-streak" aria-label="Série de nettoyage de la salle"><span class="sp-f">'+IFlame+'</span><span class="sp-txt"><b>'+st.streak+(st.streak>1?' jours':' jour')+'</b><span>Salle nettoyée d’affilée</span></span></button></div>';
     view.innerHTML=
-      '<div class="home fhome bento-home">'+ heroHtml + msgHtml +
+      '<div class="home fhome bento-home">'+ streakHtml + heroHtml + msgHtml +
         '<div class="bento">'+ tiles +'</div>'+
         '<div class="foot-min">Welcome to MatSafe Fighter</div>'+
       '</div>';
@@ -1046,6 +1062,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     document.getElementById('a-care').onclick=leaveHome(screenCare);
     document.getElementById('a-returns').onclick=leaveHome(screenReturns);
     document.getElementById('a-vdc').onclick=leaveHome(screenClubLife);
+    var sp=document.getElementById('a-streak');
+    if(sp) sp.onclick=function(){ toast('Votre salle a validé le nettoyage '+st.streak+' jour'+(st.streak>1?'s':'')+' d’affilée. Série suivie en direct.'); };
     startVdcCarousel();
   }
   // Défilé des messages « La vie du club » sur l'accueil (boucle, respecte reduced-motion).
@@ -1307,7 +1325,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   }
 
   screenHome();
-  window.addEventListener('storage', function(e){ if((e.key==='matsafe_club_message'||e.key==='matsafe_club_events'||e.key==='matsafe_club_posts') && document.querySelector('.home')){ try{ screenHome(); }catch(_){ } } });
+  window.addEventListener('storage', function(e){ if((e.key==='matsafe_club_message'||e.key==='matsafe_club_events'||e.key==='matsafe_club_posts'||e.key==='matsafe_club_streak') && document.querySelector('.home')){ try{ screenHome(); }catch(_){ } } });
 </script>
 <script>
 /* Message du club : lu depuis localStorage (publié par MATSAFE Club, même origine). */
