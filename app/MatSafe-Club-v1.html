@@ -139,8 +139,18 @@ svg{display:block}
 .streak-hb{display:inline-flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line2);border-radius:var(--r-sm);padding:7px 14px 7px 10px;cursor:pointer;text-align:left;font-family:inherit;box-shadow:0 8px 20px -14px rgba(208,64,44,.55);transition:transform .14s,box-shadow .2s}
 .streak-hb:hover{box-shadow:0 12px 24px -14px rgba(208,64,44,.72)}
 .streak-hb:active{transform:scale(.97)}
-.streak-hb .shb-f{display:flex;width:20px;height:24px;flex:none}
-.streak-hb .shb-f svg{width:100%;height:100%;display:block}
+.streak-hb .shb-f{display:flex;width:23px;height:29px;flex:none;margin:-3px 0}
+.streak-hb .shb-f svg{width:100%;height:100%;display:block;overflow:visible}
+/* Flamme vivante (brûle) — partagée par le badge d'en-tête et la grande flamme récompense */
+@keyframes flFlick{0%,100%{transform:scaleY(1) scaleX(1) rotate(0deg) translateX(0)}18%{transform:scaleY(1.07) scaleX(.95) rotate(-1.8deg) translateX(-.5px)}38%{transform:scaleY(.94) scaleX(1.05) rotate(1.5deg) translateX(.5px)}58%{transform:scaleY(1.05) scaleX(.98) rotate(-1deg) translateX(-.3px)}78%{transform:scaleY(.98) scaleX(1.02) rotate(.7deg) translateX(.3px)}}
+@keyframes flCore{0%,100%{transform:scaleY(1);opacity:1}50%{transform:scaleY(.84);opacity:.78}}
+@keyframes flGlow{0%,100%{opacity:1}50%{opacity:.48}}
+.flame .fl-body{transform-box:fill-box;transform-origin:center bottom;animation:flFlick 1.05s ease-in-out infinite}
+.flame .fl-core{transform-box:fill-box;transform-origin:center bottom;animation:flCore .74s ease-in-out infinite}
+.flame .fl-glow{transform-box:fill-box;transform-origin:center;animation:flGlow 1.7s ease-in-out infinite}
+.streak-hb:hover .flame .fl-body{animation-duration:.55s}
+.streak-hb:hover .flame .fl-core{animation-duration:.42s}
+@media(prefers-reduced-motion:reduce){.flame .fl-body,.flame .fl-core,.flame .fl-glow{animation:none}}
 .streak-hb .shb-t{display:flex;flex-direction:column;line-height:1.02}
 .streak-hb .shb-t b{font-family:var(--font-disp);font-weight:900;font-size:17px;color:var(--ink)}
 .streak-hb .shb-t span{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.04em;font-size:9px;font-weight:700;color:var(--ink2)}
@@ -710,7 +720,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <div class="head">
         <div><h1>Bonjour, Simon&nbsp;!</h1><p>Gérez vos passages et suivez l'hygiène de votre club en un coup d'œil.</p></div>
         <div class="head-actions">
-          <button class="streak-hb" data-go="serie" aria-label="Série de nettoyage de la salle"><span class="shb-f"><svg viewBox="0 0 24 28" aria-hidden="true"><path d="M13 1c.6 4.2 5 5.6 5 10.8A6 6 0 0 1 6 12c0-2.6 1.5-4.1 1.5-4.1.2 2 2.3 2.2 2.3.2 0-3 1.3-5 3.2-7z" fill="#D0402C"/><path d="M12 12c.3 2 2.4 2.6 2.4 5.1a2.6 2.6 0 0 1-5.2 0c0-1.3.8-2 .8-2 .1 1 1.2 1.1 1.2.1 0-1.4.4-2.4.8-3.2z" fill="#F3B14C"/></svg></span><span class="shb-t"><b id="streakBadgeN">7</b><span>jours nettoyée</span></span></button>
+          <button class="streak-hb" data-go="serie" aria-label="Série de nettoyage de la salle"><span class="shb-f"><svg class="flame" viewBox="0 0 200 252" aria-hidden="true"><defs><radialGradient id="hGlow" cx="50%" cy="64%" r="56%"><stop offset="0" stop-color="#F0721F" stop-opacity=".30"/><stop offset="1" stop-color="#F0721F" stop-opacity="0"/></radialGradient><linearGradient id="hFl" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#B4311A"/><stop offset=".38" stop-color="#D8471F"/><stop offset=".72" stop-color="#F0691E"/><stop offset="1" stop-color="#F79B33"/></linearGradient><linearGradient id="hCore" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#E6A85B"/><stop offset="1" stop-color="#F4DBAC"/></linearGradient></defs><ellipse class="fl-glow" cx="100" cy="168" rx="94" ry="100" fill="url(#hGlow)"/><g class="fl-body"><path fill="url(#hFl)" d="M100 24 C120 78 150 104 150 158 C150 202 128 238 100 238 C72 238 50 202 50 158 C50 116 78 104 78 70 C78 94 63 106 57 122 C49 97 66 60 100 24 Z"/><path fill="url(#hFl)" d="M112 8 C119 15 119 27 109 33 C104 27 102 22 105 15 C107 11 109 10 112 8 Z"/></g><path class="fl-core" fill="url(#hCore)" d="M101 118 C112 145 126 160 126 187 C126 210 115 226 100 226 C85 226 75 210 75 187 C75 166 90 160 90 141 C90 152 84 161 80 169 C75 154 86 133 101 118 Z"/><g class="fl-sparks"><circle cx="62" cy="98" r="3.2" fill="#F0863A"/><circle cx="140" cy="74" r="2.6" fill="#F0863A"/><circle cx="96" cy="40" r="2" fill="#F0863A"/></g></svg></span><span class="shb-t"><b id="streakBadgeN">7</b><span>jours nettoyée</span></span></button>
           <button class="iconbtn" data-toast="Aide &amp; support"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .8-1 1.7"/><path d="M12 17h.01"/></svg></button>
           <button class="iconbtn" data-toast="Notifications"><span class="dot"></span><svg class="ic" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></button>
         </div>
@@ -738,7 +748,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         <div class="srk-hero">
           <div class="srk-kick">Félicitations</div>
           <div class="srk-flamewrap">
-            <svg class="srk-flame" viewBox="0 0 200 252" aria-hidden="true">
+            <svg class="srk-flame flame" viewBox="0 0 200 252" aria-hidden="true">
               <defs>
                 <radialGradient id="srkGlow" cx="50%" cy="64%" r="56%">
                   <stop offset="0" stop-color="#F0721F" stop-opacity=".30"/>
@@ -752,10 +762,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
                   <stop offset="0" stop-color="#E6A85B"/><stop offset="1" stop-color="#F4DBAC"/>
                 </linearGradient>
               </defs>
-              <ellipse cx="100" cy="168" rx="94" ry="100" fill="url(#srkGlow)"/>
-              <path fill="url(#srkFl)" d="M100 24 C120 78 150 104 150 158 C150 202 128 238 100 238 C72 238 50 202 50 158 C50 116 78 104 78 70 C78 94 63 106 57 122 C49 97 66 60 100 24 Z"/>
-              <path fill="url(#srkCore)" d="M101 118 C112 145 126 160 126 187 C126 210 115 226 100 226 C85 226 75 210 75 187 C75 166 90 160 90 141 C90 152 84 161 80 169 C75 154 86 133 101 118 Z"/>
-              <path fill="url(#srkFl)" d="M112 8 C119 15 119 27 109 33 C104 27 102 22 105 15 C107 11 109 10 112 8 Z"/>
+              <ellipse class="fl-glow" cx="100" cy="168" rx="94" ry="100" fill="url(#srkGlow)"/>
+              <g class="fl-body"><path fill="url(#srkFl)" d="M100 24 C120 78 150 104 150 158 C150 202 128 238 100 238 C72 238 50 202 50 158 C50 116 78 104 78 70 C78 94 63 106 57 122 C49 97 66 60 100 24 Z"/><path fill="url(#srkFl)" d="M112 8 C119 15 119 27 109 33 C104 27 102 22 105 15 C107 11 109 10 112 8 Z"/></g>
+              <path class="fl-core" fill="url(#srkCore)" d="M101 118 C112 145 126 160 126 187 C126 210 115 226 100 226 C85 226 75 210 75 187 C75 166 90 160 90 141 C90 152 84 161 80 169 C75 154 86 133 101 118 Z"/>
               <circle cx="62" cy="98" r="3.2" fill="#F0863A"/>
               <circle cx="140" cy="74" r="2.6" fill="#F0863A"/>
               <circle cx="96" cy="40" r="2" fill="#F0863A"/>
