@@ -141,16 +141,21 @@ svg{display:block}
 .streak-hb:active{transform:scale(.97)}
 .streak-hb .shb-f{display:flex;width:23px;height:29px;flex:none;margin:-3px 0}
 .streak-hb .shb-f svg{width:100%;height:100%;display:block;overflow:visible}
-/* Flamme vivante (brûle) — partagée par le badge d'en-tête et la grande flamme récompense */
-@keyframes flFlick{0%,100%{transform:scaleY(1) scaleX(1) rotate(0deg) translateX(0)}18%{transform:scaleY(1.07) scaleX(.95) rotate(-1.8deg) translateX(-.5px)}38%{transform:scaleY(.94) scaleX(1.05) rotate(1.5deg) translateX(.5px)}58%{transform:scaleY(1.05) scaleX(.98) rotate(-1deg) translateX(-.3px)}78%{transform:scaleY(.98) scaleX(1.02) rotate(.7deg) translateX(.3px)}}
-@keyframes flCore{0%,100%{transform:scaleY(1);opacity:1}50%{transform:scaleY(.84);opacity:.78}}
-@keyframes flGlow{0%,100%{opacity:1}50%{opacity:.48}}
-.flame .fl-body{transform-box:fill-box;transform-origin:center bottom;animation:flFlick 1.05s ease-in-out infinite}
-.flame .fl-core{transform-box:fill-box;transform-origin:center bottom;animation:flCore .74s ease-in-out infinite}
-.flame .fl-glow{transform-box:fill-box;transform-origin:center;animation:flGlow 1.7s ease-in-out infinite}
-.streak-hb:hover .flame .fl-body{animation-duration:.55s}
-.streak-hb:hover .flame .fl-core{animation-duration:.42s}
-@media(prefers-reduced-motion:reduce){.flame .fl-body,.flame .fl-core,.flame .fl-glow{animation:none}}
+/* Flamme vivante (brûle vraiment) — partagée par le badge d'en-tête et la grande flamme récompense.
+   Base ancrée en bas, sommet qui danse, cœur qui pulse, halo qui crépite, étincelles qui montent. */
+@keyframes flFlick{0%,100%{transform:scaleY(1) scaleX(1) rotate(0deg) skewX(0deg) translateX(0)}14%{transform:scaleY(1.14) scaleX(.9) rotate(-3.6deg) skewX(2.6deg) translateX(-1px)}28%{transform:scaleY(.9) scaleX(1.1) rotate(3.2deg) skewX(-2.8deg) translateX(.9px)}42%{transform:scaleY(1.12) scaleX(.93) rotate(-2.4deg) skewX(3.2deg) translateX(-.6px)}58%{transform:scaleY(.88) scaleX(1.12) rotate(3.6deg) skewX(-2.6deg) translateX(1px)}72%{transform:scaleY(1.16) scaleX(.9) rotate(-3deg) skewX(2.2deg) translateX(-.8px)}86%{transform:scaleY(.95) scaleX(1.05) rotate(2deg) skewX(-1.8deg) translateX(.4px)}}
+@keyframes flCore{0%,100%{transform:scaleY(1) scaleX(1);opacity:1}26%{transform:scaleY(1.12) scaleX(.88);opacity:.96}52%{transform:scaleY(.74) scaleX(1.12);opacity:.68}78%{transform:scaleY(1.06) scaleX(.94);opacity:.9}}
+@keyframes flGlow{0%,100%{opacity:1;transform:scale(1)}25%{opacity:.45;transform:scale(1.1)}50%{opacity:.85;transform:scale(.95)}75%{opacity:.4;transform:scale(1.06)}}
+@keyframes flSpark{0%{opacity:0;transform:translateY(5px) scale(.5)}25%{opacity:1}100%{opacity:0;transform:translateY(-16px) scale(1.15)}}
+.flame .fl-body{transform-box:fill-box;transform-origin:center bottom;animation:flFlick .8s ease-in-out infinite}
+.flame .fl-core{transform-box:fill-box;transform-origin:center bottom;animation:flCore .56s ease-in-out infinite}
+.flame .fl-glow{transform-box:fill-box;transform-origin:center;animation:flGlow 1.25s ease-in-out infinite}
+.flame .fl-sparks circle{transform-box:fill-box;transform-origin:center;animation:flSpark 1.5s ease-out infinite}
+.flame .fl-sparks circle:nth-of-type(2){animation-duration:1.8s;animation-delay:.5s}
+.flame .fl-sparks circle:nth-of-type(3){animation-duration:1.25s;animation-delay:.95s}
+.streak-hb:hover .flame .fl-body{animation-duration:.45s}
+.streak-hb:hover .flame .fl-core{animation-duration:.34s}
+@media(prefers-reduced-motion:reduce){.flame .fl-body,.flame .fl-core,.flame .fl-glow,.flame .fl-sparks circle{animation:none}}
 .streak-hb .shb-t{display:flex;flex-direction:column;line-height:1.02}
 .streak-hb .shb-t b{font-family:var(--font-disp);font-weight:900;font-size:17px;color:var(--ink)}
 .streak-hb .shb-t span{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.04em;font-size:9px;font-weight:700;color:var(--ink2)}
