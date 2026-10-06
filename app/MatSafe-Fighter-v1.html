@@ -96,7 +96,7 @@
     --ok:#2F6B4F;  --ok-bg:#E6EFE9;
     --warn:#9A5B12; --warn-bg:#F2E8D6;
     --info:#3C4A66; --info-bg:#E4E7EE;
-    --brand:#C83830; --brand-strong:#AE2E23;
+    --brand:#D0402C; --brand-strong:#B7351F;
     --cond:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
     --sans:"Barlow","Segoe UI",system-ui,sans-serif;
     color-scheme:light;
@@ -488,8 +488,8 @@ body.fdark{background:#0C0D10}
 .fdark .fcard-badge{border-color:var(--brand);color:#fff}
 @media(hover:hover){.fdark .fcard:hover{border-color:rgba(255,255,255,.2);background:#24262D;box-shadow:0 20px 44px -28px rgba(0,0,0,.85)}.fdark .fcard:hover .fcard-t{color:#fff}}
 /* CTA central rouge, arrondi généreux */
-.fdark .fhero{border-radius:26px;box-shadow:0 34px 80px -38px rgba(200,56,48,.7)}
-@media(hover:hover){.fdark .fhero:hover{box-shadow:0 40px 92px -36px rgba(200,56,48,.85)}}
+.fdark .fhero{border-radius:26px;box-shadow:0 34px 80px -38px rgba(208,64,44,.7)}
+@media(hover:hover){.fdark .fhero:hover{box-shadow:0 40px 92px -36px rgba(208,64,44,.85)}}
 
 .chk-warn{font-family:var(--cond);text-transform:uppercase;letter-spacing:.03em;font-weight:800;font-size:13px;color:var(--brand);background:rgba(208,64,44,.07);border:1px solid rgba(208,64,44,.2);border-radius:6px;padding:12px 14px;margin:2px 0 14px;text-align:center}
 
@@ -575,7 +575,7 @@ body.fdark{background:#0C0D10}
 .contact-sub{font-size:16px;line-height:1.55;color:var(--gray);margin:18px auto 26px;max-width:42ch}
 .contact-ta{width:100%;box-sizing:border-box;min-height:210px;resize:vertical;text-align:left;font-family:var(--sans);font-size:16px;line-height:1.55;color:var(--ink);background:var(--paper);border:1px solid var(--border);border-radius:8px;padding:16px 18px}
 .contact-ta::placeholder{color:var(--faint)}
-.contact-ta:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(200,56,48,.15)}
+.contact-ta:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(208,64,44,.15)}
 .contact-send{display:inline-flex;align-items:center;gap:12px;margin-top:16px;font-family:var(--cond);text-transform:uppercase;letter-spacing:.08em;font-weight:800;font-size:14px;color:#fff;background:var(--ink);border:0;border-radius:8px;padding:15px 26px;cursor:pointer;transition:gap .14s,background .14s,opacity .14s}
 .contact-send svg{width:18px;height:18px;display:block}
 @media(hover:hover){.contact-send:hover{gap:16px;background:#000}}
@@ -1299,7 +1299,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   }
   // Animation de félicitations : « Bien joué » en grand au milieu de l'écran + confettis.
   function celebrateCheck(){
-    var colors=['#D0402C','#F3B14C','#0B0B0B','#F0691E','#C83830','#E6A85B'];
+    var colors=['#D0402C','#F3B14C','#0B0B0B','#F0691E','#E6A85B'];
     var conf='';
     for(var i=0;i<24;i++){
       var x=Math.round(Math.random()*100), c=colors[i%colors.length];
