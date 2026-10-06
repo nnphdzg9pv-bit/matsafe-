@@ -1,0 +1,76 @@
+===========================================================================
+  MatSafe — comment lancer Fighter et Club pour qu'ils communiquent
+===========================================================================
+
+POURQUOI UN LANCEUR ?
+---------------------
+Si vous ouvrez les fichiers en double-cliquant dessus directement, votre
+navigateur les charge en « file:// ». Dans ce mode, MatSafe Fighter et
+MatSafe Club ne partagent PAS leurs données (c'est une sécurité des
+navigateurs, et Safari le bloque complètement). Un retour envoyé depuis
+Fighter n'apparaît alors jamais dans Club.
+
+La solution : ouvrir les deux applications sous la même adresse locale,
+du type http://localhost:8000. Le lanceur ci-dessous fait tout pour vous.
+
+
+IMPORTANT : tout doit être dans le MÊME dossier
+-----------------------------------------------
+Placez ces fichiers ensemble dans un seul dossier :
+  • MatSafe-Fighter-v1.html
+  • MatSafe-Club-v1.html
+  • Lancer-MatSafe.command        (Mac)
+  • Lancer-MatSafe-Windows.bat    (Windows)
+
+
+SUR MAC
+-------
+1. Double-cliquez sur « Lancer-MatSafe.command ».
+   (La toute première fois, si rien ne se passe : faites un clic droit
+    sur le fichier → « Ouvrir » → « Ouvrir ». À ne faire qu'une fois.)
+2. Une petite fenêtre noire s'ouvre, puis MatSafe Fighter et MatSafe Club
+   s'ouvrent dans votre navigateur.
+3. LAISSEZ la petite fenêtre noire ouverte pendant que vous utilisez MatSafe.
+4. Pour tout arrêter : fermez cette fenêtre noire.
+
+
+SUR WINDOWS
+-----------
+1. Double-cliquez sur « Lancer-MatSafe-Windows.bat ».
+2. Une fenêtre s'ouvre, puis MatSafe Fighter et MatSafe Club s'ouvrent
+   dans votre navigateur.
+3. LAISSEZ la fenêtre du « serveur local » ouverte pendant l'utilisation.
+4. Pour tout arrêter : fermez cette fenêtre.
+
+
+TESTER LA COMMUNICATION
+-----------------------
+1. Dans MatSafe Fighter : « Faire un retour à mon club », écrivez un
+   message, puis « Envoyer mon retour ».
+2. Allez dans MatSafe Club : onglet « Retours adhérents ».
+   → Votre retour apparaît immédiatement (ou actualisez la page).
+3. Dans Club, cliquez « Prendre en compte » puis « Marquer traité ».
+4. Revenez dans Fighter : « Suivre mes retours ».
+   → Le nouveau statut s'affiche, retrouvé grâce à votre code anonyme.
+
+
+SI « PORT DÉJÀ UTILISÉ » / LA PAGE NE S'OUVRE PAS
+-------------------------------------------------
+Une autre application utilise peut-être déjà le port 8000.
+Fermez la fenêtre du serveur, patientez quelques secondes et relancez.
+
+
+REMARQUE IMPORTANTE (anonymat)
+------------------------------
+Aucune donnée personnelle n'est collectée : pas de nom, pas d'e-mail,
+pas d'identité. Seul un code de suivi anonyme relie un retour à son auteur,
+côté de son propre appareil.
+
+
+ET EN PRODUCTION ? (voir la note technique transmise par ailleurs)
+------------------------------------------------------------------
+Ce fonctionnement local (données dans le navigateur) sert au prototype.
+En production, les retours devront passer par un vrai serveur / une API
+sécurisée : Fighter envoie le retour au serveur, et Club le récupère
+depuis ce serveur. Le navigateur ne sert plus de « base de données ».
+===========================================================================

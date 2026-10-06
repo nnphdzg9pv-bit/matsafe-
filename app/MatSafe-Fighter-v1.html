@@ -1362,8 +1362,13 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   }
   function screenReturns(){
     var mine=load(STORE);
+    // Le statut (et l'éventuelle réponse) est piloté côté club : on relit l'état courant
+    // dans la file partagée matsafe_fighter_inbox via le code de suivi anonyme.
+    var inbox=load(INBOX);
+    function freshStatus(r){ for(var i=0;i<inbox.length;i++){ if(inbox[i] && inbox[i].code && inbox[i].code===r.code){ return inbox[i]; } } return r; }
     var list = mine.length
       ? mine.map(function(r){
+          var cur=freshStatus(r);
           var kindLabel = r.kind==='avis' ? 'Avis d’hygiène' : 'Signalement';
           var cat = r.kind==='avis' ? (feelOf(r.feeling)||'') : (catOf(r.cat)||'');
           var meta=[]; if(cat) meta.push(cat); if(r.zone) meta.push(r.zone);
@@ -1371,14 +1376,14 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
             '<div class="ret-top"><span class="ret-kind">'+esc(kindLabel)+'</span><span class="ret-date">'+esc(r.when||'')+'</span></div>'+
             (meta.length?'<div class="ret-meta">'+esc(meta.join(' · '))+'</div>':'')+
             '<div class="ret-code"><code>'+esc(r.code||'—')+'</code>'+(r.code?'<button class="ret-copy" data-code="'+esc(r.code)+'">Copier</button>':'')+'</div>'+
-            stepsHtml(r.status)+
-            (r.reply?'<div class="ret-reply"><div class="k">Réponse du club</div>'+esc(r.reply)+'</div>':'')+
+            stepsHtml(cur.status)+
+            (cur.reply?'<div class="ret-reply"><div class="k">Réponse du club</div>'+esc(cur.reply)+'</div>':'')+
           '</div>';
         }).join('')
       : '<div class="note"><p>Vous n’avez pas encore envoyé de retour depuis ce téléphone. Vos avis et signalements apparaîtront ici avec leur code de suivi et leur avancement.</p></div>';
     view.innerHTML=
       backBtn()+
-      '<h2 class="h2">Suivre mes retours</h2>'+
+      '<h2 class="h2" id="retTitle">Suivre mes retours</h2>'+
       '<p class="sub">Consultez la prise en compte de vos retours grâce à votre code anonyme, sans créer de compte.</p>'+
       '<div class="demo-note">Démo&nbsp;: les retours sont actuellement stockés localement sur ce téléphone. En production, le suivi se fera via le serveur MatSafe à partir de votre code.</div>'+
       list;
@@ -1427,7 +1432,11 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   }
 
   screenHome();
-  window.addEventListener('storage', function(e){ if((e.key==='matsafe_club_message'||e.key==='matsafe_club_events'||e.key==='matsafe_club_posts'||e.key==='matsafe_club_streak') && document.querySelector('.home')){ try{ screenHome(); }catch(_){ } } });
+  window.addEventListener('storage', function(e){
+    if((e.key==='matsafe_club_message'||e.key==='matsafe_club_events'||e.key==='matsafe_club_posts'||e.key==='matsafe_club_streak') && document.querySelector('.home')){ try{ screenHome(); }catch(_){ } }
+    // Le club a fait évoluer un statut (ou ajouté une réponse) : rafraîchir « Suivre mes retours ».
+    if(e.key==='matsafe_fighter_inbox' && document.getElementById('retTitle')){ try{ screenReturns(); }catch(_){ } }
+  });
 </script>
 <script>
 /* Message du club : lu depuis localStorage (publié par MATSAFE Club, même origine). */

@@ -551,6 +551,14 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .fb .fb-txt{font-size:15.5px;line-height:1.55;margin:8px 0 14px}
 .fb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-top:2px}
 .fb-grid .fb{margin-bottom:0;box-shadow:0 12px 28px -22px rgba(20,20,25,.5)}
+/* Retours reçus (file partagée MatSafe Fighter) */
+.inbox-count{display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 7px;border-radius:999px;background:var(--brand);color:#fff;font-family:var(--font-disp);font-weight:800;font-size:12px;vertical-align:middle;margin-left:6px}
+.inbox-sub{color:var(--ink2);font-size:13.5px;line-height:1.5;margin:4px 0 16px;max-width:70ch}
+.inbox-empty{grid-column:1/-1;padding:26px 22px;border:1px dashed var(--line2);border-radius:var(--r);color:var(--ink2);font-size:14.5px;line-height:1.55;background:var(--panel)}
+.fb .fb-code{font-size:12.5px;color:var(--ink2);margin:0 0 12px}
+.fb .fb-code code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;color:var(--ink);background:var(--panel);border:1px solid var(--line2);border-radius:6px;padding:2px 7px}
+.fb .fb-reply{font-size:13.5px;line-height:1.5;color:var(--ink2);background:var(--panel);border-left:3px solid var(--brand);border-radius:8px;padding:9px 12px;margin:0 0 12px}
+.fb .fb-reply b{color:var(--ink)}
 .collect{margin-top:24px}
 .collect>h3{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.03em}
 /* ===== Signaler une anomalie — agencement type « contact » (centré) ===== */
@@ -913,12 +921,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       </div>
 
       <div class="block">
-        <h3>Commentaires récents</h3>
-        <div class="fb-grid">
-          <div class="fb"><div class="av md a5">EM</div><div class="fb-body"><div class="fb-top"><span class="fb-name">Émilie M.</span><span class="fb-meta">Vestiaires · aujourd'hui</span></div><div class="fb-txt">« Douches un peu glissantes le soir, sinon tout est nickel. »</div><div class="fb-act"><span class="pill-st soon"><span class="d"></span>À consulter</span><button class="btn-ghost" data-reply>Répondre</button><button class="btn-ghost" data-treat>Marquer traité</button></div></div></div>
-          <div class="fb"><div class="av md a6">YK</div><div class="fb-body"><div class="fb-top"><span class="fb-name">Yanis K.</span><span class="fb-meta">Tatami 1 · hier</span></div><div class="fb-txt">« Tapis toujours propres et secs, ça se sent que c'est suivi. »</div><div class="fb-act"><span class="pill-st done"><span class="d"></span>Traité</span></div></div></div>
-          <div class="fb"><div class="av md a2">SB</div><div class="fb-body"><div class="fb-top"><span class="fb-name">Sofia B.</span><span class="fb-meta">Sanitaires · 2 j</span></div><div class="fb-txt">« Penser à réapprovisionner le papier plus souvent le week-end. »</div><div class="fb-act"><span class="pill-st soon"><span class="d"></span>À consulter</span><button class="btn-ghost" data-reply>Répondre</button><button class="btn-ghost" data-treat>Marquer traité</button></div></div></div>
-        </div>
+        <h3>Retours reçus des adhérents <span class="inbox-count" id="inboxCount">0</span></h3>
+        <p class="inbox-sub">Retours anonymes transmis depuis MatSafe Fighter. Aucune donnée personnelle n'est collectée — seul un code de suivi permet à l'adhérent de suivre l'avancement.</p>
+        <div class="fb-grid" id="inboxList"></div>
       </div>
       <div class="collect">
         <h3 style="font-size:16px;font-weight:700;margin:18px 0 14px">Collecter de nouveaux retours</h3>
@@ -1076,11 +1081,64 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     navItems.forEach(function(a){ a.classList.toggle('on', a.getAttribute('data-screen')===name); });
     var app=document.querySelector('.app'); if(app) app.classList.toggle('rail-hidden', name==='planning'||name==='serie');
     if(name==='serie'){ try{ renderStreak(); }catch(_){ } }
+    if(name==='retours'){ try{ renderInbox(); }catch(_){ } }
     document.querySelector('.main').scrollTop = 0;
     window.scrollTo(0,0);
   }
   var toastEl = document.getElementById('toast'), tT;
   function toast(m){ toastEl.textContent=m; toastEl.classList.add('on'); clearTimeout(tT); tT=setTimeout(function(){toastEl.classList.remove('on');},1800); }
+
+  // ── Retours adhérents : file partagée écrite par MatSafe Fighter (MÊME ORIGINE) ──
+  // Les retours sont anonymes : aucune identité n'est enregistrée. Le club voit le
+  // message, sa zone, sa date et un code de suivi, et peut faire évoluer le statut,
+  // qui est renvoyé à l'adhérent via ce même code (lu côté Fighter).
+  var FIGHTER_INBOX='matsafe_fighter_inbox';
+  function loadInbox(){ try{ var r=localStorage.getItem(FIGHTER_INBOX); var a=r?JSON.parse(r):[]; return Array.isArray(a)?a:[]; }catch(e){ return []; } }
+  function saveInbox(a){ try{ localStorage.setItem(FIGHTER_INBOX, JSON.stringify(a)); }catch(e){} }
+  var INBOX_ST={ transmis:{t:'Transmis',cls:'soon'}, taken:{t:'Pris en compte',cls:'soon'}, done:{t:'Traité',cls:'done'} };
+  function inboxStInfo(s){ return INBOX_ST[s]||INBOX_ST.transmis; }
+  function renderInbox(){
+    var box=document.getElementById('inboxList'); if(!box) return;
+    var list=loadInbox();
+    var cnt=document.getElementById('inboxCount'); if(cnt) cnt.textContent=list.length;
+    if(!list.length){
+      box.innerHTML='<div class="inbox-empty">Aucun retour reçu pour le moment. Les retours envoyés par les adhérents depuis MatSafe Fighter apparaîtront ici automatiquement.</div>';
+      return;
+    }
+    box.innerHTML=list.map(function(r){
+      var si=inboxStInfo(r.status);
+      var typ=(r.kind==='signal')?'Signalement':'Avis d’hygiène';
+      var meta=[]; if(r.zone) meta.push(r.zone); if(r.when) meta.push(r.when);
+      var acts='<span class="pill-st '+si.cls+'"><span class="d"></span>'+si.t+'</span>';
+      if(r.status!=='taken' && r.status!=='done') acts+='<button class="btn-ghost" data-take>Prendre en compte</button>';
+      if(r.status!=='done') acts+='<button class="btn-ghost" data-treat>Marquer traité</button>';
+      acts+='<button class="btn-ghost" data-reply>Répondre</button>';
+      return '<div class="fb" data-code="'+esc(r.code||'')+'">'+
+        '<div class="fb-body">'+
+          '<div class="fb-top"><span class="fb-name">'+esc(typ)+'</span><span class="fb-meta">'+esc(meta.join(' · '))+'</span></div>'+
+          '<div class="fb-txt">«&nbsp;'+esc(r.description||'(sans message)')+'&nbsp;»</div>'+
+          '<div class="fb-code">Code de suivi anonyme&nbsp;: <code>'+esc(r.code||'—')+'</code></div>'+
+          (r.reply?'<div class="fb-reply"><b>Votre réponse&nbsp;:</b> '+esc(r.reply)+'</div>':'')+
+          '<div class="fb-act">'+acts+'</div>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+  }
+  function inboxSetStatus(code, status){
+    if(!code) return;
+    var list=loadInbox(), changed=false;
+    for(var i=0;i<list.length;i++){ if(list[i] && list[i].code===code){ list[i].status=status; list[i].controlStatus=(status==='done'?'treated':(status==='taken'?'in_progress':'to_verify')); changed=true; break; } }
+    if(changed){ saveInbox(list); renderInbox(); }
+  }
+  function inboxReply(code){
+    if(!code) return;
+    var txt=window.prompt('Réponse publique à l’adhérent (anonyme — visible via son code de suivi) :','');
+    if(txt===null) return;
+    txt=String(txt).trim();
+    var list=loadInbox(), changed=false;
+    for(var i=0;i<list.length;i++){ if(list[i] && list[i].code===code){ list[i].reply=txt; if(list[i].status==='transmis') list[i].status='taken'; changed=true; break; } }
+    if(changed){ saveInbox(list); renderInbox(); toast('Réponse enregistrée. Visible par l’adhérent via son code.'); }
+  }
 
   // ── Série de nettoyage (streak) ──
   var STREAK={ streak:7, max:7, milestones:[7,14,30,90] };
@@ -1281,9 +1339,12 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var seg=e.target.closest('#anoUrg .segbtn');
     if(seg){ document.querySelectorAll('#anoUrg .segbtn').forEach(function(x){x.classList.remove('on');}); seg.classList.add('on'); return; }
     if(e.target.closest('#anoSend')){ sendAno(); return; }
-    if(e.target.closest('[data-reply]')){ toast('Réponse envoyée à l\'adhérent.'); return; }
+    var tk=e.target.closest('[data-take]');
+    if(tk){ var ca=tk.closest('.fb'); inboxSetStatus(ca&&ca.getAttribute('data-code'),'taken'); toast('Retour pris en compte.'); return; }
     var trt=e.target.closest('[data-treat]');
-    if(trt){ var fb=trt.closest('.fb'), fa=fb&&fb.querySelector('.fb-act'); if(fa) fa.innerHTML='<span class="pill-st done"><span class="d"></span>Traité</span>'; toast('Retour marqué comme traité.'); return; }
+    if(trt){ var cb=trt.closest('.fb'); inboxSetStatus(cb&&cb.getAttribute('data-code'),'done'); toast('Retour marqué comme traité.'); return; }
+    var rpl=e.target.closest('[data-reply]');
+    if(rpl){ var cc=rpl.closest('.fb'); inboxReply(cc&&cc.getAttribute('data-code')); return; }
     var fb2=e.target.closest('#histFilters .fbtn');
     if(fb2){ document.querySelectorAll('#histFilters .fbtn').forEach(function(x){x.classList.remove('on');}); fb2.classList.add('on'); filterHist(fb2.getAttribute('data-f')); return; }
     if(e.target.closest('#histTable tbody tr')){ toast('Désinfection EN 14476 · 20 ml/L · contact 5 min.'); return; }
@@ -1291,6 +1352,11 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
   var rt=document.getElementById('railToggle');
   if(rt) rt.addEventListener('click', function(){ document.querySelector('.app').classList.toggle('rail-closed'); });
+
+  // Mise à jour en direct : quand MatSafe Fighter écrit un nouveau retour (même origine),
+  // l'écran « Retours adhérents » se rafraîchit automatiquement.
+  window.addEventListener('storage', function(e){ if(e.key===FIGHTER_INBOX){ try{ renderInbox(); }catch(_){ } } });
+  try{ renderInbox(); }catch(_){ }
 })();
 </script>
 
