@@ -588,11 +588,37 @@ body.fdark{background:#0C0D10}
 .ckl-foot{border-top:1px solid var(--ink);padding-top:12px;margin-top:clamp(28px,8vw,46px)}
 .ckl-title{text-align:center;font-family:var(--sans);font-weight:800;text-transform:uppercase;letter-spacing:-.005em;font-size:clamp(32px,8vw,48px);line-height:1.02;margin:clamp(42px,12vw,70px) 0}
 .ckl-rows{margin-top:4px}
-.ckl-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 1px;border-bottom:1px solid var(--hair);cursor:default}
+.ckl-row{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;padding:16px 1px;border:0;border-bottom:1px solid var(--hair);background:none;color:var(--ink);text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .ckl-row:last-child{border-bottom:0}
-.ckl-lbl{font-family:var(--sans);text-transform:uppercase;letter-spacing:.03em;font-weight:600;font-size:clamp(13.5px,3.7vw,16px);line-height:1.1}
-/* case purement décorative : jamais cliquable / cochable (démonstration) */
-.ckl-box{flex:none;width:22px;height:22px;border:1.6px solid var(--ink);border-radius:3px;pointer-events:none}
+.ckl-lbl{font-family:var(--sans);text-transform:uppercase;letter-spacing:.03em;font-weight:600;font-size:clamp(13.5px,3.7vw,16px);line-height:1.1;transition:color .15s}
+.ckl-box{flex:none;width:26px;height:26px;border:2px solid var(--ink);border-radius:6px;display:grid;place-items:center;color:#fff;transition:background .16s,border-color .16s,transform .12s}
+.ckl-box svg{width:16px;height:16px;opacity:0;transform:scale(.4);transition:opacity .15s,transform .2s}
+.ckl-row:active .ckl-box{transform:scale(.9)}
+.ckl-row.on .ckl-box{background:var(--brand);border-color:var(--brand)}
+.ckl-row.on .ckl-box svg{opacity:1;transform:scale(1)}
+.ckl-row.on .ckl-lbl{color:var(--brand)}
+.ckl-valwrap{margin-top:clamp(26px,8vw,40px);text-align:center}
+.ckl-prog{display:block;font-family:var(--cond);text-transform:uppercase;letter-spacing:.08em;font-weight:800;font-size:12px;color:var(--gray);margin-bottom:12px}
+.ckl-validate{font-family:var(--cond);text-transform:uppercase;letter-spacing:.08em;font-weight:800;font-size:15px;color:#fff;background:var(--ink);border:0;border-radius:999px;padding:15px 34px;cursor:pointer;transition:background .15s,transform .12s,opacity .15s}
+.ckl-validate[disabled]{opacity:.32;cursor:not-allowed}
+.ckl-validate.ready{background:var(--brand)}
+.ckl-validate.ready:active{transform:translateY(1px)}
+/* ===== Animation « Bien joué » (validation de la check-list) ===== */
+.bravo-ov{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;background:var(--page);opacity:0;transition:opacity .3s;overflow:hidden}
+.bravo-ov.show{opacity:1}
+.bravo-inner{position:relative;z-index:2;text-align:center;padding:24px 20px;max-width:560px;transform:translateY(14px) scale(.96);opacity:0;transition:transform .5s cubic-bezier(.2,.85,.25,1) .06s,opacity .42s .06s}
+.bravo-ov.show .bravo-inner{transform:none;opacity:1}
+.bravo-check{display:grid;place-items:center;width:84px;height:84px;margin:0 auto 20px;border-radius:50%;background:var(--brand);color:#fff;transform:scale(.3);opacity:0;box-shadow:0 18px 40px -18px rgba(208,64,44,.65)}
+.bravo-ov.show .bravo-check{animation:bravoPop .55s cubic-bezier(.2,1.5,.4,1) .18s forwards}
+.bravo-check svg{width:46px;height:46px}
+.bravo-title{font-family:var(--cond);font-weight:900;text-transform:uppercase;letter-spacing:-.015em;font-size:clamp(58px,19vw,128px);line-height:.88;color:var(--ink)}
+.bravo-sub{font-family:var(--sans);font-size:15px;line-height:1.5;color:var(--gray);margin:12px auto 0;max-width:30ch}
+.bravo-btn{margin-top:28px;font-family:var(--cond);text-transform:uppercase;letter-spacing:.08em;font-weight:800;font-size:14px;color:#fff;background:var(--ink);border:0;border-radius:999px;padding:14px 32px;cursor:pointer}
+@keyframes bravoPop{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.14)}100%{transform:scale(1);opacity:1}}
+.bravo-confetti{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.bravo-confetti .cf{position:absolute;top:-8%;border-radius:1px;opacity:0;animation:cfFall linear 1 forwards}
+@keyframes cfFall{0%{opacity:0;transform:translateY(-12vh) rotate(0)}8%{opacity:1}100%{opacity:0;transform:translateY(112vh) translateX(calc(var(--dx,0)*40px)) rotate(600deg)}}
+@media(prefers-reduced-motion:reduce){.bravo-confetti{display:none}.bravo-ov .bravo-check{animation:none;transform:none;opacity:1}.bravo-inner{transition:opacity .2s}}
 
 /* Avertissement photo */
 .warn-note{font-size:12.5px;line-height:1.5;color:var(--warn);background:var(--warn-bg);border:1px solid #E4D3AE;border-radius:6px;padding:10px 12px;margin:0 0 10px}
@@ -1237,7 +1263,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
      stockée, ni utilisée pour un profil. L'état vit en mémoire et disparaît
      dès qu'on quitte l'écran (aucune écriture localStorage ici). */
   function screenCheck(){
-    // Check-list « poster » éditoriale — DÉMONSTRATION uniquement (pas d'en-tête, pas de pied, pas de case).
+    // Check-list INTERACTIVE : on coche les 6 items, puis « Valider » déclenche l'animation « Bien joué ».
     var items=[
       '01. J’arrive propre',
       '02. Ma tenue est propre et sèche',
@@ -1246,17 +1272,57 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       '05. J’ai vérifié ma peau',
       '06. Mon matériel est propre et sec'
     ];
+    var ICk='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
     view.innerHTML=
       backBtn()+
       '<section class="ckl">'+
         '<h2 class="ckl-title">Check-list<br>avant entraînement</h2>'+
         '<div class="ckl-rows">'+
-          items.map(function(t){
-            return '<div class="ckl-row"><span class="ckl-lbl">'+esc(t)+'</span></div>';
+          items.map(function(t,i){
+            return '<button class="ckl-row" type="button" data-i="'+i+'" aria-pressed="false"><span class="ckl-lbl">'+esc(t)+'</span><span class="ckl-box">'+ICk+'</span></button>';
           }).join('')+
+        '</div>'+
+        '<div class="ckl-valwrap">'+
+          '<span class="ckl-prog" id="cklProg">0 / '+items.length+' validés</span>'+
+          '<button class="ckl-validate" id="cklValidate" type="button" disabled>Valider la check-list</button>'+
         '</div>'+
       '</section>';
     wireBack();
+    var total=items.length;
+    var prog=document.getElementById('cklProg'), val=document.getElementById('cklValidate');
+    function refresh(){ var n=view.querySelectorAll('.ckl-row.on').length; prog.textContent=n+' / '+total+' validés'; val.disabled=(n<total); val.classList.toggle('ready', n===total); }
+    view.querySelectorAll('.ckl-row').forEach(function(r){
+      r.onclick=function(){ var on=r.classList.toggle('on'); r.setAttribute('aria-pressed', on?'true':'false'); refresh(); };
+    });
+    val.onclick=function(){ if(val.disabled) return; celebrateCheck(); };
+    refresh();
+  }
+  // Animation de félicitations : « Bien joué » en grand au milieu de l'écran + confettis.
+  function celebrateCheck(){
+    var colors=['#D0402C','#F3B14C','#0B0B0B','#F0691E','#C83830','#E6A85B'];
+    var conf='';
+    for(var i=0;i<24;i++){
+      var x=Math.round(Math.random()*100), c=colors[i%colors.length];
+      var delay=(Math.random()*0.6).toFixed(2), dur=(1.8+Math.random()*1.5).toFixed(2);
+      var w=5+Math.round(Math.random()*6), dx=(Math.random()*2-1).toFixed(2);
+      conf+='<i class="cf" style="left:'+x+'%;background:'+c+';width:'+w+'px;height:'+Math.round(w*1.7)+'px;animation-delay:'+delay+'s;animation-duration:'+dur+'s;--dx:'+dx+'"></i>';
+    }
+    var ov=document.createElement('div'); ov.className='bravo-ov';
+    ov.innerHTML=
+      '<div class="bravo-confetti">'+conf+'</div>'+
+      '<div class="bravo-inner">'+
+        '<span class="bravo-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>'+
+        '<div class="bravo-title">Bien joué</div>'+
+        '<div class="bravo-sub">Check-list validée — tu es prêt pour le tatami.</div>'+
+        '<button class="bravo-btn" type="button">Terminé</button>'+
+      '</div>';
+    document.body.appendChild(ov);
+    requestAnimationFrame(function(){ ov.classList.add('show'); });
+    ov.querySelector('.bravo-btn').onclick=function(){
+      ov.classList.remove('show');
+      setTimeout(function(){ if(ov.parentNode) ov.parentNode.removeChild(ov); }, 380);
+      screenHome();
+    };
   }
 
   /* ================= MES RETOURS (suivi anonyme) ================= */
