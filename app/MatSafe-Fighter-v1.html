@@ -111,13 +111,14 @@
     background:var(--cream); border-left:1px solid var(--border); border-right:1px solid var(--border); overflow:hidden}
 
   /* --- Topbar --- */
-  .topbar{flex:none; display:flex; align-items:center; justify-content:space-between; gap:12px;
+  .topbar{flex:none; display:flex; align-items:center; justify-content:center; gap:12px;
     padding:13px 18px; border-bottom:1px solid var(--border); background:var(--cream)}
   .brand{display:flex; align-items:center; gap:10px}
   .brand .mark{height:22px; width:auto; display:block}
   .brand .role{font-family:var(--cond); font-weight:800; text-transform:uppercase; letter-spacing:.10em;
     font-size:12px; color:var(--brand); border-left:1px solid var(--border); padding-left:10px}
-  .topbar .whoami{font-family:var(--cond); font-weight:700; text-transform:uppercase; letter-spacing:.05em;
+  .topbar .whoami{position:absolute; right:18px; top:50%; transform:translateY(-50%);
+    font-family:var(--cond); font-weight:700; text-transform:uppercase; letter-spacing:.05em;
     font-size:11px; color:var(--ink)}
 
   main{flex:1 1 auto; padding:22px 20px 40px}
@@ -234,7 +235,7 @@
   --sans:'Barlow','Segoe UI',system-ui,sans-serif;
 }
 .zonetag,.note .pill,.rrow .rk,.action,.action .ico,.chip,.feelbtn,textarea,input[type=text],.photobtn,.photo img,.btn,.btn-secondary{border-radius:6px}
-.topbar .brandlogo{height:74px;width:auto;max-width:100%;display:block}
+.topbar .brandlogo{height:58px;width:auto;max-width:100%;display:block}
 .topbar{align-items:center}
 /* ===== Message du club (émis depuis MATSAFE Club) ===== */
 .clubmsg{margin:0;padding:16px 20px;background:var(--paper);border-bottom:1px solid var(--border);border-left:4px solid var(--brand)}
@@ -627,7 +628,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   .app{border:1px solid var(--border);border-radius:10px;box-shadow:0 34px 90px -46px rgba(18,24,27,.5);
     min-height:calc(100dvh - 68px)}
   .cta{position:static;margin:24px 0 0;background:none;padding:0}
-  .topbar .brandlogo{height:104px}
+  .topbar .brandlogo{height:72px}
 }
 
 /* ===== Cinématique d'intro — glitch digital, DA MatSafe (léger, sans dépendance) ===== */
