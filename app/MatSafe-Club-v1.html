@@ -543,6 +543,22 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .comp-thumb-prev{width:66px;height:66px;border-radius:10px;object-fit:cover;border:1px solid var(--line2);display:none}
 @media(max-width:560px){.comp-empty{flex-wrap:wrap}.comp-empty .ce-btn{width:100%}}
 
+/* ===== Hygiène aujourd'hui : 4 indicateurs cliquables ===== */
+.hyg-today{margin:2px 0 26px}
+.hyg-h{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.04em;font-weight:800;font-size:15px;margin:0 0 12px;color:var(--ink)}
+.hyg-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.ht-tile{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:0;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px 16px 15px;cursor:pointer;color:var(--ink);font-family:inherit;transition:box-shadow .2s,transform .15s,border-color .15s}
+.ht-tile:hover{box-shadow:0 14px 30px -22px rgba(20,20,25,.5);transform:translateY(-1px);border-color:var(--line2)}
+.ht-tile:active{transform:translateY(0)}
+.ht-dot{position:absolute;top:14px;right:14px;width:10px;height:10px;border-radius:50%}
+.ht-dot.ok{background:#3E8E4F}
+.ht-dot.warn{background:#C07A2E}
+.ht-dot.late{background:#C83F32}
+.ht-k{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-weight:700;font-size:11px;color:var(--ink2)}
+.ht-n{font-family:var(--font-disp);font-weight:800;letter-spacing:-.01em;font-size:34px;line-height:1.02;color:var(--ink);margin-top:7px}
+.ht-s{font-family:var(--font-body);font-size:12.5px;color:var(--muted);margin-top:1px}
+@media(max-width:768px){.hyg-grid{grid-template-columns:1fr 1fr}.ht-n{font-size:30px}}
+
 /* ===================== MOBILE CLUB (≤ 768 px) ===================== */
 /* Barre d'onglets + feuille « Plus » : cachées en desktop */
 .mtab{display:none}
@@ -790,14 +806,14 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         </div>
       </div>
 
-      <!-- Espace : compétition à venir (ajout direct par le dirigeant, avec miniature) -->
-      <div class="comp-sec">
-        <div class="comp-head"><h3>Compétition à venir</h3><button class="comp-add-link" data-compadd><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Ajouter</button></div>
-        <div id="compList"></div>
+      <!-- 2.1 Hygiène aujourd'hui : 4 indicateurs clés, cliquables -->
+      <div class="hyg-today">
+        <h3 class="hyg-h">Hygiène aujourd'hui</h3>
+        <div class="hyg-grid" id="hygList"></div>
       </div>
 
       <div class="block block-msg">
-        <h3>Messages</h3>
+        <h3>Derniers retours adhérents</h3>
         <div class="msg-vp"><div class="chat" id="msgChat"></div></div>
       </div>
 
@@ -1097,7 +1113,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var app=document.querySelector('.app'); if(app) app.classList.toggle('rail-hidden', name==='planning'||name==='serie');
     if(name==='serie'){ try{ renderStreak(); }catch(_){ } }
     if(name==='retours'){ try{ renderInbox(); }catch(_){ } }
-    if(name==='accueil'){ try{ renderHomeMessages(); }catch(_){ } }
+    if(name==='accueil'){ try{ renderHomeMessages(); }catch(_){ } try{ renderHygieneToday(); }catch(_){ } }
     document.querySelector('.main').scrollTop = 0;
     window.scrollTo(0,0);
   }
@@ -1144,7 +1160,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(!code) return;
     var list=loadInbox(), changed=false;
     for(var i=0;i<list.length;i++){ if(list[i] && list[i].code===code){ list[i].status=status; list[i].controlStatus=(status==='done'?'treated':(status==='taken'?'in_progress':'to_verify')); changed=true; break; } }
-    if(changed){ saveInbox(list); renderInbox(); renderHomeMessages(); }
+    if(changed){ saveInbox(list); renderInbox(); renderHomeMessages(); try{ renderHygieneToday(); }catch(_){ } }
   }
   function inboxReply(code){
     if(!code) return;
@@ -1153,7 +1169,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     txt=String(txt).trim();
     var list=loadInbox(), changed=false;
     for(var i=0;i<list.length;i++){ if(list[i] && list[i].code===code){ list[i].reply=txt; if(list[i].status==='transmis') list[i].status='taken'; changed=true; break; } }
-    if(changed){ saveInbox(list); renderInbox(); renderHomeMessages(); toast('Réponse enregistrée. Visible par l’adhérent via son code.'); }
+    if(changed){ saveInbox(list); renderInbox(); renderHomeMessages(); try{ renderHygieneToday(); }catch(_){ } toast('Réponse enregistrée. Visible par l’adhérent via son code.'); }
   }
   // Accueil — bloc « Messages » : AFFICHE LES MÊMES RETOURS que l'écran « Retours adhérents »
   // (même file partagée matsafe_fighter_inbox), et les fait défiler en boucle.
@@ -1193,6 +1209,35 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       '</div>';
     }).join('');
     homeMsgMarquee();
+  }
+
+  // 2.1 Bloc « Hygiène aujourd'hui » — 4 indicateurs recalculés en direct.
+  function anoToTreatCount(){ try{ return document.querySelectorAll('#anoList .pill-st.todo').length; }catch(e){ return 0; } }
+  function hygieneToday(){
+    var list=(typeof SCHED!=='undefined' && SCHED[TODAY])?SCHED[TODAY]:[], done=0, late=0, todo=0;
+    list.forEach(function(c){ var s=statusOf(TODAY,c.t,c.m); if(s.cls==='done')done++; else if(s.cls==='late')late++; else if(s.cls==='todo')todo++; });
+    var ano=anoToTreatCount();
+    var pend=0; try{ pend=loadInbox().filter(function(r){ return r && r.status!=='done'; }).length; }catch(e){}
+    var streak=(typeof STREAK!=='undefined' && STREAK.streak)||0;
+    return {
+      clean:{n:done+'/'+list.length, s:'validés', dot:(late>0?'late':(todo>0?'warn':'ok'))},
+      ano:{n:String(ano), s:'à traiter', dot:(ano>0?'warn':'ok')},
+      ret:{n:String(pend), s:'en attente', dot:(pend>0?'warn':'ok')},
+      streak:{n:String(streak), s:(streak>1?'jours':'jour'), dot:'ok'}
+    };
+  }
+  function renderHygieneToday(){
+    var box=document.getElementById('hygList'); if(!box) return;
+    var d=hygieneToday();
+    function tile(goName,label,o){
+      return '<button class="ht-tile" data-go="'+goName+'"><span class="ht-dot '+o.dot+'"></span>'+
+        '<span class="ht-k">'+label+'</span><span class="ht-n">'+o.n+'</span><span class="ht-s">'+o.s+'</span></button>';
+    }
+    box.innerHTML=
+      tile('planning','Nettoyages',d.clean)+
+      tile('signalements','Anomalies',d.ano)+
+      tile('retours','Retours',d.ret)+
+      tile('serie','Série',d.streak);
   }
 
   // ── Série de nettoyage (streak) ──
@@ -1352,6 +1397,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         var st=row.querySelector('.pill-st'); if(st){ st.className='pill-st done'; st.innerHTML='<span class="d"></span>Validé'; }
       }
     });
+    try{ renderHygieneToday(); }catch(_){ }
   }
 
   // Filtres historique
@@ -1410,9 +1456,10 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
   // Mise à jour en direct : quand MatSafe Fighter écrit un nouveau retour (même origine),
   // l'écran « Retours adhérents » se rafraîchit automatiquement.
-  window.addEventListener('storage', function(e){ if(e.key===FIGHTER_INBOX){ try{ renderInbox(); }catch(_){ } try{ renderHomeMessages(); }catch(_){ } } });
+  window.addEventListener('storage', function(e){ if(e.key===FIGHTER_INBOX){ try{ renderInbox(); }catch(_){ } try{ renderHomeMessages(); }catch(_){ } try{ renderHygieneToday(); }catch(_){ } } });
   try{ renderInbox(); }catch(_){ }
   try{ renderHomeMessages(); }catch(_){ }
+  try{ renderHygieneToday(); }catch(_){ }
 })();
 </script>
 
