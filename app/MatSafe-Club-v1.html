@@ -559,6 +559,21 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .fb .fb-code code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;color:var(--ink);background:var(--panel);border:1px solid var(--line2);border-radius:6px;padding:2px 7px}
 .fb .fb-reply{font-size:13.5px;line-height:1.5;color:var(--ink2);background:var(--panel);border-left:3px solid var(--brand);border-radius:8px;padding:9px 12px;margin:0 0 12px}
 .fb .fb-reply b{color:var(--ink)}
+/* Retours des adhérents sur l'accueil — défilé automatique en boucle (comme MatSafe Fighter) */
+.hr-sec{margin:0 0 24px}
+.hr-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px}
+.hr-title{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.02em;font-weight:800;font-size:16px;margin:0;color:var(--ink)}
+.hr-link{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-weight:700;font-size:11.5px;color:var(--brand);cursor:pointer}
+.hr-link:hover{text-decoration:underline}
+.hr-vp{position:relative;overflow:hidden;height:168px;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 14%,#000 86%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 14%,#000 86%,transparent 100%)}
+.hr-track{will-change:transform}
+@keyframes hrScroll{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+@media(prefers-reduced-motion:reduce){.hr-track{animation:none!important}}
+.hr-slide{height:84px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:7px;border-top:1px solid var(--line);padding:0 2px}
+.hr-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.hr-typ{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-weight:700;font-size:10.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hr-msg{font-family:var(--font-body);font-weight:600;font-size:15px;line-height:1.3;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.hr-empty{color:var(--muted);font-size:14px;padding:16px 0;border-top:1px solid var(--line)}
 .collect{margin-top:24px}
 .collect>h3{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.03em}
 /* ===== Signaler une anomalie — agencement type « contact » (centré) ===== */
@@ -707,6 +722,15 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
           <button class="iconbtn" data-toast="Aide &amp; support"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .8-1 1.7"/><path d="M12 17h.01"/></svg></button>
           <button class="iconbtn" data-toast="Notifications"><span class="dot"></span><svg class="ic" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></button>
         </div>
+      </div>
+
+      <!-- Retours des adhérents — défilé automatique en boucle (lus depuis MatSafe Fighter) -->
+      <div class="hr-sec" id="hrSec">
+        <div class="hr-head">
+          <h3 class="hr-title">Retours des adhérents</h3>
+          <a class="hr-link" data-go="retours">Tout voir</a>
+        </div>
+        <div class="hr-body" id="hrBody"></div>
       </div>
 
       <!-- Espace : compétition à venir (ajout direct par le dirigeant, avec miniature) -->
@@ -1008,6 +1032,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var app=document.querySelector('.app'); if(app) app.classList.toggle('rail-hidden', name==='planning'||name==='serie');
     if(name==='serie'){ try{ renderStreak(); }catch(_){ } }
     if(name==='retours'){ try{ renderInbox(); }catch(_){ } }
+    if(name==='accueil'){ try{ renderHomeRetours(); }catch(_){ } }
     document.querySelector('.main').scrollTop = 0;
     window.scrollTo(0,0);
   }
@@ -1064,6 +1089,37 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var list=loadInbox(), changed=false;
     for(var i=0;i<list.length;i++){ if(list[i] && list[i].code===code){ list[i].reply=txt; if(list[i].status==='transmis') list[i].status='taken'; changed=true; break; } }
     if(changed){ saveInbox(list); renderInbox(); toast('Réponse enregistrée. Visible par l’adhérent via son code.'); }
+  }
+  // Accueil : les retours des adhérents défilent automatiquement en boucle (comme MatSafe Fighter).
+  function renderHomeRetours(){
+    var body=document.getElementById('hrBody'); if(!body) return;
+    var list=loadInbox();
+    if(!list.length){
+      body.innerHTML='<div class="hr-empty">Aucun retour pour le moment. Les retours envoyés par les adhérents depuis MatSafe Fighter s’afficheront ici.</div>';
+      return;
+    }
+    var slides=list.map(function(r){
+      var si=inboxStInfo(r.status);
+      var typ=(r.kind==='signal')?'Signalement':'Avis d’hygiène';
+      var zone=r.zone?(' · '+esc(r.zone)):'';
+      return '<div class="hr-slide">'+
+        '<div class="hr-top"><span class="hr-typ">'+typ+zone+'</span><span class="pill-st '+si.cls+'"><span class="d"></span>'+si.t+'</span></div>'+
+        '<div class="hr-msg">«&nbsp;'+esc(r.description||'(sans message)')+'&nbsp;»</div>'+
+      '</div>';
+    });
+    var reel=slides.join('');
+    // Reel dupliqué pour une boucle continue sans saut (translateY -50% = un reel exact).
+    body.innerHTML='<div class="hr-vp"><div class="hr-track" id="hrTrack">'+(list.length>1?reel+reel:reel)+'</div></div>';
+    startHomeRetoursMarquee();
+  }
+  function startHomeRetoursMarquee(){
+    var track=document.getElementById('hrTrack'); if(!track) return;
+    track.style.animation='';
+    var total=track.children.length; if(total<2) return;        // 1 seul retour : pas de défilé
+    var reduce=false; try{ reduce=window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+    if(reduce) return;
+    var slides=total/2, perSlide=2.0;                            // ~2 s par retour
+    track.style.animation='hrScroll '+(slides*perSlide).toFixed(2)+'s linear infinite';
   }
 
   // ── Série de nettoyage (streak) ──
@@ -1281,8 +1337,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
   // Mise à jour en direct : quand MatSafe Fighter écrit un nouveau retour (même origine),
   // l'écran « Retours adhérents » se rafraîchit automatiquement.
-  window.addEventListener('storage', function(e){ if(e.key===FIGHTER_INBOX){ try{ renderInbox(); }catch(_){ } } });
+  window.addEventListener('storage', function(e){ if(e.key===FIGHTER_INBOX){ try{ renderInbox(); }catch(_){ } try{ renderHomeRetours(); }catch(_){ } } });
   try{ renderInbox(); }catch(_){ }
+  try{ renderHomeRetours(); }catch(_){ }
 })();
 </script>
 
