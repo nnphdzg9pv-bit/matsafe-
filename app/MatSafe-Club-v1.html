@@ -321,7 +321,7 @@ tbody tr:hover{background:#F7F6F4}
 .bubble{display:inline-block;background:#E9E9EB;color:#1C1C1E;padding:11px 15px;border-radius:20px;border-bottom-left-radius:6px;font-size:14px;line-height:1.35}
 
 
-.rail-toggle{position:absolute;top:20px;right:368px;z-index:40;width:32px;height:32px;border-radius:50%;background:var(--panel);border:1px solid var(--line2);display:grid;place-items:center;cursor:pointer;color:var(--ink2);box-shadow:0 6px 16px -8px rgba(20,20,25,.45);transition:right .28s ease,background .15s,color .15s}
+.rail-toggle{position:absolute;top:50%;transform:translateY(-50%);right:368px;z-index:40;width:32px;height:32px;border-radius:50%;background:var(--panel);border:1px solid var(--line2);display:grid;place-items:center;cursor:pointer;color:var(--ink2);box-shadow:0 6px 16px -8px rgba(20,20,25,.45);transition:right .28s ease,background .15s,color .15s}
 .rail-toggle:hover{background:#F5F4F2;color:var(--ink)}
 .rail-toggle .rt-ic{width:17px;height:17px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:transform .28s}
 .app.rail-closed{grid-template-columns:248px 1fr}
@@ -338,7 +338,7 @@ tbody tr:hover{background:#F7F6F4}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
 @media(max-width:1180px){.app{grid-template-columns:220px 1fr}.rail{display:none}}
-@media(max-width:768px){.app{grid-template-columns:1fr}.side{display:none}.row2{grid-template-columns:1fr}.stats,.grid2,.grid3{grid-template-columns:1fr}}
+@media(max-width:860px){.app{grid-template-columns:1fr}.side{display:none}.row2{grid-template-columns:1fr}.stats,.grid2,.grid3{grid-template-columns:1fr}}
 
 /* ===== Ajouts contenu/organisation (même DA) ===== */
 .summary{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-sm);padding:12px 16px;font-size:13.5px;color:var(--ink2)}
@@ -543,97 +543,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .comp-thumb-prev{width:66px;height:66px;border-radius:10px;object-fit:cover;border:1px solid var(--line2);display:none}
 @media(max-width:560px){.comp-empty{flex-wrap:wrap}.comp-empty .ce-btn{width:100%}}
 
-/* ===== Hygiène aujourd'hui : 4 indicateurs cliquables ===== */
-.hyg-today{margin:2px 0 26px}
-.hyg-h{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.04em;font-weight:800;font-size:15px;margin:0 0 12px;color:var(--ink)}
-.hyg-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.ht-tile{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:0;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px 16px 15px;cursor:pointer;color:var(--ink);font-family:inherit;transition:box-shadow .2s,transform .15s,border-color .15s}
-.ht-tile:hover{box-shadow:0 14px 30px -22px rgba(20,20,25,.5);transform:translateY(-1px);border-color:var(--line2)}
-.ht-tile:active{transform:translateY(0)}
-.ht-dot{position:absolute;top:14px;right:14px;width:10px;height:10px;border-radius:50%}
-.ht-dot.ok{background:#3E8E4F}
-.ht-dot.warn{background:#C07A2E}
-.ht-dot.late{background:#C83F32}
-.ht-k{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-weight:700;font-size:11px;color:var(--ink2)}
-.ht-n{font-family:var(--font-disp);font-weight:800;letter-spacing:-.01em;font-size:34px;line-height:1.02;color:var(--ink);margin-top:7px}
-.ht-s{font-family:var(--font-body);font-size:12.5px;color:var(--muted);margin-top:1px}
-@media(max-width:768px){.hyg-grid{grid-template-columns:1fr 1fr}.ht-n{font-size:30px}}
-
-/* ===================== MOBILE CLUB (≤ 768 px) ===================== */
-/* Barre d'onglets + feuille « Plus » : cachées en desktop */
-.mtab{display:none}
-#mobilePlanningSlot{display:none}
-.pweek{display:none;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;margin:0 0 16px}
-.pweek .d{padding:8px 0;border-radius:12px;cursor:pointer;transition:background .15s}
-.pweek .d:hover{background:#EFEEEB}
-.pweek .d .dn{font-size:12px;color:var(--muted);font-weight:500}
-.pweek .d .dd{font-size:14px;font-weight:600;margin-top:3px}
-.pweek .d.on{background:var(--ink)}
-.pweek .d.on .dn,.pweek .d.on .dd{color:#F5F4EF}
-/* Feuille « Plus » (bottom sheet) */
-.plus-sheet{position:fixed;inset:0;z-index:70;display:none}
-.plus-sheet.open{display:block}
-.plus-sheet .ps-backdrop{position:absolute;inset:0;background:rgba(15,14,13,.5);opacity:0;transition:opacity .2s}
-.plus-sheet.open .ps-backdrop{opacity:1}
-.plus-sheet .ps-panel{position:absolute;left:0;right:0;bottom:0;background:var(--panel);border-radius:22px 22px 0 0;padding:10px 16px calc(18px + env(safe-area-inset-bottom));transform:translateY(100%);transition:transform .26s cubic-bezier(.2,.8,.25,1);box-shadow:0 -20px 50px -20px rgba(0,0,0,.4)}
-.plus-sheet.open .ps-panel{transform:translateY(0)}
-.plus-sheet .ps-grab{width:40px;height:4px;border-radius:999px;background:var(--line2);margin:6px auto 12px}
-.plus-sheet .ps-item{display:flex;align-items:center;gap:14px;width:100%;padding:15px 8px;border:0;border-top:1px solid var(--line);background:none;cursor:pointer;color:var(--ink);font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.04em;font-weight:700;font-size:14px}
-.plus-sheet .ps-item:first-of-type{border-top:0}
-.plus-sheet .ps-item .ic{width:22px;height:22px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;color:var(--brand)}
-
-@media(max-width:768px){
-  /* 1.1 Barre d'onglets fixe en bas */
-  .mtab{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--panel);border-top:1px solid var(--line2);padding:6px 4px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -8px 24px -18px rgba(20,20,25,.5)}
-  .mtab a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;background:none;border:0;cursor:pointer;color:var(--ink2);text-decoration:none;position:relative;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.02em;font-weight:700;font-size:9.5px}
-  .mtab a .ic{width:22px;height:22px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
-  .mtab a.on{color:var(--brand)}
-  .mtab a .mt-badge{position:absolute;top:0;left:calc(50% + 6px);min-width:16px;height:16px;border-radius:9px;background:var(--brand);color:#fff;font-size:10px;font-weight:700;display:grid;place-items:center;padding:0 4px;font-family:var(--font-disp)}
-  .main{padding:20px 16px calc(80px + env(safe-area-inset-bottom))}
-
-  /* 1.2 En-tête : titre + aide/notif sur une ligne, badge flamme dessous */
-  .head{flex-wrap:wrap;align-items:flex-start;justify-content:flex-start;gap:10px}
-  .head>div:first-child{flex:1 1 0;min-width:0}
-  .head-actions{display:contents}
-  .head-actions .iconbtn{flex:none;align-self:flex-start}
-  .head-actions .streak-hb{order:3;flex-basis:100%}
-
-  /* 1.3 Carte compétition : image au-dessus, pleine largeur, 16/9 */
-  .comp-card{flex-direction:column;align-items:stretch;gap:14px;padding:14px}
-  .comp-thumb{width:100%;height:auto;aspect-ratio:16/9}
-  .comp-empty{flex-direction:column;align-items:stretch;text-align:left}
-  .comp-empty .ce-thumb{width:100%;height:auto;aspect-ratio:16/9}
-  .comp-empty .ce-btn{width:100%}
-
-  /* 1.4 Planning du jour relocalisé en bas de l'accueil */
-  #mobilePlanningSlot{display:block;margin-top:24px;border-top:1px solid var(--line2);padding-top:18px}
-  #mobilePlanningSlot .week{margin-top:12px}
-  #mobilePlanningSlot .daylist{max-height:none}
-
-  /* 1.5 Planning : un seul jour + sélecteur horizontal au-dessus */
-  .pweek{display:grid}
-  .days{display:block}
-  .day{display:none;margin-bottom:0}
-  .day.pon{display:block}
-
-  /* 1.6 Historique : tableau -> cartes */
-  .table-wrap{background:none;border:0;padding:0;overflow:visible}
-  #histTable,#histTable tbody,#histTable tr,#histTable td{display:block;width:auto}
-  #histTable thead{display:none}
-  #histTable tr{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:12px}
-  #histTable td{border:0;padding:5px 0;display:flex;justify-content:space-between;align-items:center;gap:14px;text-align:right!important;font-size:14px}
-  #histTable td::before{content:attr(data-th);font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.04em;font-size:10.5px;font-weight:700;color:var(--muted);text-align:left;flex-shrink:0}
-  #histTable td:nth-of-type(1)::before{content:"Date"}
-  #histTable td:nth-of-type(2)::before{content:"Cours"}
-  #histTable td:nth-of-type(3)::before{content:"Discipline"}
-  #histTable td:nth-of-type(4)::before{content:"Tatami"}
-  #histTable td:nth-of-type(5)::before{content:"Nettoyé par"}
-  #histTable td:nth-of-type(6)::before{content:"Validé à"}
-  #histTable td:nth-of-type(7)::before{content:"Statut"}
-  #histTable td .tr-name{justify-content:flex-end}
-}
-@media(min-width:769px){.mtab{display:none!important}.plus-sheet{display:none!important}}
-
 /* Retours adhérents : messages agrandis */
 .fb{gap:16px;padding:20px 22px;border-radius:var(--r);margin-bottom:14px}
 .fb .av.md{width:52px;height:52px;font-size:16px}
@@ -682,11 +591,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .ano-send:hover{background:var(--brand-d);border-color:var(--brand-d)}
 .ano-note{font-size:12.5px;color:var(--muted);margin:2px 0 0;line-height:1.45}
 .ano-list-wrap{max-width:820px;margin:44px auto 0;border-top:1px solid var(--line);padding-top:26px}
-/* 3.6 Anomalies : icône catégorie dans le rond + actions */
-.msg .ano-ic{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;display:block}
-.ano-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0}
-.ano-right .btn-ghost{white-space:nowrap}
-@media(max-width:768px){.ano-item{flex-wrap:wrap;align-items:flex-start}.ano-item .ano-right{flex-direction:row;align-items:center;width:100%;justify-content:flex-end;margin-top:2px}}
 .ano-list-h{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.03em;font-weight:700;font-size:14px;margin-bottom:14px}
 @media(max-width:560px){.ano-seg{grid-template-columns:1fr}.ano-send{align-self:stretch;text-align:center}}
 /* ===== Message aux adhérents — DA « contact » (grand titre + champs soulignés) ===== */
@@ -735,15 +639,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .evmgr-row{display:grid;grid-template-columns:150px 1fr 170px;gap:12px;margin-bottom:16px}
 .evmgr .gm-field{margin-bottom:0}
 @media(max-width:640px){.evmgr-row{grid-template-columns:1fr}}
-/* 3.7 Compétitions dans « Prochaines échéances » : affiche + lien */
-.evrow .ev-thumb{width:84px;height:48px;flex:none;border-radius:10px;overflow:hidden;border:1px solid var(--line2);background:#EAE8DF}
-.evrow .ev-thumb img{width:100%;height:100%;object-fit:cover;display:block}
-.evrow .evk.comp{color:var(--brand)}
-.evrow .ev-link{color:var(--brand);font-weight:700;font-size:12.5px;text-decoration:none;white-space:nowrap}
-.evrow .ev-link:hover{text-decoration:underline}
-.evmgr-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.evmgr-actions .gm-ghost{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.04em;font-weight:700;font-size:12px}
-@media(max-width:560px){.evrow{flex-wrap:wrap}.evrow .evk{width:auto}.evrow .ev-thumb{width:100%;height:auto;aspect-ratio:16/9}}
 
 /* ===== SÉRIE DE NETTOYAGE (streak — félicitations) ===== */
 [data-screen="serie"]{align-items:center}
@@ -765,8 +660,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .srk-card{background:#FFFFFF;border:1px solid var(--line2);border-radius:var(--r);padding:20px 22px}
 .srk-card-h{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.1em;font-size:11px;font-weight:700;color:var(--ink2);margin-bottom:16px}
 .srk-week{display:flex;justify-content:space-between;gap:4px}
-.srk-week-prev{margin-top:14px;text-align:center;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-size:10.5px;font-weight:700;color:var(--muted)}
-.srk-week-prev:empty{display:none}
 .srk-day{display:flex;flex-direction:column;align-items:center;gap:10px;flex:1}
 .srk-day-d{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.03em;font-size:11px;font-weight:600;color:var(--muted)}
 .srk-day.today .srk-day-d{color:var(--ink);font-weight:800}
@@ -822,19 +715,16 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         </div>
       </div>
 
-      <!-- 2.1 Hygiène aujourd'hui : 4 indicateurs clés, cliquables -->
-      <div class="hyg-today">
-        <h3 class="hyg-h">Hygiène aujourd'hui</h3>
-        <div class="hyg-grid" id="hygList"></div>
+      <!-- Espace : compétition à venir (ajout direct par le dirigeant, avec miniature) -->
+      <div class="comp-sec">
+        <div class="comp-head"><h3>Compétition à venir</h3><button class="comp-add-link" data-compadd><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Ajouter</button></div>
+        <div id="compList"></div>
       </div>
 
       <div class="block block-msg">
-        <h3>Derniers retours adhérents</h3>
+        <h3>Messages</h3>
         <div class="msg-vp"><div class="chat" id="msgChat"></div></div>
       </div>
-
-      <!-- Mobile : « Planning du jour » du rail est relocalisé ici (voir relocatePlanning()) -->
-      <div id="mobilePlanningSlot"></div>
     </section>
 
     <!-- SÉRIE DE NETTOYAGE -->
@@ -878,7 +768,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         <div class="srk-card">
           <div class="srk-card-h">Cette semaine</div>
           <div class="srk-week" id="srkWeek"></div>
-          <div class="srk-week-prev" id="srkWeekPrev"></div>
         </div>
 
         <div class="srk-card srk-prog">
@@ -901,15 +790,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     <!-- PLANNING -->
     <section class="screen" data-screen="planning">
       <div class="head"><div><h1>Planning des cours</h1><p>Retrouvez les cours de la semaine et validez le nettoyage du tatami après chaque séance.</p></div></div>
-      <div class="pweek" id="pweek">
-        <div class="d" data-i="0"><div class="dn">Lu</div><div class="dd">12</div></div>
-        <div class="d on" data-i="1"><div class="dn">Ma</div><div class="dd">13</div></div>
-        <div class="d" data-i="2"><div class="dn">Me</div><div class="dd">14</div></div>
-        <div class="d" data-i="3"><div class="dn">Je</div><div class="dd">15</div></div>
-        <div class="d" data-i="4"><div class="dn">Ve</div><div class="dd">16</div></div>
-        <div class="d" data-i="5"><div class="dn">Sa</div><div class="dd">17</div></div>
-        <div class="d" data-i="6"><div class="dn">Di</div><div class="dd">18</div></div>
-      </div>
       <div class="days">
         <div class="day"><h4>Lundi</h4><div class="slot"><span class="mat">MAT 1</span><div class="st">07:00</div><div class="sd">JJB</div></div><div class="slot mma"><span class="mat">MAT 1</span><div class="st">11:00</div><div class="sd">MMA · Confirmés</div></div><div class="slot"><span class="mat">MAT 2</span><div class="st">11:00</div><div class="sd">Accès libre / Drills · Sans coach</div></div><div class="slot lutte"><span class="mat">MAT 1</span><div class="st">12:30</div><div class="sd">Lutte</div></div><div class="slot boxe"><span class="mat">MAT 2</span><div class="st">12:30</div><div class="sd">Boxe pieds-poings</div></div><div class="slot"><span class="mat">MAT 1</span><div class="st">14:00</div><div class="sd">Compétition · Gi / No Gi</div></div><div class="slot mma"><span class="mat">MAT 1</span><div class="st">18:00</div><div class="sd">MMA · Confirmés</div></div><div class="slot"><span class="mat">MAT 2</span><div class="st">18:45</div><div class="sd">No Gi · Fondamentaux</div></div><div class="slot mma"><span class="mat">MAT 1</span><div class="st">19:00</div><div class="sd">MMA · Tous niveaux</div></div><div class="slot boxe"><span class="mat">MAT 2</span><div class="st">19:45</div><div class="sd">Boxe anglaise</div></div><div class="slot"><span class="mat">MAT 1</span><div class="st">20:00</div><div class="sd">JJB · Tous niveaux</div></div></div>
         <div class="day"><h4>Mardi</h4><div class="slot"><span class="mat">MAT 1</span><div class="st">07:00</div><div class="sd">No Gi</div></div><div class="slot"><span class="mat">MAT 1</span><div class="st">12:30</div><div class="sd">JJB</div></div><div class="slot"><span class="mat">MAT 2</span><div class="st">12:30</div><div class="sd">No Gi</div></div><div class="slot"><span class="mat">MAT 1</span><div class="st">18:00</div><div class="sd">Accès libre / Drills · Sans coach</div></div><div class="slot boxe"><span class="mat">MAT 1</span><div class="st">19:00</div><div class="sd">Boxe pieds-poings</div></div><div class="slot"><span class="mat">MAT 2</span><div class="st">19:00</div><div class="sd">JJB · Fondamentaux</div></div><div class="slot"><span class="mat">MAT 1</span><div class="st">20:00</div><div class="sd">No Gi</div></div><div class="slot boxe"><span class="mat">MAT 2</span><div class="st">20:00</div><div class="sd">Boxe anglaise</div></div></div>
@@ -943,7 +823,12 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
       <div class="ano-list-wrap">
         <h3 class="ano-list-h">Anomalies en cours</h3>
-        <div id="anoList"></div>
+        <div id="anoList">
+            <div class="msg"><div class="av md a3">TA</div><div class="m-body"><div class="m-top"><span class="m-name">Tatami 2 glissant côté nord</span><span class="m-time">11:01</span></div><div class="m-prev">Hygiène · signalé par Kevin B. · à revérifier avant 18h</div></div><span class="pill-st todo"><span class="d"></span>À traiter</span></div>
+            <div class="msg"><div class="av md a1">GE</div><div class="m-body"><div class="m-top"><span class="m-name">Distributeur de gel vide — entrée MAT 1</span><span class="m-time">Hier</span></div><div class="m-prev">Matériel · signalé par Nadia R. · urgent</div></div><span class="pill-st todo"><span class="d"></span>À traiter</span></div>
+            <div class="msg"><div class="av md a2">EC</div><div class="m-body"><div class="m-top"><span class="m-name">Éclairage vestiaire défaillant</span><span class="m-time">Lun.</span></div><div class="m-prev">Sécurité · intervention prévue jeudi</div></div><span class="pill-st prog"><span class="d"></span>En cours</span></div>
+            <div class="msg"><div class="av md a4">SA</div><div class="m-body"><div class="m-top"><span class="m-name">Fuite robinet sanitaires</span><span class="m-time">Sem. dern.</span></div><div class="m-prev">Matériel · réparé par le prestataire</div></div><span class="pill-st done"><span class="d"></span>Résolue</span></div>
+          </div>
         </div>
     </section>
 
@@ -952,7 +837,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <div class="head"><div><h1>Retours adhérents</h1><p>Retrouvez les remarques des adhérents et identifiez rapidement les points d'amélioration du club.</p></div></div>
       <div class="rate">
         <div><div class="num">4,6<small>/5</small></div><div class="stars"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.3 7 .9-5 4.7 1.2 6.9L12 18.5 5.8 20.8 7 13.9 2 9.2l7-.9z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.3 7 .9-5 4.7 1.2 6.9L12 18.5 5.8 20.8 7 13.9 2 9.2l7-.9z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.3 7 .9-5 4.7 1.2 6.9L12 18.5 5.8 20.8 7 13.9 2 9.2l7-.9z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.3 7 .9-5 4.7 1.2 6.9L12 18.5 5.8 20.8 7 13.9 2 9.2l7-.9z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.3 7 .9-5 4.7 1.2 6.9L12 18.5 5.8 20.8 7 13.9 2 9.2l7-.9z" opacity=".4"/></svg></div></div>
-        <div style="border-left:1px solid var(--line);padding-left:18px"><div class="rt-sub"><b style="color:var(--ink)">Note moyenne de propreté</b><br>Basée sur 34 avis ce mois-ci.</div></div>
+        <div style="border-left:1px solid var(--line);padding-left:18px"><div class="rt-sub"><b style="color:var(--ink)">Note moyenne de propreté</b><br>Basée sur 34 retours ce mois-ci.</div></div>
       </div>
 
       <!-- Message aux adhérents -> publié sur MATSAFE Fighter (DA « contact ») -->
@@ -998,10 +883,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
           <div class="gm-field"><label>Intitulé</label><input type="text" class="ano-inp" id="evTitle" maxlength="70" placeholder="Ex. : Stage No-Gi avec un invité"></div>
           <div class="gm-field"><label>Date</label><input type="text" class="ano-inp" id="evDate" maxlength="40" placeholder="Ex. : 12 octobre · 14h"></div>
         </div>
-        <div class="evmgr-actions">
-          <button class="gm-submit" id="evAdd">Ajouter sur MATSAFE Fighter</button>
-          <button class="gm-ghost" type="button" data-compadd>+ Compétition avec affiche</button>
-        </div>
+        <button class="gm-submit" id="evAdd">Ajouter sur MATSAFE Fighter</button>
       </div>
 
       <div class="block">
@@ -1037,11 +919,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
           <tr data-who="Kevin" data-mat="mat1"><td>Aujourd'hui</td><td>11:00</td><td>MMA · Confirmés</td><td>Tatami 1</td><td><div class="tr-name"><span class="av sm a2">KB</span>Kevin B.</div></td><td>12:10</td><td style="text-align:right"><span class="pill-st done"><span class="d"></span>Validé</span></td></tr>
           <tr data-who="Thomas" data-mat="mat2" data-when="week"><td>Hier</td><td>19:45</td><td>Boxe anglaise</td><td>Tatami 2</td><td><div class="tr-name"><span class="av sm a4">TM</span>Thomas M.</div></td><td>21:05</td><td style="text-align:right"><span class="pill-st done"><span class="d"></span>Validé</span></td></tr>
           <tr data-who="Simon" data-mat="mat1" data-when="week"><td>Hier</td><td>18:00</td><td>MMA · Confirmés</td><td>Tatami 1</td><td><div class="tr-name"><span class="av sm a3">SE</span>Simon E.</div></td><td>19:12</td><td style="text-align:right"><span class="pill-st done"><span class="d"></span>Validé</span></td></tr>
-          <tr data-who="Léa" data-mat="mat1" data-when="week"><td>Hier</td><td>07:00</td><td>JJB</td><td>Tatami 1</td><td><div class="tr-name"><span class="av sm a1">LM</span>Léa M.</div></td><td>08:14</td><td style="text-align:right"><span class="pill-st done"><span class="d"></span>Validé</span></td></tr>
-          <tr data-who="Kevin" data-mat="mat1" data-when="week"><td>Hier</td><td>12:30</td><td>Lutte</td><td>Tatami 1</td><td><div class="tr-name"><span class="av sm a2">KB</span>Kevin B.</div></td><td>13:38</td><td style="text-align:right"><span class="pill-st done"><span class="d"></span>Validé</span></td></tr>
-          <tr data-who="Simon" data-mat="mat1" data-when="week"><td>Hier</td><td>20:00</td><td>JJB · Tous niveaux</td><td>Tatami 1</td><td><div class="tr-name"><span class="av sm a3">SE</span>Simon E.</div></td><td>21:12</td><td style="text-align:right"><span class="pill-st done"><span class="d"></span>Validé</span></td></tr>
-          <tr data-who="Léa" data-mat="mat1" data-when="month"><td>8 oct.</td><td>20:00</td><td>JJB · Tous niveaux</td><td>Tatami 1</td><td><div class="tr-name"><span class="av sm a1">LM</span>Léa M.</div></td><td>21:20</td><td style="text-align:right"><span class="pill-st done"><span class="d"></span>Validé</span></td></tr>
-          <tr data-who="Thomas" data-mat="mat2" data-when="month"><td>6 oct.</td><td>19:00</td><td>Boxe pieds-poings</td><td>Tatami 2</td><td><div class="tr-name"><span class="av sm a4">TM</span>Thomas M.</div></td><td>20:10</td><td style="text-align:right"><span class="pill-st done"><span class="d"></span>Validé</span></td></tr>
+          <tr data-who="Léa" data-mat="mat1" data-when="month"><td>14 sept.</td><td>20:00</td><td>JJB · Tous niveaux</td><td>Tatami 1</td><td><div class="tr-name"><span class="av sm a1">LM</span>Léa M.</div></td><td>21:20</td><td style="text-align:right"><span class="pill-st done"><span class="d"></span>Validé</span></td></tr>
         </tbody>
       </table></div>
       <p style="font-size:12.5px;color:var(--muted);margin-top:-6px">Touchez une ligne pour voir le détail (produit, dilution, temps de contact).</p>
@@ -1071,7 +949,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <div class="role">Référent hygiène · Cube Fight Club</div>
     </div>
     <hr class="rail-sep">
-    <div id="railPlanning">
+    <div>
       <div class="agenda-head"><h3>Planning du jour</h3><a class="link" data-go="planning">Tout voir</a></div>
       <div class="week" id="week">
         <div class="d" data-day="Lundi"><div class="dn">Lu</div><div class="dd">12</div></div>
@@ -1121,35 +999,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 <script>
 "use strict";
 (function(){
-  // 3.1 Date de démo unique : mardi 13 octobre 2026, 21:40. Toute date affichée en dérive ;
-  // aucun new Date() n'est utilisé pour l'affichage dans la démo.
-  var DEMO_NOW = new Date(2026, 9, 13, 21, 40);
-  try{ window.DEMO_NOW = DEMO_NOW; }catch(e){}
-
-  // 3.4 / 3.5 Données de démo pré-remplies (retours adhérents), injectées une seule fois
-  // (clé matsafe_demo_seeded_v1). Fonction IDENTIQUE dans MatSafe Club et MatSafe Fighter.
-  // Les retours envoyés ensuite depuis Fighter s'ajoutent au-dessus sans rien écraser.
-  (function seedDemo(){
-    try{
-      if(localStorage.getItem('matsafe_demo_seeded_v1')) return;
-      var DN=(typeof DEMO_NOW!=='undefined' && DEMO_NOW instanceof Date)?DEMO_NOW:new Date(2026,9,13,21,40);
-      function at(off,h,m){ var d=new Date(DN.getTime()); d.setDate(d.getDate()+off); d.setHours(h,m,0,0); return d; }
-      function st(d){ function p(n){return (n<10?'0':'')+n;} return p(d.getDate())+'/'+p(d.getMonth()+1)+' · '+p(d.getHours())+':'+p(d.getMinutes()); }
-      var seed=[
-        {code:'MS-7K4P-X9Q2',kind:'avis',  zone:'Tatami',          cat:'Propre et agréable',    description:'Tatamis nickel ce soir, merci l’équipe',          status:'done',    reply:'',                                           d:at(0,20,30)},
-        {code:'MS-3H8N-B2LF',kind:'avis',  zone:'Sanitaires',      cat:'Peut être amélioré',    description:'Papier manquant aux toilettes du fond',           status:'transmis',reply:'',                                           d:at(0,19,5)},
-        {code:'MS-9XR5-K7QD',kind:'signal',zone:'Matériel partagé',cat:'Matériel ou équipement',description:'Deux paos fendus côté boxe',                      status:'transmis',reply:'',                                           d:at(0,18,30)},
-        {code:'MS-5T2M-P4RW',kind:'signal',zone:'Douches',         cat:'Consommable manquant',  description:'Plus de savon au distributeur de droite',         status:'done',    reply:'Rechargé ce matin, merci du signalement !', d:at(0,8,40)},
-        {code:'MS-2L6V-C8KH',kind:'signal',zone:'Vestiaires',      cat:'Propreté d’une zone',   description:'Sol du vestiaire hommes humide en fin de soirée', status:'taken',   reply:'',                                           d:at(-1,22,15)}
-      ];
-      var inbox=seed.map(function(r){ return {id:'seed-'+r.code,code:r.code,kind:r.kind,zone:r.zone,cat:r.cat,description:r.description,status:r.status,reply:r.reply,when:st(r.d),ts:r.d.getTime(),club:'Cube Fight Club',clubCode:'CFC-PARIS-01',controlStatus:(r.status==='done'?'treated':(r.status==='taken'?'in_progress':'to_verify'))}; });
-      localStorage.setItem('matsafe_fighter_inbox', JSON.stringify(inbox));
-      var mineCodes={'MS-5T2M-P4RW':1,'MS-7K4P-X9Q2':1};  // 3.5 : les 2 premiers retours dans l'historique « ce téléphone » (Fighter)
-      localStorage.setItem('matsafe_fighter_v1', JSON.stringify(inbox.filter(function(r){ return mineCodes[r.code]; })));
-      localStorage.setItem('matsafe_demo_seeded_v1','1');
-    }catch(e){}
-  })();
-
   var navItems = document.querySelectorAll('.nav a[data-screen]');
   var screens = document.querySelectorAll('.screen');
   function go(name){
@@ -1161,7 +1010,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var app=document.querySelector('.app'); if(app) app.classList.toggle('rail-hidden', name==='planning'||name==='serie');
     if(name==='serie'){ try{ renderStreak(); }catch(_){ } }
     if(name==='retours'){ try{ renderInbox(); }catch(_){ } }
-    if(name==='accueil'){ try{ renderHomeMessages(); }catch(_){ } try{ renderHygieneToday(); }catch(_){ } }
+    if(name==='accueil'){ try{ renderHomeMessages(); }catch(_){ } }
     document.querySelector('.main').scrollTop = 0;
     window.scrollTo(0,0);
   }
@@ -1208,7 +1057,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(!code) return;
     var list=loadInbox(), changed=false;
     for(var i=0;i<list.length;i++){ if(list[i] && list[i].code===code){ list[i].status=status; list[i].controlStatus=(status==='done'?'treated':(status==='taken'?'in_progress':'to_verify')); changed=true; break; } }
-    if(changed){ saveInbox(list); renderInbox(); renderHomeMessages(); try{ renderHygieneToday(); }catch(_){ } }
+    if(changed){ saveInbox(list); renderInbox(); renderHomeMessages(); }
   }
   function inboxReply(code){
     if(!code) return;
@@ -1217,7 +1066,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     txt=String(txt).trim();
     var list=loadInbox(), changed=false;
     for(var i=0;i<list.length;i++){ if(list[i] && list[i].code===code){ list[i].reply=txt; if(list[i].status==='transmis') list[i].status='taken'; changed=true; break; } }
-    if(changed){ saveInbox(list); renderInbox(); renderHomeMessages(); try{ renderHygieneToday(); }catch(_){ } toast('Réponse enregistrée. Visible par l’adhérent via son code.'); }
+    if(changed){ saveInbox(list); renderInbox(); renderHomeMessages(); toast('Réponse enregistrée. Visible par l’adhérent via son code.'); }
   }
   // Accueil — bloc « Messages » : AFFICHE LES MÊMES RETOURS que l'écran « Retours adhérents »
   // (même file partagée matsafe_fighter_inbox), et les fait défiler en boucle.
@@ -1259,81 +1108,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     homeMsgMarquee();
   }
 
-  // 2.1 Bloc « Hygiène aujourd'hui » — 4 indicateurs recalculés en direct.
-  function anoToTreatCount(){ try{ return loadAnos().filter(function(a){ return a.status==='todo'; }).length; }catch(e){ return 0; } }
-  function hygieneToday(){
-    var list=(typeof SCHED!=='undefined' && SCHED[TODAY])?SCHED[TODAY]:[], done=0, late=0, todo=0;
-    list.forEach(function(c){ var s=statusOf(TODAY,c.t,c.m); if(s.cls==='done')done++; else if(s.cls==='late')late++; else if(s.cls==='todo')todo++; });
-    var ano=anoToTreatCount();
-    var pend=0; try{ pend=loadInbox().filter(function(r){ return r && r.status!=='done'; }).length; }catch(e){}
-    var streak=(typeof STREAK!=='undefined' && STREAK.streak)||0;
-    return {
-      clean:{n:done+'/'+list.length, s:'validés', dot:(late>0?'late':(todo>0?'warn':'ok'))},
-      ano:{n:String(ano), s:'à traiter', dot:(ano>0?'warn':'ok')},
-      ret:{n:String(pend), s:'en attente', dot:(pend>0?'warn':'ok')},
-      streak:{n:String(streak), s:(streak>1?'jours':'jour'), dot:'ok'}
-    };
-  }
-  function renderHygieneToday(){
-    var box=document.getElementById('hygList'); if(!box) return;
-    var d=hygieneToday();
-    function tile(goName,label,o){
-      return '<button class="ht-tile" data-go="'+goName+'"><span class="ht-dot '+o.dot+'"></span>'+
-        '<span class="ht-k">'+label+'</span><span class="ht-n">'+o.n+'</span><span class="ht-s">'+o.s+'</span></button>';
-    }
-    box.innerHTML=
-      tile('planning','Nettoyages',d.clean)+
-      tile('signalements','Anomalies',d.ano)+
-      tile('retours','Retours',d.ret)+
-      tile('serie','Série',d.streak);
-  }
-
-  // 3.6 Anomalies : modèle persistant (matsafe_club_anomalies), statuts évolutifs,
-  // icône par catégorie dans le rond coloré, badge du menu/barre mobile calculé.
-  var ANO_KEY='matsafe_club_anomalies';
-  var ANO_SEED=[
-    {id:'an1',cat:'hygiene', title:'Tatami 2 glissant côté nord',             by:'Kevin B.', note:'à revérifier avant 18h',   time:'11:01',      status:'todo'},
-    {id:'an2',cat:'materiel',title:'Distributeur de gel vide — entrée MAT 1', by:'Nadia R.', note:'urgent',                  time:'Hier',       status:'todo'},
-    {id:'an3',cat:'securite',title:'Éclairage vestiaire défaillant',          by:'',         note:'intervention prévue jeudi', time:'Lun.',       status:'prog'},
-    {id:'an4',cat:'materiel',title:'Fuite robinet sanitaires',                by:'',         note:'réparé par le prestataire', time:'Sem. dern.', status:'done'}
-  ];
-  var ANO_CAT={
-    hygiene:{label:'Hygiène', cls:'a6', ic:'<path d="M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11Z"/>'},
-    materiel:{label:'Matériel', cls:'a2', ic:'<path d="M15.5 7.5a3.6 3.6 0 0 1-4.7 3.4L6 15.6 8.4 18l4.7-4.8a3.6 3.6 0 0 1 3.4-4.7l-2.2 2.2-1.8-1.8 2.2-2.2Z"/>'},
-    securite:{label:'Sécurité', cls:'a1', ic:'<path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/>'}
-  };
-  var ANO_ST={ todo:{cls:'todo',label:'À traiter'}, prog:{cls:'prog',label:'En cours'}, done:{cls:'done',label:'Résolue'} };
-  function loadAnos(){ try{ var r=localStorage.getItem(ANO_KEY); if(r){ var a=JSON.parse(r); if(Array.isArray(a)) return a; } }catch(e){} return ANO_SEED.map(function(x){ var c={}; for(var k in x){ c[k]=x[k]; } return c; }); }
-  function saveAnos(a){ try{ localStorage.setItem(ANO_KEY, JSON.stringify(a)); }catch(e){} }
-  function anoIcon(cat){ var c=ANO_CAT[cat]||ANO_CAT.hygiene; return '<span class="av md '+c.cls+'"><svg class="ano-ic" viewBox="0 0 24 24" aria-hidden="true">'+c.ic+'</svg></span>'; }
-  function updateAnoBadges(){
-    var n=loadAnos().filter(function(a){ return a.status==='todo'; }).length;
-    var navB=document.querySelector('.nav a[data-screen="signalements"] .badge'); if(navB){ navB.textContent=n; navB.style.display=n>0?'':'none'; }
-    var mt=document.getElementById('mtabAnoBadge'); if(mt){ mt.textContent=n; mt.style.display=n>0?'':'none'; }
-  }
-  function renderAnos(){
-    var box=document.getElementById('anoList'); if(!box) return;
-    var anos=loadAnos();
-    box.innerHTML=anos.map(function(a){
-      var c=ANO_CAT[a.cat]||ANO_CAT.hygiene, s=ANO_ST[a.status]||ANO_ST.todo;
-      var meta=c.label+(a.by?' · signalé par '+esc(a.by):'')+(a.note?' · '+esc(a.note):'');
-      var btn='';
-      if(a.status==='todo') btn='<button class="btn-ghost" data-anoact="take" data-ano="'+esc(a.id)+'">Prendre en charge</button>';
-      else if(a.status==='prog') btn='<button class="btn-ghost" data-anoact="resolve" data-ano="'+esc(a.id)+'">Marquer résolue</button>';
-      return '<div class="msg ano-item" data-id="'+esc(a.id)+'">'+anoIcon(a.cat)+
-        '<div class="m-body"><div class="m-top"><span class="m-name">'+esc(a.title)+'</span><span class="m-time">'+esc(a.time||'')+'</span></div><div class="m-prev">'+meta+'</div></div>'+
-        '<div class="ano-right"><span class="pill-st '+s.cls+'"><span class="d"></span>'+s.label+'</span>'+btn+'</div></div>';
-    }).join('');
-    updateAnoBadges();
-  }
-  function anoSetStatus(id,status){ var anos=loadAnos(); for(var i=0;i<anos.length;i++){ if(anos[i].id===id){ anos[i].status=status; break; } } saveAnos(anos); renderAnos(); try{ renderHygieneToday(); }catch(_){ } }
-  document.addEventListener('click', function(e){
-    var ab=e.target.closest('[data-anoact]'); if(!ab) return;
-    var id=ab.getAttribute('data-ano'), act=ab.getAttribute('data-anoact');
-    if(act==='take'){ anoSetStatus(id,'prog'); toast('Anomalie prise en charge.'); }
-    else if(act==='resolve'){ anoSetStatus(id,'done'); toast('Anomalie marquée résolue.'); }
-  });
-
   // ── Série de nettoyage (streak) ──
   var STREAK={ streak:7, max:7, milestones:[7,14,30,90] };
   function renderStreak(){
@@ -1350,13 +1124,11 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(lead) lead.innerHTML='Bravo&nbsp;! Votre salle est nettoyée <strong>'+s+'&nbsp;jours d\'affilée.</strong> Gardez le rythme.';
     var goal=document.getElementById('srkGoal');
     if(goal) goal.innerHTML='<strong>'+next+' jours consécutifs</strong> débloquent le badge « Salle impeccable » à partager avec vos adhérents.';
-    var d=new Date(DEMO_NOW.getTime()); d.setDate(d.getDate()-(s-1));
+    var d=new Date(); d.setDate(d.getDate()-(s-1));
     var MO=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
     set('srkStart', d.getDate()+' '+MO[d.getMonth()]+' '+d.getFullYear());
     var DAYS=['LUN','MAR','MER','JEU','VEN','SAM','DIM'];
-    var jn=DEMO_NOW.getDay(); var ti=(jn===0)?6:jn-1;
-    var prevWeek=Math.max(0, s-(ti+1));
-    var pw=document.getElementById('srkWeekPrev'); if(pw) pw.textContent = prevWeek>0 ? ('+ '+prevWeek+' jour'+(prevWeek>1?'s':'')+' la semaine dernière') : '';
+    var jn=new Date().getDay(); var ti=(jn===0)?6:jn-1;
     var flame='<svg class="srk-day-f" viewBox="0 0 24 28"><path d="M13 1c.6 4.2 5 5.6 5 10.8A6 6 0 0 1 6 12c0-2.6 1.5-4.1 1.5-4.1.2 2 2.3 2.2 2.3.2 0-3 1.3-5 3.2-7z" fill="#C83F32"/><path d="M12 12c.3 2 2.4 2.6 2.4 5.1a2.6 2.6 0 0 1-5.2 0c0-1.3.8-2 .8-2 .1 1 1.2 1.1 1.2.1 0-1.4.4-2.4.8-3.2z" fill="#F3B14C"/></svg>';
     var wk=document.getElementById('srkWeek');
     if(wk){ var h=''; for(var i=0;i<7;i++){ var done=i<=ti; h+='<div class="srk-day'+(i===ti?' today':'')+'"><span class="srk-day-d">'+DAYS[i]+'</span>'+(done?flame:'<span class="srk-day-c"></span>')+'</div>'; } wk.innerHTML=h; }
@@ -1480,7 +1252,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   function confirmVal(){
     if(!curPerson){ toast('Sélectionnez la personne qui a nettoyé.'); return; }
     validated[curVal.day+'|'+curVal.t+'|'+curVal.m]=true;
-    var n=new Date(DEMO_NOW.getTime()), hh=('0'+n.getHours()).slice(-2)+':'+('0'+n.getMinutes()).slice(-2);
+    var n=new Date(), hh=('0'+n.getHours()).slice(-2)+':'+('0'+n.getMinutes()).slice(-2);
     document.getElementById('valDoneTxt').textContent='Nettoyage enregistré par '+curPerson+' à '+hh+'.';
     document.getElementById('valStep1').style.display='none';
     document.getElementById('valStep2').style.display='';
@@ -1493,7 +1265,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         var st=row.querySelector('.pill-st'); if(st){ st.className='pill-st done'; st.innerHTML='<span class="d"></span>Validé'; }
       }
     });
-    try{ renderHygieneToday(); }catch(_){ }
   }
 
   // Filtres historique
@@ -1515,11 +1286,12 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var zone=(document.getElementById('anoZone')||{}).value||'Zone';
     var desc=((document.getElementById('anoDesc')||{}).value||'').trim();
     if(!desc){ toast('Ajoutez une description du problème.'); return; }
+    var urgEl=document.querySelector('#anoUrg .segbtn.on'), urg=urgEl?urgEl.getAttribute('data-urg'):'low';
     var by=((document.getElementById('anoBy')||{}).value||'').trim()||'Simon E.';
-    var anos=loadAnos();
-    anos.unshift({ id:'an'+Date.now().toString(36), cat:'hygiene', title:desc.slice(0,80), by:by, note:zone, time:'À l\'instant', status:'todo' });
-    saveAnos(anos); renderAnos(); try{ renderHygieneToday(); }catch(_){ }
-    var dd=document.getElementById('anoDesc'); if(dd) dd.value='';
+    var list=document.getElementById('anoList'), div=document.createElement('div'); div.className='msg';
+    div.innerHTML='<div class="av md a3">NV</div><div class="m-body"><div class="m-top"><span class="m-name">'+esc(desc.slice(0,64))+'</span><span class="m-time">À l\'instant</span></div><div class="m-prev">'+esc(zone)+' · signalé par '+esc(by)+(urg==='high'?' · urgence élevée':'')+'</div></div><span class="pill-st todo"><span class="d"></span>À traiter</span>';
+    list.insertBefore(div, list.firstChild);
+    document.getElementById('anoDesc').value='';
     toast('Signalement envoyé.');
   }
 
@@ -1532,6 +1304,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var pr=e.target.closest('#valPeople .person');
     if(pr){ document.querySelectorAll('#valPeople .person').forEach(function(x){x.classList.remove('on');}); pr.classList.add('on'); curPerson=pr.getAttribute('data-person'); return; }
     if(e.target.closest('#valConfirm')){ confirmVal(); return; }
+    var seg=e.target.closest('#anoUrg .segbtn');
+    if(seg){ document.querySelectorAll('#anoUrg .segbtn').forEach(function(x){x.classList.remove('on');}); seg.classList.add('on'); return; }
     if(e.target.closest('#anoSend')){ sendAno(); return; }
     var tk=e.target.closest('[data-take]');
     if(tk){ var ca=tk.closest('.fb'); inboxSetStatus(ca&&ca.getAttribute('data-code'),'taken'); toast('Retour pris en compte.'); return; }
@@ -1549,11 +1323,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
   // Mise à jour en direct : quand MatSafe Fighter écrit un nouveau retour (même origine),
   // l'écran « Retours adhérents » se rafraîchit automatiquement.
-  window.addEventListener('storage', function(e){ if(e.key===FIGHTER_INBOX){ try{ renderInbox(); }catch(_){ } try{ renderHomeMessages(); }catch(_){ } try{ renderHygieneToday(); }catch(_){ } } });
+  window.addEventListener('storage', function(e){ if(e.key===FIGHTER_INBOX){ try{ renderInbox(); }catch(_){ } try{ renderHomeMessages(); }catch(_){ } } });
   try{ renderInbox(); }catch(_){ }
   try{ renderHomeMessages(); }catch(_){ }
-  try{ renderAnos(); }catch(_){ }
-  try{ renderHygieneToday(); }catch(_){ }
 })();
 </script>
 
@@ -1634,9 +1406,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(!name){ flash('Ajoutez le nom de la compétition.'); return; }
     var c={ id:editId||('k'+Date.now()), name:name, date:document.getElementById('compDate').value.trim(), city:document.getElementById('compCity').value.trim(), link:document.getElementById('compLink').value.trim(), img:curImg||null };
     if(editId){ for(var i=0;i<list.length;i++){ if(list[i].id===editId){ list[i]=c; break; } } } else { list.unshift(c); }
-    save(); render();
-    try{ if(window.upsertClubComp) window.upsertClubComp(c); }catch(_){ }   // 3.7 -> Prochaines échéances
-    closeComp(); editId=null; curImg=null;
+    save(); render(); closeComp(); editId=null; curImg=null;
     flash('Compétition enregistrée.');
   });
 
@@ -1695,11 +1465,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 /* Prochaines échéances : gérées par le gérant, partagées avec MATSAFE Fighter via localStorage (même origine). */
 (function(){
   var K='matsafe_club_events';
-  // 3.7 Affiche de compétition : illustration SVG sobre dans la DA (pas de photo externe).
-  var COMP_POSTER='data:image/svg+xml,'+encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 180'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='rgb(26,26,28)'/><stop offset='.62' stop-color='rgb(40,24,22)'/><stop offset='1' stop-color='rgb(200,63,50)'/></linearGradient></defs><rect width='320' height='180' fill='url(#g)'/><rect x='22' y='118' width='52' height='5' fill='rgb(200,63,50)'/><text x='22' y='58' fill='#fff' font-family='Arial,sans-serif' font-weight='800' font-size='31' letter-spacing='-1'>OPEN DE</text><text x='22' y='90' fill='#fff' font-family='Arial,sans-serif' font-weight='800' font-size='31' letter-spacing='-1'>PARIS</text><text x='22' y='146' fill='rgba(255,255,255,.88)' font-family='Arial,sans-serif' font-weight='700' font-size='13' letter-spacing='3'>JJB · GI / NO GI</text><text x='298' y='30' text-anchor='end' fill='rgba(255,255,255,.7)' font-family='Arial,sans-serif' font-weight='700' font-size='12' letter-spacing='2'>26 OCT. 2026</text></svg>");
   var DEFAULTS=[
-    {id:2,kind:'Compétition',title:'Open de Paris JJB',date:'26 octobre',city:'Paris',link:'https://ibjjf.com',img:COMP_POSTER},
-    {id:1,kind:'Stage',title:'Stage No-Gi avec un invité',date:'18 octobre · 14h'},
+    {id:1,kind:'Stage',title:'Stage No-Gi avec un invité',date:'12 octobre · 14h'},
+    {id:2,kind:'Compétition',title:'Open de Paris JJB',date:'26 octobre'},
     {id:3,kind:'Stage',title:'Sparring MMA encadré',date:'9 novembre · 11h'}
   ];
   function $(id){return document.getElementById(id);}
@@ -1712,11 +1480,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var a=get(), list=$('evList');
     if(!a.length){ list.innerHTML='<div class="evmgr-empty">Aucune échéance pour le moment.</div>'; return; }
     list.innerHTML=a.map(function(e){
-      var isComp=(e.kind==='Compétition');
-      var thumb=(e.img)?'<div class="ev-thumb"><img src="'+esc(e.img)+'" alt=""></div>':'';
-      var meta=[]; if(e.date) meta.push(esc(e.date)); if(e.city) meta.push(esc(e.city));
-      var link=e.link?'<a class="ev-link" href="'+esc(e.link)+'" target="_blank" rel="noopener">Voir&nbsp;↗</a>':'';
-      return '<div class="evrow'+(isComp&&e.img?' evrow-comp':'')+'">'+thumb+'<span class="evk'+(isComp?' comp':'')+'">'+esc(e.kind)+'</span><div class="evb"><div class="evt2">'+esc(e.title)+'</div>'+((meta.length||link)?'<div class="evd">'+meta.join(' · ')+(meta.length&&link?' · ':'')+link+'</div>':'')+'</div><button class="evx" data-id="'+esc(e.id)+'" title="Retirer" aria-label="Retirer">&times;</button></div>';
+      return '<div class="evrow"><span class="evk">'+esc(e.kind)+'</span><div class="evb"><div class="evt2">'+esc(e.title)+'</div>'+(e.date?'<div class="evd">'+esc(e.date)+'</div>':'')+'</div><button class="evx" data-id="'+esc(e.id)+'" title="Retirer" aria-label="Retirer">&times;</button></div>';
     }).join('');
     Array.prototype.forEach.call(list.querySelectorAll('.evx'), function(bn){
       bn.onclick=function(){ var id=bn.getAttribute('data-id'); set(get().filter(function(x){return String(x.id)!==String(id);})); render(); flash('Échéance retirée.'); };
@@ -1726,101 +1490,11 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var kind=($('evKind').value||'').trim(), title=($('evTitle').value||'').trim(), date=($('evDate').value||'').trim();
     if(!title){ flash('Ajoutez un intitulé.'); return; }
     var a=get(); a.push({id:Date.now(), kind:kind||'Événement', title:title, date:date});
-    if(a.length>10) a=a.slice(-10);
+    if(a.length>8) a=a.slice(-8);
     set(a); $('evTitle').value=''; $('evDate').value=''; render();
     flash('Échéance publiée sur MATSAFE Fighter.');
   });
-  // 3.7 La modale compétition ajoute/modifie une échéance de type « Compétition » (affiche + lien).
-  window.renderClubEvents = render;
-  window.upsertClubComp = function(c){
-    try{
-      var a=get(), ev={id:c.id, kind:'Compétition', title:c.name, date:c.date||'', city:c.city||'', link:c.link||'', img:c.img||null};
-      var found=false; for(var i=0;i<a.length;i++){ if(String(a[i].id)===String(c.id)){ a[i]=ev; found=true; break; } }
-      if(!found) a.unshift(ev);
-      if(a.length>10) a=a.slice(0,10);
-      set(a); render();
-    }catch(e){}
-  };
   render();
-})();
-</script>
-
-<!-- ===== MOBILE : barre d'onglets fixe (≤768px) ===== -->
-<nav class="mtab" id="mtab" aria-label="Navigation principale">
-  <a data-go="accueil" class="on"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Accueil</a>
-  <a data-go="planning"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Planning</a>
-  <a data-go="signalements"><svg class="ic" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg>Anomalies<span class="mt-badge" id="mtabAnoBadge">2</span></a>
-  <a data-go="retours"><svg class="ic" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V6a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/><path d="M8 10h8M8 13h5"/></svg>Retours</a>
-  <a id="mtabPlus"><svg class="ic" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>Plus</a>
-</nav>
-
-<!-- Feuille « Plus » : écrans secondaires -->
-<div class="plus-sheet" id="plusSheet" aria-hidden="true">
-  <div class="ps-backdrop" data-plusclose></div>
-  <div class="ps-panel" role="dialog" aria-modal="true" aria-label="Plus">
-    <div class="ps-grab"></div>
-    <button class="ps-item" data-go="serie"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3c.5 3.6 4 4.9 4 8.6a4.2 4.2 0 0 1-8.4 0c0-1.9 1-3.1 1-3.1.3 1.7 1.9 1.8 1.9.1C10.5 6.7 11 5 12 3Z"/></svg>Série de nettoyage</button>
-    <button class="ps-item" data-go="preuves"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Historique</button>
-    <button class="ps-item" data-go="reglages"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0 1.7 1.7 0 0 0-2.9-1.2l-.1.1A2 2 0 1 1 4 17l.1-.1A1.7 1.7 0 0 0 3 14H3a2 2 0 1 1 0-4 1.7 1.7 0 0 0 1.2-2.9L4 7A2 2 0 1 1 7 4l.1.1A1.7 1.7 0 0 0 10 3V3a2 2 0 1 1 4 0 1.7 1.7 0 0 0 2.9 1.2L17 4A2 2 0 1 1 20 7l-.1.1A1.7 1.7 0 0 0 21 10H21a2 2 0 1 1 0 4z"/></svg>Réglages</button>
-  </div>
-</div>
-
-<script>
-/* ===== MOBILE Club : barre d'onglets, feuille « Plus », relocalisation du planning, sélecteur planning ===== */
-(function(){
-  function go(name){ try{ var a=document.querySelector('.nav a[data-screen="'+name+'"]'); if(a){ a.click(); return; } }catch(e){}
-    // repli : clique un élément data-go équivalent
-    var g=document.querySelector('[data-go="'+name+'"]'); if(g) g.click();
-  }
-  // État actif de la barre d'onglets, synchronisé avec le menu latéral
-  var PLUS_SCREENS={serie:1,preuves:1,reglages:1};
-  function syncTabs(){
-    var cur=''; var onNav=document.querySelector('.nav a.on'); if(onNav) cur=onNav.getAttribute('data-screen')||'';
-    document.querySelectorAll('.mtab a[data-go]').forEach(function(a){ a.classList.toggle('on', a.getAttribute('data-go')===cur); });
-    var plus=document.getElementById('mtabPlus'); if(plus) plus.classList.toggle('on', !!PLUS_SCREENS[cur]);
-  }
-  // Barre d'onglets : navigation (réutilise le handler [data-go] existant) + synchro sur toute navigation
-  document.addEventListener('click', function(e){
-    if(e.target.closest('[data-go]') || e.target.closest('.nav a[data-screen]')){ setTimeout(syncTabs,0); }
-  });
-
-  // Feuille « Plus »
-  var sheet=document.getElementById('plusSheet');
-  function openSheet(){ if(sheet){ sheet.classList.add('open'); sheet.setAttribute('aria-hidden','false'); } }
-  function closeSheet(){ if(sheet){ sheet.classList.remove('open'); sheet.setAttribute('aria-hidden','true'); } }
-  var plusBtn=document.getElementById('mtabPlus'); if(plusBtn) plusBtn.addEventListener('click', openSheet);
-  if(sheet){
-    sheet.addEventListener('click', function(e){
-      if(e.target.closest('[data-plusclose]')){ closeSheet(); return; }
-      var it=e.target.closest('.ps-item'); if(it){ closeSheet(); setTimeout(syncTabs,0); }
-    });
-  }
-  document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeSheet(); });
-
-  // 1.4 Relocaliser « Planning du jour » (rail) en bas de l'accueil en mobile
-  function relocatePlanning(){
-    var rp=document.getElementById('railPlanning'); var slot=document.getElementById('mobilePlanningSlot'); var rail=document.querySelector('.rail');
-    if(!rp||!slot||!rail) return;
-    if(window.matchMedia('(max-width:768px)').matches){ if(rp.parentNode!==slot) slot.appendChild(rp); }
-    else if(rp.parentNode!==rail){ var btn=rail.querySelector('.rail-btn'); if(btn) rail.insertBefore(rp, btn); else rail.appendChild(rp); }
-  }
-  relocatePlanning();
-  var mq=window.matchMedia('(max-width:768px)');
-  if(mq.addEventListener) mq.addEventListener('change', relocatePlanning); else if(mq.addListener) mq.addListener(relocatePlanning);
-
-  // 1.5 Planning mobile : afficher un seul jour via le sélecteur horizontal
-  (function(){
-    var pw=document.getElementById('pweek'); if(!pw) return;
-    var days=document.querySelectorAll('[data-screen="planning"] .days > .day');
-    function showDay(i){
-      for(var k=0;k<days.length;k++){ days[k].classList.toggle('pon', k===i); }
-      pw.querySelectorAll('.d').forEach(function(d){ d.classList.toggle('on', (+d.getAttribute('data-i'))===i); });
-    }
-    pw.querySelectorAll('.d').forEach(function(d){ d.addEventListener('click', function(){ showDay(+d.getAttribute('data-i')); }); });
-    showDay(1); // Mardi = aujourd'hui (démo)
-  })();
-
-  syncTabs();
 })();
 </script>
 </body>
