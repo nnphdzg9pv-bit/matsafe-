@@ -321,7 +321,7 @@ tbody tr:hover{background:#F7F6F4}
 .bubble{display:inline-block;background:#E9E9EB;color:#1C1C1E;padding:11px 15px;border-radius:20px;border-bottom-left-radius:6px;font-size:14px;line-height:1.35}
 
 
-.rail-toggle{position:absolute;top:20px;right:368px;z-index:40;width:32px;height:32px;border-radius:50%;background:var(--panel);border:1px solid var(--line2);display:grid;place-items:center;cursor:pointer;color:var(--ink2);box-shadow:0 6px 16px -8px rgba(20,20,25,.45);transition:right .28s ease,background .15s,color .15s}
+.rail-toggle{position:absolute;top:50%;transform:translateY(-50%);right:368px;z-index:40;width:32px;height:32px;border-radius:50%;background:var(--panel);border:1px solid var(--line2);display:grid;place-items:center;cursor:pointer;color:var(--ink2);box-shadow:0 6px 16px -8px rgba(20,20,25,.45);transition:right .28s ease,background .15s,color .15s}
 .rail-toggle:hover{background:#F5F4F2;color:var(--ink)}
 .rail-toggle .rt-ic{width:17px;height:17px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:transform .28s}
 .app.rail-closed{grid-template-columns:248px 1fr}
@@ -338,7 +338,7 @@ tbody tr:hover{background:#F7F6F4}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
 @media(max-width:1180px){.app{grid-template-columns:220px 1fr}.rail{display:none}}
-@media(max-width:768px){.app{grid-template-columns:1fr}.side{display:none}.row2{grid-template-columns:1fr}.stats,.grid2,.grid3{grid-template-columns:1fr}}
+@media(max-width:860px){.app{grid-template-columns:1fr}.side{display:none}.row2{grid-template-columns:1fr}.stats,.grid2,.grid3{grid-template-columns:1fr}}
 
 /* ===== Ajouts contenu/organisation (même DA) ===== */
 .summary{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-sm);padding:12px 16px;font-size:13.5px;color:var(--ink2)}
@@ -543,81 +543,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .comp-thumb-prev{width:66px;height:66px;border-radius:10px;object-fit:cover;border:1px solid var(--line2);display:none}
 @media(max-width:560px){.comp-empty{flex-wrap:wrap}.comp-empty .ce-btn{width:100%}}
 
-/* ===================== MOBILE CLUB (≤ 768 px) ===================== */
-/* Barre d'onglets + feuille « Plus » : cachées en desktop */
-.mtab{display:none}
-#mobilePlanningSlot{display:none}
-.pweek{display:none;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;margin:0 0 16px}
-.pweek .d{padding:8px 0;border-radius:12px;cursor:pointer;transition:background .15s}
-.pweek .d:hover{background:#EFEEEB}
-.pweek .d .dn{font-size:12px;color:var(--muted);font-weight:500}
-.pweek .d .dd{font-size:14px;font-weight:600;margin-top:3px}
-.pweek .d.on{background:var(--ink)}
-.pweek .d.on .dn,.pweek .d.on .dd{color:#F5F4EF}
-/* Feuille « Plus » (bottom sheet) */
-.plus-sheet{position:fixed;inset:0;z-index:70;display:none}
-.plus-sheet.open{display:block}
-.plus-sheet .ps-backdrop{position:absolute;inset:0;background:rgba(15,14,13,.5);opacity:0;transition:opacity .2s}
-.plus-sheet.open .ps-backdrop{opacity:1}
-.plus-sheet .ps-panel{position:absolute;left:0;right:0;bottom:0;background:var(--panel);border-radius:22px 22px 0 0;padding:10px 16px calc(18px + env(safe-area-inset-bottom));transform:translateY(100%);transition:transform .26s cubic-bezier(.2,.8,.25,1);box-shadow:0 -20px 50px -20px rgba(0,0,0,.4)}
-.plus-sheet.open .ps-panel{transform:translateY(0)}
-.plus-sheet .ps-grab{width:40px;height:4px;border-radius:999px;background:var(--line2);margin:6px auto 12px}
-.plus-sheet .ps-item{display:flex;align-items:center;gap:14px;width:100%;padding:15px 8px;border:0;border-top:1px solid var(--line);background:none;cursor:pointer;color:var(--ink);font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.04em;font-weight:700;font-size:14px}
-.plus-sheet .ps-item:first-of-type{border-top:0}
-.plus-sheet .ps-item .ic{width:22px;height:22px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;color:var(--brand)}
-
-@media(max-width:768px){
-  /* 1.1 Barre d'onglets fixe en bas */
-  .mtab{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--panel);border-top:1px solid var(--line2);padding:6px 4px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -8px 24px -18px rgba(20,20,25,.5)}
-  .mtab a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;background:none;border:0;cursor:pointer;color:var(--ink2);text-decoration:none;position:relative;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.02em;font-weight:700;font-size:9.5px}
-  .mtab a .ic{width:22px;height:22px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
-  .mtab a.on{color:var(--brand)}
-  .mtab a .mt-badge{position:absolute;top:0;left:calc(50% + 6px);min-width:16px;height:16px;border-radius:9px;background:var(--brand);color:#fff;font-size:10px;font-weight:700;display:grid;place-items:center;padding:0 4px;font-family:var(--font-disp)}
-  .main{padding:20px 16px calc(80px + env(safe-area-inset-bottom))}
-
-  /* 1.2 En-tête : titre + aide/notif sur une ligne, badge flamme dessous */
-  .head{flex-wrap:wrap;align-items:flex-start;justify-content:flex-start;gap:10px}
-  .head>div:first-child{flex:1 1 0;min-width:0}
-  .head-actions{display:contents}
-  .head-actions .iconbtn{flex:none;align-self:flex-start}
-  .head-actions .streak-hb{order:3;flex-basis:100%}
-
-  /* 1.3 Carte compétition : image au-dessus, pleine largeur, 16/9 */
-  .comp-card{flex-direction:column;align-items:stretch;gap:14px;padding:14px}
-  .comp-thumb{width:100%;height:auto;aspect-ratio:16/9}
-  .comp-empty{flex-direction:column;align-items:stretch;text-align:left}
-  .comp-empty .ce-thumb{width:100%;height:auto;aspect-ratio:16/9}
-  .comp-empty .ce-btn{width:100%}
-
-  /* 1.4 Planning du jour relocalisé en bas de l'accueil */
-  #mobilePlanningSlot{display:block;margin-top:24px;border-top:1px solid var(--line2);padding-top:18px}
-  #mobilePlanningSlot .week{margin-top:12px}
-  #mobilePlanningSlot .daylist{max-height:none}
-
-  /* 1.5 Planning : un seul jour + sélecteur horizontal au-dessus */
-  .pweek{display:grid}
-  .days{display:block}
-  .day{display:none;margin-bottom:0}
-  .day.pon{display:block}
-
-  /* 1.6 Historique : tableau -> cartes */
-  .table-wrap{background:none;border:0;padding:0;overflow:visible}
-  #histTable,#histTable tbody,#histTable tr,#histTable td{display:block;width:auto}
-  #histTable thead{display:none}
-  #histTable tr{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:12px}
-  #histTable td{border:0;padding:5px 0;display:flex;justify-content:space-between;align-items:center;gap:14px;text-align:right!important;font-size:14px}
-  #histTable td::before{content:attr(data-th);font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.04em;font-size:10.5px;font-weight:700;color:var(--muted);text-align:left;flex-shrink:0}
-  #histTable td:nth-of-type(1)::before{content:"Date"}
-  #histTable td:nth-of-type(2)::before{content:"Cours"}
-  #histTable td:nth-of-type(3)::before{content:"Discipline"}
-  #histTable td:nth-of-type(4)::before{content:"Tatami"}
-  #histTable td:nth-of-type(5)::before{content:"Nettoyé par"}
-  #histTable td:nth-of-type(6)::before{content:"Validé à"}
-  #histTable td:nth-of-type(7)::before{content:"Statut"}
-  #histTable td .tr-name{justify-content:flex-end}
-}
-@media(min-width:769px){.mtab{display:none!important}.plus-sheet{display:none!important}}
-
 /* Retours adhérents : messages agrandis */
 .fb{gap:16px;padding:20px 22px;border-radius:var(--r);margin-bottom:14px}
 .fb .av.md{width:52px;height:52px;font-size:16px}
@@ -800,9 +725,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         <h3>Messages</h3>
         <div class="msg-vp"><div class="chat" id="msgChat"></div></div>
       </div>
-
-      <!-- Mobile : « Planning du jour » du rail est relocalisé ici (voir relocatePlanning()) -->
-      <div id="mobilePlanningSlot"></div>
     </section>
 
     <!-- SÉRIE DE NETTOYAGE -->
@@ -868,15 +790,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     <!-- PLANNING -->
     <section class="screen" data-screen="planning">
       <div class="head"><div><h1>Planning des cours</h1><p>Retrouvez les cours de la semaine et validez le nettoyage du tatami après chaque séance.</p></div></div>
-      <div class="pweek" id="pweek">
-        <div class="d" data-i="0"><div class="dn">Lu</div><div class="dd">12</div></div>
-        <div class="d on" data-i="1"><div class="dn">Ma</div><div class="dd">13</div></div>
-        <div class="d" data-i="2"><div class="dn">Me</div><div class="dd">14</div></div>
-        <div class="d" data-i="3"><div class="dn">Je</div><div class="dd">15</div></div>
-        <div class="d" data-i="4"><div class="dn">Ve</div><div class="dd">16</div></div>
-        <div class="d" data-i="5"><div class="dn">Sa</div><div class="dd">17</div></div>
-        <div class="d" data-i="6"><div class="dn">Di</div><div class="dd">18</div></div>
-      </div>
       <div class="days">
         <div class="day"><h4>Lundi</h4><div class="slot"><span class="mat">MAT 1</span><div class="st">07:00</div><div class="sd">JJB</div></div><div class="slot mma"><span class="mat">MAT 1</span><div class="st">11:00</div><div class="sd">MMA · Confirmés</div></div><div class="slot"><span class="mat">MAT 2</span><div class="st">11:00</div><div class="sd">Accès libre / Drills · Sans coach</div></div><div class="slot lutte"><span class="mat">MAT 1</span><div class="st">12:30</div><div class="sd">Lutte</div></div><div class="slot boxe"><span class="mat">MAT 2</span><div class="st">12:30</div><div class="sd">Boxe pieds-poings</div></div><div class="slot"><span class="mat">MAT 1</span><div class="st">14:00</div><div class="sd">Compétition · Gi / No Gi</div></div><div class="slot mma"><span class="mat">MAT 1</span><div class="st">18:00</div><div class="sd">MMA · Confirmés</div></div><div class="slot"><span class="mat">MAT 2</span><div class="st">18:45</div><div class="sd">No Gi · Fondamentaux</div></div><div class="slot mma"><span class="mat">MAT 1</span><div class="st">19:00</div><div class="sd">MMA · Tous niveaux</div></div><div class="slot boxe"><span class="mat">MAT 2</span><div class="st">19:45</div><div class="sd">Boxe anglaise</div></div><div class="slot"><span class="mat">MAT 1</span><div class="st">20:00</div><div class="sd">JJB · Tous niveaux</div></div></div>
         <div class="day"><h4>Mardi</h4><div class="slot"><span class="mat">MAT 1</span><div class="st">07:00</div><div class="sd">No Gi</div></div><div class="slot"><span class="mat">MAT 1</span><div class="st">12:30</div><div class="sd">JJB</div></div><div class="slot"><span class="mat">MAT 2</span><div class="st">12:30</div><div class="sd">No Gi</div></div><div class="slot"><span class="mat">MAT 1</span><div class="st">18:00</div><div class="sd">Accès libre / Drills · Sans coach</div></div><div class="slot boxe"><span class="mat">MAT 1</span><div class="st">19:00</div><div class="sd">Boxe pieds-poings</div></div><div class="slot"><span class="mat">MAT 2</span><div class="st">19:00</div><div class="sd">JJB · Fondamentaux</div></div><div class="slot"><span class="mat">MAT 1</span><div class="st">20:00</div><div class="sd">No Gi</div></div><div class="slot boxe"><span class="mat">MAT 2</span><div class="st">20:00</div><div class="sd">Boxe anglaise</div></div></div>
@@ -1036,7 +949,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <div class="role">Référent hygiène · Cube Fight Club</div>
     </div>
     <hr class="rail-sep">
-    <div id="railPlanning">
+    <div>
       <div class="agenda-head"><h3>Planning du jour</h3><a class="link" data-go="planning">Tout voir</a></div>
       <div class="week" id="week">
         <div class="d" data-day="Lundi"><div class="dn">Lu</div><div class="dd">12</div></div>
@@ -1582,85 +1495,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     flash('Échéance publiée sur MATSAFE Fighter.');
   });
   render();
-})();
-</script>
-
-<!-- ===== MOBILE : barre d'onglets fixe (≤768px) ===== -->
-<nav class="mtab" id="mtab" aria-label="Navigation principale">
-  <a data-go="accueil" class="on"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Accueil</a>
-  <a data-go="planning"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Planning</a>
-  <a data-go="signalements"><svg class="ic" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg>Anomalies<span class="mt-badge" id="mtabAnoBadge">2</span></a>
-  <a data-go="retours"><svg class="ic" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V6a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/><path d="M8 10h8M8 13h5"/></svg>Retours</a>
-  <a id="mtabPlus"><svg class="ic" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>Plus</a>
-</nav>
-
-<!-- Feuille « Plus » : écrans secondaires -->
-<div class="plus-sheet" id="plusSheet" aria-hidden="true">
-  <div class="ps-backdrop" data-plusclose></div>
-  <div class="ps-panel" role="dialog" aria-modal="true" aria-label="Plus">
-    <div class="ps-grab"></div>
-    <button class="ps-item" data-go="serie"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3c.5 3.6 4 4.9 4 8.6a4.2 4.2 0 0 1-8.4 0c0-1.9 1-3.1 1-3.1.3 1.7 1.9 1.8 1.9.1C10.5 6.7 11 5 12 3Z"/></svg>Série de nettoyage</button>
-    <button class="ps-item" data-go="preuves"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Historique</button>
-    <button class="ps-item" data-go="reglages"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0 1.7 1.7 0 0 0-2.9-1.2l-.1.1A2 2 0 1 1 4 17l.1-.1A1.7 1.7 0 0 0 3 14H3a2 2 0 1 1 0-4 1.7 1.7 0 0 0 1.2-2.9L4 7A2 2 0 1 1 7 4l.1.1A1.7 1.7 0 0 0 10 3V3a2 2 0 1 1 4 0 1.7 1.7 0 0 0 2.9 1.2L17 4A2 2 0 1 1 20 7l-.1.1A1.7 1.7 0 0 0 21 10H21a2 2 0 1 1 0 4z"/></svg>Réglages</button>
-  </div>
-</div>
-
-<script>
-/* ===== MOBILE Club : barre d'onglets, feuille « Plus », relocalisation du planning, sélecteur planning ===== */
-(function(){
-  function go(name){ try{ var a=document.querySelector('.nav a[data-screen="'+name+'"]'); if(a){ a.click(); return; } }catch(e){}
-    // repli : clique un élément data-go équivalent
-    var g=document.querySelector('[data-go="'+name+'"]'); if(g) g.click();
-  }
-  // État actif de la barre d'onglets, synchronisé avec le menu latéral
-  var PLUS_SCREENS={serie:1,preuves:1,reglages:1};
-  function syncTabs(){
-    var cur=''; var onNav=document.querySelector('.nav a.on'); if(onNav) cur=onNav.getAttribute('data-screen')||'';
-    document.querySelectorAll('.mtab a[data-go]').forEach(function(a){ a.classList.toggle('on', a.getAttribute('data-go')===cur); });
-    var plus=document.getElementById('mtabPlus'); if(plus) plus.classList.toggle('on', !!PLUS_SCREENS[cur]);
-  }
-  // Barre d'onglets : navigation (réutilise le handler [data-go] existant) + synchro sur toute navigation
-  document.addEventListener('click', function(e){
-    if(e.target.closest('[data-go]') || e.target.closest('.nav a[data-screen]')){ setTimeout(syncTabs,0); }
-  });
-
-  // Feuille « Plus »
-  var sheet=document.getElementById('plusSheet');
-  function openSheet(){ if(sheet){ sheet.classList.add('open'); sheet.setAttribute('aria-hidden','false'); } }
-  function closeSheet(){ if(sheet){ sheet.classList.remove('open'); sheet.setAttribute('aria-hidden','true'); } }
-  var plusBtn=document.getElementById('mtabPlus'); if(plusBtn) plusBtn.addEventListener('click', openSheet);
-  if(sheet){
-    sheet.addEventListener('click', function(e){
-      if(e.target.closest('[data-plusclose]')){ closeSheet(); return; }
-      var it=e.target.closest('.ps-item'); if(it){ closeSheet(); setTimeout(syncTabs,0); }
-    });
-  }
-  document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeSheet(); });
-
-  // 1.4 Relocaliser « Planning du jour » (rail) en bas de l'accueil en mobile
-  function relocatePlanning(){
-    var rp=document.getElementById('railPlanning'); var slot=document.getElementById('mobilePlanningSlot'); var rail=document.querySelector('.rail');
-    if(!rp||!slot||!rail) return;
-    if(window.matchMedia('(max-width:768px)').matches){ if(rp.parentNode!==slot) slot.appendChild(rp); }
-    else if(rp.parentNode!==rail){ var btn=rail.querySelector('.rail-btn'); if(btn) rail.insertBefore(rp, btn); else rail.appendChild(rp); }
-  }
-  relocatePlanning();
-  var mq=window.matchMedia('(max-width:768px)');
-  if(mq.addEventListener) mq.addEventListener('change', relocatePlanning); else if(mq.addListener) mq.addListener(relocatePlanning);
-
-  // 1.5 Planning mobile : afficher un seul jour via le sélecteur horizontal
-  (function(){
-    var pw=document.getElementById('pweek'); if(!pw) return;
-    var days=document.querySelectorAll('[data-screen="planning"] .days > .day');
-    function showDay(i){
-      for(var k=0;k<days.length;k++){ days[k].classList.toggle('pon', k===i); }
-      pw.querySelectorAll('.d').forEach(function(d){ d.classList.toggle('on', (+d.getAttribute('data-i'))===i); });
-    }
-    pw.querySelectorAll('.d').forEach(function(d){ d.addEventListener('click', function(){ showDay(+d.getAttribute('data-i')); }); });
-    showDay(1); // Mardi = aujourd'hui (démo)
-  })();
-
-  syncTabs();
 })();
 </script>
 </body>
