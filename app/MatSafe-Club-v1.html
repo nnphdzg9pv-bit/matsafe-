@@ -559,10 +559,12 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .fb .fb-code code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;color:var(--ink);background:var(--panel);border:1px solid var(--line2);border-radius:6px;padding:2px 7px}
 .fb .fb-reply{font-size:13.5px;line-height:1.5;color:var(--ink2);background:var(--panel);border-left:3px solid var(--brand);border-radius:8px;padding:9px 12px;margin:0 0 12px}
 .fb .fb-reply b{color:var(--ink)}
-/* Messages (accueil) — défilé automatique en boucle, successif */
+/* Messages (accueil) — mêmes retours que l'écran « Retours adhérents », en défilé continu */
 .msg-vp{position:relative;overflow:hidden;height:210px;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 11%,#000 89%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 11%,#000 89%,transparent 100%)}
 .block-msg .chat{will-change:transform}
 @media(prefers-reduced-motion:reduce){.block-msg .chat{transform:none!important}}
+.cm-st{margin:8px 0 0 2px}
+.cm-empty{color:var(--muted);font-size:14.5px;line-height:1.5;padding:6px 2px}
 .collect{margin-top:24px}
 .collect>h3{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.03em}
 /* ===== Signaler une anomalie — agencement type « contact » (centré) ===== */
@@ -721,11 +723,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
       <div class="block block-msg">
         <h3>Messages</h3>
-        <div class="msg-vp"><div class="chat" id="msgChat">
-          <div class="cm"><div class="cm-meta">Kevin Bataille · 11:01</div><div class="bubble">Tatami 2 glissant côté nord — à revérifier avant 18h</div></div>
-          <div class="cm"><div class="cm-meta">Léa Moreau · 09:18</div><div class="bubble">Vestiaires OK, désinfection faite ✔</div></div>
-          <div class="cm"><div class="cm-meta">Thomas Morel · 08:42</div><div class="bubble">Le distributeur de gel de l'entrée est vide</div></div>
-        </div></div>
+        <div class="msg-vp"><div class="chat" id="msgChat"></div></div>
       </div>
     </section>
 
@@ -1012,6 +1010,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var app=document.querySelector('.app'); if(app) app.classList.toggle('rail-hidden', name==='planning'||name==='serie');
     if(name==='serie'){ try{ renderStreak(); }catch(_){ } }
     if(name==='retours'){ try{ renderInbox(); }catch(_){ } }
+    if(name==='accueil'){ try{ renderHomeMessages(); }catch(_){ } }
     document.querySelector('.main').scrollTop = 0;
     window.scrollTo(0,0);
   }
@@ -1058,7 +1057,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(!code) return;
     var list=loadInbox(), changed=false;
     for(var i=0;i<list.length;i++){ if(list[i] && list[i].code===code){ list[i].status=status; list[i].controlStatus=(status==='done'?'treated':(status==='taken'?'in_progress':'to_verify')); changed=true; break; } }
-    if(changed){ saveInbox(list); renderInbox(); }
+    if(changed){ saveInbox(list); renderInbox(); renderHomeMessages(); }
   }
   function inboxReply(code){
     if(!code) return;
@@ -1067,7 +1066,46 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     txt=String(txt).trim();
     var list=loadInbox(), changed=false;
     for(var i=0;i<list.length;i++){ if(list[i] && list[i].code===code){ list[i].reply=txt; if(list[i].status==='transmis') list[i].status='taken'; changed=true; break; } }
-    if(changed){ saveInbox(list); renderInbox(); toast('Réponse enregistrée. Visible par l’adhérent via son code.'); }
+    if(changed){ saveInbox(list); renderInbox(); renderHomeMessages(); toast('Réponse enregistrée. Visible par l’adhérent via son code.'); }
+  }
+  // Accueil — bloc « Messages » : AFFICHE LES MÊMES RETOURS que l'écran « Retours adhérents »
+  // (même file partagée matsafe_fighter_inbox), et les fait défiler en boucle.
+  function homeMsgMarquee(){
+    var chat=document.getElementById('msgChat'); if(!chat) return;
+    if(chat._anim){ try{ chat._anim.cancel(); }catch(e){} chat._anim=null; }
+    var n=chat.children.length; if(n<2) return;                       // 1 seul retour : pas de défilé
+    var reduce=false; try{ reduce=window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+    if(reduce) return;
+    for(var i=0;i<n;i++){ chat.appendChild(chat.children[i].cloneNode(true)); }   // reel dupliqué
+    function start(){
+      if(chat._anim){ try{ chat._anim.cancel(); }catch(e){} }
+      var dist=chat.children[n].offsetTop - chat.children[0].offsetTop;
+      if(!dist || dist<=0 || !chat.animate) return;
+      try{ chat._anim=chat.animate([{transform:'translateY(0)'},{transform:'translateY(-'+dist+'px)'}],{duration:n*2500,iterations:Infinity,easing:'linear'}); }catch(e){}
+    }
+    start();
+    if(document.fonts && document.fonts.ready){ document.fonts.ready.then(start).catch(function(){}); }
+  }
+  function renderHomeMessages(){
+    var chat=document.getElementById('msgChat'); if(!chat) return;
+    if(chat._anim){ try{ chat._anim.cancel(); }catch(e){} chat._anim=null; }
+    chat.style.transform='';
+    var list=loadInbox();
+    if(!list.length){
+      chat.innerHTML='<div class="cm-empty">Aucun retour pour le moment. Les retours des adhérents (MatSafe Fighter) s’afficheront ici.</div>';
+      return;
+    }
+    chat.innerHTML=list.map(function(r){
+      var typ=(r.kind==='signal')?'Signalement':'Avis d’hygiène';
+      var si=inboxStInfo(r.status);
+      var meta=typ+(r.zone?' · '+esc(r.zone):'')+(r.when?' · '+esc(r.when):'');
+      return '<div class="cm">'+
+        '<div class="cm-meta">'+meta+'</div>'+
+        '<div class="bubble">'+esc(r.description||'(sans message)')+'</div>'+
+        '<div class="cm-st"><span class="pill-st '+si.cls+'"><span class="d"></span>'+si.t+'</span></div>'+
+      '</div>';
+    }).join('');
+    homeMsgMarquee();
   }
 
   // ── Série de nettoyage (streak) ──
@@ -1285,8 +1323,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
   // Mise à jour en direct : quand MatSafe Fighter écrit un nouveau retour (même origine),
   // l'écran « Retours adhérents » se rafraîchit automatiquement.
-  window.addEventListener('storage', function(e){ if(e.key===FIGHTER_INBOX){ try{ renderInbox(); }catch(_){ } } });
+  window.addEventListener('storage', function(e){ if(e.key===FIGHTER_INBOX){ try{ renderInbox(); }catch(_){ } try{ renderHomeMessages(); }catch(_){ } } });
   try{ renderInbox(); }catch(_){ }
+  try{ renderHomeMessages(); }catch(_){ }
 })();
 </script>
 
@@ -1456,28 +1495,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     flash('Échéance publiée sur MATSAFE Fighter.');
   });
   render();
-})();
-</script>
-<script>
-/* Messages (accueil) — défilé automatique en boucle, successif (même cinématique que Fighter).
-   Boucle sans couture : on duplique les messages, puis on anime le track sur la distance
-   exacte d'un reel (robuste au gap, mesuré après chargement des polices). */
-(function(){
-  var chat=document.getElementById('msgChat'); if(!chat) return;
-  var n=chat.children.length; if(n<2) return;
-  var reduce=false; try{ reduce=window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
-  if(reduce) return;
-  for(var i=0;i<n;i++){ chat.appendChild(chat.children[i].cloneNode(true)); }   // reel dupliqué
-  var anim=null, PER_MSG=2500;                                                   // ~2,5 s par message
-  function start(){
-    try{ if(anim){ anim.cancel(); anim=null; } }catch(e){}
-    var dist=chat.children[n].offsetTop - chat.children[0].offsetTop;            // hauteur d'un reel
-    if(!dist || dist<=0 || !chat.animate) return;
-    try{ anim=chat.animate([{transform:'translateY(0)'},{transform:'translateY(-'+dist+'px)'}],{duration:n*PER_MSG,iterations:Infinity,easing:'linear'}); }catch(e){}
-  }
-  start();
-  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(start).catch(function(){}); }
-  window.addEventListener('load', start);
 })();
 </script>
 </body>
