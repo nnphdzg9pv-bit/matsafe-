@@ -691,7 +691,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     <nav class="nav">
       <a data-screen="accueil" class="on"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Accueil</a>
       <a data-screen="planning"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Planning</a>
-      <a data-screen="signalements"><svg class="ic" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg>Signaler une anomalie<span class="badge">2</span></a>
       <a data-screen="retours"><svg class="ic" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V6a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/><path d="M8 10h8M8 13h5"/></svg>Retours adhérents</a>
       <a data-screen="serie"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3c.5 3.6 4 4.9 4 8.6a4.2 4.2 0 0 1-8.4 0c0-1.9 1-3.1 1-3.1.3 1.7 1.9 1.8 1.9.1C10.5 6.7 11 5 12 3Z"/></svg>Série de nettoyage</a>
       <a data-screen="preuves"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Historique</a>
@@ -801,36 +800,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       </div>
     </section>
 
-    <!-- SIGNALER UNE ANOMALIE -->
-    <section class="screen" data-screen="signalements">
-      <div class="ano-hero">
-        <h1>Signaler une anomalie</h1>
-        <p>Un problème d'hygiène, de matériel ou de sécurité&nbsp;? Signalez-le en quelques secondes — le club le prend en charge et le corrige.</p>
-      </div>
-      <form class="ano-form" id="anoForm" onsubmit="return false">
-        <div class="ano-field"><label>Signalé par</label>
-          <input type="text" class="ano-inp" id="anoBy" placeholder="Votre nom (facultatif)"></div>
-        <div class="ano-field"><label>Zone concernée</label>
-          <select class="ano-inp ano-sel" id="anoZone"><option>MAT 1</option><option>MAT 2</option><option>Vestiaires &amp; douches</option><option>Sanitaires</option><option>Accueil &amp; couloir</option></select></div>
-        <div class="ano-field"><label>Description du problème</label>
-          <textarea class="ano-inp ano-ta" id="anoDesc" placeholder="Ex. : Tatami 2 glissant côté nord, à revérifier avant 18h…"></textarea></div>
-        <div class="ano-field"><label>Photo <span class="opt">— facultative</span></label>
-          <label class="ano-attach"><svg viewBox="0 0 24 24"><path d="M4 7h3l2-2h6l2 2h3v12H4z"/><circle cx="12" cy="13" r="3.2"/></svg>Ajouter une photo<input type="file" accept="image/*" hidden id="anoPhoto"></label>
-          <p class="ano-hint">Une photo aide l'équipe à corriger plus vite.</p></div>
-        <button class="ano-send" id="anoSend">Signaler</button>
-        <p class="ano-note">Vos signalements sont transmis à l'équipe du club et suivis jusqu'à résolution.</p>
-      </form>
-
-      <div class="ano-list-wrap">
-        <h3 class="ano-list-h">Anomalies en cours</h3>
-        <div id="anoList">
-            <div class="msg"><div class="av md a3">TA</div><div class="m-body"><div class="m-top"><span class="m-name">Tatami 2 glissant côté nord</span><span class="m-time">11:01</span></div><div class="m-prev">Hygiène · signalé par Kevin B. · à revérifier avant 18h</div></div><span class="pill-st todo"><span class="d"></span>À traiter</span></div>
-            <div class="msg"><div class="av md a1">GE</div><div class="m-body"><div class="m-top"><span class="m-name">Distributeur de gel vide — entrée MAT 1</span><span class="m-time">Hier</span></div><div class="m-prev">Matériel · signalé par Nadia R. · urgent</div></div><span class="pill-st todo"><span class="d"></span>À traiter</span></div>
-            <div class="msg"><div class="av md a2">EC</div><div class="m-body"><div class="m-top"><span class="m-name">Éclairage vestiaire défaillant</span><span class="m-time">Lun.</span></div><div class="m-prev">Sécurité · intervention prévue jeudi</div></div><span class="pill-st prog"><span class="d"></span>En cours</span></div>
-            <div class="msg"><div class="av md a4">SA</div><div class="m-body"><div class="m-top"><span class="m-name">Fuite robinet sanitaires</span><span class="m-time">Sem. dern.</span></div><div class="m-prev">Matériel · réparé par le prestataire</div></div><span class="pill-st done"><span class="d"></span>Résolue</span></div>
-          </div>
-        </div>
-    </section>
 
     <!-- RETOURS ADHÉRENTS -->
     <section class="screen" data-screen="retours">
@@ -1247,20 +1216,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     });
   }
 
-  // Formulaire anomalie
-  function sendAno(){
-    var zone=(document.getElementById('anoZone')||{}).value||'Zone';
-    var desc=((document.getElementById('anoDesc')||{}).value||'').trim();
-    if(!desc){ toast('Ajoutez une description du problème.'); return; }
-    var urgEl=document.querySelector('#anoUrg .segbtn.on'), urg=urgEl?urgEl.getAttribute('data-urg'):'low';
-    var by=((document.getElementById('anoBy')||{}).value||'').trim()||'Simon E.';
-    var list=document.getElementById('anoList'), div=document.createElement('div'); div.className='msg';
-    div.innerHTML='<div class="av md a3">NV</div><div class="m-body"><div class="m-top"><span class="m-name">'+esc(desc.slice(0,64))+'</span><span class="m-time">À l\'instant</span></div><div class="m-prev">'+esc(zone)+' · signalé par '+esc(by)+(urg==='high'?' · urgence élevée':'')+'</div></div><span class="pill-st todo"><span class="d"></span>À traiter</span>';
-    list.insertBefore(div, list.firstChild);
-    document.getElementById('anoDesc').value='';
-    toast('Signalement envoyé.');
-  }
-
   // Interactions déléguées (nouvelles)
   document.addEventListener('click', function(e){
     var v=e.target.closest('[data-validate]');
@@ -1270,9 +1225,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var pr=e.target.closest('#valPeople .person');
     if(pr){ document.querySelectorAll('#valPeople .person').forEach(function(x){x.classList.remove('on');}); pr.classList.add('on'); curPerson=pr.getAttribute('data-person'); return; }
     if(e.target.closest('#valConfirm')){ confirmVal(); return; }
-    var seg=e.target.closest('#anoUrg .segbtn');
-    if(seg){ document.querySelectorAll('#anoUrg .segbtn').forEach(function(x){x.classList.remove('on');}); seg.classList.add('on'); return; }
-    if(e.target.closest('#anoSend')){ sendAno(); return; }
     var tk=e.target.closest('[data-take]');
     if(tk){ var ca=tk.closest('.fb'); inboxSetStatus(ca&&ca.getAttribute('data-code'),'taken'); toast('Retour pris en compte.'); return; }
     var trt=e.target.closest('[data-treat]');
