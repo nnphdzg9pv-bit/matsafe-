@@ -237,12 +237,6 @@
 .zonetag,.note .pill,.rrow .rk,.action,.action .ico,.chip,.feelbtn,textarea,input[type=text],.photobtn,.photo img,.btn,.btn-secondary{border-radius:6px}
 .topbar .brandlogo{height:58px;width:auto;max-width:100%;display:block}
 .topbar{align-items:center}
-/* ===== Message du club (émis depuis MATSAFE Club) ===== */
-.clubmsg{margin:0;padding:16px 20px;background:var(--paper);border-bottom:1px solid var(--border);border-left:4px solid var(--brand)}
-.clubmsg .k{display:flex;align-items:center;gap:7px;font-family:var(--cond);text-transform:uppercase;letter-spacing:.12em;font-size:11px;font-weight:800;color:var(--brand);margin-bottom:7px}
-.clubmsg .k .d{width:7px;height:7px;border-radius:50%;background:var(--brand)}
-.clubmsg h3{font-family:var(--cond);text-transform:uppercase;letter-spacing:.01em;font-weight:800;font-size:16px;margin:0 0 5px;color:var(--ink)}
-.clubmsg p{font-size:14.5px;line-height:1.5;color:var(--ink);margin:0;white-space:pre-wrap}
 /* ===== Avis — accroche éditoriale (grand titre centré) ===== */
 .avis-hero{text-align:center;padding:22px 6px 30px}
 .avis-title{font-family:var(--sans);font-weight:700;text-transform:uppercase;letter-spacing:-.02em;font-size:clamp(38px,11vw,54px);line-height:.98;color:var(--ink);margin:0}
@@ -264,11 +258,6 @@
 .fctx-eb{display:block;font-family:var(--cond);text-transform:uppercase;letter-spacing:.14em;font-size:11px;color:var(--gray);font-weight:700}
 .fctx-club{font-family:var(--cond);font-weight:800;text-transform:uppercase;letter-spacing:.005em;font-size:clamp(30px,7vw,44px);line-height:.95;margin:6px 0 3px;color:var(--ink)}
 .fctx-loc{font-size:13px;color:var(--gray)}
-.cmsg{background:#FFFFFF;border:1px solid var(--border);border-left:4px solid var(--brand);border-radius:6px;padding:20px 22px;margin-bottom:24px}
-.cmsg-k{display:flex;align-items:center;gap:8px;font-family:var(--cond);text-transform:uppercase;letter-spacing:.12em;font-size:11px;font-weight:800;color:var(--brand);margin-bottom:10px}
-.cmsg-k .d{width:7px;height:7px;border-radius:50%;background:var(--brand)}
-.cmsg-t{font-family:var(--cond);text-transform:uppercase;letter-spacing:.01em;font-weight:800;font-size:17px;margin:0 0 6px;color:var(--ink)}
-.cmsg-b{font-size:15.5px;line-height:1.55;color:var(--ink);margin:0;white-space:pre-wrap}
 /* Partenaire santé — Médecin Direct (téléconsultation) */
 .mdr{background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:16px 18px;margin-bottom:24px}
 .mdr-k{display:flex;align-items:center;gap:8px;font-family:var(--cond);text-transform:uppercase;letter-spacing:.12em;font-size:11px;font-weight:800;color:var(--brand);margin-bottom:13px}
@@ -495,8 +484,6 @@ body.fdark{background:#0C0D10}
 .cs-badge{font-family:var(--cond);text-transform:uppercase;letter-spacing:.05em;font-size:11px;font-weight:800;color:var(--ok);background:var(--ok-bg);border-radius:999px;padding:3px 11px}
 .cs-badge.off{color:var(--gray);background:var(--paper-2)}
 
-/* Alerte sanitaire (variante message club) */
-.cmsg.alert{border-left-color:var(--brand);background:#FBEDE9}
 
 /* Check avant l'entraînement */
 /* Check : liste minimale « étape par étape » — grosse typo, case à cocher, barré une fois fait */
@@ -913,7 +900,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     {kind:'Stage',       title:'Sparring MMA encadré',        date:'9 novembre · 11h'}
   ];
   function getEvents(){ try{ var r=localStorage.getItem('matsafe_club_events'); if(r===null) return DEFAULT_EVENTS.slice(); var a=JSON.parse(r); return Array.isArray(a)?a:[]; }catch(e){ return DEFAULT_EVENTS.slice(); } }
-  function getClubMsg(){ try{ var r=localStorage.getItem('matsafe_club_message'); return r?JSON.parse(r):null; }catch(e){ return null; } }
 
   /* ===== LA VIE DU CLUB — fil d'information officiel (publié côté Club, lu ici) =====
      Lecture seule côté Fighter : un adhérent ne peut jamais publier. */
@@ -1014,14 +1000,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         '<span class="mini-badge"><span class="d"></span>Engagé MatSafe</span>'+
       '</div>';
 
-    // Message ou alerte sanitaire — visible seulement s'il existe (aucun vide sinon).
-    var cm=getClubMsg();
-    var isAlert = !!(cm && cm.level==='alert');
-    var msgHtml = (cm && cm.body)
-      ? '<section class="cmsg'+(isAlert?' alert':'')+'"><div class="cmsg-k"><span class="d"></span>'+(isAlert?'Alerte sanitaire du club':'Message du club')+'</div>'+
-          (cm.title?'<h3 class="cmsg-t">'+esc(cm.title)+'</h3>':'')+'<p class="cmsg-b">'+esc(cm.body)+'</p></section>'
-      : '';
-
     var retBadge = mine.length ? '<span class="fcard-badge">'+mine.length+'</span>' : '';
 
     // CŒUR DE L'APP — CTA central (donner son avis / signaler, anonyme).
@@ -1070,7 +1048,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       tile('a-returns','creme','<span class="t-ic">'+IList+'</span><span class="t-b"><span class="tile-t">Suivre mes retours</span><span class="tile-s">Suivi anonyme'+(mine.length?' · '+mine.length:'')+'</span></span>');
 
     view.innerHTML=
-      '<div class="home fhome bento-home">'+ heroHtml + msgHtml +
+      '<div class="home fhome bento-home">'+ heroHtml +
         '<div class="bento">'+ tiles +'</div>'+
         '<div class="foot-min">MatSafe Fighter · Prévention et hygiène</div>'+
       '</div>';
@@ -1388,29 +1366,11 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
   screenHome();
   window.addEventListener('storage', function(e){
-    if((e.key==='matsafe_club_message'||e.key==='matsafe_club_events'||e.key==='matsafe_club_posts'||e.key==='matsafe_club_streak') && document.querySelector('.home')){ try{ screenHome(); }catch(_){ } }
+    if((e.key==='matsafe_club_events'||e.key==='matsafe_club_posts'||e.key==='matsafe_club_streak') && document.querySelector('.home')){ try{ screenHome(); }catch(_){ } }
     // Le club a fait évoluer un statut (ou ajouté une réponse) : rafraîchir « Suivre mes retours ».
     if(e.key==='matsafe_fighter_inbox' && document.getElementById('retTitle')){ try{ screenReturns(); }catch(_){ } }
   });
 </script>
-<script>
-/* Message du club : lu depuis localStorage (publié par MATSAFE Club, même origine). */
-(function(){
-  var K='matsafe_club_message';
-  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
-  var box=document.getElementById('clubMsg'); if(!box)return;
-  function render(){
-    var m=null; try{var r=localStorage.getItem(K); m=r?JSON.parse(r):null;}catch(e){}
-    if(m&&m.body){
-      box.innerHTML='<div class="k"><span class="d"></span>Message du club</div>'+(m.title?'<h3>'+esc(m.title)+'</h3>':'')+'<p>'+esc(m.body)+'</p>';
-      box.hidden=false;
-    } else { box.hidden=true; box.innerHTML=''; }
-  }
-  render();
-  window.addEventListener('storage', function(e){ if(e.key===K) render(); });
-})();
-</script>
-
 <script>
 /* ============================================================
    CINÉMATIQUE D'INTRO — MatSafe Fighter (prototype)
