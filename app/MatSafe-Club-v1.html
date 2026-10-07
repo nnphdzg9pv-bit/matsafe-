@@ -840,40 +840,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         <div style="border-left:1px solid var(--line);padding-left:18px"><div class="rt-sub"><b style="color:var(--ink)">Note moyenne de propreté</b><br>Basée sur 34 retours ce mois-ci.</div></div>
       </div>
 
-      <!-- Message aux adhérents -> publié sur MATSAFE Fighter (DA « contact ») -->
-      <div class="gm">
-        <div class="gm-head">
-          <div class="msgpub-kick">Diffusion · MATSAFE Fighter</div>
-          <h2 class="gm-title">Message aux adhérents</h2>
-        </div>
-        <div class="gm-body">
-          <div class="gm-form">
-            <div id="msgpubEdit">
-              <div class="gm-field"><label>Titre <span class="opt">— facultatif</span></label>
-                <input type="text" class="gm-inp" id="msgpubTitle" maxlength="60" placeholder="Ex. : Vestiaires"></div>
-              <div class="gm-field"><label>Message (requis)</label>
-                <textarea class="gm-inp gm-ta" id="msgpubBody" maxlength="400" placeholder="Écrivez le mot que verront les adhérents…"></textarea></div>
-              <div class="msgpub-actions">
-                <button class="gm-submit" id="msgpubPublish">Publier sur MATSAFE Fighter</button>
-                <button class="gm-ghost" id="msgpubCancel" hidden>Annuler</button>
-              </div>
-            </div>
-            <div id="msgpubView" hidden>
-              <div class="gm-current">
-                <span class="msgpub-live"><span class="d"></span>Actuellement visible sur MATSAFE Fighter</span>
-                <h4 id="msgpubCurTitle"></h4>
-                <p id="msgpubCurBody"></p>
-                <div class="msgpub-meta" id="msgpubCurMeta"></div>
-              </div>
-              <div class="msgpub-actions">
-                <button class="gm-ghost" id="msgpubEditBtn">Modifier</button>
-                <button class="gm-ghost" id="msgpubRemove">Retirer</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <!-- Prochaines échéances -> publiées sur MATSAFE Fighter -->
       <div class="evmgr">
         <div class="gm-head"><div class="msgpub-kick">Diffusion · MATSAFE Fighter</div><h2 class="evmgr-title">Prochaines échéances</h2></div>
@@ -1418,46 +1384,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(e.target===modal){ closeComp(); return; }
   });
 
-  render();
-})();
-</script>
-<script>
-/* Message aux adhérents : un seul message actif, partagé avec MATSAFE Fighter via localStorage (même origine). */
-(function(){
-  var K='matsafe_club_message';
-  function $(id){return document.getElementById(id);}
-  function get(){try{var r=localStorage.getItem(K);return r?JSON.parse(r):null;}catch(e){return null;}}
-  function set(v){try{if(v)localStorage.setItem(K,JSON.stringify(v));else localStorage.removeItem(K);}catch(e){}}
-  function flash(m){var t=$('toast');if(!t)return;t.textContent=m;t.classList.add('on');clearTimeout(flash._t);flash._t=setTimeout(function(){t.classList.remove('on');},1800);}
-  function fmt(ts){try{var d=new Date(ts);return d.toLocaleDateString('fr-FR',{day:'numeric',month:'long'})+' à '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}catch(e){return '';}}
-  if(!$('msgpubPublish'))return;
-  function render(){
-    var m=get(), edit=$('msgpubEdit'), view=$('msgpubView'), st=$('msgpubState');
-    if(m){
-      edit.hidden=true; view.hidden=false;
-      var t=$('msgpubCurTitle'); t.textContent=m.title||''; t.hidden=!m.title;
-      $('msgpubCurBody').textContent=m.body;
-      $('msgpubCurMeta').textContent='Publié le '+fmt(m.at);
-      if(st){ st.textContent='Publié'; st.className='msgpub-state on'; }
-    } else {
-      view.hidden=true; edit.hidden=false; $('msgpubCancel').hidden=true;
-      if(st){ st.textContent='Aucun message'; st.className='msgpub-state'; }
-    }
-  }
-  function openEditor(m){ $('msgpubView').hidden=true; $('msgpubEdit').hidden=false; $('msgpubTitle').value=m?(m.title||''):''; $('msgpubBody').value=m?(m.body||''):''; $('msgpubCancel').hidden=!m; $('msgpubBody').focus(); }
-  $('msgpubPublish').addEventListener('click', function(){
-    var body=($('msgpubBody').value||'').trim();
-    if(!body){ flash('Écrivez un message avant de publier.'); return; }
-    set({title:($('msgpubTitle').value||'').trim(), body:body, at:Date.now()});
-    render(); flash('Message publié sur MATSAFE Fighter.');
-  });
-  $('msgpubEditBtn').addEventListener('click', function(){ openEditor(get()); });
-  $('msgpubCancel').addEventListener('click', function(){ render(); });
-  $('msgpubRemove').addEventListener('click', function(){
-    if(window.confirm('Retirer le message des adhérents ? Il ne sera plus visible sur MATSAFE Fighter.')){
-      set(null); $('msgpubTitle').value=''; $('msgpubBody').value=''; render(); flash('Message retiré.');
-    }
-  });
   render();
 })();
 </script>
