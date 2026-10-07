@@ -733,6 +733,33 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
 <script>
 "use strict";
+// 3.1 Date de démo unique : mardi 13 octobre 2026, 21:40. Toute date affichée en dérive ;
+// aucun new Date() n'est utilisé pour l'affichage dans la démo.
+var DEMO_NOW = new Date(2026, 9, 13, 21, 40);
+
+// 3.4 / 3.5 Données de démo pré-remplies (retours adhérents), injectées une seule fois
+// (clé matsafe_demo_seeded_v1). Fonction IDENTIQUE dans MatSafe Club et MatSafe Fighter.
+// Les retours envoyés ensuite depuis Fighter s'ajoutent au-dessus sans rien écraser.
+(function seedDemo(){
+  try{
+    if(localStorage.getItem('matsafe_demo_seeded_v1')) return;
+    var DN=(typeof DEMO_NOW!=='undefined' && DEMO_NOW instanceof Date)?DEMO_NOW:new Date(2026,9,13,21,40);
+    function at(off,h,m){ var d=new Date(DN.getTime()); d.setDate(d.getDate()+off); d.setHours(h,m,0,0); return d; }
+    function st(d){ function p(n){return (n<10?'0':'')+n;} return p(d.getDate())+'/'+p(d.getMonth()+1)+' · '+p(d.getHours())+':'+p(d.getMinutes()); }
+    var seed=[
+      {code:'MS-7K4P-X9Q2',kind:'avis',  zone:'Tatami',          cat:'Propre et agréable',    description:'Tatamis nickel ce soir, merci l’équipe',          status:'done',    reply:'',                                           d:at(0,20,30)},
+      {code:'MS-3H8N-B2LF',kind:'avis',  zone:'Sanitaires',      cat:'Peut être amélioré',    description:'Papier manquant aux toilettes du fond',           status:'transmis',reply:'',                                           d:at(0,19,5)},
+      {code:'MS-9XR5-K7QD',kind:'signal',zone:'Matériel partagé',cat:'Matériel ou équipement',description:'Deux paos fendus côté boxe',                      status:'transmis',reply:'',                                           d:at(0,18,30)},
+      {code:'MS-5T2M-P4RW',kind:'signal',zone:'Douches',         cat:'Consommable manquant',  description:'Plus de savon au distributeur de droite',         status:'done',    reply:'Rechargé ce matin, merci du signalement !', d:at(0,8,40)},
+      {code:'MS-2L6V-C8KH',kind:'signal',zone:'Vestiaires',      cat:'Propreté d’une zone',   description:'Sol du vestiaire hommes humide en fin de soirée', status:'taken',   reply:'',                                           d:at(-1,22,15)}
+    ];
+    var inbox=seed.map(function(r){ return {id:'seed-'+r.code,code:r.code,kind:r.kind,zone:r.zone,cat:r.cat,description:r.description,status:r.status,reply:r.reply,when:st(r.d),ts:r.d.getTime(),club:'Cube Fight Club',clubCode:'CFC-PARIS-01',controlStatus:(r.status==='done'?'treated':(r.status==='taken'?'in_progress':'to_verify'))}; });
+    localStorage.setItem('matsafe_fighter_inbox', JSON.stringify(inbox));
+    var mineCodes={'MS-5T2M-P4RW':1,'MS-7K4P-X9Q2':1};  // 3.5 : les 2 premiers retours dans l'historique « ce téléphone »
+    localStorage.setItem('matsafe_fighter_v1', JSON.stringify(inbox.filter(function(r){ return mineCodes[r.code]; })));
+    localStorage.setItem('matsafe_demo_seeded_v1','1');
+  }catch(e){}
+})();
 /* =====================================================================
    MATSAFE FIGHTER — interface pratiquant (accès QR)
    Principe (cf. Architecture MATSAFE) : le pratiquant n'administre rien.
@@ -853,13 +880,13 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
   function pad(n){return n<10?'0'+n:''+n;}
-  function nowStamp(){var d=new Date();return pad(d.getDate())+'/'+pad(d.getMonth()+1)+' · '+pad(d.getHours())+':'+pad(d.getMinutes());}
+  function nowStamp(){var d=new Date(DEMO_NOW.getTime());return pad(d.getDate())+'/'+pad(d.getMonth()+1)+' · '+pad(d.getHours())+':'+pad(d.getMinutes());}
   function uid(){return 'f'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
   function load(k){try{return JSON.parse(localStorage.getItem(k)||'[]');}catch(e){return [];}}
   function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 
   function submit(rec){
-    rec.id=uid(); rec.club=CTX.club; rec.clubCode=CTX.code; rec.ts=Date.now();
+    rec.id=uid(); rec.club=CTX.club; rec.clubCode=CTX.code; rec.ts=DEMO_NOW.getTime();
     rec.code=genTrackCode();          // code de suivi anonyme (démo locale)
     rec.status='transmis';            // statut de suivi (progression côté pratiquant)
     rec.controlStatus='to_verify';    // statut côté Control (« à vérifier »)
@@ -921,8 +948,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   var POST_CATS={ hygiene:{label:'Hygiène',acc:true}, club:{label:'Club',acc:false}, important:{label:'Important',acc:true} };
   function catLabel(c){ var m=POST_CATS[c]; return m?m.label:(c||''); }
   function catAcc(c){ var m=POST_CATS[c]; return !!(m&&m.acc); }
-  function isoDays(n){ var d=new Date(); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
-  function hoursAgo(h){ return new Date(Date.now()-h*3600000).toISOString(); }   // toujours dans le passé
+  function isoDays(n){ var d=new Date(DEMO_NOW.getTime()); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
+  function hoursAgo(h){ return new Date(DEMO_NOW.getTime()-h*3600000).toISOString(); }   // toujours dans le passé (réf. DEMO_NOW)
   function seedPosts(){
     return [
       {id:'p-seed-1',club_id:'cube',author_id:'a-thomas',author_name:'Thomas',author_role:'Référent hygiène',
@@ -947,7 +974,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     }catch(e){ return []; }
   }
   function activePosts(){
-    var now=Date.now();
+    var now=DEMO_NOW.getTime();
     return getPosts().filter(function(p){
       if(!p||p.status!=='published') return false;
       if(p.published_at && new Date(p.published_at).getTime()>now) return false;     // programmé, pas encore publié
@@ -960,7 +987,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   }
   function postDate(p){
     var d=new Date(p.published_at||p.created_at); if(isNaN(d)) return '';
-    var now=new Date();
+    var now=new Date(DEMO_NOW.getTime());
     var diff=Math.round((new Date(now.getFullYear(),now.getMonth(),now.getDate())-new Date(d.getFullYear(),d.getMonth(),d.getDate()))/86400000);
     if(diff===0) return 'Aujourd’hui';
     if(diff===1) return 'Hier';
@@ -1340,7 +1367,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       backBtn()+
       '<h2 class="h2" id="retTitle">Suivre mes retours</h2>'+
       '<p class="sub">Consultez la prise en compte de vos retours grâce à votre code anonyme, sans créer de compte.</p>'+
-      '<div class="demo-note">Démo&nbsp;: les retours sont actuellement stockés localement sur ce téléphone. En production, le suivi se fera via le serveur MatSafe à partir de votre code.</div>'+
       list;
     wireBack();
     view.querySelectorAll('.ret-copy').forEach(function(b){
