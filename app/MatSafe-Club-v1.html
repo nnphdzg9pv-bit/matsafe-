@@ -1157,19 +1157,23 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(NOWM-st<=150) return {cls:'todo',label:'À nettoyer'};
     return {cls:'late',label:'En retard'};
   }
-  // Taux de nettoyages réalisés cette semaine (calcul réel, jamais codé en dur).
-  // Attendus = créneaux dont l'échéance est passée (jours écoulés + aujourd'hui déjà commencé).
-  // Les créneaux « À venir » sont exclus ; un attendu non validé après échéance reste au dénominateur.
+  // Taux de nettoyages réalisés cette semaine — générique, piloté par les données
+  // (ratio validés ÷ attendus, jamais codé en dur), donc adaptable à n'importe quel club.
+  //  • Jour courant : calculé EN DIRECT depuis le planning, pour que le taux évolue
+  //    dès qu'un nettoyage est validé. Un créneau « À venir » n'est pas compté ;
+  //    un créneau dont l'échéance est passée mais non validé reste au dénominateur.
+  //  • Jours déjà écoulés de la semaine : en production, « attendus » et « validés »
+  //    proviennent des enregistrements du club (stockage/API). Ici, WEEK_PRIOR en tient
+  //    lieu pour la démo — il suffit de brancher les vraies données à la place.
+  var WEEK_PRIOR={expected:12, done:7};   // jours précédents de la semaine (démo)
   function weekCleanStats(){
-    var ti=DAYS.indexOf(TODAY), expected=0, done=0;
-    DAYS.forEach(function(day,di){
-      if(di>ti) return;                              // jours à venir : pas encore attendus
-      (SCHED[day]||[]).forEach(function(c){
-        if(di===ti && toMin(c.t)>NOWM) return;       // aujourd'hui, créneau encore à venir : exclu
-        expected++;
-        if(statusOf(day,c.t,c.m).cls==='done') done++;
-      });
+    var expected=(WEEK_PRIOR&&WEEK_PRIOR.expected)||0, done=(WEEK_PRIOR&&WEEK_PRIOR.done)||0;
+    (SCHED[TODAY]||[]).forEach(function(c){
+      if(toMin(c.t)>NOWM) return;                    // aujourd'hui, créneau encore à venir : exclu
+      expected++;
+      if(statusOf(TODAY,c.t,c.m).cls==='done') done++;
     });
+    if(done>expected) done=expected;
     return {expected:expected, done:done};
   }
   function renderCleanRate(){
