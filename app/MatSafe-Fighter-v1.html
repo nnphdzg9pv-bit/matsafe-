@@ -424,16 +424,6 @@ body.homebento .topbar .brandlogo{display:none}
 /* Tuile « Faire un retour » : titre plus mesuré + sous-texte descriptif (phrase, pas de capitales) */
 .tile.big .fb-t{font-size:clamp(30px,8.2vw,40px);line-height:.92;letter-spacing:-.005em}
 .tile-desc{display:block;font-family:var(--sans);text-transform:none;font-weight:500;font-size:13px;line-height:1.42;letter-spacing:0;color:var(--ink);opacity:.72;max-width:30ch;margin:0 auto}
-/* Information de nettoyage (remplace l'ancienne flamme ludique) — sobre et crédible */
-.clean-pub{margin:0 0 6px}
-.clean-chip{display:flex;align-items:center;gap:11px;width:100%;box-sizing:border-box;background:var(--paper);border:1px solid var(--border);border-radius:13px;padding:11px 14px}
-.clean-chip .cs-ic{display:grid;place-items:center;width:34px;height:34px;flex:none;border-radius:9px}
-.clean-chip.ok .cs-ic{background:rgba(47,143,74,.12);color:#2F8F4A}
-.clean-chip.empty .cs-ic{background:var(--hair);color:var(--faint)}
-.clean-chip .cs-ic svg{width:19px;height:19px;display:block}
-.clean-chip .cs-tx{display:flex;flex-direction:column;line-height:1.25;min-width:0}
-.clean-chip .cs-tx b{font-family:var(--sans);font-weight:700;font-size:13.5px;letter-spacing:-.01em;color:var(--ink)}
-.clean-chip .cs-tx span{font-family:var(--sans);font-weight:500;font-size:11.5px;color:var(--gray);margin-top:1px}
 /* Bouton téléconsultation en attente de lien (état « bientôt ») */
 .btn.soon{background:var(--paper);color:var(--gray);border:1px dashed var(--border);cursor:default}
 .t-ic{display:flex;color:#C83F32}
@@ -924,23 +914,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   ];
   function getEvents(){ try{ var r=localStorage.getItem('matsafe_club_events'); if(r===null) return DEFAULT_EVENTS.slice(); var a=JSON.parse(r); return Array.isArray(a)?a:[]; }catch(e){ return DEFAULT_EVENTS.slice(); } }
   function getClubMsg(){ try{ var r=localStorage.getItem('matsafe_club_message'); return r?JSON.parse(r):null; }catch(e){ return null; } }
-  // Information de nettoyage de la salle — publiée par MatSafe Club, lue ici (lecture seule).
-  // On ne renvoie une info QUE si un enregistrement réel existe (horodatage du dernier
-  // nettoyage). Aucune donnée n'est inventée : sans enregistrement, la fonction renvoie null
-  // et l'accueil affiche « Aucune information de nettoyage disponible ».
-  function getCleaning(){
-    try{
-      var r=localStorage.getItem('matsafe_club_streak'); if(!r) return null;
-      var s=JSON.parse(r); if(!s || !s.updated) return null;
-      var d=new Date(s.updated); if(isNaN(d.getTime())) return null;
-      var now=new Date();
-      var sameDay = d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth() && d.getDate()===now.getDate();
-      var mm=d.getMinutes();
-      var time=d.getHours()+' h'+(mm>0?' '+(mm<10?'0'+mm:''+mm):'');
-      var MO=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
-      return { today:sameDay, time:time, dateLabel:d.getDate()+' '+MO[d.getMonth()] };
-    }catch(e){ return null; }
-  }
 
   /* ===== LA VIE DU CLUB — fil d'information officiel (publié côté Club, lu ici) =====
      Lecture seule côté Fighter : un adhérent ne peut jamais publier. */
@@ -1096,26 +1069,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       tile('a-care','creme','<span class="t-ic">'+ICare+'</span><span class="t-b"><span class="tile-t">Conseils</span><span class="tile-s">La routine MatSafe</span></span>')+
       tile('a-returns','creme','<span class="t-ic">'+IList+'</span><span class="t-b"><span class="tile-t">Suivre mes retours</span><span class="tile-s">Suivi anonyme'+(mine.length?' · '+mine.length:'')+'</span></span>');
 
-    // Information de nettoyage de la salle — signal public, sobre et crédible pour l'adhérent.
-    // Données réelles uniquement (lues depuis MatSafe Club) ; aucune invention.
-    var clean=getCleaning();
-    var ICleanOk='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6l7-3Z"/><path d="M9 12l2 2 4-4"/></svg>';
-    var ICleanInfo='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>';
-    var cleanHtml;
-    if(clean && clean.today){
-      cleanHtml='<div class="clean-pub"><div class="clean-chip ok"><span class="cs-ic">'+ICleanOk+'</span>'+
-        '<span class="cs-tx"><b>Nettoyage du tatami validé aujourd’hui</b>'+
-        '<span>Dernier nettoyage enregistré aujourd’hui à '+clean.time+'</span></span></div></div>';
-    } else if(clean){
-      cleanHtml='<div class="clean-pub"><div class="clean-chip ok"><span class="cs-ic">'+ICleanOk+'</span>'+
-        '<span class="cs-tx"><b>Nettoyage du tatami enregistré</b>'+
-        '<span>Dernier nettoyage le '+clean.dateLabel+' à '+clean.time+'</span></span></div></div>';
-    } else {
-      cleanHtml='<div class="clean-pub"><div class="clean-chip empty"><span class="cs-ic">'+ICleanInfo+'</span>'+
-        '<span class="cs-tx"><b>Aucune information de nettoyage disponible</b></span></div></div>';
-    }
     view.innerHTML=
-      '<div class="home fhome bento-home">'+ cleanHtml + heroHtml + msgHtml +
+      '<div class="home fhome bento-home">'+ heroHtml + msgHtml +
         '<div class="bento">'+ tiles +'</div>'+
         '<div class="foot-min">MatSafe Fighter · Prévention et hygiène</div>'+
       '</div>';
