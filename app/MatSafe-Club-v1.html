@@ -398,6 +398,15 @@ tbody tr:hover{background:#F7F6F4}
 .rate .num small{font-size:18px;color:var(--muted);font-weight:500}
 .stars{display:flex;gap:3px;color:#E7A23C}
 .rate .rt-sub{color:var(--ink2);font-size:13px;margin-top:4px}
+/* Indicateurs retours (remplacent la note fictive) — même conteneur .rate */
+.rate-stats{flex-wrap:wrap;gap:0}
+.rt-stat{padding:2px 22px;display:flex;flex-direction:column;gap:3px}
+.rt-stat:first-child{padding-left:0}
+.rt-div{border-left:1px solid var(--line)}
+.rt-n{font-family:var(--font-disp);font-weight:700;font-size:32px;letter-spacing:-.01em;line-height:1;color:var(--ink)}
+.rt-l{font-size:12px;color:var(--ink2)}
+.rt-empty{color:var(--ink2);font-size:13.5px;line-height:1.5}
+@media(max-width:560px){.rt-stat{padding:2px 14px}.rt-n{font-size:26px}}
 /* ===== Actions correctives — réutilise .fb / .pill-st / .btn-ghost / .sheet ===== */
 .ca-origin{display:inline-block;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.08em;font-size:10px;font-weight:700;border:1px solid var(--line2);border-radius:999px;padding:2px 9px;color:var(--ink2);vertical-align:middle}
 .ca-origin.fighter{color:var(--brand);border-color:#E4C3BE}
@@ -843,10 +852,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     <!-- RETOURS ADHÉRENTS -->
     <section class="screen" data-screen="retours">
       <div class="head"><div><h1>Retours adhérents</h1><p>Retrouvez les remarques des adhérents et identifiez rapidement les points d'amélioration du club.</p></div></div>
-      <div class="rate">
-        <div><div class="num">4,6<small>/5</small></div><div class="stars"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.3 7 .9-5 4.7 1.2 6.9L12 18.5 5.8 20.8 7 13.9 2 9.2l7-.9z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.3 7 .9-5 4.7 1.2 6.9L12 18.5 5.8 20.8 7 13.9 2 9.2l7-.9z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.3 7 .9-5 4.7 1.2 6.9L12 18.5 5.8 20.8 7 13.9 2 9.2l7-.9z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.3 7 .9-5 4.7 1.2 6.9L12 18.5 5.8 20.8 7 13.9 2 9.2l7-.9z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.3 7 .9-5 4.7 1.2 6.9L12 18.5 5.8 20.8 7 13.9 2 9.2l7-.9z" opacity=".4"/></svg></div></div>
-        <div style="border-left:1px solid var(--line);padding-left:18px"><div class="rt-sub"><b style="color:var(--ink)">Note moyenne de propreté</b><br>Basée sur 34 retours ce mois-ci.</div></div>
-      </div>
+      <div class="rate rate-stats" id="retStats"></div>
 
       <!-- Prochaines échéances -> publiées sur MATSAFE Fighter -->
       <div class="evmgr">
@@ -1040,6 +1046,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var cnt=document.getElementById('inboxCount'); if(cnt) cnt.textContent=list.length;
     if(!list.length){
       box.innerHTML='<div class="inbox-empty">Aucun retour reçu pour le moment. Les retours envoyés par les adhérents depuis MatSafe Fighter apparaîtront ici automatiquement.</div>';
+      renderRetStats();
       return;
     }
     box.innerHTML=list.map(function(r){
@@ -1060,11 +1067,28 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         '</div>'+
       '</div>';
     }).join('');
+    renderRetStats();
+  }
+  // Indicateurs calculés (remplacent la note fictive 4,6/5). Jamais de chiffre inventé :
+  // tout vient de la file réelle des retours. État vide honnête si aucun retour.
+  function renderRetStats(){
+    var box=document.getElementById('retStats'); if(!box) return;
+    var list=loadInbox(), total=list.length;
+    if(!total){ box.innerHTML='<div class="rt-empty">Aucun retour reçu pour le moment. Les indicateurs apparaîtront dès les premiers retours des adhérents.</div>'; return; }
+    var taken=0,done=0,pending=0,dSum=0,dN=0;
+    list.forEach(function(r){
+      var s=r.status||'transmis';
+      if(s==='done'){ done++; taken++; } else if(s==='taken'){ taken++; } else { pending++; }
+      if(r.ts && r.takenAt && r.takenAt>=r.ts){ dSum+=(r.takenAt-r.ts); dN++; }
+    });
+    var items=[{n:total,l:'Retours reçus'},{n:taken,l:'Pris en compte'},{n:done,l:'Résolus'},{n:pending,l:'À traiter'}];
+    if(dN){ var h=dSum/dN/3600000, lbl=(h<1?Math.max(1,Math.round(h*60))+' min':(h<48?Math.round(h)+' h':Math.round(h/24)+' j')); items.push({n:lbl,l:'Délai moyen de prise en compte'}); }
+    box.innerHTML=items.map(function(it,i){ return '<div class="rt-stat'+(i?' rt-div':'')+'"><div class="rt-n">'+esc(String(it.n))+'</div><div class="rt-l">'+esc(it.l)+'</div></div>'; }).join('');
   }
   function inboxSetStatus(code, status){
     if(!code) return;
     var list=loadInbox(), changed=false;
-    for(var i=0;i<list.length;i++){ if(list[i] && list[i].code===code){ list[i].status=status; list[i].controlStatus=(status==='done'?'treated':(status==='taken'?'in_progress':'to_verify')); changed=true; break; } }
+    for(var i=0;i<list.length;i++){ if(list[i] && list[i].code===code){ list[i].status=status; list[i].controlStatus=(status==='done'?'treated':(status==='taken'?'in_progress':'to_verify')); if((status==='taken'||status==='done') && !list[i].takenAt) list[i].takenAt=Date.now(); changed=true; break; } }
     if(changed){ saveInbox(list); renderInbox(); renderHomeMessages(); }
   }
   function inboxReply(code){ if(!code) return; openCaReply('reply', {code:code}); }
@@ -1493,7 +1517,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   function caAdvance(step, idObj){
     if(idObj.code){
       var list=loadInbox(), ch=false;
-      for(var i=0;i<list.length;i++){ if(list[i] && list[i].code===idObj.code){ list[i].controlStatus=inboxCtrlForStep(step); list[i].status=inboxStatusForStep(step); ch=true; break; } }
+      for(var i=0;i<list.length;i++){ if(list[i] && list[i].code===idObj.code){ list[i].controlStatus=inboxCtrlForStep(step); var ns=inboxStatusForStep(step); list[i].status=ns; if((ns==='taken'||ns==='done') && !list[i].takenAt) list[i].takenAt=Date.now(); ch=true; break; } }
       if(ch){ saveInbox(list); try{ renderInbox(); }catch(_){ } try{ renderHomeMessages(); }catch(_){ } }
     } else if(idObj.id){
       var cs=loadCorr();
