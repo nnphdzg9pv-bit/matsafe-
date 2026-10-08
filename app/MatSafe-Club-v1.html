@@ -414,6 +414,17 @@ tbody tr:hover{background:#F7F6F4}
 .ca-prio.high{color:var(--brand)} .ca-prio.med{color:#C07A2E} .ca-prio.low{color:var(--muted)}
 .ca-note{font-size:13px;color:var(--ink2);background:#FAF9F7;border-left:3px solid var(--line2);padding:8px 12px;border-radius:0 6px 6px 0;margin:8px 0 4px}
 .sheet-sub{font-size:13px;color:var(--ink2);line-height:1.5;margin:0 0 14px}
+/* Publications (Infos hygiène du club -> Fighter) */
+.pub-pin{display:inline-flex;align-items:center;gap:9px;font-size:13.5px;color:var(--ink);cursor:pointer;margin:2px 0 20px}
+.pub-pin input{width:16px;height:16px;accent-color:var(--brand)}
+.pub-cat{display:inline-block;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.08em;font-size:10px;font-weight:700;border:1px solid var(--line2);border-radius:999px;padding:2px 9px;color:var(--ink2)}
+.pub-cat.acc{color:var(--brand);border-color:#E4C3BE}
+.pub-prev-card{background:var(--panel);border:1px solid var(--line2);border-radius:var(--r);padding:18px 20px}
+.pub-prev-card .pc-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.pub-prev-card h4{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.005em;font-weight:800;font-size:18px;margin:0 0 6px;color:var(--ink)}
+.pub-prev-card p{font-size:14px;line-height:1.5;color:var(--ink2);margin:0 0 10px;white-space:pre-wrap}
+.pub-prev-card .pc-auth{font-size:12px;color:var(--muted)}
+.pub-prev-card .pc-pin{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.06em;font-size:10px;font-weight:700;color:var(--muted)}
 .fb{display:flex;gap:13px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:15px 16px;margin-bottom:12px}
 .fb .fb-body{flex:1;min-width:0}
 .fb .fb-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
@@ -729,6 +740,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <a data-screen="planning"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Planning</a>
       <a data-screen="retours"><svg class="ic" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V6a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/><path d="M8 10h8M8 13h5"/></svg>Retours adhérents</a>
       <a data-screen="correctives"><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/><path d="M14 4h6v6" opacity=".55"/></svg>Actions correctives<span class="badge" id="caNavBadge" style="display:none">0</span></a>
+      <a data-screen="publications"><svg class="ic" viewBox="0 0 24 24"><path d="M4 4h16v12H5.2L4 17.5z"/><path d="M8 9h8M8 12h5"/></svg>Infos hygiène</a>
       <a data-screen="serie"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3c.5 3.6 4 4.9 4 8.6a4.2 4.2 0 0 1-8.4 0c0-1.9 1-3.1 1-3.1.3 1.7 1.9 1.8 1.9.1C10.5 6.7 11 5 12 3Z"/></svg>Série de nettoyage</a>
       <a data-screen="preuves"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Historique</a>
     </nav>
@@ -893,6 +905,37 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <div class="fb-grid" id="caList"></div>
     </section>
 
+    <!-- INFOS HYGIÈNE DU CLUB (publications vers MATSAFE Fighter) -->
+    <section class="screen" data-screen="publications">
+      <div class="head"><div><h1>Infos hygiène du club</h1><p>Publiez des informations qui apparaissent dans « Infos hygiène du club » sur MatSafe Fighter. Distinct des compétitions et des prochaines échéances.</p></div><button class="btn-ghost" id="pubPreview">Aperçu Fighter</button></div>
+      <div class="gm">
+        <div class="gm-head"><div class="msgpub-kick">Diffusion · MATSAFE Fighter</div><h2 class="evmgr-title" id="pubFormTitle">Nouvelle publication</h2></div>
+        <div class="gm-form">
+          <div class="gm-field"><label>Catégorie</label>
+            <select class="ano-inp ano-sel" id="pubCat"><option value="hygiene">Hygiène</option><option value="reco">Recommandation</option><option value="alerte">Alerte</option><option value="important">Important</option></select></div>
+          <div class="gm-field"><label>Titre</label>
+            <input type="text" class="ano-inp" id="pubTitle" maxlength="90" placeholder="Ex. : Désinfection des tatamis après chaque séance"></div>
+          <div class="gm-field"><label>Message</label>
+            <textarea class="ano-inp ano-ta" id="pubBody" maxlength="500" placeholder="Information à destination des adhérents…"></textarea></div>
+          <div class="evmgr-row">
+            <div class="gm-field"><label>Publication</label>
+              <select class="ano-inp ano-sel" id="pubWhen"><option value="now">Immédiate</option><option value="sched">Programmée</option></select></div>
+            <div class="gm-field" id="pubAtWrap" style="display:none"><label>Date de publication</label><input type="date" class="ano-inp" id="pubAt"></div>
+            <div class="gm-field"><label>Expiration <span class="opt">— facultative</span></label><input type="date" class="ano-inp" id="pubExp"></div>
+          </div>
+          <label class="pub-pin"><input type="checkbox" id="pubPin"> Épingler en haut</label>
+          <div class="msgpub-actions">
+            <button class="gm-submit" id="pubSave">Publier sur MATSAFE Fighter</button>
+            <button class="gm-ghost" id="pubCancel" hidden>Annuler</button>
+          </div>
+        </div>
+      </div>
+      <div class="block">
+        <h3>Publications <span class="inbox-count" id="pubCount">0</span></h3>
+        <div class="fb-grid" id="pubList"></div>
+      </div>
+    </section>
+
     <!-- HISTORIQUE -->
     <section class="screen" data-screen="preuves">
       <div class="head"><div><h1>Historique</h1><p>Retrouvez chaque nettoyage enregistré et conservez une preuve claire des actions réalisées.</p></div><button class="btn-ghost" id="histExport">Exporter (CSV)</button></div>
@@ -1006,6 +1049,15 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   </div>
 </div>
 
+<!-- MODALE : aperçu Fighter d'une publication -->
+<div class="modal" id="pubPreviewModal" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pubPrevTitle">
+    <div class="sheet-h"><h3 id="pubPrevTitle">Aperçu — côté adhérent (Fighter)</h3><button class="sheet-x" data-close><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <p class="sheet-sub">Rendu de la publication dans « Infos hygiène du club » sur MatSafe Fighter.</p>
+    <div id="pubPrevBody"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1023,6 +1075,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(name==='serie'){ try{ renderStreak(); }catch(_){ } }
     if(name==='retours'){ try{ renderInbox(); }catch(_){ } }
     if(name==='correctives'){ try{ renderCorr(); }catch(_){ } }
+    if(name==='publications'){ try{ renderPubs(); }catch(_){ } }
     if(name==='preuves'){ try{ renderHistory(); }catch(_){ } }
     if(name==='accueil'){ try{ renderHomeMessages(); }catch(_){ } }
     document.querySelector('.main').scrollTop = 0;
@@ -1586,6 +1639,130 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   try{ renderHomeMessages(); }catch(_){ }
   try{ renderHistory(); }catch(_){ }
   try{ renderCorr(); }catch(_){ }
+
+  // ===== Infos hygiène du club : publications vers MATSAFE Fighter =====
+  // Écrit dans matsafe_club_posts, exactement dans la forme lue par Fighter
+  // (activePosts filtre selon status / published_at / expires_at / is_pinned).
+  // En production : POST/PUT/DELETE vers l'API du club (même interface loadPubs/savePubs).
+  var PUB_KEY='matsafe_club_posts';
+  var PUB_AUTHOR={ club_id:'cube', author_id:'a-simon', author_name:'Simon Ehrlacher', author_role:'Référent hygiène' };
+  var PUB_CAT_LABEL={hygiene:'Hygiène',reco:'Recommandation',alerte:'Alerte',important:'Important',club:'Club'};
+  var PUB_CAT_ACC={hygiene:true,reco:false,alerte:true,important:true,club:false};
+  function loadPubs(){ try{ var r=localStorage.getItem(PUB_KEY); var a=r?JSON.parse(r):[]; return Array.isArray(a)?a:[]; }catch(_){ return []; } }
+  function savePubs(a){ try{ localStorage.setItem(PUB_KEY, JSON.stringify(a)); }catch(_){ } }
+  function pubStatusOf(p){
+    var now=Date.now();
+    if(!p || p.status!=='published') return {k:'brouillon',t:'Brouillon',cls:'soon'};
+    if(p.published_at && new Date(p.published_at).getTime()>now) return {k:'programmee',t:'Programmée',cls:'soon'};
+    if(p.expires_at){ var e=new Date(p.expires_at); e.setHours(23,59,59,999); if(e.getTime()<now) return {k:'expiree',t:'Expirée',cls:'late'}; }
+    return {k:'publiee',t:'Publiée',cls:'done'};
+  }
+  function pubDateLabel(iso){ try{ var d=new Date(iso); if(isNaN(d)) return ''; var mo=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.']; return d.getDate()+' '+mo[d.getMonth()]+' '+d.getFullYear(); }catch(_){ return ''; } }
+  var pubEditing=null;
+  function pubReadForm(){
+    return {
+      cat:(document.getElementById('pubCat')||{}).value||'hygiene',
+      title:((document.getElementById('pubTitle')||{}).value||'').trim(),
+      body:((document.getElementById('pubBody')||{}).value||'').trim(),
+      when:(document.getElementById('pubWhen')||{}).value||'now',
+      at:(document.getElementById('pubAt')||{}).value||'',
+      exp:(document.getElementById('pubExp')||{}).value||'',
+      pin:!!(document.getElementById('pubPin')||{}).checked
+    };
+  }
+  function pubResetForm(){
+    pubEditing=null;
+    ['pubTitle','pubBody','pubAt','pubExp'].forEach(function(id){ var e=document.getElementById(id); if(e) e.value=''; });
+    var c=document.getElementById('pubCat'); if(c) c.selectedIndex=0;
+    var w=document.getElementById('pubWhen'); if(w) w.value='now';
+    var pin=document.getElementById('pubPin'); if(pin) pin.checked=false;
+    var wrap=document.getElementById('pubAtWrap'); if(wrap) wrap.style.display='none';
+    var t=document.getElementById('pubFormTitle'); if(t) t.textContent='Nouvelle publication';
+    var s=document.getElementById('pubSave'); if(s) s.textContent='Publier sur MATSAFE Fighter';
+    var ca=document.getElementById('pubCancel'); if(ca) ca.hidden=true;
+  }
+  function doPubSave(){
+    var f=pubReadForm();
+    if(!f.title){ toast('Ajoutez un titre.'); return; }
+    if(!f.body){ toast('Ajoutez un message.'); return; }
+    var nowIso=new Date().toISOString();
+    var publishedAt=(f.when==='sched' && f.at) ? new Date(f.at+'T08:00:00').toISOString() : nowIso;
+    var pubs=loadPubs();
+    if(pubEditing){
+      for(var i=0;i<pubs.length;i++){ if(pubs[i] && pubs[i].id===pubEditing){
+        pubs[i].category=f.cat; pubs[i].title=f.title; pubs[i].content=f.body;
+        pubs[i].published_at=publishedAt; pubs[i].expires_at=f.exp||null; pubs[i].is_pinned=f.pin; pubs[i].status='published'; break; } }
+      toast('Publication mise à jour.');
+    } else {
+      pubs.unshift({ id:'p'+Date.now(), club_id:PUB_AUTHOR.club_id, author_id:PUB_AUTHOR.author_id,
+        author_name:PUB_AUTHOR.author_name, author_role:PUB_AUTHOR.author_role,
+        category:f.cat, title:f.title, content:f.body,
+        created_at:nowIso, published_at:publishedAt, expires_at:f.exp||null, is_pinned:f.pin, status:'published' });
+      toast(f.when==='sched'?'Publication programmée.':'Publié sur MATSAFE Fighter.');
+    }
+    savePubs(pubs); pubResetForm(); renderPubs();
+  }
+  function pubEdit(id){
+    var pubs=loadPubs(), p=null; for(var i=0;i<pubs.length;i++){ if(pubs[i] && pubs[i].id===id){ p=pubs[i]; break; } }
+    if(!p) return; pubEditing=id;
+    var set=function(k,v){ var e=document.getElementById(k); if(e) e.value=v; };
+    set('pubCat',p.category||'hygiene'); set('pubTitle',p.title||''); set('pubBody',p.content||'');
+    var scheduled=p.published_at && new Date(p.published_at).getTime()>Date.now();
+    var w=document.getElementById('pubWhen'); if(w) w.value=scheduled?'sched':'now';
+    var wrap=document.getElementById('pubAtWrap'); if(wrap) wrap.style.display=scheduled?'':'none';
+    set('pubAt', scheduled ? String(p.published_at||'').slice(0,10) : '');
+    set('pubExp', p.expires_at ? String(p.expires_at).slice(0,10) : '');
+    var pin=document.getElementById('pubPin'); if(pin) pin.checked=!!p.is_pinned;
+    var t=document.getElementById('pubFormTitle'); if(t) t.textContent='Modifier la publication';
+    var s=document.getElementById('pubSave'); if(s) s.textContent='Enregistrer les modifications';
+    var ca=document.getElementById('pubCancel'); if(ca) ca.hidden=false;
+    try{ document.querySelector('.screen[data-screen="publications"] .gm').scrollIntoView({block:'start'}); }catch(_){ }
+  }
+  function pubDelete(id){ savePubs(loadPubs().filter(function(p){ return p && p.id!==id; })); if(pubEditing===id) pubResetForm(); renderPubs(); toast('Publication supprimée.'); }
+  function pubTogglePin(id){ var pubs=loadPubs(); for(var i=0;i<pubs.length;i++){ if(pubs[i] && pubs[i].id===id){ pubs[i].is_pinned=!pubs[i].is_pinned; break; } } savePubs(pubs); renderPubs(); }
+  function pubCardHtml(p){
+    var st=pubStatusOf(p), acc=PUB_CAT_ACC[p.category];
+    var meta=[(st.k==='programmee'?'Programmée le ':'Publiée le ')+pubDateLabel(p.published_at)];
+    if(p.expires_at) meta.push('Expire le '+pubDateLabel(p.expires_at));
+    var acts='<span class="pill-st '+st.cls+'"><span class="d"></span>'+st.t+'</span>'+
+      '<button class="btn-ghost" data-pubpin="'+esc(p.id)+'">'+(p.is_pinned?'Désépingler':'Épingler')+'</button>'+
+      '<button class="btn-ghost" data-pubedit="'+esc(p.id)+'">Modifier</button>'+
+      '<button class="btn-ghost" data-pubdel="'+esc(p.id)+'">Supprimer</button>';
+    return '<div class="fb"><div class="fb-body">'+
+      '<div class="fb-top"><span class="fb-name"><span class="pub-cat'+(acc?' acc':'')+'">'+esc(PUB_CAT_LABEL[p.category]||p.category)+'</span>'+(p.is_pinned?' <span class="pc-pin" style="font-size:10px;color:var(--muted)">· Épinglé</span>':'')+'</span><span class="fb-meta">'+esc(meta.join(' · '))+'</span></div>'+
+      '<div class="fb-txt"><b style="color:var(--ink)">'+esc(p.title)+'</b><br>'+esc(p.content||'')+'</div>'+
+      '<div class="fb-act">'+acts+'</div>'+
+    '</div></div>';
+  }
+  function renderPubs(){
+    var box=document.getElementById('pubList'); if(!box) return;
+    var pubs=loadPubs();
+    var cnt=document.getElementById('pubCount'); if(cnt) cnt.textContent=pubs.length;
+    if(!pubs.length){ box.innerHTML='<div class="inbox-empty">Aucune publication pour le moment. Créez-en une ci-dessus : elle apparaîtra dans « Infos hygiène du club » sur MatSafe Fighter.</div>'; return; }
+    pubs.sort(function(a,b){ var pa=a.is_pinned?1:0,pb=b.is_pinned?1:0; if(pa!==pb) return pb-pa; return new Date(b.published_at||b.created_at)-new Date(a.published_at||a.created_at); });
+    box.innerHTML=pubs.map(pubCardHtml).join('');
+  }
+  function pubPreview(){
+    var f=pubReadForm(), body=document.getElementById('pubPrevBody'); if(!body) return;
+    if(!f.title && !f.body){ body.innerHTML='<p class="sheet-sub">Renseignez un titre et un message pour voir l’aperçu.</p>'; }
+    else { var acc=PUB_CAT_ACC[f.cat];
+      body.innerHTML='<div class="pub-prev-card"><div class="pc-top"><span class="pub-cat'+(acc?' acc':'')+'">'+esc(PUB_CAT_LABEL[f.cat]||f.cat)+'</span>'+(f.pin?'<span class="pc-pin">Épinglé</span>':'')+'</div>'+
+        '<h4>'+esc(f.title||'(titre)')+'</h4>'+(f.body?'<p>'+esc(f.body)+'</p>':'')+
+        '<div class="pc-auth">'+esc(PUB_AUTHOR.author_name)+' · '+esc(PUB_AUTHOR.author_role)+'</div></div>'; }
+    var m=document.getElementById('pubPreviewModal'); if(m) m.classList.add('on');
+  }
+  document.addEventListener('click', function(e){
+    if(e.target.closest('#pubSave')){ doPubSave(); return; }
+    if(e.target.closest('#pubCancel')){ pubResetForm(); return; }
+    if(e.target.closest('#pubPreview')){ pubPreview(); return; }
+    var pe=e.target.closest('[data-pubedit]'); if(pe){ pubEdit(pe.getAttribute('data-pubedit')); return; }
+    var pd=e.target.closest('[data-pubdel]'); if(pd){ pubDelete(pd.getAttribute('data-pubdel')); return; }
+    var pp=e.target.closest('[data-pubpin]'); if(pp){ pubTogglePin(pp.getAttribute('data-pubpin')); return; }
+    var pm=document.getElementById('pubPreviewModal'); if(pm && e.target===pm){ pm.classList.remove('on'); return; }
+  });
+  var pubWhenSel=document.getElementById('pubWhen');
+  if(pubWhenSel) pubWhenSel.addEventListener('change', function(){ var wrap=document.getElementById('pubAtWrap'); if(wrap) wrap.style.display=(this.value==='sched'?'':'none'); });
+  try{ renderPubs(); }catch(_){ }
 })();
 </script>
 

@@ -938,7 +938,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   /* ===== LA VIE DU CLUB — fil d'information officiel (publié côté Club, lu ici) =====
      Lecture seule côté Fighter : un adhérent ne peut jamais publier. */
   var POSTS_KEY='matsafe_club_posts';
-  var POST_CATS={ hygiene:{label:'Hygiène',acc:true}, club:{label:'Club',acc:false}, important:{label:'Important',acc:true} };
+  var POST_CATS={ hygiene:{label:'Hygiène',acc:true}, reco:{label:'Recommandation',acc:false}, alerte:{label:'Alerte',acc:true}, important:{label:'Important',acc:true}, club:{label:'Club',acc:false} };
   function catLabel(c){ var m=POST_CATS[c]; return m?m.label:(c||''); }
   function catAcc(c){ var m=POST_CATS[c]; return !!(m&&m.acc); }
   function isoDays(n){ var d=new Date(); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
