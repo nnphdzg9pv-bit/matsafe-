@@ -868,7 +868,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
     <!-- HISTORIQUE -->
     <section class="screen" data-screen="preuves">
-      <div class="head"><div><h1>Historique</h1><p>Retrouvez chaque nettoyage enregistré et conservez une preuve claire des actions réalisées.</p></div></div>
+      <div class="head"><div><h1>Historique</h1><p>Retrouvez chaque nettoyage enregistré et conservez une preuve claire des actions réalisées.</p></div><button class="btn-ghost" id="histExport">Exporter (CSV)</button></div>
       <div class="filters" id="histFilters">
         <button class="fbtn on" data-f="all">Aujourd'hui</button>
         <button class="fbtn" data-f="week">Cette semaine</button>
@@ -879,14 +879,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       </div>
       <div class="table-wrap"><table id="histTable">
         <thead><tr><th>Date</th><th>Cours</th><th>Discipline</th><th>Tatami</th><th>Nettoyé par</th><th>Validé à</th><th style="text-align:right">Statut</th></tr></thead>
-        <tbody>
-          <tr data-who="Simon" data-mat="mat1"><td>Aujourd'hui</td><td>14:00</td><td>Compétition · Gi / No Gi</td><td>Tatami 1</td><td><div class="tr-name"><span class="av sm a3">SE</span>Simon E.</div></td><td>14:20</td><td style="text-align:right"><span class="pill-st done"><span class="d"></span>Validé</span></td></tr>
-          <tr data-who="Léa" data-mat="mat2"><td>Aujourd'hui</td><td>12:30</td><td>No Gi</td><td>Tatami 2</td><td><div class="tr-name"><span class="av sm a1">LM</span>Léa M.</div></td><td>13:52</td><td style="text-align:right"><span class="pill-st done"><span class="d"></span>Validé</span></td></tr>
-          <tr data-who="Kevin" data-mat="mat1"><td>Aujourd'hui</td><td>11:00</td><td>MMA · Confirmés</td><td>Tatami 1</td><td><div class="tr-name"><span class="av sm a2">KB</span>Kevin B.</div></td><td>12:10</td><td style="text-align:right"><span class="pill-st done"><span class="d"></span>Validé</span></td></tr>
-          <tr data-who="Thomas" data-mat="mat2" data-when="week"><td>Hier</td><td>19:45</td><td>Boxe anglaise</td><td>Tatami 2</td><td><div class="tr-name"><span class="av sm a4">TM</span>Thomas M.</div></td><td>21:05</td><td style="text-align:right"><span class="pill-st done"><span class="d"></span>Validé</span></td></tr>
-          <tr data-who="Simon" data-mat="mat1" data-when="week"><td>Hier</td><td>18:00</td><td>MMA · Confirmés</td><td>Tatami 1</td><td><div class="tr-name"><span class="av sm a3">SE</span>Simon E.</div></td><td>19:12</td><td style="text-align:right"><span class="pill-st done"><span class="d"></span>Validé</span></td></tr>
-          <tr data-who="Léa" data-mat="mat1" data-when="month"><td>14 sept.</td><td>20:00</td><td>JJB · Tous niveaux</td><td>Tatami 1</td><td><div class="tr-name"><span class="av sm a1">LM</span>Léa M.</div></td><td>21:20</td><td style="text-align:right"><span class="pill-st done"><span class="d"></span>Validé</span></td></tr>
-        </tbody>
+        <tbody id="histBody"></tbody>
       </table></div>
       <p style="font-size:12.5px;color:var(--muted);margin-top:-6px">Touchez une ligne pour voir le détail (produit, dilution, temps de contact).</p>
     </section>
@@ -976,6 +969,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var app=document.querySelector('.app'); if(app) app.classList.toggle('rail-hidden', name==='planning'||name==='serie');
     if(name==='serie'){ try{ renderStreak(); }catch(_){ } }
     if(name==='retours'){ try{ renderInbox(); }catch(_){ } }
+    if(name==='preuves'){ try{ renderHistory(); }catch(_){ } }
     if(name==='accueil'){ try{ renderHomeMessages(); }catch(_){ } }
     document.querySelector('.main').scrollTop = 0;
     window.scrollTo(0,0);
@@ -1143,8 +1137,39 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   function toMin(t){var p=(t||'0:0').split(':');return (+p[0])*60+(+p[1]);}
   var DAYS=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
   var TODAY='Mardi', NOWM=21*60+40, PENDKEY='Mardi|20:00|MAT 1';
+
+  // ===== Couche de données — nettoyages validés (persistants, événements datés) =====
+  // Chaque validation est conservée dans localStorage (matsafe_club_validations) : elle
+  // survit au rechargement, alimente automatiquement l'historique et le taux hebdo.
+  // En production, remplacer loadVals/saveVals par le serveur du club (même interface).
+  var VAL_KEY='matsafe_club_validations';
+  var TEAM_DEMO=['Simon E.','Léa M.','Kevin B.','Thomas M.'];
+  function matLabelOf(m){ return m==='MAT 1'?'Tatami 1':(m==='MAT 2'?'Tatami 2':m); }
+  function matClassOf(m){ return m==='MAT 1'?'mat1':(m==='MAT 2'?'mat2':''); }
+  function fmtMin(x){ x=((x%1440)+1440)%1440; return ('0'+Math.floor(x/60)).slice(-2)+':'+('0'+(x%60)).slice(-2); }
+  function loadVals(){ try{ var r=localStorage.getItem(VAL_KEY); if(r){ var o=JSON.parse(r); if(o&&o.items) return o; } }catch(_){ } return null; }
+  function saveVals(){ try{ localStorage.setItem(VAL_KEY, JSON.stringify(VALS)); }catch(_){ } }
+  var VALS=loadVals();
+  if(!VALS){
+    // Amorçage unique du scénario de démo (état réaliste : nettoyages déjà réalisés
+    // aujourd'hui + jours précédents). Remplacé par les vraies données en production ;
+    // jamais une statistique inventée — ce sont des événements de nettoyage réels du modèle.
+    VALS={ seeded:true, items:[] }; var pi=0;
+    (SCHED[TODAY]||[]).forEach(function(c){
+      var k=TODAY+'|'+c.t+'|'+c.m;
+      if(k===PENDKEY || toMin(c.t)>NOWM) return;       // en attente / à venir : non validés
+      VALS.items.push({ k:k, date:'today', dateLabel:"Aujourd'hui", time:c.t, disc:c.d,
+        mat:matClassOf(c.m), matLabel:matLabelOf(c.m), by:TEAM_DEMO[(pi++)%TEAM_DEMO.length],
+        at:fmtMin(toMin(c.t)+85), ts:Date.now() });
+    });
+    [ {dl:'Hier',w:'week',t:'19:45',d:'Boxe anglaise',m:'mat2',ml:'Tatami 2',by:'Thomas M.',at:'21:05'},
+      {dl:'Hier',w:'week',t:'18:00',d:'MMA · Confirmés',m:'mat1',ml:'Tatami 1',by:'Simon E.',at:'19:12'},
+      {dl:'14 sept.',w:'month',t:'20:00',d:'JJB · Tous niveaux',m:'mat1',ml:'Tatami 1',by:'Léa M.',at:'21:20'}
+    ].forEach(function(h,i){ VALS.items.push({ k:'seed-'+i, date:h.w, dateLabel:h.dl, time:h.t, disc:h.d, mat:h.m, matLabel:h.ml, by:h.by, at:h.at, ts:0 }); });
+    saveVals();
+  }
   var validated=Object.create(null);
-  (SCHED[TODAY]||[]).forEach(function(c){ var k=TODAY+'|'+c.t+'|'+c.m; if(k!==PENDKEY) validated[k]=true; });
+  VALS.items.forEach(function(it){ if(it.date==='today' && it.k) validated[it.k]=true; });
   var SCOL={done:'#3E8E4F',todo:'#C07A2E',late:'#C83F32',soon:'#9A9A9F'};
   function statusOf(day,t,m){
     var k=day+'|'+t+'|'+m;
@@ -1258,8 +1283,14 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   function closeVal(){ modal.classList.remove('on'); }
   function confirmVal(){
     if(!curPerson){ toast('Sélectionnez la personne qui a nettoyé.'); return; }
-    validated[curVal.day+'|'+curVal.t+'|'+curVal.m]=true;
+    var k=curVal.day+'|'+curVal.t+'|'+curVal.m;
+    validated[k]=true;
     var n=new Date(), hh=('0'+n.getHours()).slice(-2)+':'+('0'+n.getMinutes()).slice(-2);
+    // Enregistrement durable (persiste au rechargement) + ajout automatique à l'historique
+    VALS.items=VALS.items.filter(function(it){ return !(it.date==='today' && it.k===k); });
+    VALS.items.push({ k:k, date:'today', dateLabel:"Aujourd'hui", time:curVal.t, disc:curVal.disc,
+      mat:matClassOf(curVal.m), matLabel:matLabelOf(curVal.m), by:curPerson, at:hh, ts:Date.now() });
+    saveVals();
     document.getElementById('valDoneTxt').textContent='Nettoyage enregistré par '+curPerson+' à '+hh+'.';
     document.getElementById('valStep1').style.display='none';
     document.getElementById('valStep2').style.display='';
@@ -1273,20 +1304,52 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       }
     });
     renderCleanRate();
+    try{ renderHistory(); }catch(_){ }
   }
 
-  // Filtres historique
-  function filterHist(f){
-    document.querySelectorAll('#histTable tbody tr').forEach(function(tr){
-      var when=tr.getAttribute('data-when')||'today', mat=tr.getAttribute('data-mat')||'', who=tr.getAttribute('data-who')||'', show=true;
-      if(f==='all') show=(when==='today');
-      else if(f==='week') show=(when==='today'||when==='week');
-      else if(f==='month') show=true;
-      else if(f==='mat1') show=(mat==='mat1');
-      else if(f==='mat2') show=(mat==='mat2');
-      else if(f==='me') show=(who==='Simon');
-      tr.style.display=show?'':'none';
-    });
+  // ===== Historique — alimenté automatiquement par les nettoyages validés =====
+  var AVCOL=['a1','a2','a3','a4'];
+  function initialsOf(name){ var p=String(name||'').trim().split(/\s+/); return (((p[0]||'')[0]||'')+((p[1]||'')[0]||'')).toUpperCase()||'—'; }
+  function avClassOf(name){ var s=0,n=String(name||''); for(var i=0;i<n.length;i++) s=(s+n.charCodeAt(i))%4; return AVCOL[s]; }
+  function histRowHtml(it){
+    return '<tr data-who="'+esc(it.by||'')+'" data-mat="'+esc(it.mat||'')+'" data-when="'+esc(it.date||'today')+'">'+
+      '<td>'+esc(it.dateLabel||'')+'</td><td>'+esc(it.time||'')+'</td><td>'+esc(it.disc||'')+'</td>'+
+      '<td>'+esc(it.matLabel||'')+'</td>'+
+      '<td><div class="tr-name"><span class="av sm '+avClassOf(it.by)+'">'+esc(initialsOf(it.by))+'</span>'+esc(it.by||'')+'</div></td>'+
+      '<td>'+esc(it.at||'')+'</td>'+
+      '<td style="text-align:right"><span class="pill-st done"><span class="d"></span>Validé</span></td></tr>';
+  }
+  function sortedVals(){ var order={today:0,week:1,month:2}; return VALS.items.slice().sort(function(a,b){ var o=(order[a.date]||0)-(order[b.date]||0); return o?o:(toMin(b.time)-toMin(a.time)); }); }
+  var currentHistFilter='all';
+  function renderHistory(filter){
+    var tb=document.getElementById('histBody'); if(!tb) return;
+    if(filter) currentHistFilter=filter;
+    var f=currentHistFilter;
+    var html=sortedVals().filter(function(it){
+      var when=it.date||'today', mat=it.mat||'', who=it.by||'';
+      if(f==='all') return when==='today';
+      if(f==='week') return when==='today'||when==='week';
+      if(f==='month') return true;
+      if(f==='mat1') return mat==='mat1';
+      if(f==='mat2') return mat==='mat2';
+      if(f==='me') return /simon/i.test(who);
+      return true;
+    }).map(histRowHtml).join('');
+    tb.innerHTML = html || '<tr><td colspan="7" style="color:var(--muted);padding:18px 8px">Aucun nettoyage pour ce filtre.</td></tr>';
+  }
+  function filterHist(f){ renderHistory(f); }
+  function exportHistoryCSV(){
+    var head=['Date','Heure','Discipline','Tatami','Nettoyé par','Validé à','Statut'];
+    function q(s){ return '"'+String(s==null?'':s).replace(/"/g,'""')+'"'; }
+    var lines=[head.map(q).join(';')];
+    sortedVals().forEach(function(it){ lines.push([it.dateLabel,it.time,it.disc,it.matLabel,it.by,it.at,'Validé'].map(q).join(';')); });
+    try{
+      var blob=new Blob(['﻿'+lines.join('\r\n')],{type:'text/csv;charset=utf-8;'});
+      var url=URL.createObjectURL(blob), a=document.createElement('a');
+      a.href=url; a.download='matsafe-historique.csv'; document.body.appendChild(a); a.click();
+      setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 120);
+      toast('Historique exporté (CSV).');
+    }catch(_){ toast('Export indisponible sur ce navigateur.'); }
   }
 
   // Interactions déléguées (nouvelles)
@@ -1306,6 +1369,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(rpl){ var cc=rpl.closest('.fb'); inboxReply(cc&&cc.getAttribute('data-code')); return; }
     var fb2=e.target.closest('#histFilters .fbtn');
     if(fb2){ document.querySelectorAll('#histFilters .fbtn').forEach(function(x){x.classList.remove('on');}); fb2.classList.add('on'); filterHist(fb2.getAttribute('data-f')); return; }
+    if(e.target.closest('#histExport')){ exportHistoryCSV(); return; }
     if(e.target.closest('#histTable tbody tr')){ toast('Désinfection EN 14476 · 20 ml/L · contact 5 min.'); return; }
   });
 
@@ -1317,6 +1381,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   window.addEventListener('storage', function(e){ if(e.key===FIGHTER_INBOX){ try{ renderInbox(); }catch(_){ } try{ renderHomeMessages(); }catch(_){ } } });
   try{ renderInbox(); }catch(_){ }
   try{ renderHomeMessages(); }catch(_){ }
+  try{ renderHistory(); }catch(_){ }
 })();
 </script>
 
