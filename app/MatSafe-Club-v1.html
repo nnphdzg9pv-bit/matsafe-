@@ -398,6 +398,13 @@ tbody tr:hover{background:#F7F6F4}
 .rate .num small{font-size:18px;color:var(--muted);font-weight:500}
 .stars{display:flex;gap:3px;color:#E7A23C}
 .rate .rt-sub{color:var(--ink2);font-size:13px;margin-top:4px}
+/* ===== Actions correctives — réutilise .fb / .pill-st / .btn-ghost / .sheet ===== */
+.ca-origin{display:inline-block;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.08em;font-size:10px;font-weight:700;border:1px solid var(--line2);border-radius:999px;padding:2px 9px;color:var(--ink2);vertical-align:middle}
+.ca-origin.fighter{color:var(--brand);border-color:#E4C3BE}
+.ca-prio{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-size:10.5px;font-weight:700;margin-left:6px}
+.ca-prio.high{color:var(--brand)} .ca-prio.med{color:#C07A2E} .ca-prio.low{color:var(--muted)}
+.ca-note{font-size:13px;color:var(--ink2);background:#FAF9F7;border-left:3px solid var(--line2);padding:8px 12px;border-radius:0 6px 6px 0;margin:8px 0 4px}
+.sheet-sub{font-size:13px;color:var(--ink2);line-height:1.5;margin:0 0 14px}
 .fb{display:flex;gap:13px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:15px 16px;margin-bottom:12px}
 .fb .fb-body{flex:1;min-width:0}
 .fb .fb-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
@@ -712,6 +719,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <a data-screen="accueil" class="on"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Accueil</a>
       <a data-screen="planning"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Planning</a>
       <a data-screen="retours"><svg class="ic" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V6a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/><path d="M8 10h8M8 13h5"/></svg>Retours adhérents</a>
+      <a data-screen="correctives"><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/><path d="M14 4h6v6" opacity=".55"/></svg>Actions correctives<span class="badge" id="caNavBadge" style="display:none">0</span></a>
       <a data-screen="serie"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3c.5 3.6 4 4.9 4 8.6a4.2 4.2 0 0 1-8.4 0c0-1.9 1-3.1 1-3.1.3 1.7 1.9 1.8 1.9.1C10.5 6.7 11 5 12 3Z"/></svg>Série de nettoyage</a>
       <a data-screen="preuves"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Historique</a>
     </nav>
@@ -866,6 +874,19 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         </div>
     </section>
 
+    <!-- ACTIONS CORRECTIVES -->
+    <section class="screen" data-screen="correctives">
+      <div class="head"><div><h1>Actions correctives</h1><p>Vérifiez les retours des adhérents, suivez les problèmes signalés par l'équipe et pilotez chaque action jusqu'à sa résolution.</p></div><button class="btn-ghost" id="caAdd">Ajouter un problème interne</button></div>
+      <div class="filters ca-filters" id="caFilters">
+        <button class="fbtn on" data-cf="open">À traiter</button>
+        <button class="fbtn" data-cf="all">Toutes</button>
+        <button class="fbtn" data-cf="fighter">Retours Fighter</button>
+        <button class="fbtn" data-cf="team">Équipe</button>
+        <button class="fbtn" data-cf="resolu">Résolues</button>
+      </div>
+      <div class="fb-grid" id="caList"></div>
+    </section>
+
     <!-- HISTORIQUE -->
     <section class="screen" data-screen="preuves">
       <div class="head"><div><h1>Historique</h1><p>Retrouvez chaque nettoyage enregistré et conservez une preuve claire des actions réalisées.</p></div><button class="btn-ghost" id="histExport">Exporter (CSV)</button></div>
@@ -953,6 +974,32 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     </div>
   </div>
 </div>
+
+<!-- MODALE : ajouter un problème interne (Actions correctives) -->
+<div class="modal" id="caModal" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="caModalTitle">
+    <div class="sheet-h"><h3 id="caModalTitle">Ajouter un problème interne</h3><button class="sheet-x" data-close><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <p class="sheet-sub">Un problème constaté par l'équipe. Il suivra le même parcours que les retours : vérification, action, résolution.</p>
+    <div class="gm-field"><label>Zone concernée</label>
+      <select class="ano-inp ano-sel" id="caZone"><option>MAT 1</option><option>MAT 2</option><option>Vestiaires &amp; douches</option><option>Sanitaires</option><option>Accueil &amp; couloir</option></select></div>
+    <div class="gm-field"><label>Description</label>
+      <textarea class="ano-inp ano-ta" id="caDesc" maxlength="400" placeholder="Ex. : Distributeur de gel vide à l'entrée du MAT 1."></textarea></div>
+    <div class="gm-field"><label>Priorité</label>
+      <select class="ano-inp ano-sel" id="caPrio"><option value="low">Normale</option><option value="med">Élevée</option><option value="high">Urgente</option></select></div>
+    <button class="btn-primary wide" id="caCreate">Créer l'action</button>
+  </div>
+</div>
+
+<!-- MODALE : réponse publique / note interne -->
+<div class="modal" id="caReplyModal" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="caReplyTitle">
+    <div class="sheet-h"><h3 id="caReplyTitle">Répondre à l'adhérent</h3><button class="sheet-x" data-close><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <p class="sheet-sub" id="caReplySub">Réponse publique, visible par l'adhérent via son code anonyme.</p>
+    <div class="gm-field"><textarea class="ano-inp ano-ta" id="caReplyText" maxlength="400" placeholder="Votre message…"></textarea></div>
+    <button class="btn-primary wide" id="caReplySave">Enregistrer</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -969,6 +1016,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var app=document.querySelector('.app'); if(app) app.classList.toggle('rail-hidden', name==='planning'||name==='serie');
     if(name==='serie'){ try{ renderStreak(); }catch(_){ } }
     if(name==='retours'){ try{ renderInbox(); }catch(_){ } }
+    if(name==='correctives'){ try{ renderCorr(); }catch(_){ } }
     if(name==='preuves'){ try{ renderHistory(); }catch(_){ } }
     if(name==='accueil'){ try{ renderHomeMessages(); }catch(_){ } }
     document.querySelector('.main').scrollTop = 0;
@@ -1019,15 +1067,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     for(var i=0;i<list.length;i++){ if(list[i] && list[i].code===code){ list[i].status=status; list[i].controlStatus=(status==='done'?'treated':(status==='taken'?'in_progress':'to_verify')); changed=true; break; } }
     if(changed){ saveInbox(list); renderInbox(); renderHomeMessages(); }
   }
-  function inboxReply(code){
-    if(!code) return;
-    var txt=window.prompt('Réponse publique à l’adhérent (anonyme — visible via son code de suivi) :','');
-    if(txt===null) return;
-    txt=String(txt).trim();
-    var list=loadInbox(), changed=false;
-    for(var i=0;i<list.length;i++){ if(list[i] && list[i].code===code){ list[i].reply=txt; if(list[i].status==='transmis') list[i].status='taken'; changed=true; break; } }
-    if(changed){ saveInbox(list); renderInbox(); renderHomeMessages(); toast('Réponse enregistrée. Visible par l’adhérent via son code.'); }
-  }
+  function inboxReply(code){ if(!code) return; openCaReply('reply', {code:code}); }
   // Accueil — bloc « Messages » : AFFICHE LES MÊMES RETOURS que l'écran « Retours adhérents »
   // (même file partagée matsafe_fighter_inbox), et les fait défiler en boucle.
   function homeMsgMarquee(){
@@ -1280,7 +1320,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     document.querySelectorAll('#valPeople .person').forEach(function(p){p.classList.remove('on');});
     modal.classList.add('on');
   }
-  function closeVal(){ modal.classList.remove('on'); }
+  function closeVal(){ document.querySelectorAll('.modal.on').forEach(function(m){ m.classList.remove('on'); }); }
   function confirmVal(){
     if(!curPerson){ toast('Sélectionnez la personne qui a nettoyé.'); return; }
     var k=curVal.day+'|'+curVal.t+'|'+curVal.m;
@@ -1378,10 +1418,150 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
   // Mise à jour en direct : quand MatSafe Fighter écrit un nouveau retour (même origine),
   // l'écran « Retours adhérents » se rafraîchit automatiquement.
-  window.addEventListener('storage', function(e){ if(e.key===FIGHTER_INBOX){ try{ renderInbox(); }catch(_){ } try{ renderHomeMessages(); }catch(_){ } } });
+  // ===== Actions correctives : retours Fighter (file inbox) + problèmes internes/audit =====
+  // Un retour Fighter n'est JAMAIS une non-conformité d'office : il arrive au statut « Reçu »
+  // et le club le fait avancer (Vérifier → Programmer → En cours → Résolu). Les statuts et la
+  // réponse publique sont réécrits dans la file partagée, donc l'adhérent les retrouve côté
+  // Fighter via son code anonyme. Les problèmes internes vivent dans matsafe_club_correctives.
+  var CORR_KEY='matsafe_club_correctives';
+  function loadCorr(){ try{ var r=localStorage.getItem(CORR_KEY); var a=r?JSON.parse(r):[]; return Array.isArray(a)?a:[]; }catch(_){ return []; } }
+  function saveCorr(a){ try{ localStorage.setItem(CORR_KEY, JSON.stringify(a)); }catch(_){ } }
+  var CA_ST={ recu:{t:'Reçu',cls:'soon'}, verifier:{t:'À vérifier',cls:'soon'}, programmee:{t:'Action programmée',cls:'prog'}, encours:{t:'En cours',cls:'prog'}, resolu:{t:'Résolu',cls:'done'} };
+  function corrStepFromInbox(r){
+    if(r.controlStatus==='treated'||r.status==='done') return 'resolu';
+    if(r.controlStatus==='in_progress') return 'encours';
+    if(r.controlStatus==='scheduled') return 'programmee';
+    if(r.controlStatus==='to_verify') return 'verifier';
+    if(r.status==='taken') return 'programmee';
+    return 'recu';
+  }
+  function inboxStatusForStep(step){ return step==='resolu'?'done':((step==='programmee'||step==='encours')?'taken':'transmis'); }
+  function inboxCtrlForStep(step){ return {verifier:'to_verify',programmee:'scheduled',encours:'in_progress',resolu:'treated'}[step]||''; }
+  function prioLabel(p){ return p==='high'?'Urgente':(p==='med'?'Élevée':(p==='low'?'Normale':'')); }
+  function corrFeed(){
+    var out=[];
+    loadInbox().forEach(function(r){
+      out.push({ type:'fighter', code:r.code, origin:'Fighter', zone:r.zone||'', desc:r.description||'', prio:r.prio||'',
+        owner:r.owner||'', due:r.due||'', note:r.note||'', reply:r.reply||'', step:corrStepFromInbox(r), when:r.when||'', ts:r.ts||0 });
+    });
+    loadCorr().forEach(function(c){
+      out.push({ type:'corr', id:c.id, origin:(c.origin==='audit'?'Audit':'Équipe'), zone:c.zone||'', desc:c.description||'', prio:c.prio||'',
+        owner:c.owner||'', due:c.due||'', note:c.note||'', reply:'', step:c.step||'recu', when:c.when||'', ts:c.ts||0 });
+    });
+    var w={recu:0,verifier:1,programmee:2,encours:3,resolu:9};
+    out.sort(function(a,b){ var o=(w[a.step]||0)-(w[b.step]||0); return o?o:(b.ts-a.ts); });
+    return out;
+  }
+  function corrOpenCount(){ return corrFeed().filter(function(a){return a.step!=='resolu';}).length; }
+  var currentCorrFilter='open';
+  function renderCorr(filter){
+    var nb=document.getElementById('caNavBadge'); if(nb){ var oc=corrOpenCount(); nb.textContent=oc; nb.style.display=oc?'':'none'; }
+    var box=document.getElementById('caList'); if(!box) return;
+    if(filter) currentCorrFilter=filter;
+    var f=currentCorrFilter;
+    var feed=corrFeed().filter(function(a){
+      if(f==='open') return a.step!=='resolu';
+      if(f==='fighter') return a.type==='fighter';
+      if(f==='team') return a.type==='corr';
+      if(f==='resolu') return a.step==='resolu';
+      return true;
+    });
+    if(!feed.length){ box.innerHTML='<div class="inbox-empty">Aucune action pour ce filtre. Les retours des adhérents et les problèmes signalés par l\'équipe apparaissent ici.</div>'; return; }
+    box.innerHTML=feed.map(function(a){
+      var st=CA_ST[a.step]||CA_ST.recu;
+      var ident = a.type==='fighter' ? ('data-ca-code="'+esc(a.code||'')+'"') : ('data-ca-id="'+esc(a.id||'')+'"');
+      var meta=[]; if(a.zone) meta.push(a.zone); if(a.when) meta.push(a.when); if(a.owner) meta.push('Resp. '+a.owner); if(a.due) meta.push('Échéance '+a.due);
+      var prio = a.prio?('<span class="ca-prio '+a.prio+'">'+prioLabel(a.prio)+'</span>'):'';
+      var acts='<span class="pill-st '+st.cls+'"><span class="d"></span>'+st.t+'</span>';
+      if(a.step==='recu') acts+='<button class="btn-ghost" data-ca-advance="verifier" '+ident+'>Vérifier</button>';
+      else if(a.step==='verifier') acts+='<button class="btn-ghost" data-ca-advance="programmee" '+ident+'>Programmer</button>';
+      else if(a.step==='programmee') acts+='<button class="btn-ghost" data-ca-advance="encours" '+ident+'>Démarrer</button>';
+      else if(a.step==='encours') acts+='<button class="btn-ghost" data-ca-advance="resolu" '+ident+'>Résoudre</button>';
+      if(a.step==='verifier'||a.step==='programmee') acts+='<button class="btn-ghost" data-ca-advance="resolu" '+ident+'>Résoudre</button>';
+      if(a.step!=='resolu') acts+='<button class="btn-ghost" data-ca-note '+ident+'>Note interne</button>';
+      if(a.type==='fighter') acts+='<button class="btn-ghost" data-ca-reply '+ident+'>Répondre</button>';
+      return '<div class="fb" '+ident+'><div class="fb-body">'+
+          '<div class="fb-top"><span class="fb-name"><span class="ca-origin '+(a.type==='fighter'?'fighter':'')+'">'+esc(a.origin)+'</span>'+prio+'</span><span class="fb-meta">'+esc(meta.join(' · '))+'</span></div>'+
+          '<div class="fb-txt">'+esc(a.desc||'(sans description)')+'</div>'+
+          (a.type==='fighter'&&a.code?'<div class="fb-code">Code de suivi anonyme&nbsp;: <code>'+esc(a.code)+'</code></div>':'')+
+          (a.note?'<div class="ca-note"><b>Note interne&nbsp;:</b> '+esc(a.note)+'</div>':'')+
+          (a.reply?'<div class="fb-reply"><b>Réponse à l\'adhérent&nbsp;:</b> '+esc(a.reply)+'</div>':'')+
+          '<div class="fb-act">'+acts+'</div>'+
+        '</div></div>';
+    }).join('');
+  }
+  function caAdvance(step, idObj){
+    if(idObj.code){
+      var list=loadInbox(), ch=false;
+      for(var i=0;i<list.length;i++){ if(list[i] && list[i].code===idObj.code){ list[i].controlStatus=inboxCtrlForStep(step); list[i].status=inboxStatusForStep(step); ch=true; break; } }
+      if(ch){ saveInbox(list); try{ renderInbox(); }catch(_){ } try{ renderHomeMessages(); }catch(_){ } }
+    } else if(idObj.id){
+      var cs=loadCorr();
+      for(var j=0;j<cs.length;j++){ if(cs[j] && String(cs[j].id)===String(idObj.id)){ cs[j].step=step; if(step==='resolu') cs[j].resolvedAt=Date.now(); break; } }
+      saveCorr(cs);
+    }
+    renderCorr();
+    toast(step==='resolu'?'Action marquée comme résolue.':'Statut mis à jour.');
+  }
+  // Ajout d'un problème interne
+  var caModal=document.getElementById('caModal');
+  function openCaModal(){ if(!caModal) return; var d=document.getElementById('caDesc'); if(d) d.value=''; var z=document.getElementById('caZone'); if(z) z.selectedIndex=0; var pr=document.getElementById('caPrio'); if(pr) pr.selectedIndex=0; caModal.classList.add('on'); setTimeout(function(){ if(d) d.focus(); },60); }
+  function createCorr(){
+    var d=document.getElementById('caDesc'), desc=((d&&d.value)||'').trim();
+    if(!desc){ toast('Décrivez le problème avant de créer l\'action.'); return; }
+    var cs=loadCorr();
+    cs.push({ id:'c'+Date.now(), origin:'team', zone:(document.getElementById('caZone')||{}).value||'', description:desc, prio:(document.getElementById('caPrio')||{}).value||'low', step:'verifier', when:'À l\'instant', ts:Date.now() });
+    saveCorr(cs); if(caModal) caModal.classList.remove('on'); renderCorr(); toast('Problème interne ajouté aux actions correctives.');
+  }
+  // Réponse publique / note interne (remplace les fenêtres natives)
+  var caReplyModal=document.getElementById('caReplyModal'), caReplyMode='reply', caReplyTarget=null;
+  function openCaReply(mode, idObj){
+    if(!caReplyModal) return;
+    caReplyMode=mode; caReplyTarget=idObj||{};
+    var title=document.getElementById('caReplyTitle'), sub=document.getElementById('caReplySub'), ta=document.getElementById('caReplyText'), btn=document.getElementById('caReplySave');
+    var cur='';
+    if(idObj.code){ loadInbox().forEach(function(r){ if(r.code===idObj.code) cur=(mode==='reply'?(r.reply||''):(r.note||'')); }); }
+    else if(idObj.id){ loadCorr().forEach(function(c){ if(String(c.id)===String(idObj.id)) cur=(c.note||''); }); }
+    if(mode==='reply'){ if(title) title.textContent='Répondre à l\'adhérent'; if(sub) sub.textContent='Réponse publique, visible par l\'adhérent via son code anonyme. Aucune identité n\'est collectée.'; if(btn) btn.textContent='Enregistrer la réponse'; }
+    else { if(title) title.textContent='Note interne'; if(sub) sub.textContent='Visible uniquement par l\'équipe du club. Jamais affichée à l\'adhérent.'; if(btn) btn.textContent='Enregistrer la note'; }
+    if(ta) ta.value=cur;
+    caReplyModal.classList.add('on'); setTimeout(function(){ if(ta) ta.focus(); },60);
+  }
+  function saveCaReply(){
+    var ta=document.getElementById('caReplyText'), txt=((ta&&ta.value)||'').trim();
+    if(caReplyMode==='reply' && caReplyTarget && caReplyTarget.code){
+      var list=loadInbox();
+      for(var i=0;i<list.length;i++){ if(list[i] && list[i].code===caReplyTarget.code){ list[i].reply=txt; if(list[i].status==='transmis') list[i].status='taken'; break; } }
+      saveInbox(list); try{ renderInbox(); }catch(_){ } try{ renderHomeMessages(); }catch(_){ }
+      toast('Réponse enregistrée. Visible par l\'adhérent via son code.');
+    } else if(caReplyTarget && caReplyTarget.code){
+      var l2=loadInbox(); for(var j=0;j<l2.length;j++){ if(l2[j] && l2[j].code===caReplyTarget.code){ l2[j].note=txt; break; } } saveInbox(l2); toast('Note interne enregistrée.');
+    } else if(caReplyTarget && caReplyTarget.id){
+      var cs=loadCorr(); for(var k=0;k<cs.length;k++){ if(cs[k] && String(cs[k].id)===String(caReplyTarget.id)){ cs[k].note=txt; break; } } saveCorr(cs); toast('Note interne enregistrée.');
+    }
+    if(caReplyModal) caReplyModal.classList.remove('on'); renderCorr();
+  }
+  document.addEventListener('click', function(e){
+    var adv=e.target.closest('[data-ca-advance]');
+    if(adv){ caAdvance(adv.getAttribute('data-ca-advance'), {code:adv.getAttribute('data-ca-code')||null, id:adv.getAttribute('data-ca-id')||null}); return; }
+    var nt=e.target.closest('[data-ca-note]');
+    if(nt){ openCaReply('note', {code:nt.getAttribute('data-ca-code')||null, id:nt.getAttribute('data-ca-id')||null}); return; }
+    var rp=e.target.closest('[data-ca-reply]');
+    if(rp){ openCaReply('reply', {code:rp.getAttribute('data-ca-code')||null}); return; }
+    if(e.target.closest('#caAdd')){ openCaModal(); return; }
+    if(e.target.closest('#caCreate')){ createCorr(); return; }
+    if(e.target.closest('#caReplySave')){ saveCaReply(); return; }
+    if(e.target===caModal){ caModal.classList.remove('on'); return; }
+    if(e.target===caReplyModal){ caReplyModal.classList.remove('on'); return; }
+    var cf=e.target.closest('#caFilters .fbtn');
+    if(cf){ document.querySelectorAll('#caFilters .fbtn').forEach(function(x){x.classList.remove('on');}); cf.classList.add('on'); renderCorr(cf.getAttribute('data-cf')); return; }
+  });
+
+  window.addEventListener('storage', function(e){ if(e.key===FIGHTER_INBOX){ try{ renderInbox(); }catch(_){ } try{ renderHomeMessages(); }catch(_){ } try{ renderCorr(); }catch(_){ } } });
   try{ renderInbox(); }catch(_){ }
   try{ renderHomeMessages(); }catch(_){ }
   try{ renderHistory(); }catch(_){ }
+  try{ renderCorr(); }catch(_){ }
 })();
 </script>
 
