@@ -591,6 +591,7 @@ body.fdark{background:#0C0D10}
 .ckl-validate[disabled]{opacity:.32;cursor:not-allowed}
 .ckl-validate.ready{background:var(--brand)}
 .ckl-validate.ready:active{transform:translateY(1px)}
+.ckl-note{margin:16px auto 0;max-width:46ch;font-size:12.5px;line-height:1.5;color:var(--gray);text-align:center}
 /* ===== Animation « Bien joué » (validation de la check-list) ===== */
 .bravo-ov{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;background:var(--page);opacity:0;transition:opacity .3s;overflow:hidden}
 .bravo-ov.show{opacity:1}
@@ -763,7 +764,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   // Ci-dessous : données d'exemple clairement identifiées pour la démo.
   var CLUB_STATUS = {
     engaged:     true,              // club engagé dans la démarche MatSafe
-    labelStatus: 'Labellisé',       // statut du label
+    labelStatus: 'Inconnu',         // statut du label — DÉMO : non confirmé (aucun faux statut).
+                                    // En production, ce champ viendra du serveur MatSafe.
+                                    // Passer EXACTEMENT à 'Labellisé' pour afficher « Club labellisé ».
     lastEval:    'Juin 2026',       // dernière évaluation
     nextControl: 'Décembre 2026'    // prochain contrôle (si disponible, sinon '')
   };
@@ -941,28 +944,13 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   var POST_CATS={ hygiene:{label:'Hygiène',acc:true}, reco:{label:'Recommandation',acc:false}, alerte:{label:'Alerte',acc:true}, important:{label:'Important',acc:true}, club:{label:'Club',acc:false} };
   function catLabel(c){ var m=POST_CATS[c]; return m?m.label:(c||''); }
   function catAcc(c){ var m=POST_CATS[c]; return !!(m&&m.acc); }
-  function isoDays(n){ var d=new Date(); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
-  function hoursAgo(h){ return new Date(Date.now()-h*3600000).toISOString(); }   // toujours dans le passé
-  function seedPosts(){
-    return [
-      {id:'p-seed-1',club_id:'cube',author_id:'a-thomas',author_name:'Thomas',author_role:'Référent hygiène',
-       category:'hygiene',title:'Désinfection des tatamis après chaque séance',
-       content:'Merci de ne pas quitter le tapis avant le nettoyage collectif de fin de séance.',
-       created_at:hoursAgo(3),published_at:hoursAgo(3),expires_at:null,is_pinned:true,status:'published'},
-      {id:'p-seed-2',club_id:'cube',author_id:'a-thomas',author_name:'Thomas',author_role:'Référent hygiène',
-       category:'important',title:'Vérifiez votre peau avant de monter sur le tapis',
-       content:'En cas de rougeur, plaque, bouton ou lésion, évitez les contacts et demandez un avis médical.',
-       created_at:hoursAgo(28),published_at:hoursAgo(28),expires_at:isoDays(10),is_pinned:false,status:'published'},
-      {id:'p-seed-3',club_id:'cube',author_id:'a-lea',author_name:'Léa',author_role:'Équipe hygiène',
-       category:'hygiene',title:'Distributeurs de savon rechargés dans les vestiaires',
-       content:'Réapprovisionnés à la suite de vos retours. Pensez à vous laver après chaque séance.',
-       created_at:hoursAgo(50),published_at:hoursAgo(50),expires_at:null,is_pinned:false,status:'published'}
-    ];
-  }
+  // Aucune publication fictive : « Infos hygiène du club » n'affiche QUE les
+  // informations réellement publiées depuis MatSafe Club (clé matsafe_club_posts).
+  // Si le club n'a rien publié, Fighter présente un état vide honnête.
   function getPosts(){
     try{
       var r=localStorage.getItem(POSTS_KEY);
-      if(r===null){ var s=seedPosts(); try{ localStorage.setItem(POSTS_KEY,JSON.stringify(s)); }catch(e){} return s; }
+      if(r===null) return [];
       var a=JSON.parse(r); return Array.isArray(a)?a:[];
     }catch(e){ return []; }
   }
@@ -1001,7 +989,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   function clubLifeHome(){
     var posts=activePosts();
     var head='<div class="vdc-eb"><span class="vdc-k">Infos hygiène du club</span><span class="vdc-sub">Nettoyage, prévention et alertes</span></div>';
-    if(!posts.length){ return '<section class="vdc">'+head+'<div class="vdc-empty">Aucune info hygiène pour le moment.</div></section>'; }
+    if(!posts.length){ return '<section class="vdc">'+head+'<div class="vdc-empty">Aucune information publiée par le club pour le moment.</div></section>'; }
     var feat=posts[0], rest=posts.slice(1,3);
     return '<section class="vdc">'+head+
       '<div class="vdc-feat" id="vdc-feat">'+postEditorial(feat,true)+'</div>'+
@@ -1017,7 +1005,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       '<h2 class="h2">Infos hygiène du club</h2>'+
       (posts.length
         ? '<div class="vdc-full">'+posts.map(function(p){return postEditorial(p,false);}).join('')+'</div>'
-        : '<div class="vdc-empty">Aucune info hygiène pour le moment.</div>');
+        : '<div class="vdc-empty">Aucune information publiée par le club pour le moment.</div>');
     wireBack();
   }
   /* ACCUEIL — menu éditorial numéroté (court, direct, DA MatSafe).
@@ -1060,7 +1048,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         '<div class="vdc-vp"><div class="vdc-track" id="vdcTrack">'+trackHtml+'</div></div>';
     } else {
       vdcInner='<div class="t-eb"><span class="t-k">Infos hygiène du club</span><span class="t-ar">'+IArrR+'</span></div>'+
-        '<div class="t-vdc"><span class="t-vt muted">Aucune info hygiène pour le moment.</span></div>';
+        '<div class="t-vdc"><span class="t-vt muted">Aucune information publiée par le club pour le moment.</span></div>';
     }
     var tiles =
       tile('a-vdc','creme wide', vdcInner)+
@@ -1101,7 +1089,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     // Défilé continu et fluide (marquee vertical en boucle). Le reel est dupliqué,
     // on translate de -50% (= un reel) en linéaire, infini — aucun à-coup.
     var slides=total/2;
-    var perSlide=1.5;                                             // s par message (rapide, continu)
+    var perSlide=3.5;                                             // s par message (lecture posée ; reduced-motion = aucun défilé)
     track.style.animation='vdcScroll '+(slides*perSlide).toFixed(2)+'s linear infinite';
   }
   function feelOf(id){var f=FEELINGS.filter(function(x){return x.id===id;})[0];return f?f.t:'';}
@@ -1207,7 +1195,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       : '';
     view.innerHTML =
       '<div class="done">'+ head + codeBox +
-        '<p class="done-fine">Aucun compte, aucune donnée personnelle : votre retour reste anonyme.</p>'+
+        '<p class="done-fine">Sans compte et sans identité demandée : votre retour reste anonyme.</p>'+
         '<div class="again">'+
           '<button class="btn" id="toreturns" style="width:auto;padding:14px 26px">Voir mes retours</button>'+
           '<button class="btn ghost" id="again" style="width:auto;padding:14px 26px">Faire un autre retour</button>'+
@@ -1269,6 +1257,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
           '<span class="ckl-prog" id="cklProg">0 / '+items.length+' validés</span>'+
           '<button class="ckl-validate" id="cklValidate" type="button" disabled>Valider la check-list</button>'+
         '</div>'+
+        '<p class="ckl-note">Ce rappel préventif ne remplace pas un avis médical et ne constitue pas une autorisation à s’entraîner.</p>'+
       '</section>';
     wireBack();
     var total=items.length;
@@ -1296,7 +1285,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       '<div class="bravo-inner">'+
         '<span class="bravo-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>'+
         '<div class="bravo-title">Bien joué</div>'+
-        '<div class="bravo-sub">Check-list validée — tu es prêt pour le tatami.</div>'+
+        '<div class="bravo-sub">Check-list terminée — merci d’avoir vérifié les essentiels avant l’entraînement.</div>'+
         '<button class="bravo-btn" type="button">Terminé</button>'+
       '</div>';
     document.body.appendChild(ov);
@@ -1342,23 +1331,39 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   //     réponse, ce qui permettra la recherche multi-appareil et appliquera une
   //     limitation d'essais (anti-abus) côté API. Ici, garde-fou local simple.
   var CODE_RE=/^MS-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
-  var codeAttempts=0;
+  // Garde-fou LOCAL et PROVISOIRE : après 8 recherches infructueuses, la recherche est
+  // désactivée 60 s puis réactivée automatiquement (compteur remis à zéro, code conservé).
+  // En PRODUCTION, cette limitation anti-abus devra être gérée par le serveur (par IP/jeton).
+  var codeFails=0, codeLocked=false, codeLockTimer=null;
+  var CODE_MAX_FAILS=8, CODE_LOCK_MS=60000;
   function findByCode(code){
     var inbox=load(INBOX); for(var i=0;i<inbox.length;i++){ if(inbox[i] && inbox[i].code===code) return inbox[i]; }
     var mine=load(STORE); for(var j=0;j<mine.length;j++){ if(mine[j] && mine[j].code===code) return mine[j]; }
     return null;
   }
+  function setCodeLocked(locked){
+    codeLocked=locked;
+    var inp=document.getElementById('codeInput'), sb=document.getElementById('codeSearch');
+    if(inp) inp.disabled=locked; if(sb) sb.disabled=locked;
+  }
   function wireCopy(scope){ (scope||view).querySelectorAll('.ret-copy').forEach(function(b){ b.onclick=function(){ if(copyText(b.getAttribute('data-code'))){ b.textContent='Copié ✓'; toast('Code de suivi copié'); } }; }); }
   function searchCode(){
+    if(codeLocked) return;
     var inp=document.getElementById('codeInput'), msg=document.getElementById('codeMsg'), res=document.getElementById('codeResult');
     var code=((inp&&inp.value)||'').trim().toUpperCase();
     if(res) res.innerHTML='';
     if(!CODE_RE.test(code)){ if(msg){ msg.className='code-msg warn'; msg.textContent='Format attendu : MS-XXXX-XXXX (par ex. MS-7K4P-X9Q2).'; } return; }
-    if(codeAttempts>=8){ if(msg){ msg.className='code-msg warn'; msg.textContent='Trop d’essais. Patientez un instant avant de réessayer.'; } return; }
-    codeAttempts++;
     var r=findByCode(code);
-    if(r){ if(msg){ msg.className='code-msg'; msg.textContent=''; } if(res){ res.innerHTML=retCard(r); wireCopy(res); } }
-    else if(msg){ msg.className='code-msg warn'; msg.textContent='Aucun retour trouvé pour ce code sur cet appareil. La recherche depuis un autre téléphone (ou après effacement des données) nécessitera le serveur MatSafe, à venir.'; }
+    if(r){ codeFails=0; if(msg){ msg.className='code-msg'; msg.textContent=''; } if(res){ res.innerHTML=retCard(r); wireCopy(res); } return; }
+    codeFails++;
+    if(codeFails>=CODE_MAX_FAILS){
+      setCodeLocked(true);
+      if(msg){ msg.className='code-msg warn'; msg.textContent='Trop de tentatives. Vous pourrez effectuer une nouvelle recherche dans une minute.'; }
+      if(codeLockTimer) clearTimeout(codeLockTimer);
+      codeLockTimer=setTimeout(function(){ codeFails=0; setCodeLocked(false); var m=document.getElementById('codeMsg'); if(m){ m.className='code-msg'; m.textContent=''; } var ci=document.getElementById('codeInput'); if(ci){ try{ ci.focus(); }catch(_){ } } }, CODE_LOCK_MS);
+    } else if(msg){
+      msg.className='code-msg warn'; msg.textContent='Aucun retour trouvé pour ce code sur cet appareil. La recherche depuis un autre téléphone (ou après effacement des données) nécessitera le serveur MatSafe, à venir.';
+    }
   }
   function screenReturns(){
     var mine=load(STORE);
@@ -1386,6 +1391,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(tog&&body){ tog.onclick=function(){ var open=body.hidden; body.hidden=!open; tog.setAttribute('aria-expanded', open?'true':'false'); if(open){ var ci=document.getElementById('codeInput'); if(ci) ci.focus(); } }; }
     var sb=document.getElementById('codeSearch'); if(sb) sb.onclick=searchCode;
     var ci=document.getElementById('codeInput'); if(ci) ci.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); searchCode(); } });
+    if(codeLocked){ setCodeLocked(true); var lm=document.getElementById('codeMsg'); if(lm){ lm.className='code-msg warn'; lm.textContent='Trop de tentatives. Vous pourrez effectuer une nouvelle recherche dans une minute.'; } }
   }
 
   /* ================= FAIRE UN RETOUR (choix avis / signalement) ================= */
