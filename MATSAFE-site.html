@@ -2648,20 +2648,21 @@ a.svcl-row{color:var(--black)}
 }
 .svcx-title{
   display:block;font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
-  font-size:clamp(1.7rem,2.7vw,2.5rem);line-height:1;letter-spacing:.005em;color:var(--black);
+  font-size:clamp(1.95rem,3.05vw,2.6rem);line-height:1;letter-spacing:.005em;color:var(--black);
+  overflow-wrap:break-word;hyphens:auto;
 }
-.svcx-sub{display:block;margin-top:1rem;font-size:.98rem;line-height:1.5;color:rgba(10,10,10,.72);max-width:32ch}
-.svcx-foot{display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;margin-top:2rem}
-.svcx-keys{display:flex;flex-direction:column;gap:.2rem;
-  font-family:'Barlow',sans-serif;font-weight:600;font-size:1rem;line-height:1.35;color:var(--black)}
+/* Service 04 : titre avec un mot très long (« téléconsultation ») — légère
+   réduction pour qu'il tienne sur une ligne sans coupure. */
+#svcx-deck .svcx-card:nth-child(4) .svcx-title{font-size:clamp(1.65rem,2.55vw,2.35rem)}
+.svcx-sub{display:block;margin-top:1.15rem;font-size:1.1rem;line-height:1.55;color:rgba(10,10,10,.72);max-width:34ch}
+.svcx-foot{display:flex;justify-content:flex-end;align-items:flex-end;gap:1rem;margin-top:2rem}
 .svcx-num{
   font-family:'Barlow Condensed',sans-serif;font-weight:900;line-height:.8;
   font-size:clamp(2.6rem,5vw,4rem);color:var(--black);
 }
 @media(max-width:720px){
   .svcx-card{padding:1.8rem 1.5rem;min-height:64vh}
-  .svcx-sub{font-size:.92rem}
-  .svcx-keys{font-size:.92rem}
+  .svcx-sub{font-size:1.02rem}
 }
 /* Chaîne de progression : Évaluer → … → Certifier (le label = aboutissement) */
 .svcx-method{padding-top:3rem}
@@ -3141,23 +3142,23 @@ h1,h2,h3,h4,h1 *,h2 *,h3 *,h4 *,
     <div class="svcx-deck" id="svcx-deck">
       <button class="svcx-card" type="button" onclick="openSvc(0)" aria-haspopup="dialog">
         <span class="svcx-head"><span class="svcx-action">Évaluer</span><span class="svcx-title">L’audit de votre club</span><span class="svcx-sub">Une évaluation précise de vos locaux, de votre matériel et de vos pratiques, pensée pour les sports de combat.</span></span>
-        <span class="svcx-foot"><span class="svcx-keys"><span>Locaux et équipements</span><span>Pratiques observées</span><span>Priorités identifiées</span></span><span class="svcx-num">01</span></span>
+        <span class="svcx-foot"><span class="svcx-num">01</span></span>
       </button>
       <button class="svcx-card" type="button" onclick="openSvc(1)" aria-haspopup="dialog">
         <span class="svcx-head"><span class="svcx-action">Structurer</span><span class="svcx-title">Plan d’action &amp; protocoles d’hygiène</span><span class="svcx-sub">Les corrections à engager, classées par priorité, avec des protocoles validés par un médecin spécialisé et applicables par votre équipe.</span></span>
-        <span class="svcx-foot"><span class="svcx-keys"><span>Corrections prioritaires</span><span>Protocoles validés</span><span>Application terrain</span></span><span class="svcx-num">02</span></span>
+        <span class="svcx-foot"><span class="svcx-num">02</span></span>
       </button>
       <button class="svcx-card" type="button" onclick="openSvc(2)" aria-haspopup="dialog">
         <span class="svcx-head"><span class="svcx-action">Piloter</span><span class="svcx-title">MatSafe Club — Fighter</span><span class="svcx-sub">Deux applications connectées : l’une pour organiser et suivre l’hygiène, l’autre pour informer et impliquer les adhérents.</span></span>
-        <span class="svcx-foot"><span class="svcx-keys"><span>Suivi quotidien</span><span>Adhérents impliqués</span><span>Informations centralisées</span></span><span class="svcx-num">03</span></span>
+        <span class="svcx-foot"><span class="svcx-num">03</span></span>
       </button>
       <button class="svcx-card" type="button" onclick="openSvc(3)" aria-haspopup="dialog">
         <span class="svcx-head"><span class="svcx-action">Orienter</span><span class="svcx-title">Accès médical en téléconsultation 24/7</span><span class="svcx-sub">Les adhérents munis d’une carte Vitale peuvent consulter un médecin en ligne sans paiement ni avance de frais, quel que soit le motif médical.</span></span>
-        <span class="svcx-foot"><span class="svcx-keys"><span>Accessible 24/7</span><span>Sans frais avec carte Vitale</span><span>Secret médical</span></span><span class="svcx-num">04</span></span>
+        <span class="svcx-foot"><span class="svcx-num">04</span></span>
       </button>
       <button class="svcx-card" type="button" onclick="openSvc(4)" aria-haspopup="dialog">
         <span class="svcx-head"><span class="svcx-action">Vérifier</span><span class="svcx-title">MatSafe Check</span><span class="svcx-sub">À l’aide de prélèvements de surface analysés en laboratoire, MatSafe vérifie ce que l’œil ne voit pas.</span></span>
-        <span class="svcx-foot"><span class="svcx-keys"><span>Prélèvements de surface</span><span>Analyse en laboratoire</span><span>Résultats documentés</span></span><span class="svcx-num">05</span></span>
+        <span class="svcx-foot"><span class="svcx-num">05</span></span>
       </button>
     </div>
     <div class="svcx-hint">Faites défiler · cliquez une carte pour le détail</div>
