@@ -288,6 +288,7 @@
 .fmenu-name{font-family:var(--sans);font-weight:700;text-transform:uppercase;letter-spacing:-.015em;font-size:clamp(24px,6.5vw,34px);line-height:.98;margin:5px 0 0;color:var(--ink);overflow-wrap:anywhere}
 .mini-badge{flex:none;display:inline-flex;align-items:center;gap:6px;margin-top:4px;font-family:var(--cond);text-transform:uppercase;letter-spacing:.05em;font-size:10.5px;font-weight:700;color:var(--ink);background:var(--paper);border:1px solid var(--border);border-radius:999px;padding:6px 11px;white-space:nowrap}
 .mini-badge .d{width:6px;height:6px;border-radius:50%;background:var(--brand)}
+.bento-hero .mini-badge{margin:14px auto 0}
 .fmenu-label{font-family:var(--cond);text-transform:uppercase;letter-spacing:.06em;font-size:12px;font-weight:800;color:var(--brand);margin:22px 0 2px}
 .fmenu{display:block}
 .fmi{display:flex;align-items:flex-start;gap:14px;width:100%;text-align:left;cursor:pointer;background:none;border:0;border-top:1px solid var(--border);padding:17px 2px;color:var(--ink);transition:padding-left .15s,color .15s}
@@ -553,6 +554,7 @@ body.fdark{background:#0C0D10}
 @media(hover:hover){.contact-send:hover{gap:16px;background:#000}}
 .contact-send:disabled{opacity:.38;cursor:not-allowed}
 .contact-note{margin-top:14px;font-family:var(--cond);text-transform:uppercase;letter-spacing:.06em;font-size:11px;font-weight:700;color:var(--faint)}
+.contact-hint{margin:14px auto 0;max-width:44ch;font-size:12.5px;line-height:1.5;color:var(--gray)}
 /* Check-list « poster » — démonstration non interactive (noir sur crème) */
 .ckl{max-width:600px;margin:0 auto;color:var(--ink)}
 .ckl-head,.ckl-foot{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-family:var(--sans);text-transform:uppercase;letter-spacing:.11em;font-size:11px;font-weight:700;color:var(--ink)}
@@ -751,6 +753,11 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     lastEval:    'Juin 2026',       // dernière évaluation
     nextControl: 'Décembre 2026'    // prochain contrôle (si disponible, sinon '')
   };
+  // Libellé de statut affiché dans l'app : « Club labellisé ». Il provient de
+  // CLUB_STATUS (vérifié par MatSafe côté serveur), jamais d'un paramètre du QR.
+  // Si le club n'est pas labellisé, aucun badge n'est affiché (pas de faux statut).
+  function clubLabelText(){ return (CLUB_STATUS && CLUB_STATUS.labelStatus==='Labellisé') ? 'Club labellisé' : ''; }
+  function clubLabelBadge(){ var t=clubLabelText(); return t ? '<span class="mini-badge"><span class="d"></span>'+esc(t)+'</span>' : ''; }
 
   // --- Check personnel avant l'entraînement (rappel préventif, jamais envoyé) ---
   var CHECK_ITEMS=[
@@ -831,11 +838,24 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   var CTX=ctxFromQR();
 
   // ===========================================================================
-  // TÉLÉCONSULTATION — lien de la plateforme Médecin Direct.
-  // Tant que cette chaîne est vide, le bouton affiche « Lien bientôt disponible »
-  // et ne conduit vers aucune page. Pour activer la téléconsultation, il suffit
-  // de renseigner l'URL ci-dessous (une seule ligne à modifier).
-  var TELECONSULTATION_URL = '';
+  // TÉLÉCONSULTATION — configuration centralisée (partenaire Médecin Direct).
+  // >>> POUR ACTIVER : renseigner `url` ci-dessous (une seule ligne à modifier). <<<
+  // Tant que `url` est vide, le bouton reste en attente (« Lien bientôt disponible »)
+  // et n'ouvre aucune page. MatSafe oriente seulement vers le service ; la
+  // consultation a lieu sur la plateforme du partenaire ; MatSafe n'accède à aucune
+  // donnée médicale et n'en conserve aucune. Ne jamais présenter MatSafe comme un
+  // professionnel de santé, ni inventer de condition commerciale ou médicale.
+  var TELECONSULT = {
+    url:        '',                                // <<< AJOUTER ICI le lien définitif de téléconsultation
+    title:      'Un doute sur ma peau ?',
+    intro: [
+      'Une rougeur, une plaque, des boutons, une croûte ou une lésion inhabituelle ? En cas de doute, évitez les contacts et demandez l’avis d’un professionnel de santé.',
+      'La téléconsultation est réalisée directement sur la plateforme Médecin Direct. MatSafe vous oriente vers le service, mais n’accède à aucune information concernant votre consultation et ne conserve aucune donnée médicale.'
+    ],
+    coverage:   'La prise en charge et l’éventuelle avance de frais dépendent de votre situation, de vos droits et des conditions appliquées par la plateforme.',
+    button:     'Accéder à la téléconsultation',   // texte du bouton quand l'URL est renseignée
+    buttonWait: 'Lien bientôt disponible'          // état d'attente, non cliquable
+  };
   // ===========================================================================
 
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
@@ -993,15 +1013,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   function screenHome(){
     var mine=load(STORE);
 
-    // En-tête court : nom du club + petit badge discret.
-    var headHtml =
-      '<div class="fmenu-top">'+
-        '<div class="fmenu-club"><span class="fmenu-eb">Vous êtes chez</span><h1 class="fmenu-name">'+esc(CTX.club)+'</h1></div>'+
-        '<span class="mini-badge"><span class="d"></span>Engagé MatSafe</span>'+
-      '</div>';
-
-    var retBadge = mine.length ? '<span class="fcard-badge">'+mine.length+'</span>' : '';
-
     // CŒUR DE L'APP — CTA central (donner son avis / signaler, anonyme).
     var IArrowR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>';
     var ICare='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11Z"/></svg>';
@@ -1014,6 +1025,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         '<div class="bh-eb">Votre club</div>'+
         '<div class="bh-sub">'+esc(CTX.club||'MatSafe')+'</div>'+
         '<div class="bh-fine">Prévention · hygiène · sécurité du club</div>'+
+        clubLabelBadge()+
       '</div>';
 
     function tile(id,cls,inner){ return '<button class="tile '+cls+'" id="'+id+'">'+inner+'</button>'; }
@@ -1198,21 +1210,21 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   /* Écran destiné à l'adhérent uniquement : quand demander un avis médical,
      où se déroule la téléconsultation (Médecin Direct) et le fait que MatSafe
      n'accède ni ne conserve aucune donnée médicale. Aucun contenu interne,
-     commercial ou contractuel. Le lien est piloté par TELECONSULTATION_URL. */
+     commercial ou contractuel. Tous les textes et le lien sont pilotés par la
+     configuration TELECONSULT (en haut du fichier). */
   function screenLesion(){
-    var teleReady = !!TELECONSULTATION_URL;
+    var teleReady = !!TELECONSULT.url;
     view.innerHTML=
       backBtn()+
       '<section class="routine">'+
-        '<h3 class="routine-h">Un doute sur ma peau&nbsp;?</h3>'+
-        '<p>Une rougeur, une plaque, des boutons, une croûte ou une lésion inhabituelle&nbsp;? En cas de doute, évitez les contacts et demandez l’avis d’un professionnel de santé.</p>'+
-        '<p>La téléconsultation est réalisée directement sur la plateforme Médecin Direct. MatSafe vous oriente vers le service, mais n’accède à aucune information concernant votre consultation et ne conserve aucune donnée médicale.</p>'+
-        '<p>La prise en charge et l’éventuelle avance de frais dépendent de votre situation, de vos droits et des conditions appliquées par la plateforme.</p>'+
-        '<div class="cta"><button class="btn'+(teleReady?'':' soon')+'" id="teleBtn">'+(teleReady?'Accéder à la téléconsultation':'Lien bientôt disponible')+'</button></div>'+
+        '<h3 class="routine-h">'+esc(TELECONSULT.title)+'</h3>'+
+        (TELECONSULT.intro||[]).map(function(p){ return '<p>'+esc(p)+'</p>'; }).join('')+
+        (TELECONSULT.coverage?'<p>'+esc(TELECONSULT.coverage)+'</p>':'')+
+        '<div class="cta"><button class="btn'+(teleReady?'':' soon')+'" id="teleBtn"'+(teleReady?'':' disabled aria-disabled="true"')+'>'+esc(teleReady?TELECONSULT.button:TELECONSULT.buttonWait)+'</button></div>'+
       '</section>';
     wireBack();
     var tb=document.getElementById('teleBtn');
-    if(tb && teleReady){ tb.onclick=function(){ window.open(TELECONSULTATION_URL,'_blank','noopener'); }; }
+    if(tb && teleReady){ tb.onclick=function(){ window.open(TELECONSULT.url,'_blank','noopener'); }; }
   }
 
   /* ================= MON CHECK AVANT L'ENTRAÎNEMENT ================= */
@@ -1337,6 +1349,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         '<p class="contact-sub">Une remarque sur l’hygiène du club ou un problème à signaler&nbsp;? Votre retour est transmis sans compte et sans identité demandée.</p>'+
         '<textarea class="contact-ta" id="avisText" maxlength="1000" placeholder="Votre message…"></textarea>'+
         '<button class="contact-send" id="avisSend" disabled>Envoyer mon retour '+IArrowR+'</button>'+
+        '<p class="contact-hint">Pour préserver l’anonymat, n’indiquez pas de nom, de photo de visage, ni d’information médicale ou permettant d’identifier une personne.</p>'+
         '<p class="contact-note">Anonyme · sans compte</p>'+
       '</section>';
     wireBack();
@@ -1384,7 +1397,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
    ============================================================ */
 (function(){
   "use strict";
-  var INTRO_MODE = 'always';          // <— CHANGER ICI : 'always' (tests) ou 'once' (prod)
+  var INTRO_MODE = 'once';            // PRODUCTION : la cinématique n'apparaît qu'à la 1re ouverture
+                                      // sur l'appareil, puis accès direct à l'accueil.
+                                      // <— Mettre 'always' UNIQUEMENT pour rejouer l'intro à chaque test.
 
   var SEEN_KEY = 'matsafe_fighter_intro_seen';
   var intro = document.getElementById('intro');
