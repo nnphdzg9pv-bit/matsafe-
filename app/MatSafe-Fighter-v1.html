@@ -523,6 +523,20 @@ body.fdark{background:#0C0D10}
 .step.current .dot{box-shadow:0 0 0 3px rgba(200,63,50,.18)}
 .ret-reply{margin-top:12px;background:#FFF;border:1px solid var(--hair);border-radius:6px;padding:11px 13px;font-size:13.5px;line-height:1.5;color:var(--ink)}
 .ret-reply .k{font-family:var(--cond);text-transform:uppercase;letter-spacing:.06em;font-size:10.5px;font-weight:800;color:var(--brand);margin-bottom:4px}
+/* Recherche par code de suivi (discrète, DA Fighter) */
+.ret-lookup{margin-top:18px;border-top:1px solid var(--hair);padding-top:16px}
+.ret-lookup-toggle{font-family:var(--cond);text-transform:uppercase;letter-spacing:.05em;font-weight:800;font-size:12px;color:var(--brand);background:none;border:0;padding:4px 0;cursor:pointer}
+.ret-lookup-sub{font-size:13px;line-height:1.5;color:var(--gray);margin:10px 0 12px}
+.code-row{display:flex;gap:10px;flex-wrap:wrap}
+.code-inp{flex:1 1 180px;min-width:0;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink);background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:12px 14px}
+.code-inp::placeholder{color:var(--faint);letter-spacing:.04em}
+.code-inp:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(200,63,50,.15)}
+.code-row .btn{flex:0 0 auto}
+.code-msg{font-size:13px;line-height:1.5;color:var(--gray);margin-top:10px}
+.code-msg.warn{color:var(--brand)}
+.code-msg:empty{display:none}
+#codeResult{margin-top:14px}
+#codeResult .ret{margin-bottom:0}
 
 /* Entretien de l'équipement (accordéon) */
 .care{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
@@ -1305,37 +1319,73 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       return '<div class="step '+cls+'"><span class="dot"></span>'+esc(s.t)+'</div>';
     }).join('')+'</div>';
   }
+  // Carte d'un retour : le statut et l'éventuelle réponse sont relus dans la file
+  // partagée (matsafe_fighter_inbox) via le code anonyme, donc à jour avec le club.
+  function retCard(r){
+    var inbox=load(INBOX), cur=r;
+    for(var i=0;i<inbox.length;i++){ if(inbox[i] && inbox[i].code && inbox[i].code===r.code){ cur=inbox[i]; break; } }
+    var kindLabel = r.kind==='avis' ? 'Avis d’hygiène' : 'Signalement';
+    var cat = r.kind==='avis' ? (feelOf(r.feeling)||'') : (catOf(r.cat)||'');
+    var meta=[]; if(cat) meta.push(cat); if(r.zone) meta.push(r.zone);
+    return '<div class="ret">'+
+      '<div class="ret-top"><span class="ret-kind">'+esc(kindLabel)+'</span><span class="ret-date">'+esc(r.when||'')+'</span></div>'+
+      (meta.length?'<div class="ret-meta">'+esc(meta.join(' · '))+'</div>':'')+
+      '<div class="ret-code"><code>'+esc(r.code||'—')+'</code>'+(r.code?'<button class="ret-copy" data-code="'+esc(r.code)+'">Copier</button>':'')+'</div>'+
+      stepsHtml(cur.status)+
+      (cur.reply?'<div class="ret-reply"><div class="k">Réponse du club</div>'+esc(cur.reply)+'</div>':'')+
+    '</div>';
+  }
+  // Recherche par code de suivi.
+  //   • Format attendu : MS-XXXX-XXXX (lettres/chiffres).
+  //   • DÉMO : recherche seulement dans les données de CE téléphone (file locale).
+  //   • SERVEUR (à venir) : GET anonyme par code -> le serveur renvoie le statut et la
+  //     réponse, ce qui permettra la recherche multi-appareil et appliquera une
+  //     limitation d'essais (anti-abus) côté API. Ici, garde-fou local simple.
+  var CODE_RE=/^MS-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
+  var codeAttempts=0;
+  function findByCode(code){
+    var inbox=load(INBOX); for(var i=0;i<inbox.length;i++){ if(inbox[i] && inbox[i].code===code) return inbox[i]; }
+    var mine=load(STORE); for(var j=0;j<mine.length;j++){ if(mine[j] && mine[j].code===code) return mine[j]; }
+    return null;
+  }
+  function wireCopy(scope){ (scope||view).querySelectorAll('.ret-copy').forEach(function(b){ b.onclick=function(){ if(copyText(b.getAttribute('data-code'))){ b.textContent='Copié ✓'; toast('Code de suivi copié'); } }; }); }
+  function searchCode(){
+    var inp=document.getElementById('codeInput'), msg=document.getElementById('codeMsg'), res=document.getElementById('codeResult');
+    var code=((inp&&inp.value)||'').trim().toUpperCase();
+    if(res) res.innerHTML='';
+    if(!CODE_RE.test(code)){ if(msg){ msg.className='code-msg warn'; msg.textContent='Format attendu : MS-XXXX-XXXX (par ex. MS-7K4P-X9Q2).'; } return; }
+    if(codeAttempts>=8){ if(msg){ msg.className='code-msg warn'; msg.textContent='Trop d’essais. Patientez un instant avant de réessayer.'; } return; }
+    codeAttempts++;
+    var r=findByCode(code);
+    if(r){ if(msg){ msg.className='code-msg'; msg.textContent=''; } if(res){ res.innerHTML=retCard(r); wireCopy(res); } }
+    else if(msg){ msg.className='code-msg warn'; msg.textContent='Aucun retour trouvé pour ce code sur cet appareil. La recherche depuis un autre téléphone (ou après effacement des données) nécessitera le serveur MatSafe, à venir.'; }
+  }
   function screenReturns(){
     var mine=load(STORE);
-    // Le statut (et l'éventuelle réponse) est piloté côté club : on relit l'état courant
-    // dans la file partagée matsafe_fighter_inbox via le code de suivi anonyme.
-    var inbox=load(INBOX);
-    function freshStatus(r){ for(var i=0;i<inbox.length;i++){ if(inbox[i] && inbox[i].code && inbox[i].code===r.code){ return inbox[i]; } } return r; }
     var list = mine.length
-      ? mine.map(function(r){
-          var cur=freshStatus(r);
-          var kindLabel = r.kind==='avis' ? 'Avis d’hygiène' : 'Signalement';
-          var cat = r.kind==='avis' ? (feelOf(r.feeling)||'') : (catOf(r.cat)||'');
-          var meta=[]; if(cat) meta.push(cat); if(r.zone) meta.push(r.zone);
-          return '<div class="ret">'+
-            '<div class="ret-top"><span class="ret-kind">'+esc(kindLabel)+'</span><span class="ret-date">'+esc(r.when||'')+'</span></div>'+
-            (meta.length?'<div class="ret-meta">'+esc(meta.join(' · '))+'</div>':'')+
-            '<div class="ret-code"><code>'+esc(r.code||'—')+'</code>'+(r.code?'<button class="ret-copy" data-code="'+esc(r.code)+'">Copier</button>':'')+'</div>'+
-            stepsHtml(cur.status)+
-            (cur.reply?'<div class="ret-reply"><div class="k">Réponse du club</div>'+esc(cur.reply)+'</div>':'')+
-          '</div>';
-        }).join('')
+      ? mine.map(retCard).join('')
       : '<div class="note"><p>Vous n’avez pas encore envoyé de retour depuis ce téléphone. Vos avis et signalements apparaîtront ici avec leur code de suivi et leur avancement.</p></div>';
     view.innerHTML=
       backBtn()+
       '<h2 class="h2" id="retTitle">Suivre mes retours</h2>'+
       '<p class="sub">Consultez la prise en compte de vos retours grâce à votre code anonyme, sans créer de compte.</p>'+
       '<div class="demo-note">Démo&nbsp;: les retours sont actuellement stockés localement sur ce téléphone. En production, le suivi se fera via le serveur MatSafe à partir de votre code.</div>'+
-      list;
+      list+
+      '<div class="ret-lookup">'+
+        '<button class="ret-lookup-toggle" id="codeToggle" aria-expanded="false">J’ai déjà un code de suivi</button>'+
+        '<div class="ret-lookup-body" id="codeBody" hidden>'+
+          '<p class="ret-lookup-sub">Saisissez le code reçu lors de l’envoi (format MS-XXXX-XXXX) pour retrouver son avancement, sans compte ni identité.</p>'+
+          '<div class="code-row"><input class="code-inp" id="codeInput" inputmode="latin" autocomplete="off" spellcheck="false" maxlength="12" placeholder="MS-XXXX-XXXX"><button class="btn" id="codeSearch">Rechercher</button></div>'+
+          '<div class="code-msg" id="codeMsg" role="status"></div>'+
+          '<div id="codeResult"></div>'+
+        '</div>'+
+      '</div>';
     wireBack();
-    view.querySelectorAll('.ret-copy').forEach(function(b){
-      b.onclick=function(){ if(copyText(b.getAttribute('data-code'))){ b.textContent='Copié ✓'; toast('Code de suivi copié'); } };
-    });
+    wireCopy(view);
+    var tog=document.getElementById('codeToggle'), body=document.getElementById('codeBody');
+    if(tog&&body){ tog.onclick=function(){ var open=body.hidden; body.hidden=!open; tog.setAttribute('aria-expanded', open?'true':'false'); if(open){ var ci=document.getElementById('codeInput'); if(ci) ci.focus(); } }; }
+    var sb=document.getElementById('codeSearch'); if(sb) sb.onclick=searchCode;
+    var ci=document.getElementById('codeInput'); if(ci) ci.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); searchCode(); } });
   }
 
   /* ================= FAIRE UN RETOUR (choix avis / signalement) ================= */
