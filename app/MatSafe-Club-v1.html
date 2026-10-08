@@ -153,7 +153,7 @@ svg{display:block}
 @media(prefers-reduced-motion:reduce){.flame .fl-body,.flame .fl-core,.flame .fl-glow{animation:none}}
 .streak-hb .shb-t{display:flex;flex-direction:column;line-height:1.02}
 .streak-hb .shb-t b{font-family:var(--font-disp);font-weight:900;font-size:28px;color:var(--ink);line-height:1}
-.streak-hb .shb-t span{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-size:10.5px;font-weight:700;color:var(--ink2);margin-top:1px}
+.streak-hb .shb-t span{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-size:10.5px;font-weight:700;color:var(--ink2);margin-top:1px;max-width:104px;white-space:normal;line-height:1.12}
 .iconbtn{width:42px;height:42px;border-radius:13px;background:var(--panel);border:1px solid var(--line2);display:grid;place-items:center;color:var(--ink);cursor:pointer;position:relative;transition:background .15s,transform .15s}
 .iconbtn:hover{background:#F5F4F2}
 .iconbtn:active{transform:scale(.93)}
@@ -227,9 +227,9 @@ tbody tr:hover{background:#F7F6F4}
 .day h4{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink2);margin-bottom:12px}
 .slot{border-left:3px solid var(--brand);background:#FAF9F7;border-radius:8px;padding:8px 10px;margin-bottom:9px;cursor:pointer;transition:background .15s}
 .slot:hover{background:#F2F0EC}
-.slot .st{font-weight:700;font-size:13.5px}
-.slot .sd{color:var(--ink2);font-size:12px;margin-top:1px}
-.slot{position:relative;padding-right:46px}
+.slot .st{font-weight:700;font-size:13.5px;padding-right:42px}
+.slot .sd{color:var(--ink2);font-size:12px;margin-top:1px;padding-right:42px}
+.slot{position:relative}
 .slot .mat{position:absolute;top:8px;right:8px;font:700 9px/1 'Barlow';color:#77706A;background:#F1EEE9;border-radius:5px;padding:3px 5px;letter-spacing:.03em}
 .slot.mma{border-color:#C79A00}
 .slot.boxe{border-color:#1682B3}.slot.boxe .mat{background:#E4EEF3;color:#35667A}
@@ -355,6 +355,8 @@ tbody tr:hover{background:#F7F6F4}
 .pill-st.done{background:#EAF6E8;color:var(--green-d)}.pill-st.done .d{background:var(--green-d)}
 .pill-st.late{background:#F7E7E6;color:var(--red-d)}.pill-st.late .d{background:var(--red-d)}
 .pill-st.soon{background:#EFEEEB;color:var(--ink2)}.pill-st.soon .d{background:var(--muted)}
+.pill-st.cancelled{background:#EEEDEA;color:#8A857E}.pill-st.cancelled .d{background:#9A968E}
+.hist-reason{font:500 11px/1.3 'Barlow';color:#8A857E;margin-top:4px;text-transform:none;letter-spacing:0}
 .msg .status,.msg .pill-st{margin-left:auto;flex-shrink:0}
 .m-tag{font-size:11.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
 .empty-ok{display:flex;align-items:center;gap:10px;color:var(--ink2);font-size:13.5px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
@@ -362,12 +364,21 @@ tbody tr:hover{background:#F7F6F4}
 
 /* statut sur créneau du planning */
 .slot{cursor:pointer}
-.slot .sst{position:absolute;right:8px;bottom:7px;font:600 9.5px/1 'Barlow';padding:3px 6px;border-radius:6px;letter-spacing:.01em}
+.slot .sst{font:600 9.5px/1 'Barlow';padding:3px 6px;border-radius:6px;letter-spacing:.01em;flex:none}
 .slot .sst.todo{background:#FBF0DF;color:var(--amber-d)}
 .slot .sst.done{background:#EAF6E8;color:var(--green-d)}
 .slot .sst.late{background:#F7E7E6;color:var(--red-d)}
 .slot .sst.soon{background:#EFEEEB;color:#77706A}
+.slot .sst.cancelled{background:#EEEDEA;color:#8A857E}
 .slot.isdone{opacity:.86}
+/* pied du créneau : badge statut + action (annuler / rétablir) */
+.slot-foot{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}
+.slot-x,.slot-restore{margin-left:auto;font:600 9.5px/1 var(--font-disp);text-transform:uppercase;letter-spacing:.03em;border:1px solid var(--line);background:#fff;color:#8A857E;border-radius:7px;padding:5px 8px;cursor:pointer;transition:border-color .15s,color .15s}
+.slot-x:hover{border-color:var(--brand);color:var(--brand)}
+.slot-restore:hover{border-color:var(--green-d);color:var(--green-d)}
+.slot.iscancelled{opacity:.9}
+.slot.iscancelled .st,.slot.iscancelled .sd{text-decoration:line-through;color:var(--ink2)}
+.slot-reason{font:500 11px/1.35 'Barlow';color:#8A857E;margin-top:6px}
 
 /* segmented / champs de formulaire */
 .form{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:16px;max-width:560px}
@@ -414,6 +425,10 @@ tbody tr:hover{background:#F7F6F4}
 .ca-prio.high{color:var(--brand)} .ca-prio.med{color:#C07A2E} .ca-prio.low{color:var(--muted)}
 .ca-note{font-size:13px;color:var(--ink2);background:#FAF9F7;border-left:3px solid var(--line2);padding:8px 12px;border-radius:0 6px 6px 0;margin:8px 0 4px}
 .sheet-sub{font-size:13px;color:var(--ink2);line-height:1.5;margin:0 0 14px}
+/* Annulation d'un créneau */
+.cancel-note{font-size:13px;color:var(--ink2);line-height:1.5;background:#FBF5F4;border:1px solid rgba(200,63,50,.22);border-radius:12px;padding:12px 14px;margin:4px 0 18px}
+.cancel-actions{display:flex;gap:10px}
+.cancel-actions .btn-ghost,.cancel-actions .btn-primary{flex:1;text-align:center;align-self:stretch}
 /* Publications (Infos hygiène du club -> Fighter) */
 .pub-pin{display:inline-flex;align-items:center;gap:9px;font-size:13.5px;color:var(--ink);cursor:pointer;margin:2px 0 20px}
 .pub-pin input{width:16px;height:16px;accent-color:var(--brand)}
@@ -552,6 +567,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   .crate{flex-direction:column;align-items:flex-start;gap:12px;padding:20px}
   .crate-pct{font-size:clamp(68px,24vw,104px)}
   .crate-bar{max-width:none;width:100%}
+  /* mobile : le badge série passe sous le titre pour rester entièrement visible */
+  .head{flex-wrap:wrap}
+  .head>div:first-child{flex:1 1 100%}
 }
 .comp-sec{display:flex;flex-direction:column;gap:12px;margin-bottom:2px}
 .comp-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -757,7 +775,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <div class="head">
         <div><h1>Bonjour, Simon&nbsp;!</h1><p>Gérez vos passages et suivez l'hygiène de votre club en un coup d'œil.</p></div>
         <div class="head-actions">
-          <button class="streak-hb" data-go="serie" aria-label="Série de nettoyage de la salle"><span class="shb-f"><svg class="flame" viewBox="0 0 200 252" aria-hidden="true"><defs><radialGradient id="hGlow" cx="50%" cy="64%" r="56%"><stop offset="0" stop-color="#F0721F" stop-opacity=".30"/><stop offset="1" stop-color="#F0721F" stop-opacity="0"/></radialGradient><linearGradient id="hFl" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#B4311A"/><stop offset=".38" stop-color="#D8471F"/><stop offset=".72" stop-color="#F0691E"/><stop offset="1" stop-color="#F79B33"/></linearGradient><linearGradient id="hCore" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#E6A85B"/><stop offset="1" stop-color="#F4DBAC"/></linearGradient></defs><ellipse class="fl-glow" cx="100" cy="168" rx="94" ry="100" fill="url(#hGlow)"/><g class="fl-body"><path fill="url(#hFl)" d="M100 24 C120 78 150 104 150 158 C150 202 128 238 100 238 C72 238 50 202 50 158 C50 116 78 104 78 70 C78 94 63 106 57 122 C49 97 66 60 100 24 Z"/><path fill="url(#hFl)" d="M112 8 C119 15 119 27 109 33 C104 27 102 22 105 15 C107 11 109 10 112 8 Z"/></g><path class="fl-core" fill="url(#hCore)" d="M101 118 C112 145 126 160 126 187 C126 210 115 226 100 226 C85 226 75 210 75 187 C75 166 90 160 90 141 C90 152 84 161 80 169 C75 154 86 133 101 118 Z"/><g class="fl-sparks"><circle cx="62" cy="98" r="3.2" fill="#F0863A"/><circle cx="140" cy="74" r="2.6" fill="#F0863A"/><circle cx="96" cy="40" r="2" fill="#F0863A"/></g></svg></span><span class="shb-t"><b id="streakBadgeN">7</b><span>jours nettoyée</span></span></button>
+          <button class="streak-hb" data-go="serie" aria-label="Série de nettoyage de la salle"><span class="shb-f"><svg class="flame" viewBox="0 0 200 252" aria-hidden="true"><defs><radialGradient id="hGlow" cx="50%" cy="64%" r="56%"><stop offset="0" stop-color="#F0721F" stop-opacity=".30"/><stop offset="1" stop-color="#F0721F" stop-opacity="0"/></radialGradient><linearGradient id="hFl" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#B4311A"/><stop offset=".38" stop-color="#D8471F"/><stop offset=".72" stop-color="#F0691E"/><stop offset="1" stop-color="#F79B33"/></linearGradient><linearGradient id="hCore" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#E6A85B"/><stop offset="1" stop-color="#F4DBAC"/></linearGradient></defs><ellipse class="fl-glow" cx="100" cy="168" rx="94" ry="100" fill="url(#hGlow)"/><g class="fl-body"><path fill="url(#hFl)" d="M100 24 C120 78 150 104 150 158 C150 202 128 238 100 238 C72 238 50 202 50 158 C50 116 78 104 78 70 C78 94 63 106 57 122 C49 97 66 60 100 24 Z"/><path fill="url(#hFl)" d="M112 8 C119 15 119 27 109 33 C104 27 102 22 105 15 C107 11 109 10 112 8 Z"/></g><path class="fl-core" fill="url(#hCore)" d="M101 118 C112 145 126 160 126 187 C126 210 115 226 100 226 C85 226 75 210 75 187 C75 166 90 160 90 141 C90 152 84 161 80 169 C75 154 86 133 101 118 Z"/><g class="fl-sparks"><circle cx="62" cy="98" r="3.2" fill="#F0863A"/><circle cx="140" cy="74" r="2.6" fill="#F0863A"/><circle cx="96" cy="40" r="2" fill="#F0863A"/></g></svg></span><span class="shb-t"><b id="streakBadgeN">7</b><span>jours de nettoyage validés</span></span></button>
           <button class="iconbtn" data-toast="Aide &amp; support"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .8-1 1.7"/><path d="M12 17h.01"/></svg></button>
           <button class="iconbtn" data-toast="Notifications"><span class="dot"></span><svg class="ic" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></button>
         </div>
@@ -980,15 +998,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     <hr class="rail-sep">
     <div>
       <div class="agenda-head"><h3>Planning du jour</h3><a class="link" data-go="planning">Tout voir</a></div>
-      <div class="week" id="week">
-        <div class="d" data-day="Lundi"><div class="dn">Lu</div><div class="dd">12</div></div>
-        <div class="d on" data-day="Mardi"><div class="dn">Ma</div><div class="dd">13</div></div>
-        <div class="d" data-day="Mercredi"><div class="dn">Me</div><div class="dd">14</div></div>
-        <div class="d" data-day="Jeudi"><div class="dn">Je</div><div class="dd">15</div></div>
-        <div class="d" data-day="Vendredi"><div class="dn">Ve</div><div class="dd">16</div></div>
-        <div class="d" data-day="Samedi"><div class="dn">Sa</div><div class="dd">17</div></div>
-        <div class="d" data-day="Dimanche"><div class="dn">Di</div><div class="dd">18</div></div>
-      </div>
+      <div class="week" id="week"><!-- jours générés dynamiquement (semaine réelle) par renderWeekStrip() --></div>
       <div class="daylist" id="dayList"></div>
     </div>
     <button class="rail-btn" data-go="planning">Tous les cours de la semaine</button>
@@ -1020,6 +1030,33 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         <p id="valDoneTxt">Nettoyage enregistré.</p>
         <button class="btn-primary wide" data-close style="margin-top:18px">Terminé</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALE : annuler un créneau (non destructif, traçable) -->
+<div class="modal" id="cancelModal" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="cancelTitle">
+    <div class="sheet-h"><h3 id="cancelTitle">Annuler le créneau</h3><button class="sheet-x" data-close><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <div class="sheet-info">
+      <div class="si-row"><span>Cours</span><b id="cancelCours">—</b></div>
+      <div class="si-row"><span>Horaire</span><b id="cancelHeure">—</b></div>
+      <div class="si-row"><span>Tatami</span><b id="cancelMat">—</b></div>
+    </div>
+    <div class="gm-field"><label>Motif de l'annulation</label>
+      <select class="ano-inp ano-sel" id="cancelReason">
+        <option value="cours">Cours annulé</option>
+        <option value="participants">Nombre insuffisant de participants</option>
+        <option value="nonutilise">Tatami non utilisé</option>
+        <option value="fermeture">Fermeture exceptionnelle</option>
+        <option value="autre">Autre</option>
+      </select></div>
+    <div class="gm-field" id="cancelOtherWrap" style="display:none"><label>Précisez le motif <span class="opt">(facultatif)</span></label>
+      <input class="ano-inp" id="cancelOther" maxlength="120" placeholder="Ex. : travaux sur le tatami"></div>
+    <p class="cancel-note">Ce créneau sera marqué comme annulé et ne sera pas comptabilisé dans les nettoyages attendus.</p>
+    <div class="cancel-actions">
+      <button class="btn-ghost" data-close>Retour</button>
+      <button class="btn-primary" id="cancelConfirm">Confirmer l'annulation</button>
     </div>
   </div>
 </div>
@@ -1186,8 +1223,21 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   }
 
   // ── Série de nettoyage (streak) ──
-  var STREAK={ streak:7, max:7, milestones:[7,14,30,90] };
+  // La série = nombre de jours consécutifs (en remontant depuis aujourd'hui) avec ≥1 nettoyage
+  // validé. Calculée sur les données RÉELLES (jamais codée en dur), recalculée à chaque validation.
+  var STREAK={ streak:0, max:0, milestones:[7,14,30,90] };
+  function cleanDaySet(){ var byDay=Object.create(null); VALS.items.forEach(function(it){ if(it.iso) byDay[it.iso]=true; }); return byDay; }
+  function computeStreak(){
+    var byDay=cleanDaySet();
+    var s=0, startIso=null, d=new Date(NOW); d.setHours(0,0,0,0);
+    if(!byDay[isoOf(d)]) d.setDate(d.getDate()-1);   // aujourd'hui pas encore nettoyé : la série court jusqu'à hier
+    for(var i=0;i<400;i++){ if(byDay[isoOf(d)]){ s++; startIso=isoOf(d); d.setDate(d.getDate()-1); } else break; }
+    return { days:s, start:startIso };
+  }
   function renderStreak(){
+    var st=computeStreak();
+    STREAK.streak=st.days;
+    STREAK.max=Math.max(STREAK.max, st.days);
     var s=STREAK.streak;
     var next=STREAK.milestones.filter(function(m){return m>s;})[0] || (s+7);
     var prev=STREAK.milestones.filter(function(m){return m<=s;}).pop() || s;
@@ -1198,22 +1248,27 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     set('srkRemain', 'Il reste '+remain+(remain>1?' jours':' jour'));
     var bar=document.getElementById('srkBar'); if(bar) bar.style.width=fill+'%';
     var lead=document.getElementById('srkLead');
-    if(lead) lead.innerHTML='Bravo&nbsp;! Votre salle est nettoyée <strong>'+s+'&nbsp;jours d\'affilée.</strong> Gardez le rythme.';
+    if(lead){
+      if(s<=0) lead.innerHTML='Aucune série en cours. Validez un premier nettoyage pour la démarrer.';
+      else lead.innerHTML='Bravo&nbsp;! Votre salle est nettoyée <strong>'+s+'&nbsp;jour'+(s>1?'s':'')+' d\'affilée.</strong> Gardez le rythme.';
+    }
     var goal=document.getElementById('srkGoal');
     if(goal) goal.innerHTML='<strong>'+next+' jours consécutifs</strong> débloquent le badge « Salle impeccable » à partager avec vos adhérents.';
-    var d=new Date(); d.setDate(d.getDate()-(s-1));
     var MO=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
-    set('srkStart', d.getDate()+' '+MO[d.getMonth()]+' '+d.getFullYear());
-    var DAYS=['LUN','MAR','MER','JEU','VEN','SAM','DIM'];
-    var jn=new Date().getDay(); var ti=(jn===0)?6:jn-1;
+    var startStr='—';
+    if(s>0 && st.start){ var ds=dateFromIso(st.start); startStr=ds.getDate()+' '+MO[ds.getMonth()]+' '+ds.getFullYear(); }
+    set('srkStart', startStr);
+    // Bande de la semaine : une flamme uniquement les jours (passés / aujourd'hui) réellement nettoyés.
+    var byDay=cleanDaySet();
+    var DAYSL=['LUN','MAR','MER','JEU','VEN','SAM','DIM'];
     var flame='<svg class="srk-day-f" viewBox="0 0 24 28"><path d="M13 1c.6 4.2 5 5.6 5 10.8A6 6 0 0 1 6 12c0-2.6 1.5-4.1 1.5-4.1.2 2 2.3 2.2 2.3.2 0-3 1.3-5 3.2-7z" fill="#C83F32"/><path d="M12 12c.3 2 2.4 2.6 2.4 5.1a2.6 2.6 0 0 1-5.2 0c0-1.3.8-2 .8-2 .1 1 1.2 1.1 1.2.1 0-1.4.4-2.4.8-3.2z" fill="#F3B14C"/></svg>';
     var wk=document.getElementById('srkWeek');
-    if(wk){ var h=''; for(var i=0;i<7;i++){ var done=i<=ti; h+='<div class="srk-day'+(i===ti?' today':'')+'"><span class="srk-day-d">'+DAYS[i]+'</span>'+(done?flame:'<span class="srk-day-c"></span>')+'</div>'; } wk.innerHTML=h; }
+    if(wk){ var h=''; for(var i=0;i<7;i++){ var done=(i<=TODAY_IDX) && !!byDay[isoOf(dateOfIdx(i))]; h+='<div class="srk-day'+(i===TODAY_IDX?' today':'')+'"><span class="srk-day-d">'+DAYSL[i]+'</span>'+(done?flame:'<span class="srk-day-c"></span>')+'</div>'; } wk.innerHTML=h; }
     // Rendre la série publique : publiée sur le pont localStorage, lue par MatSafe Fighter (adhérents).
-    try{ localStorage.setItem('matsafe_club_streak', JSON.stringify({ streak:s, max:STREAK.max, start:(d.getDate()+' '+MO[d.getMonth()]+' '+d.getFullYear()), updated:Date.now() })); }catch(_){}
+    try{ localStorage.setItem('matsafe_club_streak', JSON.stringify({ streak:s, max:STREAK.max, start:startStr, updated:Date.now() })); }catch(_){}
     var hb=document.getElementById('streakBadgeN'); if(hb) hb.textContent=s;
   }
-  renderStreak();
+  // (l'appel initial de renderStreak() a lieu après l'initialisation des données validées)
 
   document.addEventListener('click', function(e){
     var zm = e.target.closest('[data-zoom]');
@@ -1253,68 +1308,137 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
   function toMin(t){var p=(t||'0:0').split(':');return (+p[0])*60+(+p[1]);}
   var DAYS=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
-  var TODAY='Mardi', NOWM=21*60+40, PENDKEY='Mardi|20:00|MAT 1';
+  // ======================================================================
+  // SÉPARATION DES DONNÉES PAR CLUB (préparation pilote — point 7)
+  // CLUB_ID identifie le club courant. En production, chaque club aura ses
+  // propres données (planning, zones, équipe, retours, actions correctives,
+  // historique, statistiques), rattachées à cet identifiant côté serveur.
+  //  • Données PROPRES au club (ce poste de direction) : validations, annulations,
+  //    actions correctives, réglages, publications.
+  //  • Données de SYNCHRO avec Fighter (mêmes clés des deux côtés, à ne pas renommer) :
+  //    matsafe_fighter_inbox (retours), matsafe_club_posts (infos), matsafe_club_events.
+  // DÉMO (point 8) : les données de démonstration sont conservées pour la présentation.
+  // Elles sont marquées { demo:true } et clairement isolées des futures données réelles ;
+  // leur suppression/réinitialisation sera demandée séparément avant le pilote.
+  var CLUB_ID='cube';
+  function clubKey(base){ return 'matsafe_'+base; }   // en prod : 'matsafe_'+CLUB_ID+'_'+base
 
-  // ===== Couche de données — nettoyages validés (persistants, événements datés) =====
-  // Chaque validation est conservée dans localStorage (matsafe_club_validations) : elle
-  // survit au rechargement, alimente automatiquement l'historique et le taux hebdo.
-  // En production, remplacer loadVals/saveVals par le serveur du club (même interface).
-  var VAL_KEY='matsafe_club_validations';
-  var TEAM_DEMO=['Simon E.','Léa M.','Kevin B.','Thomas M.'];
+  // ===== Horloge réelle : la semaine affichée est toujours la semaine en cours =====
+  var NOW=new Date();
+  function dayIdx(d){ return (d.getDay()+6)%7; }       // Lundi=0 … Dimanche=6
+  var TODAY_IDX=dayIdx(NOW);
+  var TODAY=DAYS[TODAY_IDX];
+  var NOWM=NOW.getHours()*60+NOW.getMinutes();
+  var WEEK_MON=new Date(NOW); WEEK_MON.setHours(0,0,0,0); WEEK_MON.setDate(WEEK_MON.getDate()-TODAY_IDX);
+  function dateOfIdx(i){ var x=new Date(WEEK_MON); x.setDate(x.getDate()+i); return x; }
+  function isoOf(d){ return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
+  function isoOfDay(day){ var i=DAYS.indexOf(day); return i<0?'':isoOf(dateOfIdx(i)); }
+  var DN_SHORT=['Lu','Ma','Me','Je','Ve','Sa','Di'];
+  var DN_MED=['lun.','mar.','mer.','jeu.','ven.','sam.','dim.'];
+  var MO_SHORT=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
+  function dateFromIso(iso){ var p=String(iso||'').split('-'); return new Date(+p[0],(+p[1]||1)-1,+p[2]||1); }
+  // Libellé lisible d'une date réelle : « Aujourd'hui » / « Hier » / « mar. 6 oct. »
+  function dLabel(iso){
+    if(iso===isoOf(NOW)) return "Aujourd'hui";
+    var y=new Date(NOW); y.setDate(y.getDate()-1);
+    if(iso===isoOf(y)) return 'Hier';
+    var d=dateFromIso(iso); return DN_MED[(d.getDay()+6)%7]+' '+d.getDate()+' '+MO_SHORT[d.getMonth()];
+  }
+  // Bucket temporel d'une date (pour les filtres d'historique), calculé sur la semaine réelle
+  function whenOf(iso){ if(iso===isoOf(NOW)) return 'today'; var d=dateFromIso(iso); d.setHours(0,0,0,0); return (d>=WEEK_MON)?'week':'past'; }
+  // Le nettoyage d'un tatami devient EXIGIBLE à la fin du cours (début + durée).
+  var CLASS_DURATION_MIN=60;      // durée standard d'un cours
+  var CLEAN_WINDOW_MIN=180;       // fenêtre « À nettoyer » après la fin du cours (sinon « En retard »)
+  function slotEnd(t){ return toMin(t)+CLASS_DURATION_MIN; }
+
   function matLabelOf(m){ return m==='MAT 1'?'Tatami 1':(m==='MAT 2'?'Tatami 2':m); }
   function matClassOf(m){ return m==='MAT 1'?'mat1':(m==='MAT 2'?'mat2':''); }
+  function matFromClass(c){ return c==='mat1'?'MAT 1':(c==='mat2'?'MAT 2':c); }
   function fmtMin(x){ x=((x%1440)+1440)%1440; return ('0'+Math.floor(x/60)).slice(-2)+':'+('0'+(x%60)).slice(-2); }
-  function loadVals(){ try{ var r=localStorage.getItem(VAL_KEY); if(r){ var o=JSON.parse(r); if(o&&o.items) return o; } }catch(_){ } return null; }
+
+  // ----- Annulations de créneaux (traçables, non destructives) : exclues du calcul -----
+  var CANCEL_KEY=clubKey('club_cancellations');
+  function loadCancels(){ try{ var r=localStorage.getItem(CANCEL_KEY); var o=r?JSON.parse(r):{}; return (o&&typeof o==='object')?o:{}; }catch(_){ return {}; } }
+  function saveCancels(){ try{ localStorage.setItem(CANCEL_KEY, JSON.stringify(CANCELS)); }catch(_){ } }
+  var CANCELS=loadCancels();
+  function slotKey(day,t,m){ return isoOfDay(day)+'|'+t+'|'+m; }
+  function isCancelled(day,t,m){ return !!CANCELS[slotKey(day,t,m)]; }
+  function cancelOf(day,t,m){ return CANCELS[slotKey(day,t,m)]||null; }
+  // Motifs d'annulation (traçables) — libellés exacts demandés
+  var CANCEL_REASONS={ cours:'Cours annulé', participants:'Nombre insuffisant de participants', nonutilise:'Tatami non utilisé', fermeture:'Fermeture exceptionnelle', autre:'Autre' };
+  function cancelLabel(c){ if(!c) return 'Annulé'; if(c.reason==='autre' && c.reasonText) return 'Autre · '+c.reasonText; return CANCEL_REASONS[c.reason]||'Annulé'; }
+
+  // ===== Nettoyages validés (persistants, événements datés par date réelle) =====
+  var VAL_KEY=clubKey('club_validations');
+  var TEAM_DEMO=['Simon E.','Léa M.','Kevin B.','Thomas M.'];
+  function loadVals(){ try{ var r=localStorage.getItem(VAL_KEY); if(r){ var o=JSON.parse(r); if(o&&o.items&&o.v===2) return o; } }catch(_){ } return null; }
   function saveVals(){ try{ localStorage.setItem(VAL_KEY, JSON.stringify(VALS)); }catch(_){ } }
   var VALS=loadVals();
   if(!VALS){
-    // Amorçage unique du scénario de démo (état réaliste : nettoyages déjà réalisés
-    // aujourd'hui + jours précédents). Remplacé par les vraies données en production ;
-    // jamais une statistique inventée — ce sont des événements de nettoyage réels du modèle.
-    VALS={ seeded:true, items:[] }; var pi=0;
-    (SCHED[TODAY]||[]).forEach(function(c){
-      var k=TODAY+'|'+c.t+'|'+c.m;
-      if(k===PENDKEY || toMin(c.t)>NOWM) return;       // en attente / à venir : non validés
-      VALS.items.push({ k:k, date:'today', dateLabel:"Aujourd'hui", time:c.t, disc:c.d,
-        mat:matClassOf(c.m), matLabel:matLabelOf(c.m), by:TEAM_DEMO[(pi++)%TEAM_DEMO.length],
-        at:fmtMin(toMin(c.t)+85), ts:Date.now() });
+    // DÉMO (point 8) : on sème la SEMAINE EN COURS de façon réaliste — la plupart des
+    // créneaux terminés sont validés, en laissant le dernier « à nettoyer » (en attente)
+    // et un créneau manqué. Conservé jusqu'au pilote. Ce ne sont pas des statistiques
+    // inventées : ce sont des événements de nettoyage réels du modèle.
+    VALS={ v:2, seeded:true, demo:true, items:[] };
+    var finished=[];
+    for(var di=0; di<=TODAY_IDX; di++){
+      var day=DAYS[di], iso=isoOf(dateOfIdx(di));
+      (SCHED[day]||[]).forEach(function(c){
+        if(di===TODAY_IDX && slotEnd(c.t)>NOWM) return;    // pas encore terminé aujourd'hui
+        finished.push({iso:iso, c:c});
+      });
+    }
+    var pendingIdx=finished.length-1;                       // dernier terminé : laissé « à nettoyer »
+    var missedIdx =finished.length>=6 ? finished.length-5 : -1;  // un manqué réaliste
+    var pi=0;
+    finished.forEach(function(f, idx){
+      if(idx===pendingIdx || idx===missedIdx) return;
+      pi++;
+      VALS.items.push({ k:f.iso+'|'+f.c.t+'|'+f.c.m, iso:f.iso, time:f.c.t, disc:f.c.d,
+        mat:matClassOf(f.c.m), matLabel:matLabelOf(f.c.m), by:TEAM_DEMO[pi%TEAM_DEMO.length],
+        at:fmtMin(slotEnd(f.c.t)+20), ts:Date.now(), demo:true });
     });
-    [ {dl:'Hier',w:'week',t:'19:45',d:'Boxe anglaise',m:'mat2',ml:'Tatami 2',by:'Thomas M.',at:'21:05'},
-      {dl:'Hier',w:'week',t:'18:00',d:'MMA · Confirmés',m:'mat1',ml:'Tatami 1',by:'Simon E.',at:'19:12'},
-      {dl:'14 sept.',w:'month',t:'20:00',d:'JJB · Tous niveaux',m:'mat1',ml:'Tatami 1',by:'Léa M.',at:'21:20'}
-    ].forEach(function(h,i){ VALS.items.push({ k:'seed-'+i, date:h.w, dateLabel:h.dl, time:h.t, disc:h.d, mat:h.m, matLabel:h.ml, by:h.by, at:h.at, ts:0 }); });
     saveVals();
   }
   var validated=Object.create(null);
-  VALS.items.forEach(function(it){ if(it.date==='today' && it.k) validated[it.k]=true; });
-  var SCOL={done:'#3E8E4F',todo:'#C07A2E',late:'#C83F32',soon:'#9A9A9F'};
+  VALS.items.forEach(function(it){ if(it.k) validated[it.k]=true; });
+  var SCOL={done:'#3E8E4F',todo:'#C07A2E',late:'#C83F32',soon:'#9A9A9F',cancelled:'#9A968E'};
+  // Statut d'un créneau, selon la date/heure RÉELLES :
+  //  • Annulé            -> créneau non tenu (exclu du calcul)
+  //  • À venir           -> cours futur (jour à venir, ou plus tard aujourd'hui)
+  //  • En cours          -> cours commencé mais pas terminé (nettoyage pas encore exigible)
+  //  • À nettoyer        -> cours terminé récemment, nettoyage pas encore validé
+  //  • En retard         -> cours terminé il y a longtemps, toujours pas validé
+  //  • Validé            -> nettoyage enregistré
   function statusOf(day,t,m){
-    var k=day+'|'+t+'|'+m;
-    if(validated[k]) return {cls:'done',label:'Validé'};
-    var di=DAYS.indexOf(day), ti=DAYS.indexOf(TODAY);
-    if(di>-1 && di<ti) return {cls:'done',label:'Validé'};
-    if(di>ti) return {cls:'soon',label:'À venir'};
-    var st=toMin(t);
-    if(st>NOWM) return {cls:'soon',label:'À venir'};
-    if(NOWM-st<=150) return {cls:'todo',label:'À nettoyer'};
-    return {cls:'late',label:'En retard'};
+    if(isCancelled(day,t,m)) return {cls:'cancelled',label:'Annulé'};
+    var di=DAYS.indexOf(day);
+    if(validated[isoOfDay(day)+'|'+t+'|'+m]) return {cls:'done',label:'Validé'};
+    if(di>TODAY_IDX) return {cls:'soon',label:'À venir'};                 // jour futur
+    var end=slotEnd(t);
+    // aujourd'hui, cours pas encore terminé : exigible seulement APRÈS l'heure de fin
+    if(di===TODAY_IDX && end>NOWM) return {cls:'soon',label:(toMin(t)<=NOWM?'En cours':'À venir')};
+    if(di===TODAY_IDX && (NOWM-end)<=CLEAN_WINDOW_MIN) return {cls:'todo',label:'À nettoyer'};
+    return {cls:'late',label:'En retard'};                                // terminé, non validé
   }
-  // Taux de nettoyages réalisés cette semaine — générique, piloté par les données
-  // (ratio validés ÷ attendus, jamais codé en dur), donc adaptable à n'importe quel club.
-  //  • Jour courant : calculé EN DIRECT depuis le planning, pour que le taux évolue
-  //    dès qu'un nettoyage est validé. Un créneau « À venir » n'est pas compté ;
-  //    un créneau dont l'échéance est passée mais non validé reste au dénominateur.
-  //  • Jours déjà écoulés de la semaine : en production, « attendus » et « validés »
-  //    proviennent des enregistrements du club (stockage/API). Ici, WEEK_PRIOR en tient
-  //    lieu pour la démo — il suffit de brancher les vraies données à la place.
-  var WEEK_PRIOR={expected:12, done:7};   // jours précédents de la semaine (démo)
+  // Taux de nettoyages réalisés cette semaine — calculé sur la SEMAINE RÉELLE
+  // (ratio validés ÷ attendus, jamais codé en dur). Règles :
+  //  • un cours FUTUR (jour à venir, ou cours du jour pas encore terminé) n'est PAS attendu ;
+  //  • un cours TERMINÉ non nettoyé est attendu (non validé) ;
+  //  • un cours TERMINÉ et nettoyé est attendu ET validé ;
+  //  • un créneau ANNULÉ est exclu des attendus (jamais présenté comme manqué).
+  // Recalculé automatiquement selon la date/heure réelles, à chaque validation ou annulation.
   function weekCleanStats(){
-    var expected=(WEEK_PRIOR&&WEEK_PRIOR.expected)||0, done=(WEEK_PRIOR&&WEEK_PRIOR.done)||0;
-    (SCHED[TODAY]||[]).forEach(function(c){
-      if(toMin(c.t)>NOWM) return;                    // aujourd'hui, créneau encore à venir : exclu
-      expected++;
-      if(statusOf(TODAY,c.t,c.m).cls==='done') done++;
-    });
+    var expected=0, done=0;
+    for(var i=0;i<=TODAY_IDX;i++){
+      var day=DAYS[i];
+      (SCHED[day]||[]).forEach(function(c){
+        if(isCancelled(day,c.t,c.m)) return;                      // annulé : exclu
+        if(i===TODAY_IDX && slotEnd(c.t)>NOWM) return;            // aujourd'hui, pas encore terminé : exclu
+        expected++;
+        if(statusOf(day,c.t,c.m).cls==='done') done++;
+      });
+    }
     if(done>expected) done=expected;
     return {expected:expected, done:done};
   }
@@ -1355,17 +1479,24 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       if(el) el.innerHTML = html;
     });
   }
-  document.querySelectorAll('#week .d').forEach(function(d){
-    d.addEventListener('click', function(){
-      document.querySelectorAll('#week .d').forEach(function(x){x.classList.remove('on');});
-      d.classList.add('on');
-      renderDay(d.getAttribute('data-day'));
+  // Barre de semaine (droite) générée dynamiquement : vrais jours, vrais numéros,
+  // jour courant sélectionné automatiquement. Aucune date codée en dur.
+  function renderWeekStrip(){
+    var wk=document.getElementById('week'); if(!wk) return;
+    var sel=wk.querySelector('.d.on'); var selDay=sel?sel.getAttribute('data-day'):TODAY;
+    var html='';
+    for(var i=0;i<7;i++){ var day=DAYS[i], d=dateOfIdx(i);
+      html+='<div class="d'+(day===selDay?' on':'')+'" data-day="'+day+'"><div class="dn">'+DN_SHORT[i]+'</div><div class="dd">'+d.getDate()+'</div></div>';
+    }
+    wk.innerHTML=html;
+    wk.querySelectorAll('.d').forEach(function(el){
+      el.addEventListener('click', function(){ wk.querySelectorAll('.d').forEach(function(x){x.classList.remove('on');}); el.classList.add('on'); renderDay(el.getAttribute('data-day')); });
     });
-  });
-  var act=document.querySelector('#week .d.on')||document.querySelector('#week .d');
-  if(act) renderDay(act.getAttribute('data-day'));
+  }
+  renderWeekStrip();
+  renderDay(TODAY);
 
-  // Planning : statut par créneau + validation au clic
+  // Planning : statut par créneau + validation au clic + annulation / rétablissement
   function enhanceSlots(){
     document.querySelectorAll('.screen[data-screen="planning"] .day').forEach(function(day){
       var h=day.querySelector('h4'), dname=h?h.textContent.trim():'';
@@ -1375,15 +1506,34 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         var m=(sl.querySelector('.mat')||{}).textContent||'';
         var s=statusOf(dname,t,m);
         sl.classList.toggle('isdone', s.cls==='done');
-        var b=sl.querySelector('.sst'); if(!b){b=document.createElement('span'); b.className='sst'; sl.appendChild(b);}
-        b.className='sst '+s.cls; b.textContent=s.label;
-        if(s.cls==='todo'||s.cls==='late'){ sl.setAttribute('data-validate', d+'|'+t+'|'+m+'|'+dname); }
+        sl.classList.toggle('iscancelled', s.cls==='cancelled');
+        // on régénère le pied (idempotent)
+        var oldFoot=sl.querySelector('.slot-foot'); if(oldFoot) oldFoot.remove();
+        var oldReason=sl.querySelector('.slot-reason'); if(oldReason) oldReason.remove();
+        var oldSst=sl.querySelector('.sst'); if(oldSst) oldSst.remove();   // ancien badge absolu éventuel
+        var payload=d+'|'+t+'|'+m+'|'+dname;
+        var foot=document.createElement('div'); foot.className='slot-foot';
+        var act='';
+        if(s.cls==='cancelled'){
+          act='<button type="button" class="slot-restore" data-restore="'+esc(payload)+'">Rétablir le créneau</button>';
+        } else if(s.cls!=='done'){
+          act='<button type="button" class="slot-x" data-cancel="'+esc(payload)+'">Annuler le créneau</button>';
+        }
+        foot.innerHTML='<span class="sst '+s.cls+'">'+esc(s.label)+'</span>'+act;
+        sl.appendChild(foot);
+        if(s.cls==='cancelled'){
+          var c=cancelOf(dname,t,m);
+          var rz=document.createElement('div'); rz.className='slot-reason'; rz.textContent='Motif : '+cancelLabel(c);
+          sl.appendChild(rz);
+        }
+        if(s.cls==='todo'||s.cls==='late'){ sl.setAttribute('data-validate', payload); }
         else { sl.removeAttribute('data-validate'); }
       });
     });
   }
   enhanceSlots();
   renderCleanRate();
+  renderStreak();   // appel initial : les données validées (VALS) sont désormais chargées
 
   // Modale « Valider le nettoyage »
   var modal=document.getElementById('valModal'), curVal=null, curPerson=null;
@@ -1400,13 +1550,13 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   function closeVal(){ document.querySelectorAll('.modal.on').forEach(function(m){ m.classList.remove('on'); }); }
   function confirmVal(){
     if(!curPerson){ toast('Sélectionnez la personne qui a nettoyé.'); return; }
-    var k=curVal.day+'|'+curVal.t+'|'+curVal.m;
+    var iso=isoOfDay(curVal.day), k=iso+'|'+curVal.t+'|'+curVal.m;
     validated[k]=true;
     var n=new Date(), hh=('0'+n.getHours()).slice(-2)+':'+('0'+n.getMinutes()).slice(-2);
-    // Enregistrement durable (persiste au rechargement) + ajout automatique à l'historique
-    VALS.items=VALS.items.filter(function(it){ return !(it.date==='today' && it.k===k); });
-    VALS.items.push({ k:k, date:'today', dateLabel:"Aujourd'hui", time:curVal.t, disc:curVal.disc,
-      mat:matClassOf(curVal.m), matLabel:matLabelOf(curVal.m), by:curPerson, at:hh, ts:Date.now() });
+    // Enregistrement durable (daté par date réelle, persiste au rechargement) + historique automatique
+    VALS.items=VALS.items.filter(function(it){ return it.k!==k; });
+    VALS.items.push({ k:k, iso:iso, time:curVal.t, disc:curVal.disc,
+      mat:matClassOf(curVal.m), matLabel:matLabelOf(curVal.m), by:curPerson, at:hh, ts:Date.now(), demo:false });
     saveVals();
     document.getElementById('valDoneTxt').textContent='Nettoyage enregistré par '+curPerson+' à '+hh+'.';
     document.getElementById('valStep1').style.display='none';
@@ -1421,29 +1571,98 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       }
     });
     renderCleanRate();
+    try{ renderStreak(); }catch(_){ }
     try{ renderHistory(); }catch(_){ }
   }
 
-  // ===== Historique — alimenté automatiquement par les nettoyages validés =====
+  // ===== Annuler / rétablir un créneau (non destructif, traçable) =====
+  var cancelModal=document.getElementById('cancelModal'), curCancel=null;
+  function openCancel(disc,t,m,day){
+    curCancel={disc:disc,t:t,m:m,day:day};
+    var set=function(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; };
+    set('cancelCours',disc); set('cancelHeure',t); set('cancelMat',matLabelOf(m));
+    var rs=document.getElementById('cancelReason'); if(rs) rs.value='cours';
+    var ow=document.getElementById('cancelOtherWrap'); if(ow) ow.style.display='none';
+    var ot=document.getElementById('cancelOther'); if(ot) ot.value='';
+    closeVal();                               // referme une éventuelle autre modale
+    if(cancelModal) cancelModal.classList.add('on');
+  }
+  function confirmCancel(){
+    if(!curCancel) return;
+    var reason=(document.getElementById('cancelReason')||{}).value||'cours';
+    var other=((document.getElementById('cancelOther')||{}).value||'').trim();
+    var n=new Date(), hh=('0'+n.getHours()).slice(-2)+':'+('0'+n.getMinutes()).slice(-2);
+    var iso=isoOfDay(curCancel.day), m=curCancel.m;
+    CANCELS[slotKey(curCancel.day,curCancel.t,m)]={
+      iso:iso, time:curCancel.t, mat:m, matLabel:matLabelOf(m), matCls:matClassOf(m),
+      disc:curCancel.disc, reason:reason, reasonText:(reason==='autre'?other:''),
+      by:'Simon E.', at:hh, ts:Date.now(), demo:false
+    };
+    saveCancels();
+    closeVal();
+    afterSlotChange(curCancel.day);
+    toast('Créneau annulé — exclu des nettoyages attendus.');
+  }
+  function restoreSlot(disc,t,m,day){
+    delete CANCELS[slotKey(day,t,m)];
+    saveCancels();
+    afterSlotChange(day);
+    toast('Créneau rétabli.');
+  }
+  // Rafraîchit toutes les vues dépendantes après une annulation / un rétablissement
+  function afterSlotChange(day){
+    enhanceSlots();
+    var a=document.querySelector('#week .d.on'); renderDay(a?a.getAttribute('data-day'):(day||TODAY));
+    renderCleanRate();
+    try{ renderStreak(); }catch(_){ }
+    try{ renderHistory(); }catch(_){ }
+  }
+
+  // ===== Historique — alimenté automatiquement par les nettoyages validés ET les annulations =====
+  // Chaque ligne est un ÉVÉNEMENT réel daté (nettoyage validé ou créneau annulé), trié par date/heure.
   var AVCOL=['a1','a2','a3','a4'];
   function initialsOf(name){ var p=String(name||'').trim().split(/\s+/); return (((p[0]||'')[0]||'')+((p[1]||'')[0]||'')).toUpperCase()||'—'; }
   function avClassOf(name){ var s=0,n=String(name||''); for(var i=0;i<n.length;i++) s=(s+n.charCodeAt(i))%4; return AVCOL[s]; }
-  function histRowHtml(it){
-    return '<tr data-who="'+esc(it.by||'')+'" data-mat="'+esc(it.mat||'')+'" data-when="'+esc(it.date||'today')+'">'+
-      '<td>'+esc(it.dateLabel||'')+'</td><td>'+esc(it.time||'')+'</td><td>'+esc(it.disc||'')+'</td>'+
-      '<td>'+esc(it.matLabel||'')+'</td>'+
-      '<td><div class="tr-name"><span class="av sm '+avClassOf(it.by)+'">'+esc(initialsOf(it.by))+'</span>'+esc(it.by||'')+'</div></td>'+
-      '<td>'+esc(it.at||'')+'</td>'+
+  function histEvents(){
+    var ev=[];
+    VALS.items.forEach(function(it){
+      if(!it.iso) return;
+      ev.push({ iso:it.iso, time:it.time, disc:it.disc, matLabel:it.matLabel, mat:it.mat, by:it.by, at:it.at, status:'done' });
+    });
+    Object.keys(CANCELS).forEach(function(key){
+      var c=CANCELS[key]; if(!c) return;
+      var p=String(key).split('|');                       // iso | heure | MAT x
+      ev.push({ iso:c.iso||p[0], time:c.time||p[1], disc:c.disc||'—',
+        matLabel:c.matLabel||matLabelOf(c.mat||p[2]), mat:c.matCls||matClassOf(c.mat||p[2]),
+        by:'', at:c.at||'', status:'cancelled', reason:cancelLabel(c) });
+    });
+    ev.sort(function(a,b){ if(a.iso!==b.iso) return a.iso<b.iso?1:-1; return toMin(b.time)-toMin(a.time); });
+    return ev;
+  }
+  function histRowHtml(ev){
+    var when=whenOf(ev.iso);
+    if(ev.status==='cancelled'){
+      return '<tr data-who="" data-mat="'+esc(ev.mat||'')+'" data-when="'+esc(when)+'" class="hist-cancelled">'+
+        '<td>'+esc(dLabel(ev.iso))+'</td><td>'+esc(ev.time||'')+'</td><td>'+esc(ev.disc||'—')+'</td>'+
+        '<td>'+esc(ev.matLabel||'')+'</td>'+
+        '<td style="color:var(--muted)">—</td>'+
+        '<td>'+esc(ev.at||'—')+'</td>'+
+        '<td style="text-align:right"><span class="pill-st cancelled"><span class="d"></span>Annulé</span><div class="hist-reason">'+esc(ev.reason||'')+'</div></td></tr>';
+    }
+    return '<tr data-who="'+esc(ev.by||'')+'" data-mat="'+esc(ev.mat||'')+'" data-when="'+esc(when)+'">'+
+      '<td>'+esc(dLabel(ev.iso))+'</td><td>'+esc(ev.time||'')+'</td><td>'+esc(ev.disc||'')+'</td>'+
+      '<td>'+esc(ev.matLabel||'')+'</td>'+
+      '<td><div class="tr-name"><span class="av sm '+avClassOf(ev.by)+'">'+esc(initialsOf(ev.by))+'</span>'+esc(ev.by||'')+'</div></td>'+
+      '<td>'+esc(ev.at||'')+'</td>'+
       '<td style="text-align:right"><span class="pill-st done"><span class="d"></span>Validé</span></td></tr>';
   }
-  function sortedVals(){ var order={today:0,week:1,month:2}; return VALS.items.slice().sort(function(a,b){ var o=(order[a.date]||0)-(order[b.date]||0); return o?o:(toMin(b.time)-toMin(a.time)); }); }
   var currentHistFilter='all';
   function renderHistory(filter){
     var tb=document.getElementById('histBody'); if(!tb) return;
     if(filter) currentHistFilter=filter;
     var f=currentHistFilter;
-    var html=sortedVals().filter(function(it){
-      var when=it.date||'today', mat=it.mat||'', who=it.by||'';
+    var html=histEvents().filter(function(ev){
+      var when=whenOf(ev.iso), mat=ev.mat||'', who=ev.by||'';
       if(f==='all') return when==='today';
       if(f==='week') return when==='today'||when==='week';
       if(f==='month') return true;
@@ -1459,7 +1678,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var head=['Date','Heure','Discipline','Tatami','Nettoyé par','Validé à','Statut'];
     function q(s){ return '"'+String(s==null?'':s).replace(/"/g,'""')+'"'; }
     var lines=[head.map(q).join(';')];
-    sortedVals().forEach(function(it){ lines.push([it.dateLabel,it.time,it.disc,it.matLabel,it.by,it.at,'Validé'].map(q).join(';')); });
+    histEvents().forEach(function(ev){ lines.push([dLabel(ev.iso),ev.time,ev.disc,ev.matLabel,(ev.status==='cancelled'?'—':ev.by),ev.at,(ev.status==='cancelled'?('Annulé · '+(ev.reason||'')):'Validé')].map(q).join(';')); });
     try{
       var blob=new Blob(['﻿'+lines.join('\r\n')],{type:'text/csv;charset=utf-8;'});
       var url=URL.createObjectURL(blob), a=document.createElement('a');
@@ -1471,10 +1690,16 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
   // Interactions déléguées (nouvelles)
   document.addEventListener('click', function(e){
+    // Annulation / rétablissement d'un créneau (prioritaire sur la validation)
+    var xc=e.target.closest('[data-cancel]');
+    if(xc){ e.stopPropagation(); var pc=(xc.getAttribute('data-cancel')||'').split('|'); openCancel(pc[0],pc[1],pc[2],pc[3]); return; }
+    var rc=e.target.closest('[data-restore]');
+    if(rc){ e.stopPropagation(); var pr2=(rc.getAttribute('data-restore')||'').split('|'); restoreSlot(pr2[0],pr2[1],pr2[2],pr2[3]); return; }
+    if(e.target.closest('#cancelConfirm')){ confirmCancel(); return; }
     var v=e.target.closest('[data-validate]');
     if(v){ var p=(v.getAttribute('data-validate')||'').split('|'); openVal(p[0],p[1],p[2],p[3]); return; }
     if(e.target.closest('[data-close]')){ closeVal(); return; }
-    if(e.target===modal){ closeVal(); return; }
+    if(e.target===modal || e.target===cancelModal){ closeVal(); return; }
     var pr=e.target.closest('#valPeople .person');
     if(pr){ document.querySelectorAll('#valPeople .person').forEach(function(x){x.classList.remove('on');}); pr.classList.add('on'); curPerson=pr.getAttribute('data-person'); return; }
     if(e.target.closest('#valConfirm')){ confirmVal(); return; }
@@ -1488,6 +1713,12 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(fb2){ document.querySelectorAll('#histFilters .fbtn').forEach(function(x){x.classList.remove('on');}); fb2.classList.add('on'); filterHist(fb2.getAttribute('data-f')); return; }
     if(e.target.closest('#histExport')){ exportHistoryCSV(); return; }
     if(e.target.closest('#histTable tbody tr')){ toast('Désinfection EN 14476 · 20 ml/L · contact 5 min.'); return; }
+  });
+  // Motif « Autre » : révèle le champ libre (facultatif)
+  document.addEventListener('change', function(e){
+    if(e.target && e.target.id==='cancelReason'){
+      var ow=document.getElementById('cancelOtherWrap'); if(ow) ow.style.display=(e.target.value==='autre'?'':'none');
+    }
   });
 
   var rt=document.getElementById('railToggle');
