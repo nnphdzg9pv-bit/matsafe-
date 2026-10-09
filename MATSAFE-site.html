@@ -1961,11 +1961,6 @@ footer{
   letter-spacing:.2em;font-size:.72rem;color:var(--black);
 }
 .pfocus-count{margin-left:.6rem;color:rgba(10,10,10,.4)}
-.pfocus-hint{
-  position:absolute;bottom:2.1rem;left:0;right:0;z-index:5;text-align:center;
-  font-family:'Barlow',sans-serif;font-weight:500;text-transform:uppercase;
-  letter-spacing:.16em;font-size:.7rem;color:rgba(10,10,10,.4);
-}
 /* Liste en absolu (top:0) : le centrage se fait uniquement par translateY en JS,
    ce qui rend le calcul exact (pas de décalage flex). */
 .pfocus-list{
@@ -2496,10 +2491,6 @@ nav a:focus-visible,.mobile-menu a:focus-visible,.btn-white:focus-visible,.btn-g
   .svc-pills--row .svc-pill{flex:0 0 auto;width:auto}
 }
 
-.svc-hint{
-  margin:1.8rem 0 0;font-family:'Barlow Condensed',sans-serif;font-weight:700;
-  font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gray);
-}
 
 /* modale service : réutilise .prob-modal / .prob-modal-box / .pm-* + champs additionnels */
 .svc-m-tags{display:flex;flex-wrap:wrap;gap:.4rem .5rem;margin:-.4rem 0 1.2rem}
@@ -2626,11 +2617,6 @@ a.svcl-row{color:var(--black)}
   letter-spacing:.2em;font-size:.72rem;color:var(--black);
 }
 .svcx-count{margin-left:.6rem;color:rgba(10,10,10,.4)}
-.svcx-hint{
-  position:absolute;bottom:2.1rem;left:0;right:0;z-index:5;text-align:center;
-  font-family:'Barlow',sans-serif;font-weight:500;text-transform:uppercase;
-  letter-spacing:.16em;font-size:.7rem;color:rgba(10,10,10,.4);
-}
 .svcx-deck{position:absolute;inset:0;z-index:2}
 .svcx-card{
   position:absolute;left:50%;top:50%;
@@ -2683,7 +2669,6 @@ a.svcl-row{color:var(--black)}
   .svcx-bg span{font-size:clamp(2.2rem,9vw,4rem)}
   .svcx-deck{position:static;display:flex;flex-direction:column;gap:1.5rem;width:100%;max-width:460px}
   .svcx-card{position:static;transform:none;opacity:1;width:100%}
-  .svcx-hint{position:static;margin-top:1rem}
 }
 
 .route[hidden]{display:none!important}
@@ -3065,7 +3050,6 @@ h1,h2,h3,h4,h1 *,h2 *,h3 *,h4 *,
       <li class="pf-word"><button type="button" class="pf-btn" onclick="openProb(4)">Arrêt de la pratique</button><span class="pf-tag" aria-hidden="true">Performance</span></li>
       <li class="pf-word"><button type="button" class="pf-btn" onclick="openProb(5)">Image dégradée</button><span class="pf-tag" aria-hidden="true">Réputation</span></li>
     </ul>
-    <div class="pfocus-hint">Faites défiler · cliquez un enjeu pour le détail</div>
   </div>
 </section>
 
@@ -3161,7 +3145,6 @@ h1,h2,h3,h4,h1 *,h2 *,h3 *,h4 *,
         <span class="svcx-foot"><span class="svcx-num">05</span></span>
       </button>
     </div>
-    <div class="svcx-hint">Faites défiler · cliquez une carte pour le détail</div>
   </div>
 </section>
 
@@ -3189,8 +3172,6 @@ h1,h2,h3,h4,h1 *,h2 *,h3 *,h4 *,
     <button class="svc-pill" role="listitem" onclick="openStep(3)" aria-haspopup="dialog"><span class="svc-pill-n">04</span>Certification</button>
   </div>
 
-  <p class="svc-hint reveal">Cliquez sur une étape pour en déployer le détail.</p>
-  <p class="svc-hint reveal">Cliquez sur une étape pour en déployer le détail.</p>
 </section>
 </section>
 
