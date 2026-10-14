@@ -2145,20 +2145,6 @@ body.pm-open{overflow:hidden}
 /* La carte hérite de .ed-section : on neutralise juste le padding bas
    pour que le bloc carte + panneau vienne au ras du bord. */
 .map-section{padding-bottom:0}
-.map-legend{
-  display:flex;gap:1.75rem;align-items:center;flex-wrap:wrap;
-  margin-top:2.5rem;padding-bottom:1.1rem;
-  border-bottom:1px solid var(--border);
-}
-.map-lg{
-  display:flex;align-items:center;gap:.5rem;
-  font-family:'Barlow Condensed',sans-serif;font-weight:700;
-  font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--black);
-}
-.map-lg-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
-.map-lg-dot--exc{background:#0A0A0A}
-.map-lg-dot--pre{background:#767676}
-.map-lg-dot--std{background:#C9C6C0}
 .map-layout {
   display: grid;
   grid-template-columns: 1fr 360px;
@@ -2234,13 +2220,6 @@ body.pm-open{overflow:hidden}
   background: var(--white);
 }
 .map-club-item.active { border-left: 3px solid var(--black); }
-.mci-level {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700; font-size: .58rem;
-  letter-spacing: .16em; text-transform: uppercase;
-  color: var(--gray); margin-bottom: .3rem;
-  display: flex; align-items: center; gap: .35rem;
-}
 .mci-name {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 900; font-size: 1rem;
@@ -2266,13 +2245,6 @@ body.pm-open{overflow:hidden}
 .map-popup {
   font-family: 'Barlow', sans-serif;
   padding: 1.1rem 1.25rem; min-width: 220px;
-}
-.mp-level {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700; font-size: .6rem;
-  letter-spacing: .16em; text-transform: uppercase;
-  color: var(--gray); margin-bottom: .3rem;
-  display: flex; align-items: center; gap: .35rem;
 }
 .mp-name {
   font-family: 'Barlow Condensed', sans-serif;
@@ -3329,12 +3301,6 @@ h1,h2,h3,h4,h1 *,h2 *,h3 *,h4 *,
 <section class="route" id="route-clubs" data-route="clubs" hidden>
 
 <section class="ed-section map-section" id="s-carte">
-  <div class="map-legend">
-    <span class="map-lg"><i class="map-lg-dot map-lg-dot--exc"></i>Excellence</span>
-    <span class="map-lg"><i class="map-lg-dot map-lg-dot--pre"></i>Premium</span>
-    <span class="map-lg"><i class="map-lg-dot map-lg-dot--std"></i>Standard</span>
-  </div>
-
   <div class="map-layout">
     <div id="shl-map"></div>
     <div class="map-sidebar" id="map-sidebar">
@@ -3342,7 +3308,7 @@ h1,h2,h3,h4,h1 *,h2 *,h3 *,h4 *,
         <input type="text" class="map-search" id="map-search" placeholder="Rechercher un club, une ville…" oninput="mapSearch()"/>
       </div>
       <!-- Valeur de départ : le script la recalcule dès le rendu de la liste. -->
-      <span class="map-count" id="map-count">12 clubs</span>
+      <span class="map-count" id="map-count">1 club</span>
       <div id="map-list"></div>
     </div>
   </div>
@@ -4024,20 +3990,22 @@ const CONTACT_EMAIL = 'contact@matsafe.fr';
 </script>
 <script>
 const CLUBS=[
-  {id:'1',name:'Excellence BJJ Paris',city:'Paris',region:'Île-de-France',level:'excellence',disciplines:['BJJ','Grappling'],certifiedAt:'2024-03-15',score:97,members:310,lat:48.8533,lng:2.3752,address:'18 rue de la Roquette, 75011 Paris',email:'contact@excellencebjj-paris.fr',phone:'01 43 55 12 34',website:'excellencebjj-paris.fr',desc:"Club de référence parisien pour la pratique du BJJ gi et no-gi. 380m² de tapis professionnels, vestiaires entièrement rénovés en 2023, protocole de désinfection industrielle après chaque session."},
-  {id:'2',name:'Lion MMA Lyon',city:'Lyon',region:'Auvergne-Rhône-Alpes',level:'premium',disciplines:['MMA','Muay Thaï','Grappling'],certifiedAt:'2023-09-01',score:91,members:220,lat:45.7578,lng:4.8320,address:'42 cours Lafayette, 69003 Lyon',email:'info@lion-mma.fr',phone:'04 72 33 44 55',website:'lion-mma.fr',desc:"Académie MMA de référence lyonnaise. Cage pro homologuée, ring boxe, zone grappling 200m². Protocole sanitaire documenté 3x/jour."},
-  {id:'3',name:'Dojo Matsuri Marseille',city:'Marseille',region:"Provence-Alpes-Côte d'Azur",level:'standard',disciplines:['Judo','Jujitsu'],certifiedAt:'2024-01-20',score:82,members:305,lat:43.2686,lng:5.3969,address:'7 bd Michelet, 13008 Marseille',email:'dojo.matsuri@gmail.com',phone:'04 91 22 33 44',website:null,desc:'Club de judo historique fondé en 1987. Tatamis renouvelés annuellement, vestiaires séparés, douches eau chaude permanente.'},
-  {id:'4',name:'Académie Top Fight',city:'Toulouse',region:'Occitanie',level:'excellence',disciplines:['MMA','Boxe','BJJ'],certifiedAt:'2023-11-10',score:95,members:180,lat:43.6047,lng:1.4442,address:'22 allée de Barcelone, 31000 Toulouse',email:'contact@topfight-toulouse.fr',phone:'05 61 44 55 66',website:'topfight-toulouse.fr',desc:'Académie pluridisciplinaire de 800m² au cœur de Toulouse. 3 rings, zone grappling 200m². Protocole nettoyage documenté avec fiches de contrôle.'},
-  {id:'5',name:'Club Bushido Bordeaux',city:'Bordeaux',region:'Nouvelle-Aquitaine',level:'premium',disciplines:['Judo','Karaté'],certifiedAt:'2024-02-28',score:88,members:160,lat:44.8378,lng:-0.5792,address:'15 cours de la Libération, 33000 Bordeaux',email:'bushido.bordeaux@gmail.com',phone:'05 56 77 88 99',website:null,desc:"Club traditionnel d'arts martiaux fondé en 1993. Tatamis igusa naturel, rituel de nettoyage collectif après chaque séance."},
-  {id:'6',name:'Nantes Grappling Academy',city:'Nantes',region:'Pays de la Loire',level:'excellence',disciplines:['BJJ','Grappling','Lutte'],certifiedAt:'2024-04-01',score:98,members:145,lat:47.2184,lng:-1.5536,address:'8 rue de Strasbourg, 44000 Nantes',email:'nga@grapplingnantes.fr',phone:'02 40 55 66 77',website:'grapplingnantes.fr',desc:"Première académie spécialisée grappling de Loire-Atlantique. EVA mats compétition renouvelés tous les 18 mois, désinfection pro hebdomadaire."},
-  {id:'7',name:'Fighting Spirit Lille',city:'Lille',region:'Hauts-de-France',level:'premium',disciplines:['MMA','Boxe','Muay Thaï'],certifiedAt:'2023-07-15',score:90,members:190,lat:50.6292,lng:3.0573,address:'33 rue Nationale, 59000 Lille',email:'fs.lille@gmail.com',phone:'03 20 44 55 66',website:'fightingspirit-lille.fr',desc:"Leader MMA dans la métropole lilloise. Vestiaires rénovés 2023, partenariat CHU Lille pour protocoles de prévention."},
-  {id:'8',name:'Aix Combat Sports',city:'Aix-en-Provence',region:"Provence-Alpes-Côte d'Azur",level:'excellence',disciplines:['BJJ','MMA','Grappling'],certifiedAt:'2023-06-01',score:96,members:130,lat:43.5297,lng:5.4474,address:'12 av. des Belges, 13100 Aix-en-Provence',email:'contact@aix-combat.fr',phone:'04 42 33 44 55',website:'aix-combat.fr',desc:'Club premium aixois. Vestiaires climatisés, générateur ozone bihebdomadaire, tapis traités avec solution antibactérienne certifiée.'},
-  {id:'9',name:'Rennes Judo Club',city:'Rennes',region:'Bretagne',level:'standard',disciplines:['Judo','Jujitsu'],certifiedAt:'2024-01-10',score:84,members:260,lat:48.1173,lng:-1.6778,address:'5 bd de la Liberté, 35000 Rennes',email:'rjc@rennes-judo.fr',phone:'02 99 44 55 66',website:null,desc:'Club historique FFJudo. Tatamis EVA compétition, douches séparées. 260 membres dont 90 moins de 16 ans.'},
-  {id:'10',name:'Strasbourg Fight Club',city:'Strasbourg',region:'Grand Est',level:'premium',disciplines:['MMA','Boxe','Lutte'],certifiedAt:'2023-10-20',score:89,members:175,lat:48.5734,lng:7.7521,address:'19 rue du Faubourg National, 67000 Strasbourg',email:'sfc@sfcstrasbourg.fr',phone:'03 88 22 33 44',website:'sfcstrasbourg.fr',desc:"Club MMA de référence en Alsace. Cage MMA, ring professionnel. Nettoyage industriel 2x/semaine, désinfection UV des équipements."},
-  {id:'11',name:'Montpellier Submission',city:'Montpellier',region:'Occitanie',level:'premium',disciplines:['BJJ','Grappling'],certifiedAt:'2024-03-01',score:93,members:120,lat:43.6110,lng:3.8767,address:'28 rue de la Loge, 34000 Montpellier',email:'submission.montpellier@gmail.com',phone:'04 67 55 66 77',website:null,desc:"Académie 100% BJJ et no-gi grappling. Nettoyage des mats après chaque session affiché publiquement."},
-  {id:'12',name:'Grenoble Combat Sports',city:'Grenoble',region:'Auvergne-Rhône-Alpes',level:'excellence',disciplines:['BJJ','MMA','Lutte'],certifiedAt:'2023-04-20',score:94,members:140,lat:45.1885,lng:5.7245,address:'18 rue Félix Poulat, 38000 Grenoble',email:'contact@grenoble-combat.fr',phone:'04 76 33 44 55',website:'grenoble-combat.fr',desc:'Club alpin pluridisciplinaire. Infrastructure premium, vestiaires eau chaude illimitée, protocoles adaptés aux sports de contact intense.'},
+  {
+    id: '1',
+    name: 'Cube Fight Club',
+    city: 'Paris',
+    region: 'Île-de-France',
+    disciplines: ['BJJ', 'Grappling', 'MMA'],
+    certifiedAt: null, // à renseigner (AAAA-MM-JJ) : la ligne « Certifié depuis » ne s'affiche pas tant que la date est vide
+    address: '21 boulevard Richard-Lenoir, 75011 Paris',
+    lat: 48.856704,
+    lng: 2.3702516,
+    email: null,
+    phone: null,
+    website: null,
+    desc: "Club pionnier de la démarche MatSafe et premier club labellisé."
+  }
 ];
-const LL={excellence:'Excellence',premium:'Premium',standard:'Standard'};
 function fd(iso){return new Date(iso).toLocaleDateString('fr-FR',{month:'long',year:'numeric'})}
 
 // ── MODAL FICHE CLUB ──
@@ -4047,17 +4015,19 @@ let lastFocus=null;
 function openM(id){
   const c=CLUBS.find(x=>x.id===id);if(!c)return;
   lastFocus=document.activeElement;
-  document.getElementById('mlvl').textContent='Club certifié · '+LL[c.level];
+  document.getElementById('mlvl').textContent='Club certifié';
   document.getElementById('mnm').textContent=c.name;
   document.getElementById('mct').textContent=c.city+' · '+c.region;
   document.getElementById('mdesc').textContent=c.desc;
-  document.getElementById('mrows').innerHTML=`
-    <div class="modal-row"><b>Adresse</b>${c.address}</div>
-    <div class="modal-row"><b>Tél.</b><a href="tel:${c.phone.replace(/\s/g,'')}">${c.phone}</a></div>
-    <div class="modal-row"><b>Email</b><a href="mailto:${c.email}">${c.email}</a></div>
-    ${c.website?`<div class="modal-row"><b>Web</b><a href="https://${c.website}" target="_blank" rel="noopener">${c.website} ↗</a></div>`:''}
-    <div class="modal-row"><b>Membres</b>${c.members} adhérents</div>
-    <div class="modal-row"><b>Certifié</b>depuis ${fd(c.certifiedAt)}</div>`;
+  // Une ligne n'apparaît que si l'information est renseignée (aucun champ vide).
+  const certOk=c.certifiedAt&&!isNaN(new Date(c.certifiedAt));
+  document.getElementById('mrows').innerHTML=[
+    c.address?`<div class="modal-row"><b>Adresse</b>${c.address}</div>`:'',
+    c.phone?`<div class="modal-row"><b>Tél.</b><a href="tel:${c.phone.replace(/\s/g,'')}">${c.phone}</a></div>`:'',
+    c.email?`<div class="modal-row"><b>Email</b><a href="mailto:${c.email}">${c.email}</a></div>`:'',
+    c.website?`<div class="modal-row"><b>Web</b><a href="https://${c.website}" target="_blank" rel="noopener">${c.website} ↗</a></div>`:'',
+    certOk?`<div class="modal-row"><b>Certifié</b>depuis ${fd(c.certifiedAt)}</div>`:''
+  ].join('');
   document.getElementById('mbg').classList.add('open');
   document.getElementById('mbg').setAttribute('aria-hidden','false');
   document.body.style.overflow='hidden';
@@ -4080,14 +4050,19 @@ let shlMap = null;
 let mapMarkers = [];
 let activeClubId = null;
 
-const LEVEL_MARKER_COLOR = {
-  excellence: '#0A0A0A',
-  premium:    '#767676',
-  standard:   '#AAAAAA',
-};
+// Style de marqueur unique (ancien style du niveau le plus foncé).
+const MARKER_COLOR = '#0A0A0A';
 
-function makeMarkerIcon(level, active) {
-  const c = LEVEL_MARKER_COLOR[level];
+// Vue par défaut : centrée sur le club tant qu'il n'y en a qu'un (Paris),
+// France entière au-delà.
+function mapDefaultView() {
+  return CLUBS.length === 1
+    ? { center: [CLUBS[0].lat, CLUBS[0].lng], zoom: 12 }
+    : { center: [46.6, 2.4], zoom: 5 };
+}
+
+function makeMarkerIcon(active) {
+  const c = MARKER_COLOR;
   const size = active ? 18 : 13;
   const border = active ? 3 : 2;
   return L.divIcon({
@@ -4129,7 +4104,7 @@ function initMap() {
   shlMap = L.map('shl-map', {
     zoomControl: false,
     scrollWheelZoom: false,
-  }).setView([46.6, 2.4], 5);
+  }).setView(mapDefaultView().center, mapDefaultView().zoom);
 
   // Tuiles CartoDB Positron - cohérent avec l'esthétique épurée du site
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -4152,7 +4127,7 @@ function renderMapMarkers(clubs) {
   clubs.forEach(club => {
     const isActive = club.id === activeClubId;
     const marker = L.marker([club.lat, club.lng], {
-      icon: makeMarkerIcon(club.level, isActive),
+      icon: makeMarkerIcon(isActive),
       zIndexOffset: isActive ? 1000 : 0,
     }).addTo(shlMap);
 
@@ -4162,10 +4137,6 @@ function renderMapMarkers(clubs) {
 
     marker.bindPopup(`
       <div class="map-popup">
-        <div class="mp-level">
-          <span style="width:7px;height:7px;border-radius:50%;background:${LEVEL_MARKER_COLOR[club.level]};display:inline-block"></span>
-          ${LL[club.level]}
-        </div>
         <div class="mp-name">${club.name}</div>
         <div class="mp-city">${club.city} · ${club.region}</div>
         <div class="mp-discs">${discs}</div>
@@ -4196,10 +4167,6 @@ function renderMapList(clubs) {
     <div class="map-club-item${c.id === activeClubId ? ' active' : ''}"
          id="mci-${c.id}"
          onclick="setActiveClub('${c.id}')">
-      <div class="mci-level">
-        <span style="width:6px;height:6px;border-radius:50%;background:${LEVEL_MARKER_COLOR[c.level]};display:inline-block"></span>
-        ${LL[c.level]}
-      </div>
       <div class="mci-name">${c.name}</div>
       <div class="mci-city">${c.city}</div>
       <div class="mci-discs">
@@ -4231,7 +4198,7 @@ function setActiveClub(id) {
   // Update marqueurs
   mapMarkers.forEach(m => {
     const c = CLUBS.find(x => x.id === m._clubId);
-    if (c) m.setIcon(makeMarkerIcon(c.level, c.id === id));
+    if (c) m.setIcon(makeMarkerIcon(c.id === id));
   });
 
   // Ouvrir popup
@@ -4252,7 +4219,7 @@ function mapSearch() {
   renderMapList(filtered);
   if (!shlMap) return;                 // liste seule : rien à repositionner
   renderMapMarkers(filtered);
-  if (!q) shlMap.flyTo([46.6, 2.4], 5, { duration: 0.6 });
+  if (!q) { const v = mapDefaultView(); shlMap.flyTo(v.center, v.zoom, { duration: 0.6 }); }
 }
 
 // Init map quand la section devient visible
