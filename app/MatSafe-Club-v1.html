@@ -1122,7 +1122,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         <div class="gm-head"><div class="msgpub-kick">Diffusion · MATSAFE Fighter</div><h2 class="evmgr-title">Nouvelle information</h2></div>
         <div class="gm-form">
           <div class="gm-field"><label>Catégorie</label>
-            <select class="ano-inp ano-sel" id="pubCat"><option value="hygiene">Hygiène</option><option value="reco">Recommandation</option><option value="stage">Stage</option><option value="animation">Animation</option><option value="alerte">Alerte</option><option value="important">Important</option></select></div>
+            <select class="ano-inp ano-sel" id="pubCat"><option value="">Sans catégorie</option><option value="hygiene" selected>Hygiène</option><option value="alerte">Alerte</option><option value="stage">Stage</option><option value="planning">Planning</option></select></div>
           <div id="pubEventFields" hidden>
             <div class="gm-field"><label>Intervenant <span class="opt">(qui l'anime)</span></label>
               <input type="text" class="ano-inp" id="pubEvHost" maxlength="80" placeholder="Ex. : Gordon Ryan"></div>
@@ -2328,16 +2328,26 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   // En production : POST/PUT/DELETE vers l'API du club (même interface loadPubs/savePubs).
   var PUB_KEY='matsafe_club_posts';
   var PUB_AUTHOR={ club_id:'cube', author_id:'a-simon', author_name:'Simon Ehrlacher', author_role:'Référent hygiène' };
-  var PUB_CAT_LABEL={hygiene:'Hygiène',reco:'Recommandation',stage:'Stage',animation:'Animation',alerte:'Alerte',important:'Important',club:'Club'};
-  var PUB_CAT_ACC={hygiene:true,reco:false,stage:false,animation:false,alerte:true,important:true,club:false};
-  function loadPubs(){ try{ var r=localStorage.getItem(PUB_KEY); var a=r?JSON.parse(r):[]; return Array.isArray(a)?a:[]; }catch(_){ return []; } }
+  // 4 catégories + « Sans catégorie » (valeur vide). Les anciennes clés restent présentes
+  // (mappées sur les nouveaux libellés) pour un affichage correct avant reprise.
+  var PUB_CAT_LABEL={hygiene:'Hygiène',alerte:'Alerte',stage:'Stage',planning:'Planning',club:'Club',reco:'Hygiène',important:'Alerte',animation:'Stage'};
+  var PUB_CAT_ACC={hygiene:true,alerte:true,stage:false,planning:false,club:false,reco:true,important:true,animation:false};
+  // Reprise unique des anciennes catégories : reco→hygiene, important→alerte, animation→stage
+  // (l'intervenant, la date et l'heure de l'événement sont conservés).
+  var PUB_CAT_MIGRATE={reco:'hygiene', important:'alerte', animation:'stage'};
+  function loadPubs(){ try{ var r=localStorage.getItem(PUB_KEY); var a=r?JSON.parse(r):[]; if(!Array.isArray(a)) return [];
+      var changed=false;
+      for(var i=0;i<a.length;i++){ var p=a[i]; if(p && p.category && PUB_CAT_MIGRATE[p.category]){ p.category=PUB_CAT_MIGRATE[p.category]; changed=true; } }
+      if(changed){ try{ localStorage.setItem(PUB_KEY, JSON.stringify(a)); }catch(_){ } }
+      return a;
+    }catch(_){ return []; } }
   function savePubs(a){ try{ localStorage.setItem(PUB_KEY, JSON.stringify(a)); }catch(_){ } }
   function pubDateLabel(iso){ try{ var d=new Date(iso); if(isNaN(d)) return ''; var mo=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.']; return d.getDate()+' '+mo[d.getMonth()]+' '+d.getFullYear(); }catch(_){ return ''; } }
   // Formulaire réduit à l'essentiel : catégorie + message, publication immédiate.
   // La date de création est enregistrée en interne (jamais demandée) ; pas d'expiration :
   // l'information reste visible jusqu'à ce que le responsable la supprime.
   // Catégories « événement » : le formulaire affiche en plus Intervenant / Date / Heure.
-  var PUB_EVENT_CATS={stage:1, animation:1};
+  var PUB_EVENT_CATS={stage:1};
   function pubIsEvent(cat){ return !!PUB_EVENT_CATS[cat]; }
   var PUB_ICAL='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16" rx="3"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>';
   var PUB_IPER='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20c.8-3.5 3.8-5.5 7.5-5.5s6.7 2 7.5 5.5"/></svg>';
@@ -2351,12 +2361,12 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   }
   // Affiche/masque les champs d'événement selon la catégorie choisie.
   function syncPubForm(){
-    var cat=(document.getElementById('pubCat')||{}).value||'hygiene', ev=pubIsEvent(cat);
+    var cat=(document.getElementById('pubCat')||{}).value||'', ev=pubIsEvent(cat);
     var box=document.getElementById('pubEventFields'); if(box) box.hidden=!ev;
     var opt=document.getElementById('pubBodyOpt'); if(opt) opt.hidden=!ev;
   }
   function doPubSave(){
-    var cat=(document.getElementById('pubCat')||{}).value||'hygiene';
+    var cat=(document.getElementById('pubCat')||{}).value||'';
     var body=((document.getElementById('pubBody')||{}).value||'').trim();
     var ev=null;
     if(pubIsEvent(cat)){
@@ -2377,7 +2387,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     savePubs(pubs);
     var b=document.getElementById('pubBody'); if(b) b.value='';
     ['pubEvHost','pubEvDate','pubEvTime'].forEach(function(id){ var e=document.getElementById(id); if(e) e.value=''; });
-    var c=document.getElementById('pubCat'); if(c) c.selectedIndex=0;
+    var c=document.getElementById('pubCat'); if(c) c.value='hygiene';
     syncPubForm();
     renderPubs();
     toast('Publié sur MatSafe Fighter.');
@@ -2392,10 +2402,11 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     });
   }
   function pubCardHtml(p){
-    var acc=PUB_CAT_ACC[p.category];
+    var hasCat=!!p.category, acc=PUB_CAT_ACC[p.category];
+    var catSpan=hasCat?'<span class="pub-cat'+(acc?' acc':'')+'">'+esc(PUB_CAT_LABEL[p.category]||p.category)+'</span>':'';
     return '<article class="pub-item">'+
       '<div class="pub-item-main">'+
-        '<div class="pub-item-top"><span class="pub-cat'+(acc?' acc':'')+'">'+esc(PUB_CAT_LABEL[p.category]||p.category)+'</span>'+
+        '<div class="pub-item-top">'+catSpan+
           '<span class="pub-date">'+esc(pubDateLabel(p.published_at||p.created_at))+'</span></div>'+
         pubEventHtml(p.event)+
         (p.content?'<p class="pub-text">'+esc(p.content)+'</p>':'')+
