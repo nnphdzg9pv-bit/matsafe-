@@ -881,6 +881,80 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .rt-stars .star svg{width:14px;height:14px;display:block;fill:#DAD5CC}
 .rt-stars .star.on svg{fill:#E3A008}
 .ret-mhead .rt-stars{margin:0}
+
+/* ===== Prompt 2/2 : zones, photo de preuve, incidents, traitement des retours (même DA) ===== */
+/* L'attribut [hidden] l'emporte toujours (sinon display:flex/inline-block le masquerait) */
+[hidden]{display:none!important}
+/* Les modales plus longues (incident, retour) défilent à l'intérieur de leur cadre */
+.modal .sheet{max-height:calc(100vh - 48px);overflow-y:auto}
+/* Photo facultative dans les modales (validation, incident, retour) */
+.val-photo{margin:0 0 16px}
+.val-photo-prev{position:relative;display:inline-block;margin-top:10px}
+.val-photo-prev img{max-width:160px;max-height:120px;border-radius:var(--r);border:1px solid var(--line2);display:block}
+.val-photo-x{position:absolute;top:-8px;right:-8px;width:24px;height:24px;border-radius:50%;background:var(--ink);color:#fff;border:0;display:grid;place-items:center;cursor:pointer}
+.val-photo-x svg{stroke:#fff;fill:none;stroke-width:2.4;stroke-linecap:round}
+
+/* Zones dans le planning (sous les créneaux de chaque jour) */
+.day-zones{margin-top:10px;padding-top:12px;border-top:1px solid var(--line)}
+.zones-h{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.08em;font-weight:700;font-size:11px;color:var(--ink2);margin-bottom:8px}
+.zrow{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--line)}
+.zrow:last-child{border-bottom:0}
+.zname{font-size:13.5px;color:var(--ink);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.zcount{font-family:var(--font-disp);font-weight:700;font-size:12.5px;color:var(--ink2);flex:none}
+.zrow .pill-st{flex:none}
+.zbtn{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.04em;font-size:11px;font-weight:700;color:#fff;background:var(--brand);border:0;border-radius:var(--r-sm);padding:7px 11px;cursor:pointer;flex:none}
+.zbtn:hover{background:var(--brand-d)}
+/* Dans l'accueil (≤1180px), le planning du jour s'étend : zones visibles sans scroll interne */
+#dayListMain{max-height:none;overflow:visible}
+/* Zones dans le « Planning du jour » compact (rail + accueil) */
+.mini-zones-h{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.08em;font-weight:700;font-size:10.5px;color:var(--ink2);margin:12px 0 2px;padding-top:10px;border-top:1px solid var(--line)}
+.mini-zone .mdot.zdot{background:var(--muted)}
+.mini-zone.can{cursor:pointer}
+
+/* Ligne « Zones : X sur Y » sous le taux de la semaine */
+.zrate{margin:10px 0 0;font-size:13.5px;color:var(--ink2);background:var(--panel);border:1px solid var(--line2);border-radius:var(--r-sm);padding:11px 15px}
+.zrate b{color:var(--ink);font-weight:700}
+
+/* Incidents — bloc d'accueil */
+.inc-home{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:16px}
+.inc-signal-btn{display:inline-flex;align-items:center;gap:9px;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-weight:700;font-size:13px;color:var(--brand);background:var(--panel);border:1px solid #E6C9C4;border-radius:var(--r-sm);padding:12px 16px;cursor:pointer}
+.inc-signal-btn:hover{background:#FBF1EF}
+.inc-signal-btn svg{width:18px;height:18px;stroke:var(--brand);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.inc-open-line{display:inline-flex;align-items:center;gap:9px;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--ink);background:var(--panel);border:1px solid var(--line2);border-radius:var(--r-sm);padding:11px 15px;cursor:pointer}
+.inc-open-line:hover{background:#F2F0EC}
+.inc-open-dot{width:9px;height:9px;border-radius:50%;background:var(--red-d);flex:none}
+.inc-chev{width:15px;height:15px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* Modale incident : puces de type, rappels, liste des incidents ouverts */
+.head-tools{display:flex;gap:10px;flex-wrap:wrap}
+.inc-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.inc-health{background:#FBF1EF;border:1px solid #E6C9C4;border-radius:var(--r-sm);padding:11px 14px;font-size:13px;line-height:1.5;color:var(--red-d);margin-bottom:14px}
+.inc-proto{background:#FAF9F7;border:1px solid var(--line2);border-radius:var(--r-sm);padding:10px 14px;font-size:12.5px;line-height:1.5;color:var(--ink2);margin:0 0 12px}
+.inc-proto b{color:var(--ink);font-weight:700;display:block;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-size:11px;margin-bottom:3px}
+.inc-list{display:flex;flex-direction:column;gap:10px}
+.inc-li{display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;background:var(--panel);border:1px solid var(--line2);border-radius:var(--r-sm);padding:13px 15px;cursor:pointer;font-family:inherit}
+.inc-li:hover{background:#F2F0EC}
+.inc-li .inc-li-b{flex:1;min-width:0}
+.inc-li .inc-li-t{font-family:var(--font-disp);font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:.01em;color:var(--ink)}
+.inc-li .inc-li-d{font-size:13px;color:var(--ink2);margin-top:3px;line-height:1.45}
+.inc-li .inc-li-m{font-size:11.5px;color:var(--muted);margin-top:4px}
+.inc-list-empty{color:var(--ink2);font-size:14px;padding:18px 2px;text-align:center}
+
+/* Traitement d'un retour : bloc interne + réponse adhérent */
+.ret-treat{border-top:1px solid var(--line);margin-top:4px;padding-top:16px}
+.ret-treat .people{margin-bottom:14px}
+.ret-reply-label{display:block;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-weight:700;font-size:11.5px;color:var(--ink2);margin-bottom:8px}
+#retClose{margin-top:10px}
+.btn-ghost.wide{width:100%;display:block}
+
+/* Historique : colonne incidents + icône photo */
+.hist-col-ic.hc-inc{background:#F7E9E7}.hist-col-ic.hc-inc svg{stroke:var(--red-d)}
+.hist-cols{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:980px){.hist-cols{grid-template-columns:1fr}}
+.tl-cam{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:7px;background:#FAF9F7;border:1px solid var(--line2);cursor:pointer;margin-top:4px;padding:0}
+.tl-cam svg{width:15px;height:15px;stroke:var(--ink2);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tl-cam:hover{background:#F2F0EC}
+.hist-col .tl-cam{grid-column:3;justify-self:start}
 </style>
 </head>
 <body>
@@ -924,6 +998,12 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         <button class="rail-btn" data-go="planning">Tous les cours de la semaine</button>
       </section>
 
+      <!-- Incidents : signalement + accès aux incidents ouverts -->
+      <section class="inc-home" aria-label="Incidents">
+        <button class="inc-signal-btn" data-incident-new><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4M12 17h.01M10.3 3.9 2.3 18a2 2 0 0 0 1.7 3h16a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>Signaler un incident</button>
+        <button class="inc-open-line" id="incOpenLine" data-inc-open hidden><span class="inc-open-dot"></span><span id="incOpenTxt">Incidents ouverts : 0</span><svg class="inc-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+      </section>
+
       <!-- Indicateur hebdo : taux de nettoyages réalisés — le chiffre fait office de jauge -->
       <section class="crate" id="crate" aria-label="Taux de nettoyages réalisés cette semaine">
         <div class="crate-fig"><span class="crate-pct" id="cratePct" style="--fill:0%">0%</span></div>
@@ -934,6 +1014,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
           <div class="crate-bar" aria-hidden="true"><span id="crateBar" style="width:0%"></span></div>
         </div>
       </section>
+
+      <!-- Taux des zones hors tatamis (vestiaires, douches, sanitaires, matériel…) -->
+      <p class="zrate" id="zrate" hidden></p>
 
       <div class="block block-msg">
         <h3>Messages</h3>
@@ -1068,7 +1151,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
     <!-- HISTORIQUE -->
     <section class="screen" data-screen="preuves">
-      <div class="head"><div><h1>Historique</h1><p>Le journal d'activité du club : nettoyages, créneaux annulés et suivi des retours adhérents, dans l'ordre chronologique.</p></div><button class="btn-ghost" id="histExport">Exporter (CSV)</button></div>
+      <div class="head"><div><h1>Historique</h1><p>Le journal d'activité du club : nettoyages, zones, incidents, créneaux annulés et suivi des retours adhérents, dans l'ordre chronologique.</p></div><div class="head-tools"><button class="btn-ghost" data-incident-new>Signaler un incident</button><button class="btn-ghost" id="histExport">Exporter (CSV)</button></div></div>
       <div class="filters" id="histFilters">
         <button class="fbtn on" data-f="all">Aujourd'hui</button>
         <button class="fbtn" data-f="week">Cette semaine</button>
@@ -1082,6 +1165,10 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         <div class="hist-col">
           <div class="hist-col-h"><span class="hist-col-ic hc-ret"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V6a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg></span><h3>Retours adhérents</h3></div>
           <div class="timeline" id="histRetours"></div>
+        </div>
+        <div class="hist-col">
+          <div class="hist-col-h"><span class="hist-col-ic hc-inc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4M12 17h.01M10.3 3.9 2.3 18a2 2 0 0 0 1.7 3h16a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></span><h3>Incidents</h3></div>
+          <div class="timeline" id="histIncidents"></div>
         </div>
       </div>
     </section>
@@ -1136,9 +1223,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     <div id="valStep1">
       <div class="sheet-h"><h3 id="valTitle">Valider le nettoyage</h3><button class="sheet-x" data-close><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
       <div class="sheet-info">
-        <div class="si-row"><span>Cours</span><b id="valCours">—</b></div>
-        <div class="si-row"><span>Horaire</span><b id="valHeure">—</b></div>
-        <div class="si-row"><span>Tatami</span><b id="valMat">—</b></div>
+        <div class="si-row"><span id="valL1">Cours</span><b id="valCours">—</b></div>
+        <div class="si-row"><span id="valL2">Horaire</span><b id="valHeure">—</b></div>
+        <div class="si-row" id="valRow3"><span id="valL3">Tatami</span><b id="valMat">—</b></div>
       </div>
       <div class="sheet-q">Qui a effectué le nettoyage&nbsp;?</div>
       <div class="people" id="valPeople">
@@ -1146,6 +1233,11 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         <button class="person" data-person="Léa"><span class="av sm a1">LM</span>Léa</button>
         <button class="person" data-person="Kevin"><span class="av sm a2">KB</span>Kevin</button>
         <button class="person" data-person="Thomas"><span class="av sm a4">TM</span>Thomas</button>
+      </div>
+      <div class="val-photo">
+        <input type="file" id="valPhotoInput" accept="image/*" capture="environment" hidden>
+        <button type="button" class="filebtn" id="valPhotoBtn"><svg class="ic" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M4 7h3l2-2h6l2 2h3v12H4z"/><circle cx="12" cy="13" r="3.2"/></svg>Ajouter une photo <span class="opt">(facultatif)</span></button>
+        <div class="val-photo-prev" id="valPhotoPrev" hidden><img id="valPhotoImg" alt="Aperçu de la photo"><button type="button" class="val-photo-x" id="valPhotoClear" aria-label="Retirer la photo"><svg viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
       </div>
       <button class="btn-primary wide" id="valConfirm">Confirmer le nettoyage</button>
     </div>
@@ -1192,9 +1284,37 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     <div class="sheet-h"><h3 id="retModalTitle">Retour adhérent</h3><button class="sheet-x" data-close><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
     <div class="ret-thread" id="retThread"></div>
 
+    <div class="ret-treat">
+      <div class="gm-field"><label>Statut</label>
+        <div class="seg" id="retStatusSeg">
+          <button type="button" class="segbtn" data-set-status="transmis">Reçu</button>
+          <button type="button" class="segbtn" data-set-status="taken">En cours</button>
+          <button type="button" class="segbtn" data-set-status="done">Traité</button>
+        </div>
+      </div>
+      <div class="gm-field"><label>Assigné à <span class="opt">(interne)</span></label>
+        <div class="people" id="retPeople">
+          <button class="person" data-ret-person="Simon"><span class="av sm a3">SE</span>Simon</button>
+          <button class="person" data-ret-person="Léa"><span class="av sm a1">LM</span>Léa</button>
+          <button class="person" data-ret-person="Kevin"><span class="av sm a2">KB</span>Kevin</button>
+          <button class="person" data-ret-person="Thomas"><span class="av sm a4">TM</span>Thomas</button>
+        </div>
+      </div>
+      <div class="gm-field"><label>Action réalisée <span class="opt">(interne — jamais visible par l'adhérent)</span></label>
+        <textarea class="ano-inp ano-ta" id="retAction" maxlength="300" placeholder="Note interne : ce que le club a fait…"></textarea>
+      </div>
+      <div class="val-photo">
+        <input type="file" id="retPhotoInput" accept="image/*" capture="environment" hidden>
+        <button type="button" class="filebtn" id="retPhotoBtn"><svg class="ic" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M4 7h3l2-2h6l2 2h3v12H4z"/><circle cx="12" cy="13" r="3.2"/></svg>Ajouter une preuve photo <span class="opt">(interne)</span></button>
+        <div class="val-photo-prev" id="retPhotoPrev" hidden><img id="retPhotoImg" alt="Aperçu de la preuve"><button type="button" class="val-photo-x" id="retPhotoClear" aria-label="Retirer la photo"><svg viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+      </div>
+    </div>
+
     <div class="ret-reply-box">
+      <label class="ret-reply-label">Réponse à l'adhérent <span class="opt">(visible par l'adhérent via son code)</span></label>
       <textarea class="ano-inp ano-ta" id="retReplyText" maxlength="400" placeholder="Votre réponse à l'adhérent (elle apparaîtra dans son suivi)…"></textarea>
       <button class="btn-primary wide" id="retReplySend">Envoyer la réponse</button>
+      <button class="btn-ghost wide" id="retClose">Clôturer le retour</button>
     </div>
   </div>
 </div>
@@ -1208,6 +1328,47 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <button class="btn-ghost" data-close>Annuler</button>
       <button class="btn-primary" id="confirmOk">Supprimer</button>
     </div>
+  </div>
+</div>
+
+<!-- MODALE : signaler / traiter un incident -->
+<div class="modal" id="incModal" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="incTitle" style="max-width:480px">
+    <div class="sheet-h"><h3 id="incTitle">Signaler un incident</h3><button class="sheet-x" data-close><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <div class="sheet-q">Type d'incident</div>
+    <div class="inc-chips" id="incTypes"></div>
+    <div class="inc-health" id="incHealth" hidden>Ne notez ni nom ni information médicale. Orientez l'adhérent vers un professionnel de santé.</div>
+    <div class="gm-field"><label>Zone concernée</label>
+      <select class="ano-inp ano-sel" id="incZone"></select></div>
+    <div class="gm-field"><label>Ce qui s'est passé</label>
+      <textarea class="ano-inp ano-ta" id="incWhat" maxlength="240" placeholder="Décrivez brièvement l'incident, sans donnée personnelle…"></textarea></div>
+    <div class="inc-proto" id="incProto"></div>
+    <div class="gm-field"><label>Action réalisée <span class="opt">(facultatif)</span></label>
+      <textarea class="ano-inp ano-ta" id="incAction" maxlength="240" placeholder="Ce que vous avez fait…"></textarea></div>
+    <div class="sheet-q">Qui a constaté / traité l'incident&nbsp;?</div>
+    <div class="people" id="incPeople">
+      <button class="person" data-inc-person="Simon"><span class="av sm a3">SE</span>Simon</button>
+      <button class="person" data-inc-person="Léa"><span class="av sm a1">LM</span>Léa</button>
+      <button class="person" data-inc-person="Kevin"><span class="av sm a2">KB</span>Kevin</button>
+      <button class="person" data-inc-person="Thomas"><span class="av sm a4">TM</span>Thomas</button>
+    </div>
+    <div class="val-photo">
+      <input type="file" id="incPhotoInput" accept="image/*" capture="environment" hidden>
+      <button type="button" class="filebtn" id="incPhotoBtn"><svg class="ic" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M4 7h3l2-2h6l2 2h3v12H4z"/><circle cx="12" cy="13" r="3.2"/></svg>Ajouter une photo <span class="opt">(facultatif)</span></button>
+      <div class="val-photo-prev" id="incPhotoPrev" hidden><img id="incPhotoImg" alt="Aperçu de la photo"><button type="button" class="val-photo-x" id="incPhotoClear" aria-label="Retirer la photo"><svg viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    </div>
+    <div class="gm-field"><label>Statut</label>
+      <div class="seg" id="incStatusSeg"><button type="button" class="segbtn on" data-inc-status="open">Ouvert</button><button type="button" class="segbtn" data-inc-status="done">Traité</button></div>
+    </div>
+    <button class="btn-primary wide" id="incSubmit">Enregistrer l'incident</button>
+  </div>
+</div>
+
+<!-- MODALE : liste des incidents ouverts -->
+<div class="modal" id="incOpenModal" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="incOpenTitle" style="max-width:480px">
+    <div class="sheet-h"><h3 id="incOpenTitle">Incidents ouverts</h3><button class="sheet-x" data-close><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <div class="inc-list" id="incOpenList"></div>
   </div>
 </div>
 
@@ -1226,6 +1387,29 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     return 'Label valide jusqu’au '+(d===1?'1er':d)+' '+(MO[parseInt(m[2],10)-1]||'')+' '+m[1];
   }
   (function(){ var t=labelValidityText(); ['sideLabelValidity','regValidity'].forEach(function(id){ var el=document.getElementById(id); if(el) el.textContent=t; }); })();
+  // ======================================================================
+  // PARAMÈTRES ÉDITABLES — Prompt 2/2 (à valider avec le référentiel MatSafe)
+  // « Le référentiel définit ce qui doit être fait. MatSafe Club prouve que c'est fait. »
+  // ======================================================================
+  // Zones à nettoyer hors tatamis. Fréquences PROVISOIRES, à valider avec le référentiel.
+  var ZONES_CLEAN = [
+    { id:'vestiaires', label:'Vestiaires',             perDay:1 },
+    { id:'douches',    label:'Douches',                perDay:1 },
+    { id:'sanitaires', label:'Sanitaires',             perDay:1 },
+    { id:'materiel',   label:'Matériel partagé',       perDay:1 },
+    { id:'accueil',    label:'Accueil et circulation', perDay:1 }
+  ];
+  // Types d'incidents et rappel du protocole à appliquer.
+  // Les textes de protocole sont VIDES tant qu'ils ne sont pas validés : ne rien inventer.
+  var INCIDENT_TYPES = [
+    { id:'sang',       label:'Trace de sang',               protocole:'' },
+    { id:'lesion',     label:'Lésion suspecte (adhérent)',  protocole:'' },
+    { id:'souille',    label:'Matériel souillé',            protocole:'' },
+    { id:'sanitaire',  label:'Problème aux sanitaires',     protocole:'' },
+    { id:'equipement', label:'Équipement défectueux',       protocole:'' },
+    { id:'autre',      label:'Autre',                       protocole:'' }
+  ];
+
   // Le menu latéral ET la barre d'onglets mobile partagent les mêmes actions (data-screen → go()).
   var navItems = document.querySelectorAll('.nav a[data-screen], .tabbar a[data-screen]');
   var screens = document.querySelectorAll('.screen');
@@ -1240,7 +1424,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(name==='retours'){ try{ renderInbox(); }catch(_){ } }
     if(name==='publications'){ try{ renderPubs(); }catch(_){ } }
     if(name==='preuves'){ try{ renderHistory(); }catch(_){ } }
-    if(name==='accueil'){ try{ renderHomeMessages(); }catch(_){ } }
+    if(name==='accueil'){ try{ renderHomeMessages(); }catch(_){ } try{ renderZoneRate(); }catch(_){ } try{ renderIncHome(); }catch(_){ } }
     document.querySelector('.main').scrollTop = 0;
     window.scrollTo(0,0);
   }
@@ -1358,6 +1542,17 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var th=document.getElementById('retThread');
     if(th) th.innerHTML='<div class="rt-th rt-th-msg"><div class="rt-th-k">Message de l’adhérent</div><div class="rt-th-b">'+esc(r.description||'(sans message)')+'</div></div>';
     var rb=document.getElementById('retReplySend'); if(rb) rb.textContent=r.reply?'Envoyer une nouvelle réponse':'Envoyer la réponse';
+    // Statut (segment Reçu / En cours / Traité)
+    var cur=r.status||'transmis';
+    document.querySelectorAll('#retStatusSeg [data-set-status]').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-set-status')===cur); });
+    // Assigné à (interne)
+    document.querySelectorAll('#retPeople .person').forEach(function(x){ x.classList.toggle('on', !!r.assignee && x.getAttribute('data-ret-person')===r.assignee); });
+    // Action réalisée (interne)
+    var act=document.getElementById('retAction'); if(act) act.value=r.actionInterne||'';
+    // Preuve photo (interne)
+    if(r.proofPhoto) showPhoto('ret', r.proofPhoto); else resetPhoto('ret');
+    // Bouton Clôturer : masqué si déjà traité
+    var cb=document.getElementById('retClose'); if(cb) cb.style.display=(cur==='done'?'none':'');
   }
   function setRetStatus(status){
     var list=loadInbox(), now=Date.now(), changed=false, reopen=false;
@@ -1527,12 +1722,20 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     closeZoom();
     var img = host.querySelector('img');
     if(!img) return;
-    var nm = ((document.querySelector('.prof h2')||{}).textContent||'').trim();
-    var rl = ((document.querySelector('.prof .role')||{}).textContent||'').trim();
+    var isProf = !!(host.closest && host.closest('.prof'));
     var ov = document.createElement('div');
     ov.className='zoom-ov';
-    var cap = (nm||rl) ? '<div class="zoom-cap">'+(nm?'<div class="zn">'+esc(nm)+'</div>':'')+(rl?'<div class="zr">'+esc(rl)+'</div>':'')+'</div>' : '';
-    ov.innerHTML='<figure class="zoom-fig"><button class="zoom-close" type="button" aria-label="Fermer">&times;</button><img alt="'+esc(nm||'Photo du référent')+'" src="'+img.getAttribute('src')+'"></figure>'+cap;
+    var cap='', alt='Photo';
+    if(isProf){
+      var nm = ((document.querySelector('.prof h2')||{}).textContent||'').trim();
+      var rl = ((document.querySelector('.prof .role')||{}).textContent||'').trim();
+      cap = (nm||rl) ? '<div class="zoom-cap">'+(nm?'<div class="zn">'+esc(nm)+'</div>':'')+(rl?'<div class="zr">'+esc(rl)+'</div>':'')+'</div>' : '';
+      alt = nm||'Photo du référent';
+    } else {
+      var c=(host.getAttribute&&host.getAttribute('data-zoom-cap'))||'';
+      if(c){ cap='<div class="zoom-cap"><div class="zn">'+esc(c)+'</div></div>'; alt=c; }
+    }
+    ov.innerHTML='<figure class="zoom-fig"><button class="zoom-close" type="button" aria-label="Fermer">&times;</button><img alt="'+esc(alt)+'" src="'+img.getAttribute('src')+'"></figure>'+cap;
     ov.addEventListener('click', function(e){ if(e.target===ov || e.target.closest('.zoom-close')) closeZoom(); });
     document.body.appendChild(ov);
   }
@@ -1640,6 +1843,57 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   }
   var validated=Object.create(null);
   VALS.items.forEach(function(it){ if(it.k) validated[it.k]=true; });
+
+  // ===== Nettoyages de ZONE (hors tatamis) — clé dédiée, stockage SÉPARÉ des tatamis =====
+  // N'entre JAMAIS dans cleanDaySet()/computeStreak() : la série reste strictement inchangée.
+  var ZONE_KEY=clubKey('club_zone_cleanings');
+  function loadZoneVals(){ try{ var r=localStorage.getItem(ZONE_KEY); if(r){ var o=JSON.parse(r); if(o&&o.items&&o.v===1) return o; } }catch(_){ } return null; }
+  function saveZoneVals(){ try{ localStorage.setItem(ZONE_KEY, JSON.stringify(ZVALS)); }catch(_){ } }
+  function zoneConf(id){ for(var i=0;i<ZONES_CLEAN.length;i++){ if(ZONES_CLEAN[i].id===id) return ZONES_CLEAN[i]; } return null; }
+  function isOpeningDay(di){ var day=DAYS[di], l=SCHED[day]||[]; for(var i=0;i<l.length;i++){ if(!isCancelled(day,l[i].t,l[i].m)) return true; } return false; }
+  function zoneDoneCount(zoneId,iso){ var n=0; for(var i=0;i<ZVALS.items.length;i++){ var it=ZVALS.items[i]; if(it.zone===zoneId && it.iso===iso) n++; } return n; }
+  function zoneWeekStats(){ var expected=0,done=0; for(var i=0;i<=TODAY_IDX;i++){ if(!isOpeningDay(i)) continue; var iso=isoOf(dateOfIdx(i)); for(var z=0;z<ZONES_CLEAN.length;z++){ var zz=ZONES_CLEAN[z]; expected+=zz.perDay; done+=Math.min(zoneDoneCount(zz.id,iso),zz.perDay); } } return {expected:expected,done:done}; }
+  var ZVALS=loadZoneVals();
+  if(!ZVALS){
+    // DÉMO (point 8) : zones nettoyées sur les jours d'ouverture déjà PASSÉS de la semaine,
+    // laissées « à faire » pour aujourd'hui. Événements réels du modèle, marqués demo:true.
+    ZVALS={ v:1, seeded:true, demo:true, items:[] };
+    for(var zdi=0; zdi<TODAY_IDX; zdi++){
+      if(!isOpeningDay(zdi)) continue;
+      var ziso0=isoOf(dateOfIdx(zdi));
+      for(var zz0=0; zz0<ZONES_CLEAN.length; zz0++){ var zc=ZONES_CLEAN[zz0];
+        for(var zp=0; zp<zc.perDay; zp++){
+          ZVALS.items.push({ zone:zc.id, zoneLabel:zc.label, iso:ziso0, time:fmtMin(19*60+30),
+            by:TEAM_DEMO[(zdi+zz0)%TEAM_DEMO.length], photo:null, ts:Date.now(), demo:true });
+        }
+      }
+    }
+    saveZoneVals();
+  }
+
+  // ===== INCIDENTS — clé dédiée =====
+  var INC_KEY=clubKey('club_incidents');
+  function loadIncidents(){ try{ var r=localStorage.getItem(INC_KEY); if(r){ var o=JSON.parse(r); if(o&&o.items&&o.v===1) return o; } }catch(_){ } return null; }
+  function saveIncidents(){ try{ localStorage.setItem(INC_KEY, JSON.stringify(INCS)); }catch(_){ } }
+  function incTypeConf(id){ for(var i=0;i<INCIDENT_TYPES.length;i++){ if(INCIDENT_TYPES[i].id===id) return INCIDENT_TYPES[i]; } return null; }
+  function incProtoText(id){ var t=incTypeConf(id); return (t&&t.protocole)?t.protocole:'Appliquer le protocole MatSafe correspondant.'; }
+  function incFind(id){ for(var i=0;i<INCS.items.length;i++){ if(INCS.items[i].id===id) return INCS.items[i]; } return null; }
+  function openIncidents(){ return INCS.items.filter(function(it){ return (it.status||'open')!=='done'; }); }
+  var INCS=loadIncidents();
+  if(!INCS){
+    // DÉMO (point 8) : un incident déjà traité, pour illustrer le journal. Marqué demo:true.
+    INCS={ v:1, seeded:true, demo:true, items:[] };
+    if(TODAY_IDX>=1){
+      var idi=TODAY_IDX-1, iiso=isoOf(dateOfIdx(idi)), it0=incTypeConf('souille');
+      INCS.items.push({ id:'inc-demo-1', type:'souille', typeLabel:it0?it0.label:'Matériel souillé',
+        zone:'Matériel partagé', what:'Gants de frappe oubliés et souillés près du tatami.',
+        action:'Matériel retiré, nettoyé et désinfecté.', by:'Léa M.', photo:null, status:'done',
+        iso:iiso, time:fmtMin(20*60), ts:Date.now(),
+        doneIso:iiso, doneTime:fmtMin(20*60+30), doneBy:'Léa M.', doneAt:Date.now(), demo:true });
+    }
+    saveIncidents();
+  }
+
   var SCOL={done:'#3E8E4F',todo:'#C07A2E',late:'#C83F32',soon:'#9A9A9F',cancelled:'#9A968E'};
   // Statut d'un créneau, selon la date/heure RÉELLES :
   //  • Annulé            -> créneau non tenu (exclu du calcul)
@@ -1681,6 +1935,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     return {expected:expected, done:done};
   }
   function renderCleanRate(){
+    try{ renderZoneRate(); }catch(_){ }
     var box=document.getElementById('crate'); if(!box) return;
     var s=weekCleanStats();
     var pctEl=document.getElementById('cratePct'),
@@ -1712,9 +1967,21 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
                  '<span class="mm" style="color:'+SCOL[s.cls]+';font-weight:700">'+s.label+'</span></div>';
         }).join('')
       : '<div class="mini-empty">Aucun cours ce jour</div>';
+    // Zones à nettoyer (hors tatamis) du jour, à la suite des créneaux
+    var di=DAYS.indexOf(day), zhtml='';
+    if(di>=0 && isOpeningDay(di)){
+      var ziso=isoOf(dateOfIdx(di)), zfuture=di>TODAY_IDX;
+      zhtml='<div class="mini-zones-h">Zones à nettoyer</div>'+ZONES_CLEAN.map(function(z){
+        var zdone=Math.min(zoneDoneCount(z.id,ziso),z.perDay), zfull=zdone>=z.perDay, zcan=!zfull && !zfuture;
+        var zlbl=zfull?'Validé':(zfuture?'À venir':'À faire'), zcol=zfull?SCOL.done:(zfuture?SCOL.soon:SCOL.todo);
+        return '<div class="mini mini-zone'+(zcan?' can':'')+'"'+(zcan?' data-zone-val="'+esc(z.id)+'|'+esc(day)+'" style="cursor:pointer"':'')+'>'+
+          '<span class="mdot zdot"></span><span class="md">'+esc(z.label)+'</span>'+
+          '<span class="mm" style="color:'+zcol+';font-weight:700">'+zdone+'/'+z.perDay+' · '+zlbl+'</span></div>';
+      }).join('');
+    }
     ['dayList','dayListMain'].forEach(function(id){
       var el = document.getElementById(id);
-      if(el) el.innerHTML = html;
+      if(el) el.innerHTML = html + zhtml;
     });
   }
   // Barre de semaine (droite) générée dynamiquement : vrais jours, vrais numéros,
@@ -1767,6 +2034,20 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         if(s.cls==='todo'||s.cls==='late'){ sl.setAttribute('data-validate', payload); }
         else { sl.removeAttribute('data-validate'); }
       });
+      // ----- Zones à nettoyer (hors tatamis), sous les créneaux du jour -----
+      var oldZ=day.querySelector('.day-zones'); if(oldZ) oldZ.remove();
+      var zdi=DAYS.indexOf(dname);
+      if(zdi>=0 && isOpeningDay(zdi)){
+        var ziso=isoOf(dateOfIdx(zdi)), zfuture=zdi>TODAY_IDX;
+        var zrows=ZONES_CLEAN.map(function(z){
+          var zdone=Math.min(zoneDoneCount(z.id,ziso),z.perDay), zfull=zdone>=z.perDay;
+          var zcls=zfull?'done':(zfuture?'soon':'todo'), zlbl=zfull?'Validé':(zfuture?'À venir':'À faire');
+          var zbtn=(!zfull && !zfuture)?'<button type="button" class="zbtn" data-zone-val="'+esc(z.id)+'|'+esc(dname)+'">Valider</button>':'';
+          return '<div class="zrow"><span class="zname">'+esc(z.label)+'</span><span class="zcount">'+zdone+'/'+z.perDay+'</span><span class="pill-st '+zcls+'"><span class="d"></span>'+zlbl+'</span>'+zbtn+'</div>';
+        }).join('');
+        var zb=document.createElement('div'); zb.className='day-zones'; zb.innerHTML='<div class="zones-h">Zones</div>'+zrows;
+        day.appendChild(zb);
+      }
     });
   }
   enhanceSlots();
@@ -1776,25 +2057,44 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   // Modale « Valider le nettoyage »
   var modal=document.getElementById('valModal'), curVal=null, curPerson=null;
   function openVal(disc,t,m,day){
-    curVal={disc:disc,t:t,m:m,day:day}; curPerson=null;
-    document.getElementById('valCours').textContent=disc;
-    document.getElementById('valHeure').textContent=t;
-    document.getElementById('valMat').textContent=(m==='MAT 1'?'Tatami 1':m==='MAT 2'?'Tatami 2':m);
+    curVal={kind:'tatami', disc:disc,t:t,m:m,day:day, photo:null}; curPerson=null;
+    document.getElementById('valTitle').textContent='Valider le nettoyage';
+    setValLabel('valL1','Cours'); document.getElementById('valCours').textContent=disc;
+    setValLabel('valL2','Horaire'); document.getElementById('valHeure').textContent=t;
+    setValLabel('valL3','Tatami'); document.getElementById('valMat').textContent=(m==='MAT 1'?'Tatami 1':m==='MAT 2'?'Tatami 2':m);
+    var r3=document.getElementById('valRow3'); if(r3) r3.style.display='';
     document.getElementById('valStep1').style.display='';
     document.getElementById('valStep2').style.display='none';
     document.querySelectorAll('#valPeople .person').forEach(function(p){p.classList.remove('on');});
+    resetPhoto('val');
     modal.classList.add('on');
   }
   function closeVal(){ document.querySelectorAll('.modal.on').forEach(function(m){ m.classList.remove('on'); }); }
   function confirmVal(){
     if(!curPerson){ toast('Sélectionnez la personne qui a nettoyé.'); return; }
+    var n=new Date(), hh=('0'+n.getHours()).slice(-2)+':'+('0'+n.getMinutes()).slice(-2);
+    // --- Nettoyage de ZONE (stocké séparément — n'affecte pas la série) ---
+    if(curVal && curVal.kind==='zone'){
+      var ziso=isoOfDay(curVal.day);
+      ZVALS.items.push({ zone:curVal.zone, zoneLabel:curVal.zoneLabel, iso:ziso, time:hh,
+        by:curPerson, photo:(curVal.photo||null), ts:Date.now(), demo:false });
+      saveZoneVals();
+      document.getElementById('valDoneTxt').textContent='Nettoyage de '+curVal.zoneLabel+' enregistré par '+curPerson+' à '+hh+'.';
+      document.getElementById('valStep1').style.display='none';
+      document.getElementById('valStep2').style.display='';
+      enhanceSlots();
+      var az=document.querySelector('#week .d.on'); if(az) renderDay(az.getAttribute('data-day'));
+      try{ renderZoneRate(); }catch(_){ }
+      try{ renderHistory(); }catch(_){ }
+      return;
+    }
+    // --- Nettoyage de TATAMI (inchangé, + photo facultative) ---
     var iso=isoOfDay(curVal.day), k=iso+'|'+curVal.t+'|'+curVal.m;
     validated[k]=true;
-    var n=new Date(), hh=('0'+n.getHours()).slice(-2)+':'+('0'+n.getMinutes()).slice(-2);
     // Enregistrement durable (daté par date réelle, persiste au rechargement) + historique automatique
     VALS.items=VALS.items.filter(function(it){ return it.k!==k; });
     VALS.items.push({ k:k, iso:iso, time:curVal.t, disc:curVal.disc,
-      mat:matClassOf(curVal.m), matLabel:matLabelOf(curVal.m), by:curPerson, at:hh, ts:Date.now(), demo:false });
+      mat:matClassOf(curVal.m), matLabel:matLabelOf(curVal.m), by:curPerson, at:hh, ts:Date.now(), photo:(curVal.photo||null), demo:false });
     saveVals();
     document.getElementById('valDoneTxt').textContent='Nettoyage enregistré par '+curPerson+' à '+hh+'.';
     document.getElementById('valStep1').style.display='none';
@@ -1873,20 +2173,39 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       if(!it.iso) return;
       ev.push({ type:'clean', iso:it.iso, time:it.time, sortMin:toMin(it.time),
         title:'Nettoyage validé', detail:(it.matLabel||'')+' · '+(it.disc||'')+(it.by?' · '+it.by:''),
-        statusLabel:'Validé', statusCls:'done', dotCls:'ok' });
+        statusLabel:'Validé', statusCls:'done', dotCls:'ok', csvType:'Tatami', photo:(it.photo||null) });
+    });
+    // Nettoyages de ZONE — même colonne « Nettoyages », identifiés par le nom de la zone
+    ZVALS.items.forEach(function(it){
+      if(!it.iso) return;
+      ev.push({ type:'clean', zoneKind:true, iso:it.iso, time:it.time, sortMin:toMin(it.time||'0:0'),
+        title:'Nettoyage de zone', detail:(it.zoneLabel||'')+(it.by?' · '+it.by:''),
+        statusLabel:'Validé', statusCls:'done', dotCls:'ok', csvType:'Zone', photo:(it.photo||null) });
+    });
+    // Incidents — colonne « Incidents » : signalement + éventuelle résolution
+    INCS.items.forEach(function(it){
+      var base=(it.typeLabel||'')+(it.zone?' · '+it.zone:'');
+      ev.push({ type:'incident', iso:it.iso, time:it.time, sortMin:toMin(it.time||'0:0'),
+        title:'Incident signalé', detail:base+(it.what?' — '+it.what:''),
+        statusLabel:'Ouvert', statusCls:'late', dotCls:'red', csvType:'Incident', photo:(it.photo||null) });
+      if((it.status||'open')==='done'){
+        ev.push({ type:'incident', iso:(it.doneIso||it.iso), time:(it.doneTime||it.time), sortMin:toMin(it.doneTime||it.time||'0:0'),
+          title:'Incident traité', detail:base+(it.action?' — '+it.action:'')+(it.doneBy?' · '+it.doneBy:''),
+          statusLabel:'Traité', statusCls:'done', dotCls:'ok', csvType:'Incident', photo:(it.photo||null) });
+      }
     });
     Object.keys(CANCELS).forEach(function(key){
       var c=CANCELS[key]; if(!c) return; var p=String(key).split('|');
       var iso=c.iso||p[0], time=c.time||p[1];
       ev.push({ type:'cancel', iso:iso, time:time, sortMin:toMin(time),
         title:'Créneau annulé', detail:(c.matLabel||matLabelOf(c.mat||p[2]))+' · '+(c.disc||'—')+' — '+cancelLabel(c),
-        statusLabel:'Annulé', statusCls:'cancelled', dotCls:'red' });
+        statusLabel:'Annulé', statusCls:'cancelled', dotCls:'red', csvType:'Annulation' });
     });
     loadInbox().forEach(function(r){
       if(!r||!r.events) return;
       var cat=retCatLabel(r), code=r.code||'', base=cat+(code?' · '+code:'');
       r.events.forEach(function(e){
-        var o={ type:'retour', iso:epochIso(e.at), time:epochHHMM(e.at), sortMin:epochMin(e.at), detail:base, statusLabel:'', statusCls:'', dotCls:'grey' };
+        var o={ type:'retour', iso:epochIso(e.at), time:epochHHMM(e.at), sortMin:epochMin(e.at), detail:base, statusLabel:'', statusCls:'', dotCls:'grey', csvType:'Retour' };
         if(e.t==='received'){ o.title='Retour reçu'; o.statusLabel='Reçu'; o.statusCls='todo'; o.dotCls='grey'; }
         else if(e.t==='reply'){ o.title='Réponse envoyée'; o.detail='« '+(e.text||'')+' »'; o.dotCls='blue'; }
         else if(e.t==='reopened'){ var sir=inboxStInfo(e.status); o.title='Retour rouvert'; o.statusLabel=sir.t; o.statusCls=sir.cls; o.dotCls='amber'; }
@@ -1900,10 +2219,11 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   }
   function tlRowHtml(ev){
     var pill = ev.statusLabel? '<span class="pill-st '+ev.statusCls+'"><span class="d"></span>'+esc(ev.statusLabel)+'</span>' : '';
+    var cam = ev.photo? '<button type="button" class="tl-cam" data-zoom data-zoom-cap="'+esc(ev.title||'Photo')+'" aria-label="Voir la photo jointe" title="Voir la photo jointe"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h3l2-2h6l2 2h3v12H4z"/><circle cx="12" cy="13" r="3.2"/></svg><img src="'+ev.photo+'" alt="" style="display:none"></button>' : '';
     return '<div class="tl-row">'+
       '<span class="tl-time">'+esc(ev.time||'')+'</span>'+
       '<span class="tl-dot '+ev.dotCls+'"></span>'+
-      '<div class="tl-body"><div class="tl-title">'+esc(ev.title||'')+'</div>'+(ev.detail?'<div class="tl-detail">'+esc(ev.detail)+'</div>':'')+'</div>'+
+      '<div class="tl-body"><div class="tl-title">'+esc(ev.title||'')+'</div>'+(ev.detail?'<div class="tl-detail">'+esc(ev.detail)+'</div>':'')+cam+'</div>'+
       pill+
     '</div>';
   }
@@ -1933,13 +2253,14 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     });
     renderHistCol(cBox, evs.filter(function(ev){ return ev.type==='clean'||ev.type==='cancel'; }), 'Aucun nettoyage sur cette période.');
     renderHistCol(rBox, evs.filter(function(ev){ return ev.type==='retour'; }), 'Aucun retour sur cette période.');
+    renderHistCol(document.getElementById('histIncidents'), evs.filter(function(ev){ return ev.type==='incident'; }), 'Aucun incident sur cette période.');
   }
   function filterHist(f){ renderHistory(f); }
   function exportHistoryCSV(){
-    var head=['Date','Heure','Événement','Détail','Statut'];
+    var head=['Date','Heure','Type','Événement','Détail','Statut'];
     function q(s){ return '"'+String(s==null?'':s).replace(/"/g,'""')+'"'; }
     var lines=[head.map(q).join(';')];
-    histEvents().forEach(function(ev){ lines.push([dLabel(ev.iso),ev.time,ev.title,ev.detail,(ev.statusLabel||'')].map(q).join(';')); });
+    histEvents().forEach(function(ev){ lines.push([dLabel(ev.iso),ev.time,(ev.csvType||''),ev.title,ev.detail,(ev.statusLabel||'')].map(q).join(';')); });
     try{
       var blob=new Blob(['﻿'+lines.join('\r\n')],{type:'text/csv;charset=utf-8;'});
       var url=URL.createObjectURL(blob), a=document.createElement('a');
@@ -2098,6 +2419,176 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   document.addEventListener('change', function(e){ if(e.target && e.target.id==='pubCat'){ syncPubForm(); } });
   try{ syncPubForm(); }catch(_){ }
   try{ renderPubs(); }catch(_){ }
+
+  // ======================================================================
+  // PROMPT 2/2 — Rendu & interactions : zones, photo de preuve, incidents,
+  // traitement complet des retours. Lecture/écriture regroupées en load…/save…
+  // pour faciliter le passage à un serveur sécurisé plus tard.
+  // ======================================================================
+  // Réduction d'image avant stockage (~1000 px max, JPEG) — même principe que les compétitions.
+  function photoDownscale(src,cb){ var im=new Image(); im.onload=function(){ var mx=1000,w=im.width,h=im.height,s=Math.min(1,mx/Math.max(w,h)); w=Math.round(w*s); h=Math.round(h*s); var cv=document.createElement('canvas'); cv.width=w; cv.height=h; try{ cv.getContext('2d').drawImage(im,0,0,w,h); cb(cv.toDataURL('image/jpeg',0.82)); }catch(e){ cb(src); } }; im.onerror=function(){ cb(src); }; im.src=src; }
+
+  // ----- Aperçu / réinitialisation d'une photo dans une modale (val / inc / ret) -----
+  function resetPhoto(ns){ var p=document.getElementById(ns+'PhotoPrev'); if(p) p.hidden=true; var im=document.getElementById(ns+'PhotoImg'); if(im) im.removeAttribute('src'); var inp=document.getElementById(ns+'PhotoInput'); if(inp) inp.value=''; var b=document.getElementById(ns+'PhotoBtn'); if(b) b.style.display=''; }
+  function showPhoto(ns,dataUrl){ var p=document.getElementById(ns+'PhotoPrev'), im=document.getElementById(ns+'PhotoImg'), b=document.getElementById(ns+'PhotoBtn'); if(im) im.src=dataUrl; if(p) p.hidden=false; if(b) b.style.display='none'; }
+  function wirePhoto(ns,onPick){
+    var inp=document.getElementById(ns+'PhotoInput'), btn=document.getElementById(ns+'PhotoBtn'), clr=document.getElementById(ns+'PhotoClear');
+    if(btn&&inp) btn.addEventListener('click', function(){ inp.click(); });
+    if(inp) inp.addEventListener('change', function(){ var f=inp.files&&inp.files[0]; if(!f) return; var rd=new FileReader(); rd.onload=function(){ photoDownscale(rd.result, function(u){ onPick(u); showPhoto(ns,u); }); }; rd.readAsDataURL(f); });
+    if(clr) clr.addEventListener('click', function(){ onPick(null); resetPhoto(ns); });
+  }
+
+  // ----- Taux des zones (accueil) -----
+  function renderZoneRate(){
+    var el=document.getElementById('zrate'); if(!el) return;
+    var s=zoneWeekStats();
+    if(!s.expected){ el.hidden=true; return; }
+    el.hidden=false;
+    el.innerHTML='Zones : <b>'+s.done+'</b> nettoyage'+(s.done>1?'s':'')+' sur <b>'+s.expected+'</b> attendu'+(s.expected>1?'s':'')+' cette semaine.';
+  }
+  // ----- Incidents ouverts (ligne d'accueil) -----
+  function renderIncHome(){
+    var line=document.getElementById('incOpenLine'); if(!line) return;
+    var n=openIncidents().length, txt=document.getElementById('incOpenTxt');
+    if(txt) txt.textContent='Incidents ouverts : '+n;
+    line.hidden=(n===0);
+  }
+
+  // ----- Validation d'une zone : réutilise la modale de validation -----
+  function setValLabel(id,txt){ var e=document.getElementById(id); if(e) e.textContent=txt; }
+  function dayDateLabel(day){ var i=DAYS.indexOf(day); if(i<0) return day; var d=dateOfIdx(i); var MO=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.']; return day+' '+d.getDate()+' '+MO[d.getMonth()]; }
+  function openValZone(zoneId,day){
+    var z=zoneConf(zoneId); if(!z) return;
+    curVal={ kind:'zone', zone:zoneId, zoneLabel:z.label, day:day, photo:null }; curPerson=null;
+    document.getElementById('valTitle').textContent='Valider le nettoyage';
+    setValLabel('valL1','Zone'); document.getElementById('valCours').textContent=z.label;
+    setValLabel('valL2','Jour'); document.getElementById('valHeure').textContent=dayDateLabel(day);
+    var r3=document.getElementById('valRow3'); if(r3) r3.style.display='none';
+    document.getElementById('valStep1').style.display='';
+    document.getElementById('valStep2').style.display='none';
+    document.querySelectorAll('#valPeople .person').forEach(function(p){p.classList.remove('on');});
+    resetPhoto('val');
+    modal.classList.add('on');
+  }
+
+  // ----- Incidents : modale de signalement / modification -----
+  var incModal=document.getElementById('incModal'), incOpenModal=document.getElementById('incOpenModal');
+  var curIncId=null, curIncType=null, curIncPerson=null, curIncPhoto=null, curIncStatus='open';
+  function nowHHMM(){ var n=new Date(); return ('0'+n.getHours()).slice(-2)+':'+('0'+n.getMinutes()).slice(-2); }
+  function incZoneOptions(){ var o=['<option value="Tatami 1">Tatami 1</option>','<option value="Tatami 2">Tatami 2</option>']; ZONES_CLEAN.forEach(function(z){ o.push('<option value="'+esc(z.label)+'">'+esc(z.label)+'</option>'); }); return o.join(''); }
+  function renderIncTypes(){ var box=document.getElementById('incTypes'); if(!box) return; box.innerHTML=INCIDENT_TYPES.map(function(t){ return '<button type="button" class="segbtn'+(t.id===curIncType?' on':'')+'" data-inc-type="'+esc(t.id)+'">'+esc(t.label)+'</button>'; }).join(''); }
+  function syncIncProto(){ var p=document.getElementById('incProto'); if(p) p.innerHTML='<b>Protocole</b>'+esc(curIncType?incProtoText(curIncType):'Sélectionnez un type d’incident.'); var h=document.getElementById('incHealth'); if(h) h.hidden=(curIncType!=='lesion'); }
+  function setIncType(id){ curIncType=id; renderIncTypes(); syncIncProto(); }
+  function setIncPerson(name){ curIncPerson=name; document.querySelectorAll('#incPeople .person').forEach(function(x){ x.classList.toggle('on', x.getAttribute('data-inc-person')===name); }); }
+  function setIncStatus(s){ curIncStatus=s; document.querySelectorAll('#incStatusSeg [data-inc-status]').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-inc-status')===s); }); }
+  function openIncident(id){
+    curIncId=id||null; var it=id?incFind(id):null;
+    document.getElementById('incTitle').textContent=id?'Modifier l’incident':'Signaler un incident';
+    document.getElementById('incSubmit').textContent=id?'Enregistrer les modifications':'Enregistrer l’incident';
+    var zoneSel=document.getElementById('incZone'); if(zoneSel && !zoneSel.innerHTML) zoneSel.innerHTML=incZoneOptions();
+    curIncType=it?it.type:null; curIncPerson=it?it.by:null; curIncPhoto=it?(it.photo||null):null; curIncStatus=it?(it.status||'open'):'open';
+    document.getElementById('incWhat').value=it?(it.what||''):'';
+    document.getElementById('incAction').value=it?(it.action||''):'';
+    if(zoneSel) zoneSel.value=it?(it.zone||'Tatami 1'):'Tatami 1';
+    renderIncTypes(); syncIncProto(); setIncStatus(curIncStatus);
+    document.querySelectorAll('#incPeople .person').forEach(function(x){ x.classList.toggle('on', !!curIncPerson && x.getAttribute('data-inc-person')===curIncPerson); });
+    if(curIncPhoto) showPhoto('inc',curIncPhoto); else resetPhoto('inc');
+    closeVal();
+    if(incModal) incModal.classList.add('on');
+  }
+  function submitIncident(){
+    if(!curIncType){ toast('Choisissez un type d’incident.'); return; }
+    var what=((document.getElementById('incWhat')||{}).value||'').trim();
+    if(!what){ toast('Décrivez brièvement ce qui s’est passé.'); return; }
+    if(!curIncPerson){ toast('Indiquez qui a constaté ou traité l’incident.'); return; }
+    var zone=((document.getElementById('incZone')||{}).value||'Tatami 1');
+    var action=((document.getElementById('incAction')||{}).value||'').trim();
+    var t=incTypeConf(curIncType), now=Date.now();
+    var it=curIncId?incFind(curIncId):null;
+    if(it){
+      var wasOpen=(it.status||'open')!=='done';
+      it.type=curIncType; it.typeLabel=t?t.label:curIncType; it.zone=zone; it.what=what; it.action=action; it.by=curIncPerson; it.photo=curIncPhoto; it.status=curIncStatus;
+      if(curIncStatus==='done'){ if(wasOpen||!it.doneAt){ it.doneAt=now; it.doneBy=curIncPerson; it.doneIso=isoOf(new Date()); it.doneTime=nowHHMM(); } }
+      else { it.doneAt=null; it.doneBy=null; it.doneIso=null; it.doneTime=null; }
+    } else {
+      var rec={ id:'inc-'+now, type:curIncType, typeLabel:t?t.label:curIncType, zone:zone, what:what, action:action, by:curIncPerson, photo:curIncPhoto, status:curIncStatus, iso:isoOf(new Date()), time:nowHHMM(), ts:now, demo:false };
+      if(curIncStatus==='done'){ rec.doneAt=now; rec.doneBy=curIncPerson; rec.doneIso=rec.iso; rec.doneTime=rec.time; }
+      INCS.items.push(rec);
+    }
+    saveIncidents(); closeVal();
+    renderIncHome(); try{ renderIncOpenList(); }catch(_){ } try{ renderHistory(); }catch(_){ }
+    toast(curIncStatus==='done'?'Incident enregistré comme traité.':'Incident enregistré.');
+  }
+  function renderIncOpenList(){
+    var box=document.getElementById('incOpenList'); if(!box) return;
+    var list=openIncidents();
+    if(!list.length){ box.innerHTML='<div class="inc-list-empty">Aucun incident ouvert. Tout est à jour.</div>'; return; }
+    box.innerHTML=list.map(function(it){
+      return '<button type="button" class="inc-li" data-inc-edit="'+esc(it.id)+'">'+
+        '<span class="inc-open-dot"></span>'+
+        '<span class="inc-li-b"><span class="inc-li-t">'+esc(it.typeLabel||'')+'</span>'+
+        '<span class="inc-li-d">'+esc(it.zone||'')+(it.what?' — '+esc(it.what):'')+'</span>'+
+        '<span class="inc-li-m">'+esc(dLabel(it.iso))+' · '+esc(it.time||'')+(it.by?' · '+esc(it.by):'')+'</span></span>'+
+        '<svg class="inc-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>';
+    }).join('');
+  }
+  function openIncOpen(){ renderIncOpenList(); if(incOpenModal) incOpenModal.classList.add('on'); }
+
+  // ----- Traitement d'un retour : assignation, action interne, preuve, clôture -----
+  function setRetAssignee(name){
+    var list=loadInbox(), ch=false;
+    for(var i=0;i<list.length;i++){ var r=list[i]; if(r&&r.code===curRetCode){ r.assignee=name; ch=true; break; } }
+    if(ch) saveInbox(list);
+    document.querySelectorAll('#retPeople .person').forEach(function(x){ x.classList.toggle('on', x.getAttribute('data-ret-person')===name); });
+    toast('Assigné à '+name+'.');
+  }
+  function saveRetAction(){
+    var txt=((document.getElementById('retAction')||{}).value||'').trim();
+    var list=loadInbox(), ch=false;
+    for(var i=0;i<list.length;i++){ var r=list[i]; if(r&&r.code===curRetCode){ if((r.actionInterne||'')!==txt){ r.actionInterne=txt; ch=true; } break; } }
+    if(ch) saveInbox(list);
+  }
+  function setRetProof(dataUrl){
+    saveRetAction();
+    var list=loadInbox(), ch=false;
+    for(var i=0;i<list.length;i++){ var r=list[i]; if(r&&r.code===curRetCode){ r.proofPhoto=dataUrl; ch=true; break; } }
+    if(ch) saveInbox(list);
+  }
+  function closeRet(){
+    saveRetAction();
+    var r=findRet(curRetCode); if(!r) return;
+    var list=loadInbox();
+    for(var i=0;i<list.length;i++){ var x=list[i]; if(x&&x.code===curRetCode){ x.closedBy=x.assignee||x.closedBy||null; break; } }
+    saveInbox(list);
+    if((r.status||'transmis')!=='done'){ setRetStatus('done'); } else { try{ afterRetChange(); }catch(_){ } }
+    toast('Retour clôturé.');
+  }
+
+  // ----- Interactions déléguées (zones / incidents / retours — Prompt 2/2) -----
+  document.addEventListener('click', function(e){
+    var zv=e.target.closest('[data-zone-val]');
+    if(zv){ var zp=(zv.getAttribute('data-zone-val')||'').split('|'); openValZone(zp[0],zp[1]); return; }
+    if(e.target.closest('[data-incident-new]')){ openIncident(null); return; }
+    if(e.target.closest('[data-inc-open]')){ openIncOpen(); return; }
+    var ie=e.target.closest('[data-inc-edit]'); if(ie){ openIncident(ie.getAttribute('data-inc-edit')); return; }
+    var it2=e.target.closest('#incTypes [data-inc-type]'); if(it2){ setIncType(it2.getAttribute('data-inc-type')); return; }
+    var ip=e.target.closest('#incPeople [data-inc-person]'); if(ip){ setIncPerson(ip.getAttribute('data-inc-person')); return; }
+    var is=e.target.closest('#incStatusSeg [data-inc-status]'); if(is){ setIncStatus(is.getAttribute('data-inc-status')); return; }
+    if(e.target.closest('#incSubmit')){ submitIncident(); return; }
+    var rp=e.target.closest('#retPeople [data-ret-person]'); if(rp){ setRetAssignee(rp.getAttribute('data-ret-person')); return; }
+    if(e.target.closest('#retClose')){ closeRet(); return; }
+    if(e.target===incModal || e.target===incOpenModal){ closeVal(); return; }
+  });
+  document.addEventListener('change', function(e){ if(e.target && e.target.id==='retAction'){ saveRetAction(); } });
+
+  // Câblage des sélecteurs de photo + rendus initiaux
+  wirePhoto('val', function(u){ if(curVal) curVal.photo=u; });
+  wirePhoto('inc', function(u){ curIncPhoto=u; });
+  wirePhoto('ret', function(u){ setRetProof(u); });
+  (function(){ var zs=document.getElementById('incZone'); if(zs) zs.innerHTML=incZoneOptions(); })();
+  try{ renderIncTypes(); }catch(_){ }
+  try{ renderZoneRate(); }catch(_){ }
+  try{ renderIncHome(); }catch(_){ }
 })();
 </script>
 
