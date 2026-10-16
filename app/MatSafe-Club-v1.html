@@ -1966,17 +1966,28 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     // TODO SERVEUR : ce résumé public sera envoyé au serveur ; Fighter le lira via une API publique du club.
     try{
       var isoToday=isoOf(NOW);
-      // Cours du jour, dans l'ordre horaire — aucun nom de personne, uniquement l'horaire de validation.
-      var today=(SCHED[TODAY]||[]).map(function(c){
-        var k=isoToday+'|'+c.t+'|'+c.m, vAt=null;
-        for(var i=0;i<VALS.items.length;i++){ if(VALS.items[i].k===k){ vAt=VALS.items[i].at||null; break; } }
-        return { t:c.t, end:fmtMin(slotEnd(c.t)), d:c.d, m:c.m, c:(c.c||''),
-                 cancelled:isCancelled(TODAY,c.t,c.m), validatedAt:vAt };
-      });
-      // Zones validées aujourd'hui — libellés uniquement.
-      var seen={}, zonesToday=[];
-      for(var zi=0; zi<ZVALS.items.length; zi++){ var zit=ZVALS.items[zi];
-        if(zit.iso===isoToday && zit.zoneLabel && !seen[zit.zoneLabel]){ seen[zit.zoneLabel]=1; zonesToday.push(zit.zoneLabel); } }
+      // Heures de validation tatami, indexées une seule fois (k = iso|heure|mat).
+      var valAt={};
+      for(var vi=0; vi<VALS.items.length; vi++){ var it=VALS.items[vi]; if(it.k && it.at && !valAt[it.k]) valAt[it.k]=it.at; }
+      // Zones validées, indexées par date (libellés uniquement, dédoublonnés).
+      var zonesByIso={};
+      for(var zi=0; zi<ZVALS.items.length; zi++){ var zt=ZVALS.items[zi];
+        if(!zt.iso || !zt.zoneLabel) continue;
+        (zonesByIso[zt.iso]=zonesByIso[zt.iso]||{})[zt.zoneLabel]=1; }
+      // Semaine RÉELLE complète (lundi → dimanche) : données brutes, sans aucun nom de personne.
+      // Fighter calcule lui-même les statuts d'affichage (à venir / terminé / validé / en attente)
+      // à partir de ces données et de l'horloge réelle : une seule logique, pas de recalcul du planning.
+      var days=[];
+      for(var di=0; di<7; di++){
+        var day=DAYS[di], iso=isoOf(dateOfIdx(di));
+        var courses=(SCHED[day]||[]).map(function(c){
+          var k=iso+'|'+c.t+'|'+c.m;
+          return { t:c.t, end:fmtMin(slotEnd(c.t)), d:c.d, m:c.m, c:(c.c||''),
+                   cancelled:isCancelled(day,c.t,c.m), validatedAt:(valAt[k]||null) };
+        });
+        days.push({ name:day, iso:iso, courses:courses, zones:Object.keys(zonesByIso[iso]||{}) });
+      }
+      var today=days[TODAY_IDX].courses, zonesToday=days[TODAY_IDX].zones;
       // Dernier nettoyage de tatami validé, toutes dates confondues (date + heure de validation).
       var last=null, lastRank=-1;
       for(var li=0; li<VALS.items.length; li++){ var v=VALS.items[li];
@@ -1984,8 +1995,10 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         var rank=isoNum(v.iso)*10000+toMin(v.at);
         if(rank>lastRank){ lastRank=rank; last={ date:v.iso, time:v.at }; } }
       var w=weekCleanStats();
-      var pub={ v:1, updated:pubLocalISO(), date:isoToday, today:today,
-                zonesToday:zonesToday, week:{ done:w.done, expected:w.expected }, lastValidated:last };
+      var pub={ v:2, updated:pubLocalISO(), date:isoToday,
+                weekStart:isoOf(dateOfIdx(0)), todayIdx:TODAY_IDX, days:days,
+                today:today, zonesToday:zonesToday,
+                week:{ done:w.done, expected:w.expected }, lastValidated:last };
       localStorage.setItem(PUBLIC_HYGIENE_KEY, JSON.stringify(pub));
     }catch(_){ }
   }
