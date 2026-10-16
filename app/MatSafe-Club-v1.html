@@ -1956,6 +1956,39 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(sub) sub.textContent=s.done+' nettoyage'+(s.done>1?'s':'')+' validé'+(s.done>1?'s':'')+' sur '+s.expected+' attendu'+(s.expected>1?'s':'');
     if(bar) bar.style.width=pct+'%';
   }
+  // ===== Résumé public d'hygiène — lecture seule pour les adhérents (MatSafe Fighter) =====
+  // N'ajoute AUCUNE règle de calcul : réutilise SCHED, isCancelled, VALS, weekCleanStats(),
+  // slotEnd, et les validations de zones. Ne publie jamais de nom de personne ni de photo.
+  var PUBLIC_HYGIENE_KEY=clubKey('club_public_hygiene');
+  function pubLocalISO(){ var n=new Date(); var p=function(x){return ('0'+x).slice(-2);};
+    return n.getFullYear()+'-'+p(n.getMonth()+1)+'-'+p(n.getDate())+'T'+p(n.getHours())+':'+p(n.getMinutes())+':'+p(n.getSeconds()); }
+  function publishPublicHygiene(){
+    // TODO SERVEUR : ce résumé public sera envoyé au serveur ; Fighter le lira via une API publique du club.
+    try{
+      var isoToday=isoOf(NOW);
+      // Cours du jour, dans l'ordre horaire — aucun nom de personne, uniquement l'horaire de validation.
+      var today=(SCHED[TODAY]||[]).map(function(c){
+        var k=isoToday+'|'+c.t+'|'+c.m, vAt=null;
+        for(var i=0;i<VALS.items.length;i++){ if(VALS.items[i].k===k){ vAt=VALS.items[i].at||null; break; } }
+        return { t:c.t, end:fmtMin(slotEnd(c.t)), d:c.d, m:c.m, c:(c.c||''),
+                 cancelled:isCancelled(TODAY,c.t,c.m), validatedAt:vAt };
+      });
+      // Zones validées aujourd'hui — libellés uniquement.
+      var seen={}, zonesToday=[];
+      for(var zi=0; zi<ZVALS.items.length; zi++){ var zit=ZVALS.items[zi];
+        if(zit.iso===isoToday && zit.zoneLabel && !seen[zit.zoneLabel]){ seen[zit.zoneLabel]=1; zonesToday.push(zit.zoneLabel); } }
+      // Dernier nettoyage de tatami validé, toutes dates confondues (date + heure de validation).
+      var last=null, lastRank=-1;
+      for(var li=0; li<VALS.items.length; li++){ var v=VALS.items[li];
+        if(!v.iso || !v.at) continue;
+        var rank=isoNum(v.iso)*10000+toMin(v.at);
+        if(rank>lastRank){ lastRank=rank; last={ date:v.iso, time:v.at }; } }
+      var w=weekCleanStats();
+      var pub={ v:1, updated:pubLocalISO(), date:isoToday, today:today,
+                zonesToday:zonesToday, week:{ done:w.done, expected:w.expected }, lastValidated:last };
+      localStorage.setItem(PUBLIC_HYGIENE_KEY, JSON.stringify(pub));
+    }catch(_){ }
+  }
   function renderDay(day){
     var list = SCHED[day] || [];
     var html = list.length
@@ -2053,6 +2086,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   enhanceSlots();
   renderCleanRate();
   renderStreak();   // appel initial : les données validées (VALS) sont désormais chargées
+  publishPublicHygiene();                                   // résumé public initial pour les adhérents
+  try{ setInterval(publishPublicHygiene, 5*60*1000); }catch(_){ }  // rafraîchissement tant que Club est ouvert
 
   // Modale « Valider le nettoyage »
   var modal=document.getElementById('valModal'), curVal=null, curPerson=null;
@@ -2086,6 +2121,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       var az=document.querySelector('#week .d.on'); if(az) renderDay(az.getAttribute('data-day'));
       try{ renderZoneRate(); }catch(_){ }
       try{ renderHistory(); }catch(_){ }
+      try{ publishPublicHygiene(); }catch(_){ }
       return;
     }
     // --- Nettoyage de TATAMI (inchangé, + photo facultative) ---
@@ -2111,6 +2147,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     renderCleanRate();
     try{ renderStreak(); }catch(_){ }
     try{ renderHistory(); }catch(_){ }
+    try{ publishPublicHygiene(); }catch(_){ }
   }
 
   // ===== Annuler / rétablir un créneau (non destructif, traçable) =====
@@ -2154,6 +2191,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     renderCleanRate();
     try{ renderStreak(); }catch(_){ }
     try{ renderHistory(); }catch(_){ }
+    try{ publishPublicHygiene(); }catch(_){ }
   }
 
   // ===== Historique — alimenté automatiquement par les nettoyages validés ET les annulations =====
