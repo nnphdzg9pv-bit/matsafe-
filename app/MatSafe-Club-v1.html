@@ -1375,6 +1375,38 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 <div class="toast" id="toast"></div>
 
 <script>
+/* ============================================================================
+   MatSafe — Synchronisation serveur (Supabase), intégrée au fichier (autonome).
+   Le Club PUBLIE une validation de nettoyage de tatami vers le serveur, pour que
+   l'app Fighter (sur le téléphone d'un adhérent, un autre appareil) la voie.
+   Passe par la fonction publique submit_validation (SECURITY DEFINER). La clé
+   « anon » est publique par conception. Si le réseau échoue, la validation reste
+   enregistrée localement (aucune erreur bloquante) ; on réessaiera au prochain envoi.
+   ============================================================================ */
+(function(){
+  "use strict";
+  var CFG = {
+    url:  'https://enhyrejspgjywnqgmoth.supabase.co',
+    anon: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVuaHlyZWpzcGdqeXducWdtb3RoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwNTgzNzgsImV4cCI6MjEwNTYzNDM3OH0.W0TDwJVB4hF7Xs0MmZGa0SRDq130lQUv4aCNGe_lAfo',
+    slug: 'cube-fight-club'              // identifiant public du club (clubs.public_slug)
+  };
+  function rpc(fn, body){
+    return fetch(CFG.url+'/rest/v1/rpc/'+fn, {
+      method:'POST',
+      headers:{ 'apikey':CFG.anon, 'Authorization':'Bearer '+CFG.anon, 'Content-Type':'application/json', 'Accept':'application/json' },
+      body: JSON.stringify(body||{})
+    }).then(function(r){ if(!r.ok) return r.text().then(function(t){ throw new Error('rpc '+fn+' '+r.status+' '+t); }); return r.json(); });
+  }
+  window.MATSAFE_CONFIG = CFG;
+  window.MatSafeAPI = {
+    enabled: true,
+    // payload : { zone:'MAT 1'|'MAT 2'|nom de zone, courseTime:'12:30', courseLabel:'No Gi' }
+    submitValidation: function(payload){ return rpc('submit_validation', { p_slug:CFG.slug, p_payload:payload||{} }); }
+  };
+})();
+</script>
+
+<script>
 "use strict";
 (function(){
   // Validité du label MatSafe (date de fin, format AAAA-MM-JJ ; vide = club pilote).
@@ -2145,6 +2177,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     VALS.items.push({ k:k, iso:iso, time:curVal.t, disc:curVal.disc,
       mat:matClassOf(curVal.m), matLabel:matLabelOf(curVal.m), by:curPerson, at:hh, ts:Date.now(), photo:(curVal.photo||null), demo:false });
     saveVals();
+    // Synchro serveur : rend la validation visible dans l'app Fighter (autre appareil, temps réel).
+    try{ if(window.MatSafeAPI && MatSafeAPI.enabled){ MatSafeAPI.submitValidation({ zone:curVal.m, courseTime:curVal.t, courseLabel:curVal.disc }).catch(function(){}); } }catch(_){ }
     document.getElementById('valDoneTxt').textContent='Nettoyage enregistré par '+curPerson+' à '+hh+'.';
     document.getElementById('valStep1').style.display='none';
     document.getElementById('valStep2').style.display='';
