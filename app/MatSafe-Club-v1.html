@@ -1400,8 +1400,14 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   window.MATSAFE_CONFIG = CFG;
   window.MatSafeAPI = {
     enabled: true,
-    // payload : { zone:'MAT 1'|'MAT 2'|nom de zone, courseTime:'12:30', courseLabel:'No Gi' }
-    submitValidation: function(payload){ return rpc('submit_validation', { p_slug:CFG.slug, p_payload:payload||{} }); }
+    // Nettoyage : { zone:'MAT 1'|'MAT 2'|nom de zone, courseTime?:'12:30', courseLabel?:'No Gi' }
+    submitValidation: function(payload){ return rpc('submit_validation', { p_slug:CFG.slug, p_payload:payload||{} }); },
+    // Infos : publier / dépublier
+    submitPost: function(payload){ return rpc('submit_post', { p_slug:CFG.slug, p_payload:payload||{} }); },
+    deletePost: function(id){ return rpc('delete_post', { p_slug:CFG.slug, p_id:id }); },
+    // Retours : lire la boîte du club / répondre / changer le statut
+    getClubReturns: function(){ return rpc('get_club_returns', { p_slug:CFG.slug }); },
+    setReturnStatus: function(id, status, reply){ return rpc('set_return_status', { p_slug:CFG.slug, p_id:id, p_status:status, p_reply:(reply===undefined?null:reply) }); }
   };
 })();
 </script>
@@ -1470,6 +1476,41 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   var FIGHTER_INBOX='matsafe_fighter_inbox';
   function loadInbox(){ try{ var r=localStorage.getItem(FIGHTER_INBOX); var a=r?JSON.parse(r):[]; return Array.isArray(a)?a:[]; }catch(e){ return []; } }
   function saveInbox(a){ try{ localStorage.setItem(FIGHTER_INBOX, JSON.stringify(a)); }catch(e){} }
+  // ----- Synchro serveur des retours adhérents (Supabase) : les retours envoyés
+  //        depuis Fighter (autre appareil) arrivent ici ; réponses/statuts repartent au serveur. -----
+  function srvRetStatus(s){ return s==='resolu'?'done':(s==='pris_en_charge'?'taken':'transmis'); }
+  function srvCatToClub(cat){ var m={hygiene:'proprete',materiel:'materiel',vestiaires:'sanitaires',sanitaires:'sanitaires',tatami:'autre',autre:'autre'}; return m[cat]||'autre'; }
+  function srvRatingToFeel(r){ return r>=5?'clean':(r>=3?'ok':(r?'improve':null)); }
+  function mapServerReturn(s){
+    var ts=Date.parse(s.createdAt)||Date.now(), up=Date.parse(s.updatedAt)||ts, status=srvRetStatus(s.status);
+    var rec={ id:s.id, code:s.id, serverId:s.id, fromServer:true,
+      kind:(s.kind==='signalement'?'signal':'avis'),
+      cat:(s.kind==='signalement'?srvCatToClub(s.category):null),
+      feeling:(s.kind==='avis'?srvRatingToFeel(s.rating):null),
+      zone:s.zone||'', description:s.description||'', reply:s.reply||'',
+      status:status, controlStatus:ctrlForStatus(status), ts:ts, by:null, photo:null, demo:false,
+      events:[{t:'received',at:ts}] };
+    if(status==='taken'||status==='done') rec.events.push({t:'status',at:up,status:'taken'});
+    if(rec.reply) rec.events.push({t:'reply',at:up,text:rec.reply});
+    if(status==='done') rec.events.push({t:'status',at:up,status:'done'});
+    if(rec.reply||status!=='transmis') rec.takenAt=up;
+    return rec;
+  }
+  function refreshClubReturns(){
+    if(!(window.MatSafeAPI && MatSafeAPI.enabled)) return;
+    MatSafeAPI.getClubReturns().then(function(rows){
+      if(!Array.isArray(rows)) return;
+      var list=loadInbox(), byId={}, changed=false;
+      list.forEach(function(r){ if(r){ if(r.serverId) byId[r.serverId]=r; else if(r.id) byId[r.id]=r; } });
+      rows.forEach(function(s){
+        var ex=byId[s.id];
+        if(!ex){ list.unshift(mapServerReturn(s)); changed=true; return; }
+        var st=srvRetStatus(s.status);
+        if(ex.status!==st || (ex.reply||'')!==(s.reply||'')){ ex.status=st; ex.controlStatus=ctrlForStatus(st); ex.reply=s.reply||''; ex.serverId=s.id; changed=true; }
+      });
+      if(changed){ saveInbox(list); try{ afterRetChange(); }catch(_){ try{ renderInbox(); }catch(__){} } }
+    }).catch(function(){});
+  }
   // Trois statuts, partagés avec Fighter via la même file (clés inchangées : transmis/taken/done).
   var INBOX_ST={ transmis:{t:'Reçu',cls:'todo'}, taken:{t:'En cours',cls:'prog'}, done:{t:'Traité',cls:'done'} };
   function inboxStInfo(s){ return INBOX_ST[s]||INBOX_ST.transmis; }
@@ -1600,7 +1641,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         changed=true; break;
       }
     }
-    if(changed){ saveInbox(list); afterRetChange(); toast(reopen?'Retour rouvert.':(status==='done'?'Retour marqué comme traité.':'Statut mis à jour.')); }
+    if(changed){ saveInbox(list);
+      try{ if(window.MatSafeAPI && MatSafeAPI.enabled){ var _m=loadInbox().filter(function(x){return x&&x.code===curRetCode;})[0]; if(_m&&_m.serverId) MatSafeAPI.setReturnStatus(_m.serverId,_m.status).catch(function(){}); } }catch(_){ }
+      afterRetChange(); toast(reopen?'Retour rouvert.':(status==='done'?'Retour marqué comme traité.':'Statut mis à jour.')); }
   }
   // Fait avancer le statut d'un retour directement depuis sa pastille (Reçu → En cours → Traité → Reçu).
   function cycleRetStatus(code){
@@ -1613,7 +1656,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         r.status=next; r.controlStatus=ctrlForStatus(next);
         if((next==='taken'||next==='done') && !r.takenAt) r.takenAt=now;
         if(next==='done') r.resolvedAt=now;
-        saveInbox(list); afterRetChange(); toast('Statut : '+inboxStInfo(next).t);
+        saveInbox(list);
+        try{ if(window.MatSafeAPI && MatSafeAPI.enabled){ var _m=loadInbox().filter(function(x){return x&&x.code===code;})[0]; if(_m&&_m.serverId) MatSafeAPI.setReturnStatus(_m.serverId,_m.status).catch(function(){}); } }catch(_){ }
+        afterRetChange(); toast('Statut : '+inboxStInfo(next).t);
         return;
       }
     }
@@ -1631,7 +1676,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         changed=true; break;
       }
     }
-    if(changed){ saveInbox(list); if(ta) ta.value=''; afterRetChange(); toast('Réponse envoyée. Visible par l’adhérent via son code.'); }
+    if(changed){ saveInbox(list);
+      try{ if(window.MatSafeAPI && MatSafeAPI.enabled){ var _m=loadInbox().filter(function(x){return x&&x.code===curRetCode;})[0]; if(_m&&_m.serverId) MatSafeAPI.setReturnStatus(_m.serverId,_m.status,_m.reply).catch(function(){}); } }catch(_){ }
+      if(ta) ta.value=''; afterRetChange(); toast('Réponse envoyée. Visible par l’adhérent via son code.'); }
   }
   function afterRetChange(){ try{ renderInbox(); }catch(_){ } try{ renderHomeMessages(); }catch(_){ } try{ renderHistory(); }catch(_){ } renderRetModal(); }
 
@@ -2133,6 +2180,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   renderStreak();   // appel initial : les données validées (VALS) sont désormais chargées
   publishPublicHygiene();                                   // résumé public initial pour les adhérents
   try{ setInterval(publishPublicHygiene, 5*60*1000); }catch(_){ }  // rafraîchissement tant que Club est ouvert
+  try{ refreshClubReturns(); }catch(_){ }                   // retours adhérents reçus depuis le serveur (autres appareils)
+  try{ setInterval(refreshClubReturns, 15000); }catch(_){ } // interrogation périodique
 
   // Modale « Valider le nettoyage »
   var modal=document.getElementById('valModal'), curVal=null, curPerson=null;
@@ -2159,6 +2208,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       ZVALS.items.push({ zone:curVal.zone, zoneLabel:curVal.zoneLabel, iso:ziso, time:hh,
         by:curPerson, photo:(curVal.photo||null), ts:Date.now(), demo:false });
       saveZoneVals();
+      // Synchro serveur : nettoyage de zone visible dans Fighter (autre appareil).
+      try{ if(window.MatSafeAPI && MatSafeAPI.enabled){ MatSafeAPI.submitValidation({ zone:curVal.zoneLabel }).catch(function(){}); } }catch(_){ }
       document.getElementById('valDoneTxt').textContent='Nettoyage de '+curVal.zoneLabel+' enregistré par '+curPerson+' à '+hh+'.';
       document.getElementById('valStep1').style.display='none';
       document.getElementById('valStep2').style.display='';
@@ -2470,6 +2521,14 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(ev) post.event=ev;
     pubs.unshift(post);
     savePubs(pubs);
+    // Publication serveur : visible dans MatSafe Fighter (autres appareils). Détails d'événement joints au texte.
+    try{ if(window.MatSafeAPI && MatSafeAPI.enabled){
+      var _c=post.content||'';
+      if(post.event){ var _e=[]; if(post.event.date)_e.push(post.event.date); if(post.event.time)_e.push(post.event.time); if(post.event.host)_e.push('avec '+post.event.host); if(_e.length) _c=(_c?_c+'\n':'')+'📅 '+_e.join(' · '); }
+      MatSafeAPI.submitPost({ category:post.category, content:_c }).then(function(res){
+        if(res && res.id){ var a=loadPubs(); for(var i=0;i<a.length;i++){ if(a[i]&&a[i].id===post.id){ a[i].serverId=res.id; break; } } savePubs(a); }
+      }).catch(function(){});
+    } }catch(_){ }
     var b=document.getElementById('pubBody'); if(b) b.value='';
     ['pubEvHost','pubEvDate','pubEvTime'].forEach(function(id){ var e=document.getElementById(id); if(e) e.value=''; });
     var c=document.getElementById('pubCat'); if(c) c.value='hygiene';
@@ -2482,6 +2541,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(!p) return;
     openConfirm('Supprimer cette information ? Elle disparaîtra de MatSafe Club et de MatSafe Fighter.', 'Supprimer', function(){
       savePubs(loadPubs().filter(function(x){ return x && x.id!==id; }));
+      try{ if(window.MatSafeAPI && MatSafeAPI.enabled && p.serverId){ MatSafeAPI.deletePost(p.serverId).catch(function(){}); } }catch(_){ }
       renderPubs();
       toast('Information supprimée.');
     });
