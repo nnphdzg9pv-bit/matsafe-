@@ -1098,6 +1098,45 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 <div class="toast" id="toast"></div>
 
 <script>
+/* ============================================================================
+   MatSafe — Synchronisation serveur (Supabase), intégrée au fichier (autonome).
+   PORTÉ depuis le prototype : le Club publie vers des fonctions publiques
+   (SECURITY DEFINER, clé anon). Lit window.MATSAFE_CONFIG si présent (app/config.js),
+   sinon valeurs par défaut intégrées. Si le réseau échoue, tout reste en local
+   (aucune erreur bloquante). NB : approche « prototype » (accès public) — à
+   remplacer par l'archi auth + Edge Functions en production.
+   ============================================================================ */
+(function(){
+  "use strict";
+  var C = window.MATSAFE_CONFIG || {};
+  var CFG = {
+    url:  C.SUPABASE_URL      || 'https://enhyrejspgjywnqgmoth.supabase.co',
+    anon: C.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVuaHlyZWpzcGdqeXducWdtb3RoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwNTgzNzgsImV4cCI6MjEwNTYzNDM3OH0.W0TDwJVB4hF7Xs0MmZGa0SRDq130lQUv4aCNGe_lAfo',
+    slug: C.MATSAFE_SLUG      || 'cube-fight-club'
+  };
+  function rpc(fn, body){
+    return fetch(CFG.url+'/rest/v1/rpc/'+fn, {
+      method:'POST',
+      headers:{ 'apikey':CFG.anon, 'Authorization':'Bearer '+CFG.anon, 'Content-Type':'application/json', 'Accept':'application/json' },
+      body: JSON.stringify(body||{})
+    }).then(function(r){ if(!r.ok) return r.text().then(function(t){ throw new Error('rpc '+fn+' '+r.status+' '+t); }); return r.json(); });
+  }
+  window.MATSAFE_CONFIG = window.MATSAFE_CONFIG || {};
+  window.MatSafeAPI = {
+    enabled: true,
+    // Nettoyage : { zone:'MAT 1'|'MAT 2'|nom de zone, courseTime?:'12:30', courseLabel?:'No Gi' }
+    submitValidation: function(payload){ return rpc('submit_validation', { p_slug:CFG.slug, p_payload:payload||{} }); },
+    // Infos : publier / dépublier
+    submitPost: function(payload){ return rpc('submit_post', { p_slug:CFG.slug, p_payload:payload||{} }); },
+    deletePost: function(id){ return rpc('delete_post', { p_slug:CFG.slug, p_id:id }); },
+    // Retours : lire la boîte du club / répondre / changer le statut
+    getClubReturns: function(){ return rpc('get_club_returns', { p_slug:CFG.slug }); },
+    setReturnStatus: function(id, status, reply){ return rpc('set_return_status', { p_slug:CFG.slug, p_id:id, p_status:status, p_reply:(reply===undefined?null:reply) }); }
+  };
+})();
+</script>
+
+<script>
 "use strict";
 (function(){
   var navItems = document.querySelectorAll('.nav a[data-screen]');
@@ -1558,6 +1597,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     VALS.items.push({ k:k, iso:iso, time:curVal.t, disc:curVal.disc,
       mat:matClassOf(curVal.m), matLabel:matLabelOf(curVal.m), by:curPerson, at:hh, ts:Date.now(), demo:false });
     saveVals();
+    // Synchro serveur : enregistre la validation dans Supabase (cleaning_validations). Aucun nom de coach n'est envoyé.
+    try{ if(window.MatSafeAPI && MatSafeAPI.enabled){ MatSafeAPI.submitValidation({ zone:curVal.m, courseTime:curVal.t, courseLabel:curVal.disc }).catch(function(){}); } }catch(_){ }
     document.getElementById('valDoneTxt').textContent='Nettoyage enregistré par '+curPerson+' à '+hh+'.';
     document.getElementById('valStep1').style.display='none';
     document.getElementById('valStep2').style.display='';
