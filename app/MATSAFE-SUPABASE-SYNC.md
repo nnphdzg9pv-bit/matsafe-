@@ -21,7 +21,8 @@ La couche lit `window.MATSAFE_CONFIG` si présent (via `app/config.js`, cf.
 window.MATSAFE_CONFIG = {
   SUPABASE_URL: "https://<ref>.supabase.co",
   SUPABASE_ANON_KEY: "<clé publishable/anon>",
-  MATSAFE_SLUG: "cube-fight-club"   // clubs.public_slug
+  MATSAFE_SLUG: "cube-fight-club",      // clubs.public_slug
+  MATSAFE_WRITE_SECRET: "msk_…"         // secret d'écriture du club (app Club uniquement)
 };
 ```
 
@@ -32,16 +33,22 @@ Pré-existantes (lecture publique / retours) :
 `get_public_events(p_slug)`, `get_retour_status(p_tokens[])`,
 `submit_retour(p_slug, p_payload)`.
 
-**Ajoutées par cette couche** (écriture Club, prototype anon) :
-- `submit_validation(p_slug, p_payload)` → insère dans `cleaning_validations`
+**Ajoutées par cette couche** (écriture Club — **exigent le secret `p_secret`**) :
+- `submit_validation(p_slug, p_payload, p_secret)` → insère dans `cleaning_validations`
   (source `admin`, membre référent, sans nom de coach dans le public).
-- `submit_post(p_slug, p_payload)` / `delete_post(p_slug, p_id)` → `club_posts`.
-- `get_club_returns(p_slug)` / `set_return_status(p_slug, p_id, p_status, p_reply)`
-  → `member_returns` (lecture + réponse/statut côté club).
+- `submit_post(p_slug, p_payload, p_secret)` / `delete_post(p_slug, p_id, p_secret)` → `club_posts`.
+- `get_club_returns(p_slug, p_secret)` / `set_return_status(p_slug, p_id, p_status, p_reply, p_secret)`
+  → `member_returns` (lecture de la boîte + réponse/statut côté club).
 
-Toutes `GRANT EXECUTE … TO anon, authenticated`. Aucune table n'a été recréée ;
-`get_public_hygiene` a été étendue pour inclure les zones nettoyées (zones
-non-tatami d'`cleaning_validations`) dans `zonesToday`.
+Chaque appel vérifie `p_secret` via `matsafe_check_secret(slug, secret)` contre la
+table **`app_write_secrets`** (slug → secret ; aucune policy, donc inaccessible via
+l'API : seules les fonctions `SECURITY DEFINER` la lisent). Un mauvais secret ou
+l'absence de secret → `forbidden_write`.
+
+`submit_retour` (envoi anonyme par un adhérent) et les `get_public_*` **restent
+ouverts** (pas de secret). `get_public_hygiene` a été étendue pour inclure les
+zones nettoyées (zones non-tatami d'`cleaning_validations`) dans `zonesToday`.
+Aucune table existante n'a été recréée.
 
 ## Ce qui est branché
 
@@ -61,13 +68,20 @@ non-tatami d'`cleaning_validations`) dans `zonesToday`.
   relire le statut/réponse via `get_retour_status`.
 - Infos lues du serveur → `get_public_posts` ; événements → `get_public_events`.
 
-## Sécurité (à traiter avant la production)
+## Sécurité
 
-Les RPC d'écriture (`submit_*`, `set_return_status`, `delete_post`) sont
-**appelables avec la seule clé publique** : n'importe qui disposant de cette clé
-peut écrire. C'est acceptable pour un prototype, **pas pour la production**.
+**Durcissement appliqué (prototype).** Les écritures du Club exigent désormais un
+**secret d'écriture** (`app_write_secrets`), que seule l'app Club détient. La clé
+publique anon **seule ne suffit plus** pour écrire/forger : l'app **adhérent**
+(Fighter) ne contient pas le secret, donc un adhérent ne peut ni valider un
+nettoyage, ni publier, ni répondre, ni lire la boîte de retours. La lecture
+publique (planning/infos) et l'envoi de retour anonyme restent ouverts, par design.
 
-Durcissement recommandé : router l'écriture via l'archi **authentifiée + Edge
-Functions** déjà présente (sessions `supabase-js`, `validation-record`, device
-binding / codes d'activation), et retirer/`REVOKE` les RPC d'écriture anon
-(ou les passer en `SECURITY INVOKER` derrière des policies RLS adaptées).
+**Limite résiduelle.** Dans ce prototype, le secret est intégré par défaut dans
+`MatSafe-Club-v1.html`. Quiconque obtient ce fichier obtient le secret. Pour une
+vraie étanchéité :
+1. Déplacer le secret dans `app/config.js` (git-ignoré) via `MATSAFE_WRITE_SECRET`
+   et le **retirer du HTML** ; faire tourner le secret dans `app_write_secrets`.
+2. À terme, router l'écriture via l'archi **authentifiée + Edge Functions** déjà
+   présente (sessions `supabase-js`, `validation-record`, device binding / codes
+   d'activation), puis `REVOKE`/supprimer les RPC d'écriture anon.

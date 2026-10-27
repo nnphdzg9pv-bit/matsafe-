@@ -1097,6 +1097,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
 <div class="toast" id="toast"></div>
 
+<!-- Config locale (git-ignorée) : SUPABASE_* et surtout MATSAFE_WRITE_SECRET. Absente = Club en local seul. -->
+<script src="config.js"></script>
 <script>
 /* ============================================================================
    MatSafe — Synchronisation serveur (Supabase), intégrée au fichier (autonome).
@@ -1112,7 +1114,12 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   var CFG = {
     url:  C.SUPABASE_URL      || 'https://enhyrejspgjywnqgmoth.supabase.co',
     anon: C.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVuaHlyZWpzcGdqeXducWdtb3RoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwNTgzNzgsImV4cCI6MjEwNTYzNDM3OH0.W0TDwJVB4hF7Xs0MmZGa0SRDq130lQUv4aCNGe_lAfo',
-    slug: C.MATSAFE_SLUG      || 'cube-fight-club'
+    slug: C.MATSAFE_SLUG      || 'cube-fight-club',
+    // Secret d'écriture du club : requis par les RPC d'écriture (validation/infos/réponses).
+    // JAMAIS dans ce fichier (ni dans git) : il est fourni par app/config.js (git-ignoré),
+    // via MATSAFE_WRITE_SECRET. Sans secret, le Club reste en LOCAL (pas d'écriture serveur).
+    // L'app ADHÉRENT (Fighter) ne charge pas config.js → ne peut rien écrire/forger.
+    secret: C.MATSAFE_WRITE_SECRET || ''
   };
   function rpc(fn, body){
     return fetch(CFG.url+'/rest/v1/rpc/'+fn, {
@@ -1125,13 +1132,13 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   window.MatSafeAPI = {
     enabled: true,
     // Nettoyage : { zone:'MAT 1'|'MAT 2'|nom de zone, courseTime?:'12:30', courseLabel?:'No Gi' }
-    submitValidation: function(payload){ return rpc('submit_validation', { p_slug:CFG.slug, p_payload:payload||{} }); },
+    submitValidation: function(payload){ if(!CFG.secret) return Promise.resolve(null); return rpc('submit_validation', { p_slug:CFG.slug, p_payload:payload||{}, p_secret:CFG.secret }); },
     // Infos : publier / dépublier
-    submitPost: function(payload){ return rpc('submit_post', { p_slug:CFG.slug, p_payload:payload||{} }); },
-    deletePost: function(id){ return rpc('delete_post', { p_slug:CFG.slug, p_id:id }); },
+    submitPost: function(payload){ if(!CFG.secret) return Promise.resolve(null); return rpc('submit_post', { p_slug:CFG.slug, p_payload:payload||{}, p_secret:CFG.secret }); },
+    deletePost: function(id){ if(!CFG.secret) return Promise.resolve(null); return rpc('delete_post', { p_slug:CFG.slug, p_id:id, p_secret:CFG.secret }); },
     // Retours : lire la boîte du club / répondre / changer le statut
-    getClubReturns: function(){ return rpc('get_club_returns', { p_slug:CFG.slug }); },
-    setReturnStatus: function(id, status, reply){ return rpc('set_return_status', { p_slug:CFG.slug, p_id:id, p_status:status, p_reply:(reply===undefined?null:reply) }); }
+    getClubReturns: function(){ if(!CFG.secret) return Promise.resolve([]); return rpc('get_club_returns', { p_slug:CFG.slug, p_secret:CFG.secret }); },
+    setReturnStatus: function(id, status, reply){ if(!CFG.secret) return Promise.resolve(null); return rpc('set_return_status', { p_slug:CFG.slug, p_id:id, p_status:status, p_reply:(reply===undefined?null:reply), p_secret:CFG.secret }); }
   };
 })();
 </script>
