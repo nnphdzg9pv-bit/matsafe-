@@ -550,6 +550,29 @@ body.fdark{background:#0C0D10}
 .routine{margin:6px 0 20px}
 .routine-h{font-family:var(--cond);text-transform:uppercase;letter-spacing:-.005em;font-weight:900;font-size:clamp(28px,7.5vw,36px);line-height:.96;margin:4px 0 16px;color:var(--ink);text-align:center}
 .routine p{font-size:clamp(17px,4.6vw,19px);line-height:1.6;color:var(--ink);margin:0 0 18px}
+/* ===== Écran « Dernier nettoyage » (porté) ===== */
+.hy-meta{font-family:var(--sans);font-size:14.5px;color:var(--gray);text-align:center;margin:0 0 20px}
+.hy-cards{margin:0 0 8px}
+.hy-card{background:var(--paper,#FAF9F5);border:1px solid var(--border,#CFC9BD);border-radius:8px;padding:16px 18px;margin:0 0 12px}
+.hy-card:last-child{margin-bottom:0}
+.hy-k{display:flex;align-items:center;gap:8px;font-family:var(--cond);font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:12px;color:var(--gray);margin:0 0 9px}
+.hy-dot{width:9px;height:9px;border-radius:50%;background:var(--faint,#9A9488);flex:none}
+.hy-dot.ok{background:var(--ok,#2F6B4F)}
+.hy-main{font-family:var(--cond);font-weight:900;text-transform:uppercase;letter-spacing:-.005em;font-size:clamp(23px,6.2vw,30px);line-height:1.03;color:var(--ink)}
+.hy-sub{font-family:var(--sans);font-size:14px;line-height:1.45;color:var(--gray);margin-top:9px}
+.hy-wait{font-family:var(--sans);font-size:13px;line-height:1.4;color:var(--faint,#9A9488);margin-top:11px;padding-top:11px;border-top:1px solid var(--hair,#E0DCD3)}
+.hy-sect{font-family:var(--cond);text-transform:uppercase;letter-spacing:.03em;font-weight:700;font-size:16px;color:var(--ink);margin:18px 0 2px}
+.hy-mini{display:flex;align-items:center;gap:10px;padding:9px 3px;border-bottom:1px solid var(--hair,#E0DCD3)}
+.hy-mini:last-child{border-bottom:0}
+.hy-mt{font-family:var(--sans);font-weight:700;font-size:12.5px;width:42px;flex:none;color:var(--ink)}
+.hy-md{font-family:var(--sans);font-size:13px;color:var(--gray);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hy-mm{font-family:var(--sans);font-size:11px;font-weight:700;flex:none;text-align:right;white-space:nowrap}
+.hy-mm.hy-ok{color:var(--ok,#2F6B4F)}
+.hy-mm.hy-wait{color:var(--gray)}
+.hy-mm.hy-soon{color:#B7B3AB}
+.hy-z{margin-top:14px;padding-top:10px;border-top:1px solid var(--hair,#E0DCD3)}
+.hy-empty{font-family:var(--sans);font-size:15px;color:var(--gray);padding:12px 3px}
+.hy-note{font-family:var(--sans);font-size:12.5px;line-height:1.5;color:var(--gray);margin:18px 0 0;border-top:1px solid var(--hair,#E0DCD3);padding-top:14px}
 .routine-key{font-weight:800;font-size:clamp(19px,5vw,22px);line-height:1.45;color:var(--ink);background:var(--paper);border:1px solid var(--border);border-left:5px solid var(--brand);border-radius:6px;padding:20px 22px;margin:22px 0 0}
 /* Médecin Direct — liste des rôles (puce rouge en accent) */
 .md-roles{list-style:none;margin:0 0 18px;padding:0;display:flex;flex-direction:column;gap:12px}
@@ -765,9 +788,20 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   }
   function feelRating(f){ return f==='clean'?5:(f==='ok'?3:(f==='improve'?2:null)); }
   function feelLabel(f){ return f==='clean'?'Propre et agréable':(f==='ok'?'Correct':(f==='improve'?'Peut être amélioré':'')); }
+  function pad2(n){ return ('0'+n).slice(-2); }
+  function mondayISO(){ var d=new Date(); var k=(d.getDay()+6)%7; d.setDate(d.getDate()-k); return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate()); }
+  function hm(ts){ if(!ts) return null; try{ return new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Paris',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(ts)); }catch(e){ return null; } }
   window.MATSAFE_CONFIG = window.MATSAFE_CONFIG || {};
   window.MatSafeAPI = {
     enabled: true,
+    getPublicHygiene: function(){
+      return rpc('get_public_hygiene', { p_slug:CFG.slug, p_week_start:mondayISO() }).then(function(data){
+        if(!data) return null;
+        function fix(list){ (list||[]).forEach(function(c){ if(c && c.validatedAt) c.validatedAt=hm(c.validatedAt); }); }
+        (data.days||[]).forEach(function(d){ fix(d.courses); }); fix(data.today);
+        return data;
+      });
+    },
     getPublicPosts:  function(){ return rpc('get_public_posts',  { p_slug:CFG.slug }).then(function(r){ return r||[]; }); },
     getPublicEvents: function(){ return rpc('get_public_events', { p_slug:CFG.slug }).then(function(r){ return (r&&r.length)?r:null; }); },
     getRetourStatus: function(tokens){ return rpc('get_retour_status', { p_tokens:tokens||[] }).then(function(r){ return r||[]; }); },
@@ -1108,6 +1142,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     }
     var tiles =
       tile('a-vdc','creme wide', vdcInner)+
+      tile('a-hygiene','creme','<span class="t-ic">'+ICheck+'</span><span class="t-b"><span class="tile-t">Dernier nettoyage</span><span class="tile-s">Propreté des tatamis</span></span>')+
       tile('a-feedback','creme big',
         '<span class="tile-t fb-t">Faire un retour<br>à mon club</span>'+
         '<span class="tile-desc">Une remarque sur l’hygiène ou un problème à signaler, sans dévoiler votre identité.</span>'+
@@ -1133,6 +1168,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     document.getElementById('a-care').onclick=leaveHome(screenCare);
     document.getElementById('a-returns').onclick=leaveHome(screenReturns);
     document.getElementById('a-vdc').onclick=leaveHome(screenClubLife);
+    var _ah=document.getElementById('a-hygiene'); if(_ah) _ah.onclick=leaveHome(screenHygiene);
     startVdcCarousel();
   }
   // Défilé des messages « La vie du club » sur l'accueil (boucle, respecte reduced-motion).
@@ -1489,6 +1525,81 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     wireBack();
   }
 
+  /* ===== Écran « Dernier nettoyage » (porté) : cartes par tatami + cours du jour, via Supabase ===== */
+  var HY_MONTHS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  var HY_GRACE=60*60000;
+  function hyPad(n){ return ('0'+n).slice(-2); }
+  function hyTodayIso(){ var d=new Date(); return d.getFullYear()+'-'+hyPad(d.getMonth()+1)+'-'+hyPad(d.getDate()); }
+  function hyYesterdayIso(){ var y=new Date(); y.setDate(y.getDate()-1); return y.getFullYear()+'-'+hyPad(y.getMonth()+1)+'-'+hyPad(y.getDate()); }
+  function hyDObj(iso){ var p=String(iso||'').split('-'); return new Date(+p[0],(+p[1]||1)-1,(+p[2]||1)); }
+  function hyHhMm(t){ var p=String(t||'').split(':'); if(p.length<2) return t||''; var h=String(+p[0]); return (p[1]==='00')?(h+' h'):(h+' h '+p[1]); }
+  function hyFullDate(iso){ var d=hyDObj(iso); return d.getDate()+' '+HY_MONTHS[d.getMonth()]; }
+  function hyDateCap(iso){ if(iso===hyTodayIso()) return "Aujourd'hui"; if(iso===hyYesterdayIso()) return 'Hier'; return 'Le '+hyFullDate(iso); }
+  function hyAtDt(iso,hhmm){ var d=hyDObj(iso), p=String(hhmm||'0:0').split(':'); d.setHours(+p[0]||0,+p[1]||0,0,0); return d; }
+  function hyAgo(ms){ var m=Math.floor(ms/60000); if(m<1) return "à l'instant"; if(m<60) return 'il y a '+m+' min'; var h=Math.floor(m/60), mm=m%60; return 'il y a '+h+' h'+(mm?(' '+hyPad(mm)):''); }
+  function hyMatLabel(m){ var s=String(m||'').trim(); if(/^mat\s*1$/i.test(s)) return 'Tatami 1'; if(/^mat\s*2$/i.test(s)) return 'Tatami 2'; return s||'Tatami'; }
+  function hyMats(data){ var seen={}, out=[]; (data.days||[]).forEach(function(d){ (d.courses||[]).forEach(function(c){ if(c.m && !seen[c.m]){ seen[c.m]=1; out.push(c.m); } }); }); out.sort(function(a,b){return String(a).toLowerCase().localeCompare(String(b).toLowerCase());}); return out; }
+  function hyEntries(data, mat){ var out=[]; (data.days||[]).forEach(function(d){ (d.courses||[]).forEach(function(c){ if(c.m===mat) out.push({iso:d.iso,t:c.t,end:c.end,cancelled:c.cancelled,validatedAt:c.validatedAt}); }); }); return out; }
+  function hyCleanCard(mat, entries, now){
+    var nowMs=now.getTime(), todayIso=hyTodayIso(), last=null, fin=null;
+    entries.forEach(function(e){ if(!e.validatedAt) return; var ms=hyAtDt(e.iso,e.validatedAt).getTime(); if(ms>nowMs+60000) return; if(!last||ms>last.ms) last={ms:ms,iso:e.iso,at:e.validatedAt,course:e.t}; });
+    entries.forEach(function(e){ if(e.cancelled) return; var endMs=hyAtDt(e.iso,e.end).getTime(); if(endMs>nowMs) return; if(!fin||endMs>fin.endMs) fin={endMs:endMs,validated:!!e.validatedAt,course:e.t,iso:e.iso}; });
+    var pastGrace=(fin && (nowMs-fin.endMs)>=HY_GRACE);
+    var awaiting=(fin && !fin.validated && pastGrace && fin.iso===todayIso) ? fin.course : null;
+    var green=fin ? (fin.validated || !pastGrace) : false;
+    var main;
+    if(!last){ main='Aucun nettoyage validé pour le moment'; }
+    else { var age=nowMs-last.ms; if(age<24*3600000) main='Nettoyé '+hyAgo(age); else if(last.iso===hyYesterdayIso()) main='Dernier nettoyage hier'; else main='Dernier nettoyage le '+hyFullDate(last.iso); }
+    var sub=last ? (hyDateCap(last.iso)+' à '+hyHhMm(last.at)+', après le cours de '+hyHhMm(last.course)) : '';
+    var wait=awaiting ? ('En attente de validation après le cours de '+hyHhMm(awaiting)) : '';
+    return '<div class="hy-card"><div class="hy-k"><span class="hy-dot'+(green?' ok':'')+'"></span>'+esc(hyMatLabel(mat))+'</div>'+
+      '<div class="hy-main">'+esc(main)+'</div>'+
+      (sub?'<div class="hy-sub">'+esc(sub)+'</div>':'')+
+      (wait?'<div class="hy-wait">'+esc(wait)+'</div>':'')+'</div>';
+  }
+  function hyDayStatus(c, dayIso, todayIso, nowMin){
+    if(c.cancelled) return {cls:'hy-soon',label:'Annulé'};
+    if(c.validatedAt) return {cls:'hy-ok',label:'Nettoyé'};
+    if(dayIso>todayIso) return {cls:'hy-soon',label:'À venir'};
+    if(dayIso<todayIso) return {cls:'hy-wait',label:'En attente'};
+    var p=String(c.t||'0:0').split(':'), s=(+p[0])*60+(+p[1]);
+    if(nowMin<s) return {cls:'hy-soon',label:'À venir'};
+    return {cls:'hy-wait',label:'En attente'};
+  }
+  var _hyData=null;
+  function hyRender(){
+    if(!document.getElementById('hyWrap')) return;
+    var data=_hyData, now=new Date();
+    var cardsEl=document.getElementById('hyCards'), dayEl=document.getElementById('hyDay');
+    if(!data || !data.days || !data.days.length){ if(cardsEl) cardsEl.innerHTML='<div class="hy-empty">Le planning du club n’est pas encore disponible.</div>'; if(dayEl) dayEl.innerHTML=''; return; }
+    var mats=hyMats(data); if(!mats.length) mats=[''];
+    if(cardsEl) cardsEl.innerHTML=mats.map(function(m){ return hyCleanCard(m, hyEntries(data,m), now); }).join('');
+    var todayIso=hyTodayIso(), nowMin=now.getHours()*60+now.getMinutes(), today=null;
+    for(var i=0;i<data.days.length;i++){ if(data.days[i].iso===todayIso){ today=data.days[i]; break; } }
+    if(dayEl){
+      if(today && today.courses && today.courses.length){
+        var rows=today.courses.map(function(c){ var st=hyDayStatus(c,today.iso,todayIso,nowMin);
+          return '<div class="hy-mini"><span class="hy-mt">'+esc(c.t)+'</span><span class="hy-md">'+esc(c.d)+' · '+esc(hyMatLabel(c.m))+'</span><span class="hy-mm '+st.cls+'">'+esc(st.label)+'</span></div>'; }).join('');
+        var zones=(today.zones&&today.zones.length)?('<div class="hy-sect hy-z">Zones nettoyées</div>'+today.zones.map(function(z){return '<div class="hy-mini"><span class="hy-md">'+esc(z)+'</span><span class="hy-mm hy-ok">Nettoyé</span></div>';}).join('')):'';
+        dayEl.innerHTML='<div class="hy-sect">Cours du jour</div>'+rows+zones;
+      } else { dayEl.innerHTML='<div class="hy-sect">Cours du jour</div><div class="hy-empty">Aucun cours aujourd’hui.</div>'; }
+    }
+  }
+  function hyRefresh(){ if(!(window.MatSafeAPI && MatSafeAPI.enabled && MatSafeAPI.getPublicHygiene)) return; MatSafeAPI.getPublicHygiene().then(function(d){ if(d){ _hyData=d; try{ save('matsafe_hy_cache', d); }catch(_){ } hyRender(); } }).catch(function(){}); }
+  function screenHygiene(){
+    try{ if(!_hyData){ var c=load('matsafe_hy_cache'); if(c && !Array.isArray(c) && c.days) _hyData=c; } }catch(_){ }
+    view.innerHTML=backBtn()+
+      '<section class="hy-screen" id="hyWrap">'+
+        '<h3 class="routine-h" style="margin-bottom:6px">Dernier nettoyage</h3>'+
+        '<div class="hy-meta">'+esc(CTX.club||'Mon club')+'</div>'+
+        '<div id="hyCards" class="hy-cards"></div>'+
+        '<div id="hyDay"></div>'+
+        '<p class="hy-note">Informations déclarées et validées par l’équipe du club. MatSafe suit le fonctionnement du club dans le cadre de son label mais ne vérifie pas physiquement chaque nettoyage.</p>'+
+      '</section>';
+    wireBack();
+    hyRender(); hyRefresh();
+  }
+
   // ---- Synchro serveur (Supabase) : infos publiées + statut/réponse des retours ----
   function srvPostCat(c){ var m={hygiene:'hygiene',alerte:'alerte',recommandation:'reco',information:'club',evenement:'club'}; return m[c]||'club'; }
   function refreshServerPublicData(){
@@ -1519,6 +1630,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   try{ refreshServerPublicData(); }catch(_){ }
   try{ refreshReturnStatuses(); }catch(_){ }
   try{ setInterval(refreshServerPublicData, 60000); setInterval(refreshReturnStatuses, 20000); }catch(_){ }
+  try{ setInterval(function(){ if(document.getElementById('hyWrap')){ try{ hyRender(); }catch(_){ } try{ hyRefresh(); }catch(_){ } } }, 60000); }catch(_){ }
   window.addEventListener('storage', function(e){
     if((e.key==='matsafe_club_events'||e.key==='matsafe_club_posts'||e.key==='matsafe_club_streak') && document.querySelector('.home')){ try{ screenHome(); }catch(_){ } }
     // Le club a fait évoluer un statut (ou ajouté une réponse) : rafraîchir « Suivre mes retours ».
