@@ -2307,14 +2307,16 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var ev=[];
     VALS.items.forEach(function(it){
       if(!it.iso) return;
-      ev.push({ type:'clean', iso:it.iso, time:it.time, sortMin:toMin(it.time),
+      var realAt=it.at||it.time;   // heure RÉELLE de validation ; it.time (heure du cours) en secours (anciennes données)
+      ev.push({ type:'clean', iso:it.iso, time:realAt, sortMin:toMin(realAt),
         title:'Nettoyage validé', detail:(it.matLabel||'')+' · '+(it.disc||'')+(it.by?' · '+it.by:''),
         statusLabel:'Validé', statusCls:'done', dotCls:'ok', csvType:'Tatami', photo:(it.photo||null) });
     });
     // Nettoyages de ZONE — même colonne « Nettoyages », identifiés par le nom de la zone
     ZVALS.items.forEach(function(it){
       if(!it.iso) return;
-      ev.push({ type:'clean', zoneKind:true, iso:it.iso, time:it.time, sortMin:toMin(it.time||'0:0'),
+      var realAt=it.at||it.time;   // zones : it.time est déjà l'heure réelle ; fallback cohérent
+      ev.push({ type:'clean', zoneKind:true, iso:it.iso, time:realAt, sortMin:toMin(realAt||'0:0'),
         title:'Nettoyage de zone', detail:(it.zoneLabel||'')+(it.by?' · '+it.by:''),
         statusLabel:'Validé', statusCls:'done', dotCls:'ok', csvType:'Zone', photo:(it.photo||null) });
     });
