@@ -736,6 +736,54 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 </div>
 
 <script>
+/* ============================================================================
+   MatSafe — Synchronisation serveur (Supabase), intégrée au fichier (autonome).
+   PORTÉ depuis le prototype : Fighter LIT les infos du club et ENVOIE les retours,
+   via les fonctions publiques (clé anon). Lit window.MATSAFE_CONFIG si présent
+   (app/config.js), sinon valeurs par défaut intégrées. Repli local si réseau KO.
+   NB : approche « prototype » (accès public) — à remplacer par auth + Edge Functions.
+   ============================================================================ */
+(function(){
+  "use strict";
+  var C = window.MATSAFE_CONFIG || {};
+  var CFG = {
+    url:  C.SUPABASE_URL      || 'https://enhyrejspgjywnqgmoth.supabase.co',
+    anon: C.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVuaHlyZWpzcGdqeXducWdtb3RoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwNTgzNzgsImV4cCI6MjEwNTYzNDM3OH0.W0TDwJVB4hF7Xs0MmZGa0SRDq130lQUv4aCNGe_lAfo',
+    slug: C.MATSAFE_SLUG      || 'cube-fight-club'
+  };
+  function rpc(fn, body){
+    return fetch(CFG.url+'/rest/v1/rpc/'+fn, {
+      method:'POST',
+      headers:{ 'apikey':CFG.anon, 'Authorization':'Bearer '+CFG.anon, 'Content-Type':'application/json', 'Accept':'application/json' },
+      body: JSON.stringify(body||{})
+    }).then(function(r){ if(!r.ok) return r.text().then(function(t){ throw new Error('rpc '+fn+' '+r.status+' '+t); }); return r.json(); });
+  }
+  function mapCat(rec){
+    if(rec.kind==='avis') return 'hygiene';
+    var m={proprete:'hygiene',sanitaires:'sanitaires',douches:'sanitaires',materiel:'materiel',consommable:'materiel',premiers:'autre',autre:'autre'};
+    return m[rec.cat]||'autre';
+  }
+  function feelRating(f){ return f==='clean'?5:(f==='ok'?3:(f==='improve'?2:null)); }
+  function feelLabel(f){ return f==='clean'?'Propre et agréable':(f==='ok'?'Correct':(f==='improve'?'Peut être amélioré':'')); }
+  window.MATSAFE_CONFIG = window.MATSAFE_CONFIG || {};
+  window.MatSafeAPI = {
+    enabled: true,
+    getPublicPosts:  function(){ return rpc('get_public_posts',  { p_slug:CFG.slug }).then(function(r){ return r||[]; }); },
+    getPublicEvents: function(){ return rpc('get_public_events', { p_slug:CFG.slug }).then(function(r){ return (r&&r.length)?r:null; }); },
+    getRetourStatus: function(tokens){ return rpc('get_retour_status', { p_tokens:tokens||[] }).then(function(r){ return r||[]; }); },
+    submitRetour: function(rec){
+      var desc=((rec&&rec.description)||'').trim();
+      if(rec.kind==='avis' && !desc) desc='Avis d’hygiène : '+(feelLabel(rec.feeling)||'retour positif');
+      var payload={ kind:(rec.kind==='signal'?'signalement':'avis'), category:mapCat(rec), description:(desc||'(sans détail)') };
+      if(rec.zone) payload.zone=String(rec.zone).slice(0,120);
+      var rt=feelRating(rec.feeling); if(rt) payload.rating=rt;
+      return rpc('submit_retour', { p_slug:CFG.slug, p_payload:payload });
+    }
+  };
+})();
+</script>
+
+<script>
 "use strict";
 /* =====================================================================
    MATSAFE FIGHTER — interface pratiquant (accès QR)
@@ -893,6 +941,14 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     // de suivi et pilote ensuite le statut + la réponse publique du club.
     var mine=load(STORE); mine.unshift(rec); save(STORE, mine.slice(0,20));
     var inbox=load(INBOX); inbox.unshift(rec); save(INBOX, inbox.slice(0,200));  // file lue par Control (même origine), sans identité
+    // Serveur : envoi anonyme. On conserve le jeton privé renvoyé par Supabase pour
+    // relire ensuite le statut + la réponse du club (le code MS-… affiché reste inchangé).
+    try{ if(window.MatSafeAPI && MatSafeAPI.enabled){
+      (function(localCode){ MatSafeAPI.submitRetour(rec).then(function(srv){
+        if(!srv || !srv.token) return;
+        [STORE,INBOX].forEach(function(key){ var a=load(key), ch=false; a.forEach(function(r){ if(r && r.code===localCode){ r.serverToken=srv.token; ch=true; } }); if(ch) save(key,a); });
+      }).catch(function(){}); })(rec.code);
+    } }catch(_){ }
     return rec.code;
   }
 
@@ -1433,7 +1489,36 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     wireBack();
   }
 
+  // ---- Synchro serveur (Supabase) : infos publiées + statut/réponse des retours ----
+  function srvPostCat(c){ var m={hygiene:'hygiene',alerte:'alerte',recommandation:'reco',information:'club',evenement:'club'}; return m[c]||'club'; }
+  function refreshServerPublicData(){
+    if(!(window.MatSafeAPI && MatSafeAPI.enabled)) return;
+    MatSafeAPI.getPublicPosts().then(function(rows){
+      var list=(rows||[]).map(function(p){ return { id:p.id, category:srvPostCat(p.category), title:'', content:p.content,
+        status:'published', published_at:p.publishedAt, created_at:p.publishedAt, expires_at:p.expiresAt, is_pinned:false }; });
+      save(POSTS_KEY, list);
+      if(document.querySelector('.home')){ try{ screenHome(); }catch(_){ } }
+    }).catch(function(){});
+    MatSafeAPI.getPublicEvents().then(function(rows){ if(rows && rows.length){ save('matsafe_club_events', rows); if(document.querySelector('.home')){ try{ screenHome(); }catch(_){ } } } }).catch(function(){});
+  }
+  function refreshReturnStatuses(){
+    if(!(window.MatSafeAPI && MatSafeAPI.enabled)) return;
+    var toks=load(STORE).map(function(r){return r&&r.serverToken;}).filter(function(t){return t&&String(t).length>=32;});
+    if(!toks.length) return;
+    MatSafeAPI.getRetourStatus(toks).then(function(rows){
+      var by={}; (rows||[]).forEach(function(x){ by[x.token]={ status:(x.status==='resolu'?'done':(x.status==='pris_en_charge'?'taken':'transmis')), reply:x.reply||'' }; });
+      [STORE,INBOX].forEach(function(key){ var a=load(key), ch=false;
+        a.forEach(function(r){ if(r && r.serverToken && by[r.serverToken]){ var s=by[r.serverToken]; if(r.status!==s.status||((r.reply||'')!==s.reply)){ r.status=s.status; r.reply=s.reply; ch=true; } } });
+        if(ch) save(key,a);
+      });
+      if(document.getElementById('retTitle')){ try{ screenReturns(); }catch(_){ } }
+    }).catch(function(){});
+  }
+
   screenHome();
+  try{ refreshServerPublicData(); }catch(_){ }
+  try{ refreshReturnStatuses(); }catch(_){ }
+  try{ setInterval(refreshServerPublicData, 60000); setInterval(refreshReturnStatuses, 20000); }catch(_){ }
   window.addEventListener('storage', function(e){
     if((e.key==='matsafe_club_events'||e.key==='matsafe_club_posts'||e.key==='matsafe_club_streak') && document.querySelector('.home')){ try{ screenHome(); }catch(_){ } }
     // Le club a fait évoluer un statut (ou ajouté une réponse) : rafraîchir « Suivre mes retours ».

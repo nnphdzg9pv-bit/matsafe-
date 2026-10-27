@@ -1167,6 +1167,38 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   var FIGHTER_INBOX='matsafe_fighter_inbox';
   function loadInbox(){ try{ var r=localStorage.getItem(FIGHTER_INBOX); var a=r?JSON.parse(r):[]; return Array.isArray(a)?a:[]; }catch(e){ return []; } }
   function saveInbox(a){ try{ localStorage.setItem(FIGHTER_INBOX, JSON.stringify(a)); }catch(e){} }
+  // ----- Synchro serveur des retours adhérents (Supabase), portée du prototype -----
+  function _srvRetStatus(s){ return s==='resolu'?'done':(s==='pris_en_charge'?'taken':'transmis'); }
+  function _srvCatToClub(cat){ var m={hygiene:'proprete',materiel:'materiel',vestiaires:'sanitaires',sanitaires:'sanitaires',tatami:'autre',autre:'autre'}; return m[cat]||'autre'; }
+  function _srvCtrl(st){ return st==='done'?'treated':(st==='taken'?'in_progress':'to_verify'); }
+  function _retDateLabel(iso){ try{ var d=new Date(iso); var mo=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.']; return d.getDate()+' '+mo[d.getMonth()]; }catch(_){ return ''; } }
+  function mapServerReturn(s){
+    var ts=Date.parse(s.createdAt)||Date.now(), up=Date.parse(s.updatedAt)||ts, st=_srvRetStatus(s.status);
+    return { code:s.id, serverId:s.id, fromServer:true,
+      kind:(s.kind==='signalement'?'signal':'avis'), cat:(s.kind==='signalement'?_srvCatToClub(s.category):null),
+      zone:s.zone||'', when:_retDateLabel(s.createdAt), description:s.description||'', reply:s.reply||'',
+      status:st, controlStatus:_srvCtrl(st), ts:ts, takenAt:(st!=='transmis'?up:0) };
+  }
+  function refreshClubReturns(){
+    if(!(window.MatSafeAPI && MatSafeAPI.enabled)) return;
+    MatSafeAPI.getClubReturns().then(function(rows){
+      if(!Array.isArray(rows)) return;
+      var list=loadInbox(), seen={}, changed=false;
+      list.forEach(function(r){ if(r){ if(r.serverId) seen[r.serverId]=r; else if(r.code) seen[r.code]=r; } });
+      rows.forEach(function(s){
+        var ex=seen[s.id], st=_srvRetStatus(s.status);
+        if(!ex){ list.unshift(mapServerReturn(s)); changed=true; return; }
+        if(ex.status!==st || (ex.reply||'')!==(s.reply||'')){ ex.status=st; ex.controlStatus=_srvCtrl(st); ex.reply=s.reply||''; ex.serverId=s.id; changed=true; }
+      });
+      if(changed){ saveInbox(list); try{ renderInbox(); }catch(_){ } try{ renderHomeMessages(); }catch(_){ } }
+    }).catch(function(){});
+  }
+  function pushRetServer(code){
+    try{ if(!(window.MatSafeAPI && MatSafeAPI.enabled) || !code) return;
+      var r=loadInbox().filter(function(x){return x&&x.code===code;})[0];
+      if(r && r.serverId) MatSafeAPI.setReturnStatus(r.serverId, r.status, r.reply).catch(function(){});
+    }catch(_){ }
+  }
   var INBOX_ST={ transmis:{t:'Transmis',cls:'soon'}, taken:{t:'Pris en compte',cls:'soon'}, done:{t:'Traité',cls:'done'} };
   function inboxStInfo(s){ return INBOX_ST[s]||INBOX_ST.transmis; }
   function renderInbox(){
@@ -1218,7 +1250,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(!code) return;
     var list=loadInbox(), changed=false;
     for(var i=0;i<list.length;i++){ if(list[i] && list[i].code===code){ list[i].status=status; list[i].controlStatus=(status==='done'?'treated':(status==='taken'?'in_progress':'to_verify')); if((status==='taken'||status==='done') && !list[i].takenAt) list[i].takenAt=Date.now(); changed=true; break; } }
-    if(changed){ saveInbox(list); renderInbox(); renderHomeMessages(); }
+    if(changed){ saveInbox(list); pushRetServer(code); renderInbox(); renderHomeMessages(); }
   }
   function inboxReply(code){ if(!code) return; openCaReply('reply', {code:code}); }
   // Accueil — bloc « Messages » : AFFICHE LES MÊMES RETOURS que l'écran « Retours adhérents »
@@ -1881,7 +1913,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(caReplyMode==='reply' && caReplyTarget && caReplyTarget.code){
       var list=loadInbox();
       for(var i=0;i<list.length;i++){ if(list[i] && list[i].code===caReplyTarget.code){ list[i].reply=txt; if(list[i].status==='transmis') list[i].status='taken'; break; } }
-      saveInbox(list); try{ renderInbox(); }catch(_){ } try{ renderHomeMessages(); }catch(_){ }
+      saveInbox(list); pushRetServer(caReplyTarget.code); try{ renderInbox(); }catch(_){ } try{ renderHomeMessages(); }catch(_){ }
       toast('Réponse enregistrée. Visible par l\'adhérent via son code.');
     } else if(caReplyTarget && caReplyTarget.code){
       var l2=loadInbox(); for(var j=0;j<l2.length;j++){ if(l2[j] && l2[j].code===caReplyTarget.code){ l2[j].note=txt; break; } } saveInbox(l2); toast('Note interne enregistrée.');
@@ -1908,6 +1940,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
   window.addEventListener('storage', function(e){ if(e.key===FIGHTER_INBOX){ try{ renderInbox(); }catch(_){ } try{ renderHomeMessages(); }catch(_){ } try{ renderCorr(); }catch(_){ } } });
   try{ renderInbox(); }catch(_){ }
+  try{ refreshClubReturns(); }catch(_){ }                   // retours adhérents reçus du serveur (autres appareils)
+  try{ setInterval(refreshClubReturns, 15000); }catch(_){ } // interrogation périodique
   try{ renderHomeMessages(); }catch(_){ }
   try{ renderHistory(); }catch(_){ }
   try{ renderCorr(); }catch(_){ }
@@ -1972,7 +2006,19 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         created_at:nowIso, published_at:publishedAt, expires_at:f.exp||null, is_pinned:f.pin, status:'published' });
       toast(f.when==='sched'?'Publication programmée.':'Publié sur MATSAFE Fighter.');
     }
-    savePubs(pubs); pubResetForm(); renderPubs();
+    savePubs(pubs);
+    // Publication serveur (visible dans Fighter, autres appareils). Titre + message regroupés dans le contenu.
+    try{ if(window.MatSafeAPI && MatSafeAPI.enabled){
+      var _p = pubEditing ? pubs.filter(function(x){return x&&x.id===pubEditing;})[0] : pubs[0];
+      if(_p){
+        if(pubEditing && _p.serverId){ try{ MatSafeAPI.deletePost(_p.serverId).catch(function(){}); }catch(_){ } }
+        var _c=((_p.title?_p.title+'\n':'')+(_p.content||'')).trim();
+        if(_c) MatSafeAPI.submitPost({ category:_p.category, content:_c, expiresAt:(_p.expires_at||null) }).then(function(res){
+          if(res && res.id){ var a=loadPubs(); for(var i=0;i<a.length;i++){ if(a[i]&&a[i].id===_p.id){ a[i].serverId=res.id; break; } } savePubs(a); }
+        }).catch(function(){});
+      }
+    } }catch(_){ }
+    pubResetForm(); renderPubs();
   }
   function pubEdit(id){
     var pubs=loadPubs(), p=null; for(var i=0;i<pubs.length;i++){ if(pubs[i] && pubs[i].id===id){ p=pubs[i]; break; } }
@@ -1990,7 +2036,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var ca=document.getElementById('pubCancel'); if(ca) ca.hidden=false;
     try{ document.querySelector('.screen[data-screen="publications"] .gm').scrollIntoView({block:'start'}); }catch(_){ }
   }
-  function pubDelete(id){ savePubs(loadPubs().filter(function(p){ return p && p.id!==id; })); if(pubEditing===id) pubResetForm(); renderPubs(); toast('Publication supprimée.'); }
+  function pubDelete(id){ var _d=loadPubs().filter(function(p){return p&&p.id===id;})[0]; savePubs(loadPubs().filter(function(p){ return p && p.id!==id; })); try{ if(window.MatSafeAPI && MatSafeAPI.enabled && _d && _d.serverId) MatSafeAPI.deletePost(_d.serverId).catch(function(){}); }catch(_){ } if(pubEditing===id) pubResetForm(); renderPubs(); toast('Publication supprimée.'); }
   function pubTogglePin(id){ var pubs=loadPubs(); for(var i=0;i<pubs.length;i++){ if(pubs[i] && pubs[i].id===id){ pubs[i].is_pinned=!pubs[i].is_pinned; break; } } savePubs(pubs); renderPubs(); }
   function pubCardHtml(p){
     var st=pubStatusOf(p), acc=PUB_CAT_ACC[p.category];
