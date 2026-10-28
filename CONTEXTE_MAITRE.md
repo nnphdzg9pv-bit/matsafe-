@@ -15,13 +15,13 @@
 - **[DÉCISION]** **Vocabulaire (contrainte juridique)** : MatSafe est **un label**,
   rien d'autre. Ne jamais écrire « certification », « certifié(e)(s) », « certifier »
   ni « label national ». Employer « label », « labellisé », « labellisation ».
-- **[FAIT]** Livrable = **un seul fichier `index.html`** (site statique, aucune
-  dépendance de build). Tout le CSS et le JS sont **inline** dans `index.html`.
-  Les médias sont dans `assets/` en chemins relatifs.
-- **[FAIT]** À chaque étape on livre aussi au client un **fichier autonome**
-  `matsafe-site.html` (tout embarqué en base64 : polices, images, vidéo, logo)
-  pour qu'il puisse ouvrir le site hors-ligne d'un double-clic. **Ce fichier
-  autonome n'est PAS commité** ; il est régénéré et envoyé via SendUserFile.
+- **[DÉCISION]** (28/10/2026) Le site de référence est **`MATSAFE-site.html`** :
+  fichier autonome (polices, images, vidéo embarquées en base64 ; CSS et JS
+  inline), commité et livré au client via SendUserFile.
+  **`index.html` en est une copie exacte** : toute modification se fait dans
+  `MATSAFE-site.html`, puis est recopiée à l'identique dans `index.html`.
+  L'ancienne version de `index.html` (médias dans `assets/`, sections `#s-…`)
+  a été remplacée : les descriptions de structure plus bas peuvent la refléter.
 - **[HYPOTHÈSE]** Objectif final = mise en ligne (domaine + pages légales).
   Non encore fait.
 
