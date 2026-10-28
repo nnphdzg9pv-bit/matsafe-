@@ -10,8 +10,11 @@
 
 ## 1. Objectif final et livrable attendu
 
-- **[FAIT]** Site vitrine one-page pour **MatSafe**, un label/certification d'hygiène
+- **[FAIT]** Site vitrine one-page pour **MatSafe**, un label d'hygiène
   pour les **clubs de sports de combat** (BJJ, MMA, judo, lutte, grappling, boxe…).
+- **[DÉCISION]** **Vocabulaire (contrainte juridique)** : MatSafe est **un label**,
+  rien d'autre. Ne jamais écrire « certification », « certifié(e)(s) », « certifier »
+  ni « label national ». Employer « label », « labellisé », « labellisation ».
 - **[FAIT]** Livrable = **un seul fichier `index.html`** (site statique, aucune
   dépendance de build). Tout le CSS et le JS sont **inline** dans `index.html`.
   Les médias sont dans `assets/` en chemins relatifs.
@@ -41,7 +44,7 @@
   6. NOS SERVICES (`#s-livrables`)
   7. LE LABEL (`#s-pourquoi`)
   8. LA DÉMARCHE EN 4 ÉTAPES / PROCESS (`#s-process`)
-  9. PREMIER CLUB CERTIFIÉ / SPOTLIGHT (section `.ed-section` sans id — Cube Fight Club)
+  9. PREMIER CLUB LABELLISÉ / SPOTLIGHT (section `.ed-section` sans id — Cube Fight Club)
   10. CARTE NATIONALE (`#s-carte`)
   11. CANDIDATER / CONTACT (`#s-contact`)
   12. FOOTER
@@ -102,7 +105,7 @@
   « aussi gros comme un titre »).
 - **[DÉCISION]** **STATS BAR** : chiffres tenables au lancement = **25 critères
   évalués · 6 disciplines couvertes · 48h délai de réponse**. (On a retiré
-  « 247 clubs certifiés » car incohérent avec « premier club labellisé ».)
+  le compteur « 247 clubs » car incohérent avec « premier club labellisé ».)
 - **[DÉCISION]** **MARQUEE** : mots = **Performance · Respect · Discipline ·
   Rigueur · Confiance · Prévention** (répétés 2× pour la boucle).
 - **[DÉCISION]** **Accessibilité** : lien d'évitement, `<main>`, focus visibles,
@@ -191,7 +194,7 @@ Titre : **« L'hygiène doit évoluer avec la pratique »**. Puis, verbatim :
 
 ### 4 ÉTAPES (sur `etapes-poster.jpg`)
 01 **Audit de votre club** · 02 **Mise en conformité** · 03 **Validation** ·
-04 **Certification**.
+04 **Labellisation**.
 
 ### Positions des 6 cases (poster ring) — % exacts, `.poster-box` inline styles
 ```
@@ -305,7 +308,7 @@ Titre : **« L'hygiène doit évoluer avec la pratique »**. Puis, verbatim :
 - **[PROBLÈME OUVERT]** **Mentions légales / Confidentialité / Presse** = liens `#`
   morts dans le footer. Manque : éditeur, SIRET, hébergeur.
 - **[PROBLÈME OUVERT]** **Clubs de la carte = démo fictive** (12). À remplacer par
-  les vrais clubs certifiés.
+  les vrais clubs labellisés.
 - **[PROBLÈME OUVERT]** **`og:image`** absent (partage social) : nécessite l'URL
   finale du domaine.
 - **[RISQUE]** La section Problème est **très verticale** (image portrait 736×1308) →
