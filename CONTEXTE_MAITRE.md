@@ -22,6 +22,10 @@
   `MATSAFE-site.html`, puis est recopiée à l'identique dans `index.html`.
   L'ancienne version de `index.html` (médias dans `assets/`, sections `#s-…`)
   a été remplacée : les descriptions de structure plus bas peuvent la refléter.
+- **[DÉCISION]** Aperçu de partage (balises og/twitter) : image = logo MatSafe
+  centré sur fond `#F2F0EC`, 1200×630, fichier `assets/og-image.png`. Faute de
+  domaine, son adresse pointe vers GitHub (raw, branche principale) : à remplacer
+  par l'adresse du domaine dès la mise en ligne.
 - **[HYPOTHÈSE]** Objectif final = mise en ligne (domaine + pages légales).
   Non encore fait.
 
