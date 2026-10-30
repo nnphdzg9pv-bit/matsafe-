@@ -61,6 +61,12 @@ une colonne nullable `kind` a été **ajoutée** à `club_events` (aucune table 
 - Infos (`doPubSave` / `pubDelete`) → `submit_post` / `delete_post`.
 - Échéances / agenda (ajout, suppression) → `submit_event` / `delete_event`
   (date saisie via un sélecteur de date, envoyée en ISO `YYYY-MM-DD`).
+- **Multi-appareils** : au chargement, le Club lit l'état publié
+  (`get_public_posts` / `get_public_events`) et l'intègre à ses gestionnaires
+  (infos + échéances). Le contenu créé sur un autre appareil — ou les infos
+  d'accueil — apparaît comme **miroir supprimable** (dédup par `serverId`, le
+  contenu local « authored » est conservé). Un indicateur barre latérale
+  signale si l'écriture serveur est active (secret présent) ou non.
 - Retours : réception (`get_club_returns`, toutes les 15 s) + réponse/statut
   (`inboxSetStatus`, `saveCaReply`) → `set_return_status`.
 - Historique : affiche désormais l'heure **réelle** de validation (`it.at`),

@@ -1141,6 +1141,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     // Échéances (agenda) : publier / retirer. payload : { kind, title, date:'YYYY-MM-DD', city?, link? }
     submitEvent: function(payload){ if(!CFG.secret) return Promise.resolve(null); return rpc('submit_event', { p_slug:CFG.slug, p_payload:payload||{}, p_secret:CFG.secret }); },
     deleteEvent: function(id){ if(!CFG.secret) return Promise.resolve(null); return rpc('delete_event', { p_slug:CFG.slug, p_id:id, p_secret:CFG.secret }); },
+    // Lecture de l'état publié (multi-appareils) : infos + échéances actives du club (public, sans secret).
+    getClubPosts: function(){ return rpc('get_public_posts', { p_slug:CFG.slug }).then(function(r){ return r||[]; }); },
+    getClubEvents: function(){ return rpc('get_public_events', { p_slug:CFG.slug }).then(function(r){ return r||[]; }); },
     // Retours : lire la boîte du club / répondre / changer le statut
     getClubReturns: function(){ if(!CFG.secret) return Promise.resolve([]); return rpc('get_club_returns', { p_slug:CFG.slug, p_secret:CFG.secret }); },
     setReturnStatus: function(id, status, reply){ if(!CFG.secret) return Promise.resolve(null); return rpc('set_return_status', { p_slug:CFG.slug, p_id:id, p_status:status, p_reply:(reply===undefined?null:reply), p_secret:CFG.secret }); }
@@ -1959,6 +1962,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   try{ renderInbox(); }catch(_){ }
   try{ refreshClubReturns(); }catch(_){ }                   // retours adhérents reçus du serveur (autres appareils)
   try{ setInterval(refreshClubReturns, 15000); }catch(_){ } // interrogation périodique
+  try{ pubLoadServer(); }catch(_){ }                        // infos publiées (multi-appareils), au chargement
   try{ renderHomeMessages(); }catch(_){ }
   try{ renderHistory(); }catch(_){ }
   try{ renderCorr(); }catch(_){ }
@@ -1973,6 +1977,24 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   var PUB_CAT_ACC={hygiene:true,reco:false,alerte:true,important:true,club:false};
   function loadPubs(){ try{ var r=localStorage.getItem(PUB_KEY); var a=r?JSON.parse(r):[]; return Array.isArray(a)?a:[]; }catch(_){ return []; } }
   function savePubs(a){ try{ localStorage.setItem(PUB_KEY, JSON.stringify(a)); }catch(_){ } }
+  function pubSrvCat(c){ return ({hygiene:'hygiene',alerte:'alerte',recommandation:'reco',information:'club',evenement:'club'})[c]||'club'; }
+  // Multi-appareils : fusionne l'état publié côté serveur. Les infos créées ici
+  // (authored) sont conservées ; les autres (autres appareils, accueil) sont des
+  // miroirs supprimables, reconstruits à chaque chargement (dédup par serverId).
+  function pubLoadServer(){
+    if(!(window.MatSafeAPI && MatSafeAPI.getClubPosts)) return;
+    MatSafeAPI.getClubPosts().then(function(rows){
+      if(!Array.isArray(rows)) return;
+      var authored=loadPubs().filter(function(p){ return p && !p._server; });
+      var seen={}; authored.forEach(function(p){ if(p.serverId) seen[String(p.serverId)]=1; });
+      var mirrors=rows.filter(function(r){ return r && r.id && !seen[String(r.id)]; }).map(function(r){
+        return { id:'srv_'+r.id, serverId:r.id, category:pubSrvCat(r.category), title:'', content:r.content,
+          published_at:r.publishedAt, created_at:r.publishedAt, expires_at:(r.expiresAt||null), is_pinned:false, status:'published', _server:true };
+      });
+      savePubs(authored.concat(mirrors));
+      try{ renderPubs(); }catch(_){ }
+    }).catch(function(){});
+  }
   function pubStatusOf(p){
     var now=Date.now();
     if(!p || p.status!=='published') return {k:'brouillon',t:'Brouillon',cls:'soon'};
@@ -2250,7 +2272,21 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       }
     }catch(_){ flash('Échéance ajoutée (local).'); }
   });
+  // Multi-appareils : fusionne les échéances publiées côté serveur (dédup par serverId).
+  function evLoadServer(){
+    if(!(window.MatSafeAPI && MatSafeAPI.getClubEvents)) return;
+    MatSafeAPI.getClubEvents().then(function(rows){
+      if(!Array.isArray(rows)) return;
+      var authored=get().filter(function(e){ return e && !e._server; });
+      var seen={}; authored.forEach(function(e){ if(e.serverId) seen[String(e.serverId)]=1; });
+      var mirrors=rows.filter(function(r){ return r && r.id && !seen[String(r.id)]; }).map(function(r){
+        return { id:'srv_'+r.id, serverId:r.id, kind:(r.kind||'Événement'), title:(r.name||''), iso:r.date, date:dateLabel(r.date), _server:true };
+      });
+      set(authored.concat(mirrors)); render();
+    }).catch(function(){});
+  }
   render();
+  try{ evLoadServer(); }catch(_){ }
 })();
 </script>
 </body>
