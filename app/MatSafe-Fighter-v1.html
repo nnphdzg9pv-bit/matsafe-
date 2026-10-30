@@ -1331,10 +1331,14 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       backBtn()+
       '<section class="routine">'+
         '<h3 class="routine-h">'+esc(TELECONSULT.title)+'</h3>'+
-        '<div style="margin:2px 0 16px"><img src="'+KRY_LOGO+'" alt="Kry" style="height:46px;width:auto;display:block"></div>'+
         (TELECONSULT.intro||[]).map(function(p){ return '<p>'+esc(p)+'</p>'; }).join('')+
         (TELECONSULT.coverage?'<p>'+esc(TELECONSULT.coverage)+'</p>':'')+
-        '<div class="cta"><button class="btn'+(teleReady?'':' soon')+'" id="teleBtn"'+(teleReady?'':' disabled aria-disabled="true"')+'>'+esc(teleReady?TELECONSULT.button:TELECONSULT.buttonWait)+'</button></div>'+
+        (teleReady
+          ? '<a href="'+esc(TELECONSULT.url)+'" target="_blank" rel="noopener noreferrer" aria-label="Accéder à la téléconsultation Kry" style="display:block;text-decoration:none;text-align:center;margin:30px 0 8px">'+
+              '<img src="'+KRY_LOGO+'" alt="Kry" style="display:block;width:86%;max-width:340px;height:auto;margin:0 auto">'+
+              '<span style="display:block;margin-top:14px;font-weight:600;font-size:14px;color:#17352C">Accéder à la téléconsultation ↗</span>'+
+            '</a>'
+          : '<div class="cta"><button class="btn soon" id="teleBtn" disabled aria-disabled="true">'+esc(TELECONSULT.buttonWait)+'</button></div>')+
       '</section>';
     wireBack();
     var tb=document.getElementById('teleBtn');
