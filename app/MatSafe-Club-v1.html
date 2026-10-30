@@ -764,6 +764,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     </nav>
     <div class="side-promo">
       <h4>Suivi MatSafe actif</h4>
+      <p id="syncState"></p>
     </div>
   </aside>
 
@@ -1131,6 +1132,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   window.MATSAFE_CONFIG = window.MATSAFE_CONFIG || {};
   window.MatSafeAPI = {
     enabled: true,
+    writeReady: !!CFG.secret,   // true si le secret est présent (écritures synchronisées)
     // Nettoyage : { zone:'MAT 1'|'MAT 2'|nom de zone, courseTime?:'12:30', courseLabel?:'No Gi' }
     submitValidation: function(payload){ if(!CFG.secret) return Promise.resolve(null); return rpc('submit_validation', { p_slug:CFG.slug, p_payload:payload||{}, p_secret:CFG.secret }); },
     // Infos : publier / dépublier
@@ -1143,6 +1145,11 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     getClubReturns: function(){ if(!CFG.secret) return Promise.resolve([]); return rpc('get_club_returns', { p_slug:CFG.slug, p_secret:CFG.secret }); },
     setReturnStatus: function(id, status, reply){ if(!CFG.secret) return Promise.resolve(null); return rpc('set_return_status', { p_slug:CFG.slug, p_id:id, p_status:status, p_reply:(reply===undefined?null:reply), p_secret:CFG.secret }); }
   };
+  // Indicateur d'état de synchro dans la barre latérale (garde-fou contre un envoi silencieux en local).
+  try{ var _ss=document.getElementById('syncState'); if(_ss){
+    _ss.textContent = CFG.secret ? '● Synchronisation serveur active' : '● Mode local (config.js absent)';
+    _ss.style.cssText = 'margin:6px 0 0;font-size:11px;font-weight:600;line-height:1.3;color:'+(CFG.secret?'#2e7d32':'#b26a00')+';';
+  } }catch(_){ }
 })();
 </script>
 
@@ -2014,7 +2021,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         author_name:PUB_AUTHOR.author_name, author_role:PUB_AUTHOR.author_role,
         category:f.cat, title:f.title, content:f.body,
         created_at:nowIso, published_at:publishedAt, expires_at:f.exp||null, is_pinned:f.pin, status:'published' });
-      toast(f.when==='sched'?'Publication programmée.':'Publié sur MATSAFE Fighter.');
+      var _synced=!!(window.MatSafeAPI && MatSafeAPI.writeReady);
+      toast(f.when==='sched' ? 'Publication programmée.' : (_synced ? 'Publié sur MATSAFE Fighter.' : 'Publié (local — synchro désactivée).'));
     }
     savePubs(pubs);
     // Publication serveur (visible dans Fighter, autres appareils). Titre + message regroupés dans le contenu.
@@ -2219,6 +2227,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var kind=($('evKind').value||'').trim(), title=($('evTitle').value||'').trim(), iso=($('evDate').value||'').trim();
     if(!title){ flash('Ajoutez un intitulé.'); return; }
     if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)){ flash('Choisissez une date.'); return; }
+    var _t=new Date(), _tIso=_t.getFullYear()+'-'+('0'+(_t.getMonth()+1)).slice(-2)+'-'+('0'+_t.getDate()).slice(-2);
+    if(iso < _tIso){ flash('Date passée : les adhérents ne la verraient pas. Choisissez une date à venir.'); return; }
     var localId=Date.now();
     var ev={id:localId, kind:kind||'Événement', title:title, iso:iso, date:dateLabel(iso)};
     var a=get(); a.push(ev);
