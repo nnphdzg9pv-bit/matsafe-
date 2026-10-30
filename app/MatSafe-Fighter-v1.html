@@ -1566,7 +1566,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var green=fin ? (fin.validated || !pastGrace) : false;
     var main;
     if(!last){ main='Aucun nettoyage validé pour le moment'; }
-    else { var age=nowMs-last.ms; if(age<24*3600000) main='Nettoyé '+hyAgo(age); else if(last.iso===hyYesterdayIso()) main='Dernier nettoyage hier'; else main='Dernier nettoyage le '+hyFullDate(last.iso); }
+    else { var age=nowMs-last.ms; if(age<24*3600000) main='Nettoyé '+hyAgo(age); else if(last.iso===hyYesterdayIso()) main='Nettoyé hier'; else main='Nettoyé le '+hyFullDate(last.iso); }
     var sub=last ? (hyDateCap(last.iso)+' à '+hyHhMm(last.at)+', après le cours de '+hyHhMm(last.course)) : '';
     var wait=awaiting ? ('En attente de validation après le cours de '+hyHhMm(awaiting)) : '';
     return '<div class="hy-card"><div class="hy-k"><span class="hy-dot'+(green?' ok':'')+'"></span>'+esc(hyMatLabel(mat))+'</div>'+
