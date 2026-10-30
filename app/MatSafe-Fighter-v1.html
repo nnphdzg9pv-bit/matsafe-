@@ -1021,12 +1021,12 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   document.getElementById('whoami').textContent='Retour anonyme';
 
   /* ======================= ÉCRANS ======================= */
-  var DEFAULT_EVENTS=[
-    {kind:'Stage',       title:'Stage No-Gi avec un invité', date:'12 octobre · 14h'},
-    {kind:'Compétition', title:'Open de Paris JJB',          date:'26 octobre'},
-    {kind:'Stage',       title:'Sparring MMA encadré',        date:'9 novembre · 11h'}
-  ];
+  // Pas d'échéance de démonstration : on n'affiche que les vraies échéances publiées par le club.
+  var DEFAULT_EVENTS=[];
   function getEvents(){ try{ var r=localStorage.getItem('matsafe_club_events'); if(r===null) return DEFAULT_EVENTS.slice(); var a=JSON.parse(r); return Array.isArray(a)?a:[]; }catch(e){ return DEFAULT_EVENTS.slice(); } }
+  var EV_FR_MOIS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  // 'YYYY-MM-DD' -> '12 décembre 2026' (sans décalage de fuseau) ; laisse tel quel si déjà en texte libre.
+  function evDateLabel(d){ var m=/^(\d{4})-(\d{2})-(\d{2})/.exec(String(d||'')); if(!m) return String(d||''); return parseInt(m[3],10)+' '+EV_FR_MOIS[parseInt(m[2],10)-1]+' '+m[1]; }
 
   /* ===== LA VIE DU CLUB — fil d'information officiel (publié côté Club, lu ici) =====
      Lecture seule côté Fighter : un adhérent ne peut jamais publier. */
@@ -1087,6 +1087,22 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       '<button class="vdc-all" id="vdc-all"><span>Voir toutes les infos du club</span>'+IArrR+'</button>'+
     '</section>';
   }
+  // Bloc « Prochaines échéances » (agenda publié par le club). Conteneur #clubEvents
+  // toujours présent pour un rafraîchissement live quand le serveur répond.
+  function clubEventsSection(){
+    var evs=getEvents().filter(function(e){ return e && e.title; });
+    evs.sort(function(a,b){ return String(a.iso||'').localeCompare(String(b.iso||'')); });
+    var head='<h2 class="h2" style="margin-top:28px">Prochaines échéances</h2>';
+    var body = evs.length
+      ? '<div class="vdc-full">'+evs.map(function(e){
+          return '<article class="post"><div class="post-top"><span class="pc">'+esc(e.kind||'Événement')+'</span>'+
+            (e.date?'<span class="post-date">'+esc(e.date)+'</span>':'')+'</div>'+
+            '<h3 class="post-t">'+esc(e.title)+'</h3>'+
+            (e.city?'<p class="post-c">'+esc(e.city)+'</p>':'')+'</article>';
+        }).join('')+'</div>'
+      : '<div class="vdc-empty">Aucune échéance à venir pour le moment.</div>';
+    return '<div id="clubEvents">'+head+body+'</div>';
+  }
   function screenClubLife(){
     document.body.classList.remove('fdark');          // écran de contenu : thème clair
     var posts=activePosts();
@@ -1095,7 +1111,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       '<h2 class="h2">Infos hygiène du club</h2>'+
       (posts.length
         ? '<div class="vdc-full">'+posts.map(function(p){return postEditorial(p,false);}).join('')+'</div>'
-        : '<div class="vdc-empty">Aucune information publiée par le club pour le moment.</div>');
+        : '<div class="vdc-empty">Aucune information publiée par le club pour le moment.</div>')+
+      clubEventsSection();
     wireBack();
   }
   /* ACCUEIL — menu éditorial numéroté (court, direct, DA MatSafe).
@@ -1610,7 +1627,14 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       save(POSTS_KEY, list);
       if(document.querySelector('.home')){ try{ screenHome(); }catch(_){ } }
     }).catch(function(){});
-    MatSafeAPI.getPublicEvents().then(function(rows){ if(rows && rows.length){ save('matsafe_club_events', rows); if(document.querySelector('.home')){ try{ screenHome(); }catch(_){ } } } }).catch(function(){});
+    MatSafeAPI.getPublicEvents().then(function(rows){
+      if(rows && rows.length){
+        var evs=rows.map(function(r){ return { id:r.id, kind:(r.kind||'Événement'), title:(r.name||r.title||''), iso:r.date, date:evDateLabel(r.date), city:(r.city||''), link:(r.link||'') }; });
+        save('matsafe_club_events', evs);
+        if(document.querySelector('.home')){ try{ screenHome(); }catch(_){ } }
+        if(document.getElementById('clubEvents')){ try{ screenClubLife(); }catch(_){ } }
+      }
+    }).catch(function(){});
   }
   function refreshReturnStatuses(){
     if(!(window.MatSafeAPI && MatSafeAPI.enabled)) return;

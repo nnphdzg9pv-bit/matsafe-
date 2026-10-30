@@ -37,6 +37,8 @@ Pré-existantes (lecture publique / retours) :
 - `submit_validation(p_slug, p_payload, p_secret)` → insère dans `cleaning_validations`
   (source `admin`, membre référent, sans nom de coach dans le public).
 - `submit_post(p_slug, p_payload, p_secret)` / `delete_post(p_slug, p_id, p_secret)` → `club_posts`.
+- `submit_event(p_slug, p_payload, p_secret)` / `delete_event(p_slug, p_id, p_secret)` → `club_events`
+  (agenda ; `p_payload` : `{ kind, title, date:'YYYY-MM-DD', city?, link? }`, `published=true`).
 - `get_club_returns(p_slug, p_secret)` / `set_return_status(p_slug, p_id, p_status, p_reply, p_secret)`
   → `member_returns` (lecture de la boîte + réponse/statut côté club).
 
@@ -48,13 +50,17 @@ l'absence de secret → `forbidden_write`.
 `submit_retour` (envoi anonyme par un adhérent) et les `get_public_*` **restent
 ouverts** (pas de secret). `get_public_hygiene` a été étendue pour inclure les
 zones nettoyées (zones non-tatami d'`cleaning_validations`) dans `zonesToday`.
-Aucune table existante n'a été recréée.
+`get_public_events` a été étendue pour renvoyer aussi `kind` (type d'échéance) ;
+une colonne nullable `kind` a été **ajoutée** à `club_events` (aucune table n'a
+été recréée ni aucune existante supprimée).
 
 ## Ce qui est branché
 
 **Club** (`MatSafe-Club-v1.html`)
 - Validation de nettoyage (`confirmVal`) → `submit_validation`.
 - Infos (`doPubSave` / `pubDelete`) → `submit_post` / `delete_post`.
+- Échéances / agenda (ajout, suppression) → `submit_event` / `delete_event`
+  (date saisie via un sélecteur de date, envoyée en ISO `YYYY-MM-DD`).
 - Retours : réception (`get_club_returns`, toutes les 15 s) + réponse/statut
   (`inboxSetStatus`, `saveCaReply`) → `set_return_status`.
 - Historique : affiche désormais l'heure **réelle** de validation (`it.at`),
@@ -66,7 +72,10 @@ Aucune table existante n'a été recréée.
 - Envoi d'un retour (`submit`) → `submit_retour` ; le code « MS-… » affiché est
   conservé, le **jeton serveur privé** est stocké à part (`serverToken`) pour
   relire le statut/réponse via `get_retour_status`.
-- Infos lues du serveur → `get_public_posts` ; événements → `get_public_events`.
+- Infos lues du serveur → `get_public_posts`.
+- Écran **« La vie du club »** : affiche les **infos** et les **prochaines
+  échéances** (`get_public_events`, date reformatée en français). Aucun contenu
+  de démonstration : état vide honnête si le club n'a rien publié.
 
 ## Sécurité
 

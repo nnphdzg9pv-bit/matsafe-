@@ -891,7 +891,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         <div class="evmgr-row">
           <div class="gm-field"><label>Type</label><select class="ano-inp ano-sel" id="evKind"><option>Stage</option><option>Compétition</option><option>Autre</option></select></div>
           <div class="gm-field"><label>Intitulé</label><input type="text" class="ano-inp" id="evTitle" maxlength="70" placeholder="Ex. : Stage No-Gi avec un invité"></div>
-          <div class="gm-field"><label>Date</label><input type="text" class="ano-inp" id="evDate" maxlength="40" placeholder="Ex. : 12 octobre · 14h"></div>
+          <div class="gm-field"><label>Date</label><input type="date" class="ano-inp" id="evDate"></div>
         </div>
         <button class="gm-submit" id="evAdd">Ajouter sur MATSAFE Fighter</button>
       </div>
@@ -1136,6 +1136,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     // Infos : publier / dépublier
     submitPost: function(payload){ if(!CFG.secret) return Promise.resolve(null); return rpc('submit_post', { p_slug:CFG.slug, p_payload:payload||{}, p_secret:CFG.secret }); },
     deletePost: function(id){ if(!CFG.secret) return Promise.resolve(null); return rpc('delete_post', { p_slug:CFG.slug, p_id:id, p_secret:CFG.secret }); },
+    // Échéances (agenda) : publier / retirer. payload : { kind, title, date:'YYYY-MM-DD', city?, link? }
+    submitEvent: function(payload){ if(!CFG.secret) return Promise.resolve(null); return rpc('submit_event', { p_slug:CFG.slug, p_payload:payload||{}, p_secret:CFG.secret }); },
+    deleteEvent: function(id){ if(!CFG.secret) return Promise.resolve(null); return rpc('delete_event', { p_slug:CFG.slug, p_id:id, p_secret:CFG.secret }); },
     // Retours : lire la boîte du club / répondre / changer le statut
     getClubReturns: function(){ if(!CFG.secret) return Promise.resolve([]); return rpc('get_club_returns', { p_slug:CFG.slug, p_secret:CFG.secret }); },
     setReturnStatus: function(id, status, reply){ if(!CFG.secret) return Promise.resolve(null); return rpc('set_return_status', { p_slug:CFG.slug, p_id:id, p_status:status, p_reply:(reply===undefined?null:reply), p_secret:CFG.secret }); }
@@ -2187,13 +2190,13 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 /* Prochaines échéances : gérées par le gérant, partagées avec MATSAFE Fighter via localStorage (même origine). */
 (function(){
   var K='matsafe_club_events';
-  var DEFAULTS=[
-    {id:1,kind:'Stage',title:'Stage No-Gi avec un invité',date:'12 octobre · 14h'},
-    {id:2,kind:'Compétition',title:'Open de Paris JJB',date:'26 octobre'},
-    {id:3,kind:'Stage',title:'Sparring MMA encadré',date:'9 novembre · 11h'}
-  ];
+  // Aucune échéance de démonstration : le Club part d'une liste vide et publie ses vraies échéances.
+  var DEFAULTS=[];
   function $(id){return document.getElementById(id);}
   function get(){ try{ var r=localStorage.getItem(K); if(r===null) return DEFAULTS.slice(); var a=JSON.parse(r); return Array.isArray(a)?a:[]; }catch(e){ return DEFAULTS.slice(); } }
+  var FR_MOIS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  // 'YYYY-MM-DD' -> '12 décembre 2026' (formatage sûr, sans décalage de fuseau)
+  function dateLabel(iso){ var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso||'')); if(!m) return String(iso||''); return parseInt(m[3],10)+' '+FR_MOIS[parseInt(m[2],10)-1]+' '+m[1]; }
   function set(a){ try{ localStorage.setItem(K, JSON.stringify(a)); }catch(e){} }
   function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
   function flash(m){ var t=$('toast'); if(!t)return; t.textContent=m; t.classList.add('on'); clearTimeout(flash._t); flash._t=setTimeout(function(){t.classList.remove('on');},1800); }
@@ -2205,16 +2208,37 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       return '<div class="evrow"><span class="evk">'+esc(e.kind)+'</span><div class="evb"><div class="evt2">'+esc(e.title)+'</div>'+(e.date?'<div class="evd">'+esc(e.date)+'</div>':'')+'</div><button class="evx" data-id="'+esc(e.id)+'" title="Retirer" aria-label="Retirer">&times;</button></div>';
     }).join('');
     Array.prototype.forEach.call(list.querySelectorAll('.evx'), function(bn){
-      bn.onclick=function(){ var id=bn.getAttribute('data-id'); set(get().filter(function(x){return String(x.id)!==String(id);})); render(); flash('Échéance retirée.'); };
+      bn.onclick=function(){ var id=bn.getAttribute('data-id');
+        var _d=get().filter(function(x){return String(x.id)===String(id);})[0];
+        set(get().filter(function(x){return String(x.id)!==String(id);})); render(); flash('Échéance retirée.');
+        try{ if(window.MatSafeAPI && MatSafeAPI.enabled && _d && _d.serverId) MatSafeAPI.deleteEvent(_d.serverId).catch(function(){}); }catch(_){ }
+      };
     });
   }
   $('evAdd').addEventListener('click', function(){
-    var kind=($('evKind').value||'').trim(), title=($('evTitle').value||'').trim(), date=($('evDate').value||'').trim();
+    var kind=($('evKind').value||'').trim(), title=($('evTitle').value||'').trim(), iso=($('evDate').value||'').trim();
     if(!title){ flash('Ajoutez un intitulé.'); return; }
-    var a=get(); a.push({id:Date.now(), kind:kind||'Événement', title:title, date:date});
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)){ flash('Choisissez une date.'); return; }
+    var localId=Date.now();
+    var ev={id:localId, kind:kind||'Événement', title:title, iso:iso, date:dateLabel(iso)};
+    var a=get(); a.push(ev);
     if(a.length>8) a=a.slice(-8);
     set(a); $('evTitle').value=''; $('evDate').value=''; render();
-    flash('Échéance publiée sur MATSAFE Fighter.');
+    // Publication serveur (visible côté Fighter / autres appareils). Sans secret -> local uniquement.
+    try{
+      if(window.MatSafeAPI && MatSafeAPI.enabled){
+        MatSafeAPI.submitEvent({ kind:ev.kind, title:ev.title, date:ev.iso }).then(function(res){
+          if(res && res.id){
+            var b=get(); for(var i=0;i<b.length;i++){ if(b[i] && String(b[i].id)===String(localId)){ b[i].serverId=res.id; break; } } set(b);
+            flash('Échéance publiée sur MATSAFE Fighter.');
+          } else {
+            flash('Échéance ajoutée (local — synchro désactivée).');
+          }
+        }).catch(function(){ flash('Échéance ajoutée en local (serveur injoignable).'); });
+      } else {
+        flash('Échéance ajoutée (local).');
+      }
+    }catch(_){ flash('Échéance ajoutée (local).'); }
   });
   render();
 })();
