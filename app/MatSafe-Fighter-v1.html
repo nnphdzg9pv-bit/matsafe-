@@ -945,14 +945,15 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   // professionnel de santé, ni inventer de condition commerciale ou médicale.
   var TELECONSULT = {
     url:        'https://www.kry.fr/',             // partenaire téléconsultation : Kry
-    title:      'Un doute sur ma peau ?',
+    title:      'Besoin d’un avis médical ?',
     intro: [
-      'Une rougeur, une plaque, des boutons, une croûte ou une lésion inhabituelle ? En cas de doute, ne montez pas sur le tatami et demandez l’avis d’un professionnel de santé.',
-      'La téléconsultation est réalisée directement sur la plateforme Kry. MatSafe vous oriente vers le service, mais n’accède à aucune information concernant votre consultation et ne conserve aucune donnée médicale.'
+      'Une suspicion d’infection, un doute sur une zone de votre peau, une douleur, une blessure ou tout autre symptôme ? En attendant, ne vous entraînez pas.'
     ],
-    coverage:   'La prise en charge et l’éventuelle avance de frais dépendent de votre situation, de vos droits et des conditions appliquées par la plateforme.',
-    button:     'Accéder à la téléconsultation',   // texte du bouton quand l'URL est renseignée
-    buttonWait: 'Lien bientôt disponible'          // état d'attente, non cliquable
+    key:        'Un médecin en vidéo 24/7, avec Kry, notre partenaire téléconsultation.',          // phrase d’accroche (style .routine-key)
+    coverage:   'Remboursée dans les mêmes conditions qu’au cabinet.',
+    disclaimer: 'MatSafe vous oriente vers le service, mais ne pose aucun diagnostic, n’accède à aucune information concernant votre consultation et ne conserve aucune donnée médicale.',  // petit texte discret, sous le bouton
+    button:     'Accéder à la téléconsultation',
+    buttonWait: 'Lien bientôt disponible'
   };
   // Logo du partenaire téléconsultation (Kry) — badge SVG autonome (data URI).
   var KRY_LOGO='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNTAgOTYiPjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iOTYiIHJ4PSIyNiIgZmlsbD0iIzkzRTdDMyIvPjx0ZXh0IHg9Ijc1IiB5PSI2NyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IlZlcmRhbmEsR2VuZXZhLHN5c3RlbS11aSxBcmlhbCxzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCIgZm9udC1zaXplPSI1OCIgbGV0dGVyLXNwYWNpbmc9Ii0zIiBmaWxsPSIjMTczNTJDIj5rcnk8L3RleHQ+PC9zdmc+';
@@ -1331,14 +1332,15 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       '<section class="routine">'+
         '<h3 class="routine-h">'+esc(TELECONSULT.title)+'</h3>'+
         (TELECONSULT.intro||[]).map(function(p){ return '<p>'+esc(p)+'</p>'; }).join('')+
+        (TELECONSULT.key?'<div class="routine-key">'+esc(TELECONSULT.key)+'</div>':'')+
         (TELECONSULT.coverage?'<p>'+esc(TELECONSULT.coverage)+'</p>':'')+
-        '<p>Partenaire téléconsultation officiel : Kry</p>'+
         (teleReady
           ? '<a href="'+esc(TELECONSULT.url)+'" target="_blank" rel="noopener noreferrer" aria-label="Accéder à la téléconsultation Kry" style="display:block;text-decoration:none;text-align:center;margin:30px 0 8px">'+
               '<img src="'+KRY_LOGO+'" alt="Kry" style="display:block;width:86%;max-width:340px;height:auto;margin:0 auto">'+
               '<span style="display:block;margin-top:14px;font-weight:600;font-size:14px;color:#17352C">Accéder à la téléconsultation ↗</span>'+
             '</a>'
           : '<div class="cta"><button class="btn soon" id="teleBtn" disabled aria-disabled="true">'+esc(TELECONSULT.buttonWait)+'</button></div>')+
+        (TELECONSULT.disclaimer?'<p style="font-size:13.5px;line-height:1.55;color:var(--gray);margin:16px 0 0">'+esc(TELECONSULT.disclaimer)+'</p>':'')+
       '</section>';
     wireBack();
     var tb=document.getElementById('teleBtn');
