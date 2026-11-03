@@ -2625,8 +2625,9 @@ a.svcl-row{color:var(--black)}
   overflow-wrap:break-word;hyphens:manual;
 }
 /* Service 04 : titre avec un mot très long (« téléconsultation ») — très légère
-   réduction pour qu'il tienne sur une ligne sans coupure. */
-#svcx-deck .svcx-card:nth-child(4) .svcx-title{font-size:clamp(1.75rem,2.6vw,2.2rem)}
+   réduction pour qu'il tienne sur une ligne sans coupure. Sur mobile (< 440 px),
+   la taille suit la largeur d'écran (6.4vw) pour que le mot ne soit jamais coupé. */
+#svcx-deck .svcx-card:nth-child(4) .svcx-title{font-size:clamp(min(1.75rem,6.4vw),2.6vw,2.2rem)}
 .svcx-sub{display:block;margin-top:1.1rem;font-size:1.03rem;line-height:1.6;color:rgba(10,10,10,.7);max-width:33ch}
 .svcx-foot{display:flex;justify-content:flex-end;align-items:flex-end;gap:1rem;margin-top:2rem}
 .svcx-num{

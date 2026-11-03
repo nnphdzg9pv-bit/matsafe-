@@ -115,8 +115,11 @@
 - **[DÉCISION]** **Accessibilité** : lien d'évitement, `<main>`, focus visibles,
   modales avec Échap + retour du focus, `prefers-reduced-motion` coupe les
   animations, labels de formulaire associés.
-- **[DÉCISION]** **Partenaire MédecinDirect** dans Services (ligne 03) : logo
-  `assets/medecindirect.png` + liens vers `https://www.medecindirect.fr/`.
+- **[DÉCISION]** (03/11/2026) **Partenaire téléconsultation officiel : Kry**
+  (`https://www.kry.fr/`). Il remplace MédecinDirect, à ne plus citer nulle part.
+  Sur le site : ligne « Partenaire téléconsultation officiel : Kry » dans la
+  carte 04 « Accès médical en téléconsultation 24/7 » de Nos services ; aucun
+  logo de partenaire n'est affiché sur le site.
 
 ---
 
@@ -219,9 +222,9 @@ Titre : **« L'hygiène doit évoluer avec la pratique »**. Puis, verbatim :
 - POUR QUI disciplines listées : 01 Jiu-Jitsu Brésilien · 02 MMA · 03 Grappling ·
   04 Judo · 05 Lutte · 06 Sports de combat en général.
 - SERVICES (5, accordéon) : 01 Diagnostic & Feuille de Route · 02 Le Système
-  Opérationnel · 03 Téléconsultation Partenaire (MédecinDirect) · 04 Assistance
+  Opérationnel · 03 Téléconsultation Partenaire (Kry) · 04 Assistance
   Continue · 05 Formations MatSafe.
-- URL partenaire : **https://www.medecindirect.fr/**.
+- URL partenaire : **https://www.kry.fr/**.
 
 ### Formulaire de contact
 - Champs (ids/names à préserver — le JS s'en sert) : `fp`/prenom, `fn`/nom,
@@ -247,7 +250,8 @@ Titre : **« L'hygiène doit évoluer avec la pratique »**. Puis, verbatim :
 - **`assets/pourqui-sport.jpg`** + **`fighter-1..5.jpg`** — bande « fighters » (Pour qui).
   fighter-5 = 3 pratiquantes (logo « VIRUS » visible en fond).
 - **`assets/club-cube-1.jpg` / `club-cube-2.jpg`** — section Cube Fight Club.
-- **`assets/medecindirect.png`** — logo partenaire.
+- **`assets/medecindirect.png`** — logo de l'ancien partenaire, **plus utilisé**
+  (le partenaire est Kry).
 - **`assets/example-4.com`** (photo enfants BJJ) — **NON utilisée** ; le client
   l'a envoyée, elle irait plutôt dans « Pour qui ». **[À TRAITER]**.
 - **`assets/probleme-poster.jpg` (210 Ko)** et **`assets/probleme-bg.jpg` (205 Ko)**
