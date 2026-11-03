@@ -258,7 +258,7 @@
 .fctx-eb{display:block;font-family:var(--cond);text-transform:uppercase;letter-spacing:.14em;font-size:11px;color:var(--gray);font-weight:700}
 .fctx-club{font-family:var(--cond);font-weight:800;text-transform:uppercase;letter-spacing:.005em;font-size:clamp(30px,7vw,44px);line-height:.95;margin:6px 0 3px;color:var(--ink)}
 .fctx-loc{font-size:13px;color:var(--gray)}
-/* Partenaire santé — Médecin Direct (téléconsultation) */
+/* Partenaire santé — Kry (téléconsultation) */
 .mdr{background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:16px 18px;margin-bottom:24px}
 .mdr-k{display:flex;align-items:center;gap:8px;font-family:var(--cond);text-transform:uppercase;letter-spacing:.12em;font-size:11px;font-weight:800;color:var(--brand);margin-bottom:13px}
 .mdr-k .d{width:7px;height:7px;border-radius:50%;background:var(--brand)}
@@ -323,7 +323,7 @@
 .fcard-ic svg{width:24px;height:24px;display:block}
 .fcard-t{margin-top:auto;padding-top:14px;font-family:var(--sans);font-weight:700;letter-spacing:-.01em;font-size:15.5px;line-height:1.14;color:var(--ink)}
 .fcard-badge{display:inline-grid;place-items:center;vertical-align:middle;margin-left:7px;min-width:20px;height:20px;border-radius:50%;border:1.5px solid var(--brand);color:var(--brand);font-family:var(--cond);font-weight:800;font-size:11px;padding:0 4px;transform:translateY(-2px)}
-/* Emblème médecin direct sur la carte « peau » : téléconsultation incluse pour les adhérents */
+/* Emblème Kry sur la carte « peau » : téléconsultation incluse pour les adhérents */
 .fcard-md{justify-content:center;gap:13px;align-items:flex-start}
 .md-chip{display:block;width:100%;max-width:230px;box-sizing:border-box;background:#fff;border-radius:13px;padding:11px 14px;line-height:0;box-shadow:0 3px 14px -7px rgba(0,0,0,.55)}
 .md-logo{display:block;width:100%;height:auto}
@@ -574,7 +574,7 @@ body.fdark{background:#0C0D10}
 .hy-empty{font-family:var(--sans);font-size:15px;color:var(--gray);padding:12px 3px}
 .hy-note{font-family:var(--sans);font-size:12.5px;line-height:1.5;color:var(--gray);margin:18px 0 0;border-top:1px solid var(--hair,#E0DCD3);padding-top:14px}
 .routine-key{font-weight:800;font-size:clamp(19px,5vw,22px);line-height:1.45;color:var(--ink);background:var(--paper);border:1px solid var(--border);border-left:5px solid var(--brand);border-radius:6px;padding:20px 22px;margin:22px 0 0}
-/* Médecin Direct — liste des rôles (puce rouge en accent) */
+/* Kry — liste des rôles (puce rouge en accent) */
 .md-roles{list-style:none;margin:0 0 18px;padding:0;display:flex;flex-direction:column;gap:12px}
 .md-roles li{position:relative;padding-left:22px;font-size:clamp(17px,4.6vw,19px);line-height:1.5;color:var(--ink)}
 .md-roles li::before{content:"";position:absolute;left:3px;top:.6em;width:7px;height:7px;border-radius:50%;background:var(--brand)}
@@ -938,7 +938,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   var CTX=ctxFromQR();
 
   // ===========================================================================
-  // TÉLÉCONSULTATION — configuration centralisée (partenaire Médecin Direct).
+  // TÉLÉCONSULTATION — configuration centralisée (partenaire Kry).
   // >>> POUR ACTIVER : renseigner `url` ci-dessous (une seule ligne à modifier). <<<
   // Tant que `url` est vide, le bouton reste en attente (« Lien bientôt disponible »)
   // et n'ouvre aucune page. MatSafe oriente seulement vers le service ; la
@@ -1128,7 +1128,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     // CŒUR DE L'APP — CTA central (donner son avis / signaler, anonyme).
     var IArrowR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>';
     var ICare='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11Z"/></svg>';
-    var MD_LOGO='';   // déprécié : partenaire téléconsultation = Kry (voir KRY_LOGO)   // logo médecin direct (data URI)
+    var MD_LOGO='';   // déprécié : partenaire téléconsultation = Kry (voir KRY_LOGO)   // logo Kry (data URI)
     // ===== Accueil « bento » (réf. WAKE UP) : wordmark MATSAFE FIGHTER + cases =====
     var bl=document.querySelector('.brandlogo'); var logoSrc=bl?(bl.getAttribute('src')||''):'';
     var heroHtml =
@@ -1322,7 +1322,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
   /* ================= TÉLÉCONSULTATION (doute sur la peau) ================= */
   /* Écran destiné à l'adhérent uniquement : quand demander un avis médical,
-     où se déroule la téléconsultation (Médecin Direct) et le fait que MatSafe
+     où se déroule la téléconsultation (Kry) et le fait que MatSafe
      n'accède ni ne conserve aucune donnée médicale. Aucun contenu interne,
      commercial ou contractuel. Tous les textes et le lien sont pilotés par la
      configuration TELECONSULT (en haut du fichier). */
