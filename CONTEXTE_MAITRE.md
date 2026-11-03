@@ -117,7 +117,7 @@
   animations, labels de formulaire associés.
 - **[DÉCISION]** (03/11/2026) **Partenaire téléconsultation officiel : Kry**
   (`https://www.kry.fr/`). Il remplace MédecinDirect, à ne plus citer nulle part.
-  Sur le site : ligne « Partenaire téléconsultation officiel : Kry » dans la
+  Sur le site : ligne « Partenaire téléconsultation : Kry » dans la
   carte 04 « Accès médical en téléconsultation 24/7 » de Nos services ; aucun
   logo de partenaire n'est affiché sur le site.
 
