@@ -860,18 +860,19 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
   // --- Check personnel avant l'entraînement (rappel préventif, jamais envoyé) ---
   var CHECK_ITEMS=[
-    {t:'J’arrive propre',                 d:'Mon corps, mes mains et mes pieds sont propres.'},
+    {t:'J’arrive propre',                 d:'Je me suis douché(e) à l’eau et au savon. Mon corps, mes mains et mes pieds sont propres.'},
     {t:'Ma tenue est propre et sèche',    d:'Elle a été lavée depuis sa dernière utilisation.'},
     {t:'J’ai mes claquettes',             d:'Je les porte pour circuler en dehors du tatami.'},
-    {t:'Mes ongles sont courts et propres', d:'Mains et pieds vérifiés, bijoux retirés.'},
-    {t:'J’ai vérifié ma peau',            d:'Je n’ai aucune lésion suspecte, plaie ouverte, zone saignante ou suintante.'},
+    {t:'Mes ongles sont courts et propres', d:'Mains et pieds vérifiés, bijoux retirés, cheveux attachés si besoin.'},
+    {t:'J’ai vérifié ma peau',            d:'Je n’ai aucune plaie non cicatrisée, aucune lésion suspecte, zone saignante ou suintante.'},
+    {t:'Je me sens bien',                 d:'Je n’ai ni fièvre ni fatigue inhabituelle.'},
     {t:'Mon matériel est propre et sec',  d:'Mes protections ont été nettoyées, aérées et ne sont pas partagées.'}
   ];
 
   // --- Fiches d'entretien de l'équipement ---
   var CARE_FICHES=[
     {t:'Nettoyer son kimono ou son rashguard',
-     b:'Lavez après chaque séance à 30–40 °C, à l’envers. Séchez à l’air libre, jamais roulé en boule dans le sac. Le vinaigre blanc dans le bac aide à neutraliser les odeurs.'},
+     b:'Lavez après chaque séance, à l’envers. Le lavage à 60 °C est recommandé. Si l’étiquette ne le permet pas (textiles techniques), lavez à 30–40 °C, idéalement avec un désinfectant du linge. Séchez à l’air libre, jamais roulé en boule dans le sac.'},
     {t:'Nettoyer et sécher ses gants',
      b:'Aérez et essuyez l’intérieur après chaque usage. Sortez-les du sac en rentrant et laissez-les sécher complètement. Un désodorisant/absorbeur d’humidité prolonge leur vie.'},
     {t:'Entretenir ses protège-tibias et protections',
@@ -948,7 +949,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     url:        'https://www.kry.fr/',             // partenaire téléconsultation : Kry
     title:      'Un doute sur ma peau ?',
     intro: [
-      'Une rougeur, une plaque, des boutons, une croûte ou une lésion inhabituelle ? En cas de doute, évitez les contacts et demandez l’avis d’un professionnel de santé.',
+      'Une rougeur, une plaque, des boutons, une croûte ou une lésion inhabituelle ? En cas de doute, ne montez pas sur le tatami et demandez l’avis d’un professionnel de santé.',
       'La téléconsultation est réalisée directement sur la plateforme Kry. MatSafe vous oriente vers le service, mais n’accède à aucune information concernant votre consultation et ne conserve aucune donnée médicale.'
     ],
     coverage:   'La prise en charge et l’éventuelle avance de frais dépendent de votre situation, de vos droits et des conditions appliquées par la plateforme.',
@@ -1350,14 +1351,15 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
      stockée, ni utilisée pour un profil. L'état vit en mémoire et disparaît
      dès qu'on quitte l'écran (aucune écriture localStorage ici). */
   function screenCheck(){
-    // Check-list INTERACTIVE : on coche les 6 items, puis « Valider » déclenche l'animation « Bien joué ».
+    // Check-list INTERACTIVE : on coche les 7 items, puis « Valider » déclenche l'animation « Bien joué ».
     var items=[
       '01. J’arrive propre',
       '02. Ma tenue est propre et sèche',
       '03. J’ai mes claquettes',
       '04. Mes ongles sont courts et propres',
       '05. J’ai vérifié ma peau',
-      '06. Mon matériel est propre et sec'
+      '06. Je me sens bien',
+      '07. Mon matériel est propre et sec'
     ];
     var ICk='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
     view.innerHTML=
@@ -1540,11 +1542,11 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       backBtn()+
       '<section class="routine">'+
         '<h3 class="routine-h">La routine MatSafe</h3>'+
-        '<p>Avant de monter sur le tatami, arrivez propre, avec une tenue lavée et parfaitement sèche. Vérifiez votre peau, gardez vos ongles courts, retirez vos bijoux et portez des claquettes en dehors de la zone d’entraînement.</p>'+
-        '<p>Après chaque séance, douchez-vous rapidement avec un savon doux, utilisez une serviette personnelle et enfilez des vêtements propres.</p>'+
-        '<p>Lavez systématiquement votre gi, rashguard, short, bandes et serviette en respectant leur étiquette — généralement 30 °C pour les textiles techniques et 40 °C pour le coton. Un désinfectant du linge peut compléter la lessive à basse température.</p>'+
+        '<p>Avant de monter sur le tatami, douchez-vous à l’eau et au savon et arrivez avec une tenue lavée et parfaitement sèche. Vérifiez votre peau, gardez vos ongles courts, attachez vos cheveux si besoin, retirez vos bijoux et portez des claquettes en dehors de la zone d’entraînement.</p>'+
+        '<p>Après chaque séance, douchez-vous à l’eau et au savon, séchez-vous soigneusement avec une serviette personnelle et enfilez des vêtements propres.</p>'+
+        '<p>Lavez systématiquement votre gi, rashguard, short, bandes et serviette. Le lavage à 60 °C est recommandé. Si l’étiquette ne le permet pas (textiles techniques), lavez à 30–40 °C, idéalement avec un désinfectant du linge.</p>'+
         '<p>Nettoyez vos gants, protections, protège-dents, gourde et sac, puis laissez tout sécher dans un endroit ventilé. Rien d’humide ne doit rester enfermé et les objets en contact avec la peau ne doivent pas être partagés.</p>'+
-        '<p>Enfin, soyez attentif aux plaques, rougeurs, boutons, croûtes, démangeaisons ou écoulements. En cas de doute ou de plaie ouverte, interrompez les contacts et demandez un avis médical.</p>'+
+        '<p>Enfin, soyez attentif aux plaques, rougeurs, boutons, croûtes, démangeaisons ou écoulements. En cas de plaie non cicatrisée, de lésion suspecte, de fièvre ou de fatigue inhabituelle, ne montez pas sur le tatami et demandez un avis médical. Reprise à la résolution des symptômes ou après avis médical.</p>'+
       '</section>';
     wireBack();
   }
