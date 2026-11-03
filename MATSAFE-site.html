@@ -1558,7 +1558,7 @@ footer{
    le recouvre une fois chargée. Il reste donc visible pendant le chargement
    comme si le fichier manque (onerror retire alors l'<img>). */
 .ed-media > img{position:absolute;inset:0}
-/* ── CARTE PARTENAIRE (MédecinDirect) ──
+/* ── CARTE PARTENAIRE (Kry) ──
    Occupe la colonne média d'une ligne, à la place d'une photo. */
 .ed-media--partner{
   aspect-ratio:auto;background:var(--white);
@@ -2625,8 +2625,9 @@ a.svcl-row{color:var(--black)}
   overflow-wrap:break-word;hyphens:manual;
 }
 /* Service 04 : titre avec un mot très long (« téléconsultation ») — très légère
-   réduction pour qu'il tienne sur une ligne sans coupure. */
-#svcx-deck .svcx-card:nth-child(4) .svcx-title{font-size:clamp(1.75rem,2.6vw,2.2rem)}
+   réduction pour qu'il tienne sur une ligne sans coupure. Sur mobile (< 440 px),
+   la taille suit la largeur d'écran (6.4vw) pour que le mot ne soit jamais coupé. */
+#svcx-deck .svcx-card:nth-child(4) .svcx-title{font-size:clamp(min(1.75rem,6.4vw),2.6vw,2.2rem)}
 .svcx-sub{display:block;margin-top:1.1rem;font-size:1.03rem;line-height:1.6;color:rgba(10,10,10,.7);max-width:33ch}
 .svcx-foot{display:flex;justify-content:flex-end;align-items:flex-end;gap:1rem;margin-top:2rem}
 .svcx-num{
@@ -3124,7 +3125,7 @@ h1,h2,h3,h4,h1 *,h2 *,h3 *,h4 *,
         <span class="svcx-foot"><span class="svcx-num">03</span></span>
       </button>
       <button class="svcx-card" type="button" onclick="openSvc(3)" aria-haspopup="dialog">
-        <span class="svcx-head"><span class="svcx-action">Orienter</span><span class="svcx-title">Accès médical en téléconsultation 24/7</span><span class="svcx-sub">Les adhérents munis d’une carte Vitale peuvent consulter un médecin en ligne sans paiement ni avance de frais, quel que soit le motif médical.</span></span>
+        <span class="svcx-head"><span class="svcx-action">Orienter</span><span class="svcx-title">Accès médical en téléconsultation 24/7</span><span class="svcx-sub">Les adhérents munis d’une carte Vitale peuvent consulter un médecin en ligne sans paiement ni avance de frais, quel que soit le motif médical.</span><span class="svcx-sub">Partenaire téléconsultation officiel&nbsp;: Kry</span></span>
         <span class="svcx-foot"><span class="svcx-num">04</span></span>
       </button>
       <button class="svcx-card" type="button" onclick="openSvc(4)" aria-haspopup="dialog">
