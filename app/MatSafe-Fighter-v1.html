@@ -1163,8 +1163,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       tile('a-vdc','creme wide', vdcInner)+
       tile('a-hygiene','creme wide','<div class="t-eb"><span class="t-k" style="display:inline-flex;align-items:center;gap:10px"><svg viewBox="0 0 24 24" fill="none" stroke="#C83F32" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;flex:none" aria-hidden="true"><path d="M8 3 4 21"/><path d="M16 3l4 18"/><path d="M8 3h8"/><path d="M4 21h16"/><path d="M12 8v4"/><path d="M12 15.6v.4"/></svg>Dernier nettoyage</span><span class="t-ar">'+IArrR+'</span></div><div class="t-vdc"><span class="t-vt muted">Propreté des tatamis</span></div>')+
       tile('a-feedback','creme big',
-        '<span class="tile-t fb-t">Faire un retour<br>à mon club</span>'+
-        '<span class="tile-desc">Une remarque sur l’hygiène ou un problème à signaler, sans dévoiler votre identité.</span>'+
+        '<span class="tile-t fb-t">Signaler<br>un problème</span>'+
+        '<span class="tile-desc">Un souci d’hygiène, de propreté ou de matériel ? Dites-le au club, sans dévoiler votre identité.</span>'+
         '<span class="t-cta">Commencer '+IArrowR+'</span>')+
       tile('a-check','creme','<span class="t-ic">'+ICheck+'</span><span class="t-b"><span class="tile-t">Faire mon check</span><span class="tile-s">Avant l’entraînement</span></span>')+
       tile('a-lesion','creme md','<span class="tile-t">Un doute sur ma peau&nbsp;?</span><img class="md-logo" src="'+KRY_LOGO+'" alt="Kry" loading="lazy"><span class="tile-s">Téléconsultation avec Kry</span>')+
@@ -1493,47 +1493,43 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       backBtn()+
       '<h2 class="h2" id="retTitle">Suivre mes retours</h2>'+
       '<p class="sub">Consultez la prise en compte de vos retours grâce à votre code anonyme, sans créer de compte.</p>'+
-      '<div class="demo-note">Démo&nbsp;: les retours sont actuellement stockés localement sur ce téléphone. En production, le suivi se fera via le serveur MatSafe à partir de votre code.</div>'+
-      list+
-      '<div class="ret-lookup">'+
-        '<button class="ret-lookup-toggle" id="codeToggle" aria-expanded="false">J’ai déjà un code de suivi</button>'+
-        '<div class="ret-lookup-body" id="codeBody" hidden>'+
-          '<p class="ret-lookup-sub">Saisissez le code reçu lors de l’envoi (format MS-XXXX-XXXX) pour retrouver son avancement, sans compte ni identité.</p>'+
-          '<div class="code-row"><input class="code-inp" id="codeInput" inputmode="latin" autocomplete="off" spellcheck="false" maxlength="12" placeholder="MS-XXXX-XXXX"><button class="btn" id="codeSearch">Rechercher</button></div>'+
-          '<div class="code-msg" id="codeMsg" role="status"></div>'+
-          '<div id="codeResult"></div>'+
-        '</div>'+
-      '</div>';
+      list;
     wireBack();
     wireCopy(view);
-    var tog=document.getElementById('codeToggle'), body=document.getElementById('codeBody');
-    if(tog&&body){ tog.onclick=function(){ var open=body.hidden; body.hidden=!open; tog.setAttribute('aria-expanded', open?'true':'false'); if(open){ var ci=document.getElementById('codeInput'); if(ci) ci.focus(); } }; }
-    var sb=document.getElementById('codeSearch'); if(sb) sb.onclick=searchCode;
-    var ci=document.getElementById('codeInput'); if(ci) ci.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); searchCode(); } });
-    if(codeLocked){ setCodeLocked(true); var lm=document.getElementById('codeMsg'); if(lm){ lm.className='code-msg warn'; lm.textContent='Trop de tentatives. Vous pourrez effectuer une nouvelle recherche dans une minute.'; } }
   }
 
   /* ================= FAIRE UN RETOUR (choix avis / signalement) ================= */
   function screenFeedback(){
-    // « Contactez-nous » : une grande accroche + un seul champ pour l'avis (anonyme).
-    var IArrowR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>';
+    var st={ description:'', photo:null };
     view.innerHTML=
       backBtn()+
-      '<section class="contact">'+
-        '<h1 class="contact-h">Faire un retour<br>à mon club</h1>'+
-        '<p class="contact-sub">Une remarque sur l’hygiène du club ou un problème à signaler&nbsp;? Votre retour est transmis sans compte et sans identité demandée.</p>'+
-        '<textarea class="contact-ta" id="avisText" maxlength="1000" placeholder="Votre message…"></textarea>'+
-        '<button class="contact-send" id="avisSend" disabled>Envoyer mon retour '+IArrowR+'</button>'+
-        '<p class="contact-hint">Pour préserver l’anonymat, n’indiquez pas de nom, de photo de visage, ni d’information médicale ou permettant d’identifier une personne.</p>'+
-        '<p class="contact-note">Anonyme · sans compte</p>'+
-      '</section>';
+      '<h2 class="h2">Signaler un problème</h2>'+
+      '<div class="field"><textarea id="desc" rows="4" maxlength="600" placeholder="Ex. : plus de savon au lavabo du vestiaire"></textarea></div>'+
+      '<div class="field">'+
+        '<div class="photo" id="photo"><button class="photobtn" id="addphoto">'+ICam+' Ajouter une photo (optionnel)</button></div>'+
+        '<p class="warn-note">Ne photographiez aucune personne et ne transmettez aucune information médicale ou permettant d’identifier un pratiquant.</p>'+
+      '</div>'+
+      '<div class="cta"><button class="btn" id="send" disabled>Envoyer</button></div>';
     wireBack();
-    var ta=document.getElementById('avisText'), sb=document.getElementById('avisSend');
-    ta.oninput=function(){ sb.disabled = !this.value.trim(); };
-    sb.onclick=function(){
-      var txt=ta.value.trim(); if(!txt) return;
-      var code=submit({kind:'avis', feeling:null, zone:CTX.zone||'', description:txt, cat:null, photo:null, when:nowStamp()});
-      screenDone('avis', code);
+    var send=document.getElementById('send');
+    document.getElementById('desc').oninput=function(){ st.description=this.value.trim(); send.disabled=!st.description; };
+    document.getElementById('addphoto').onclick=function(){ pickPhoto(function(data){ if(!data){ toast('Photo non ajoutée'); return; } st.photo=data; drawPhoto(); }); };
+    function drawPhoto(){
+      var box=document.getElementById('photo');
+      box.innerHTML='<img alt="aperçu" src="'+st.photo+'"><button class="rm" id="rmph">Retirer</button>'+
+        '<button class="photobtn" id="addphoto2">'+ICam+' Remplacer</button>';
+      document.getElementById('rmph').onclick=function(){ st.photo=null; box.innerHTML='<button class="photobtn" id="addphoto">'+ICam+' Ajouter une photo (optionnel)</button>'; document.getElementById('addphoto').onclick=function(){ pickPhoto(function(d){ if(d){ st.photo=d; drawPhoto(); } }); }; };
+      document.getElementById('addphoto2').onclick=function(){ pickPhoto(function(d){ if(d){ st.photo=d; drawPhoto(); } }); };
+    }
+    send.onclick=function(){
+      if(!st.description) return;
+      submit({kind:'signal', cat:null, zone:CTX.zone||'', description:st.description, photo:st.photo, feeling:null, when:nowStamp()});
+      view.innerHTML='<div class="done"><div class="ring">'+ICheck+'</div>'+
+        '<p class="done-lead">Merci, le club a reçu votre signalement.</p>'+
+        '<div class="again"><button class="btn" id="tohome" style="width:auto;padding:14px 26px">Retour à l’accueil</button></div>'+
+      '</div>';
+      document.getElementById('tohome').onclick=screenHome;
+      toast('Signalement envoyé');
     };
   }
 
