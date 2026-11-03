@@ -2622,7 +2622,7 @@ a.svcl-row{color:var(--black)}
 .svcx-title{
   display:block;font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;
   font-size:clamp(1.9rem,2.9vw,2.4rem);line-height:.98;letter-spacing:.005em;color:var(--black);
-  overflow-wrap:break-word;hyphens:auto;
+  overflow-wrap:break-word;hyphens:manual;
 }
 /* Service 04 : titre avec un mot très long (« téléconsultation ») — très légère
    réduction pour qu'il tienne sur une ligne sans coupure. */
@@ -3116,7 +3116,7 @@ h1,h2,h3,h4,h1 *,h2 *,h3 *,h4 *,
         <span class="svcx-foot"><span class="svcx-num">01</span></span>
       </button>
       <button class="svcx-card" type="button" onclick="openSvc(1)" aria-haspopup="dialog">
-        <span class="svcx-head"><span class="svcx-action">Structurer</span><span class="svcx-title">Plan d’action &amp; protocoles d’hygiène</span><span class="svcx-sub">Les corrections à engager, classées par priorité, avec des protocoles validés par un médecin spécialisé et applicables par votre équipe.</span></span>
+        <span class="svcx-head"><span class="svcx-action">Structurer</span><span class="svcx-title">Plan d’action &amp; protocoles d’hygiène</span><span class="svcx-sub">Notre référentiel et nos protocoles sont construits avec des experts en hygiène et un médecin dermatologue-infectiologue.</span></span>
         <span class="svcx-foot"><span class="svcx-num">02</span></span>
       </button>
       <button class="svcx-card" type="button" onclick="openSvc(2)" aria-haspopup="dialog">
@@ -3363,6 +3363,7 @@ h1,h2,h3,h4,h1 *,h2 *,h3 *,h4 *,
   <div class="faq reveal">
     <details class="faq-item"><summary>Où trouver les clubs labellisés MatSafe ?</summary><div class="faq-a">Les clubs dont le label est valide figurent sur la carte MatSafe. Un club dont le label n’est plus valide en est retiré.</div></details>
     <details class="faq-item"><summary>Les clubs labellisés sont-ils contrôlés après l’obtention du label ?</summary><div class="faq-a">Oui. Le label est valable un an. Pour le conserver, le club passe chaque année un audit de renouvellement, et ses actions quotidiennes sont tracées dans MatSafe Club entre deux contrôles. Un club qui ne respecte plus les exigences perd son label.</div></details>
+    <details class="faq-item"><summary>Que faire si un club labellisé ne respecte pas les standards MatSafe ?</summary><div class="faq-a">Signalez d’abord le problème à votre club, depuis MatSafe Fighter. Si le club ne répond pas, ou si vous pensez que les standards MatSafe ne sont pas appliqués, écrivez à <strong><a href="mailto:contact@matsafe.fr?subject=Signalement%20MatSafe">contact@matsafe.fr</a></strong>. MatSafe examine chaque signalement et peut ouvrir une vérification auprès du club. Votre identité n’est jamais transmise au club. Merci de ne pas indiquer d’information médicale.</div></details>
   </div>
 </section>
 </section>
@@ -3370,7 +3371,7 @@ h1,h2,h3,h4,h1 *,h2 *,h3 *,h4 *,
 <section class="route" id="route-referentiel" data-route="referentiel" hidden>
 
 <section class="ed-section">
-  <div class="ed-header"><div><div class="eyebrow reveal">Familles de critères</div><h2 class="ed-giant ed-giant--md reveal">Ce que l'on <em>évalue</em></h2></div>
+  <div class="ed-header"><div><div class="eyebrow reveal">Familles de critères</div><h2 class="ed-giant ed-giant--md reveal">Ce que l'on <em>évalue</em></h2><p class="sec-intro reveal">Construit avec des experts en hygiène et un médecin dermatologue-infectiologue.</p></div>
   <p class="sec-intro reveal">Le référentiel couvre les points qui font réellement la différence sur le terrain, regroupés par familles. <!-- À compléter : nombre exact de critères et barème d'obtention du label --></p></div>
   <div class="ref-fam reveal">
     <span>Tatamis &amp; surfaces</span><span>Vestiaires &amp; sanitaires</span><span>Matériel partagé</span>
@@ -3550,7 +3551,7 @@ const SVC=[
   {n:'01',t:"L’audit de votre club",
    b:"Quelques jours avant l’audit, le club reçoit un formulaire de pré-audit afin de préparer l’intervention et de recueillir les premières informations utiles. MatSafe examine ensuite les locaux, le matériel, les produits utilisés et les pratiques d’hygiène selon des critères conçus pour les sports de combat. L’audit fait ressortir les points maîtrisés, les écarts constatés et les corrections prioritaires avant la labellisation."},
   {n:'02',t:"Plan d’action & protocoles d’hygiène",
-   b:"Après l’audit, MatSafe remet un plan d’action qui classe les corrections à effectuer par ordre de priorité, accompagné de protocoles d’hygiène validés par un médecin spécialisé. Ils encadrent le nettoyage, le matériel partagé, les traces de sang et les lésions suspectes afin de limiter autant que possible les risques infectieux et la transmission de bactéries, de virus ou de champignons."},
+   b:"Après l’audit, MatSafe remet un plan d’action qui classe les corrections à effectuer par ordre de priorité, accompagné de protocoles d’hygiène construits avec des experts en hygiène et un médecin dermatologue-infectiologue. Ils encadrent le nettoyage, le matériel partagé, les traces de sang et les lésions suspectes afin de limiter autant que possible les risques infectieux et la transmission de bactéries, de virus ou de champignons."},
   {n:'03',t:"MatSafe Club & Fighter",
    b:"MatSafe Club centralise les nettoyages, les contrôles, les anomalies, les retours des adhérents et les preuves enregistrées. MatSafe Fighter informe les pratiquants, leur donne accès aux services proposés et leur permet de communiquer anonymement avec leur établissement. Les deux applications sont connectées pour assurer un suivi cohérent au quotidien."},
   {n:'04',t:"Accès médical en téléconsultation 24/7",
