@@ -1113,8 +1113,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       '<h2 class="h2">Infos hygiène du club</h2>'+
       (posts.length
         ? '<div class="vdc-full">'+posts.map(function(p){return postEditorial(p,false);}).join('')+'</div>'
-        : '<div class="vdc-empty">Aucune information publiée par le club pour le moment.</div>')+
-      clubEventsSection();
+        : '<div class="vdc-empty">Aucune information publiée par le club pour le moment.</div>');
     wireBack();
   }
   /* ACCUEIL — menu éditorial numéroté (court, direct, DA MatSafe).
