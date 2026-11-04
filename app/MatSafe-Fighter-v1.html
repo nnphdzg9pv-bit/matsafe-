@@ -1597,20 +1597,10 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   function hyRender(){
     if(!document.getElementById('hyWrap')) return;
     var data=_hyData, now=new Date();
-    var cardsEl=document.getElementById('hyCards'), dayEl=document.getElementById('hyDay');
-    if(!data || !data.days || !data.days.length){ if(cardsEl) cardsEl.innerHTML='<div class="hy-empty">Le planning du club n’est pas encore disponible.</div>'; if(dayEl) dayEl.innerHTML=''; return; }
+    var cardsEl=document.getElementById('hyCards');
+    if(!data || !data.days || !data.days.length){ if(cardsEl) cardsEl.innerHTML='<div class="hy-empty">Les informations de nettoyage ne sont pas encore disponibles.</div>'; return; }
     var mats=hyMats(data); if(!mats.length) mats=[''];
     if(cardsEl) cardsEl.innerHTML=mats.map(function(m){ return hyCleanCard(m, hyEntries(data,m), now); }).join('');
-    var todayIso=hyTodayIso(), nowMin=now.getHours()*60+now.getMinutes(), today=null;
-    for(var i=0;i<data.days.length;i++){ if(data.days[i].iso===todayIso){ today=data.days[i]; break; } }
-    if(dayEl){
-      if(today && today.courses && today.courses.length){
-        var rows=today.courses.map(function(c){ var st=hyDayStatus(c,today.iso,todayIso,nowMin);
-          return '<div class="hy-mini"><span class="hy-mt">'+esc(c.t)+'</span><span class="hy-md">'+esc(c.d)+' · '+esc(hyMatLabel(c.m))+'</span><span class="hy-mm '+st.cls+'">'+esc(st.label)+'</span></div>'; }).join('');
-        var zones=(today.zones&&today.zones.length)?('<div class="hy-sect hy-z">Zones nettoyées</div>'+today.zones.map(function(z){return '<div class="hy-mini"><span class="hy-md">'+esc(z)+'</span><span class="hy-mm hy-ok">Nettoyé</span></div>';}).join('')):'';
-        dayEl.innerHTML='<div class="hy-sect">Cours du jour</div>'+rows+zones;
-      } else { dayEl.innerHTML='<div class="hy-sect">Cours du jour</div><div class="hy-empty">Aucun cours aujourd’hui.</div>'; }
-    }
   }
   function hyRefresh(){ if(!(window.MatSafeAPI && MatSafeAPI.enabled && MatSafeAPI.getPublicHygiene)) return; MatSafeAPI.getPublicHygiene().then(function(d){ if(d){ _hyData=d; try{ save('matsafe_hy_cache', d); }catch(_){ } hyRender(); } }).catch(function(){}); }
   function screenHygiene(){
@@ -1620,7 +1610,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         '<h3 class="routine-h" style="margin-bottom:6px">Dernier nettoyage</h3>'+
         '<div class="hy-meta">'+esc(CTX.club||'Mon club')+'</div>'+
         '<div id="hyCards" class="hy-cards"></div>'+
-        '<div id="hyDay"></div>'+
         '<p class="hy-note">Informations déclarées et validées par l’équipe du club. MatSafe suit le fonctionnement du club dans le cadre de son label mais ne vérifie pas physiquement chaque nettoyage.</p>'+
       '</section>';
     wireBack();
