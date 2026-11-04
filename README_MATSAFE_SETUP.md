@@ -78,7 +78,7 @@ Ces fonctions déterminent **côté serveur** qui valide (jamais le téléphone 
 
 ---
 
-## 5. Créer le premier compte **dirigeant** et le **Cube Fight Club**
+## 5. Créer le premier compte **dirigeant** et **Le Cube Fight Club**
 
 ### 5.1 Le compte dirigeant (Simon)
 1. Menu **Authentication** → **Users** → **Add user** → renseignez l'e-mail du dirigeant (ex. `simon@cubefightclub.fr`) et cochez **Auto-confirm**.
@@ -90,7 +90,7 @@ Remplacez seulement l'UID (et les prénoms/zones si besoin), puis **Run** :
 ```sql
 -- 1) Le club
 insert into public.clubs (matsafe_code, name, city, status)
-values ('CUBE-FIGHT-CLUB', 'Cube Fight Club', 'Votre ville', 'labelled')
+values ('CUBE-FIGHT-CLUB', 'Le Cube Fight Club', 'Votre ville', 'labelled')
 returning id;  -- notez l'id du club (club_id)
 
 -- 2) Le dirigeant (remplacez les deux UUID par le club_id ci-dessus et l'UID du user)

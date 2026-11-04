@@ -30,7 +30,7 @@ l'URL Supabase, la clé publique (anon) et le slug du club. Elle ne peut que
 
 ## 2. Avant le lancement — pré-requis (déjà en place pour le pilote)
 
-Club pilote : **Cube fight club** — slug `cube-fight-club`.
+Club pilote : **Le Cube Fight Club** — slug `cube-fight-club`.
 
 - [x] Club créé et actif côté Supabase.
 - [x] 7 zones définies : `mat 1`, `MAT 2` (tatamis), `Douches`, `Sanitaires`,
