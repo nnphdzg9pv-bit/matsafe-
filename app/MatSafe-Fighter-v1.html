@@ -728,6 +728,28 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 @keyframes introTag{to{opacity:1;transform:none}}
 @keyframes stageOut{to{opacity:0}}
 @keyframes introBlackOut{to{opacity:0}}
+
+/* ===== Typographie unifiée : 2 styles seulement (référence : écran Conseils) =====
+   Titres = « La routine MatSafe » (.routine-h) ; textes = paragraphes de la routine
+   (.routine p). Boutons, étiquettes, dates, compteurs et étapes gardent leur style.
+   !important : l'emporte sur les variantes plus précises (cases d'accueil, posts,
+   styles en ligne). */
+.routine-h,.h2,.ckl-title,.contact-h,.done h2,.bravo-title,.bh-sub,
+.tile-t,.tile.big .tile-t,.tile.big .fb-t,.t-k,.fb-mine-h,.post-t,.post-big .post-t,.hy-main{
+  font-family:var(--cond)!important;font-weight:800!important;font-style:normal!important;
+  text-transform:uppercase!important;letter-spacing:-.005em!important;
+  font-size:clamp(28px,7.5vw,36px)!important;line-height:.96!important;color:var(--ink)!important}
+.routine p,.routine-key,.post-c,.post-big .post-c,.t-vt,.t-vt.muted,.vdc-empty,
+.hy-meta,.hy-empty,.hy-note,.hy-sub,.hy-wait,.ckl-note,.done-lead,.bravo-sub,
+.ret-meta,.ret-reply,.contact-hint,.ckl-lbl{
+  font-family:var(--sans)!important;font-weight:400!important;font-style:normal!important;
+  text-transform:none!important;letter-spacing:normal!important;
+  font-size:clamp(17px,4.6vw,19px)!important;line-height:1.6!important}
+/* Couleur du texte de référence, sauf la check-list dont la couleur signale l'état coché. */
+.routine p,.routine-key,.post-c,.post-big .post-c,.t-vt,.t-vt.muted,.vdc-empty,
+.hy-meta,.hy-empty,.hy-note,.hy-sub,.hy-wait,.ckl-note,.done-lead,.bravo-sub,
+.ret-meta,.ret-reply,.contact-hint{color:var(--ink)!important}
+.t-vt.muted{opacity:1}
 </style>
 
 <div class="app">
