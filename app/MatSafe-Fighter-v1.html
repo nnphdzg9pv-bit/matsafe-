@@ -1111,8 +1111,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
      l'accueil n'affiche qu'un petit badge « engagé MatSafe ».
      Les événements du club (getEvents) restent disponibles dans le code. */
   function screenHome(){
-    var mine=load(STORE);
-
     // CŒUR DE L'APP — CTA central (donner son avis / signaler, anonyme).
     var IArrowR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>';
     var ICare='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11Z"/></svg>';
@@ -1122,9 +1120,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var heroHtml =
       '<div class="bento-hero">'+
         (logoSrc?'<img class="bh-mark" src="'+logoSrc+'" alt="MATSAFE FIGHTER">':'<div class="bh-txt">MATSAFE FIGHTER</div>')+
-        '<div class="bh-eb">Votre club</div>'+
         '<div class="bh-sub">'+esc(CTX.club||'MatSafe')+'</div>'+
-        '<div class="bh-fine">Prévention · hygiène · sécurité du club</div>'+
         clubLabelBadge()+
       '</div>';
 
@@ -1150,15 +1146,14 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     }
     var tiles =
       tile('a-vdc','creme wide', vdcInner)+
-      tile('a-hygiene','creme wide','<div class="t-eb"><span class="t-k" style="display:inline-flex;align-items:center;gap:10px"><svg viewBox="0 0 24 24" fill="none" stroke="#C83F32" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;flex:none" aria-hidden="true"><path d="M8 3 4 21"/><path d="M16 3l4 18"/><path d="M8 3h8"/><path d="M4 21h16"/><path d="M12 8v4"/><path d="M12 15.6v.4"/></svg>Dernier nettoyage</span><span class="t-ar">'+IArrR+'</span></div><div class="t-vdc"><span class="t-vt muted">Propreté des tatamis</span></div>')+
+      tile('a-hygiene','creme wide','<div class="t-eb"><span class="t-k" style="display:inline-flex;align-items:center;gap:10px"><svg viewBox="0 0 24 24" fill="none" stroke="#C83F32" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;flex:none" aria-hidden="true"><path d="M8 3 4 21"/><path d="M16 3l4 18"/><path d="M8 3h8"/><path d="M4 21h16"/><path d="M12 8v4"/><path d="M12 15.6v.4"/></svg>Dernier nettoyage</span><span class="t-ar">'+IArrR+'</span></div>')+
       tile('a-feedback','creme big',
         '<span class="tile-t fb-t">Faire un retour<br>à mon club</span>'+
-        '<span class="tile-desc">Une remarque sur l’hygiène ou un problème à signaler, sans dévoiler votre identité.</span>'+
         '<span class="t-cta">Commencer '+IArrowR+'</span>')+
-      tile('a-check','creme','<span class="t-ic">'+ICheck+'</span><span class="t-b"><span class="tile-t">Faire mon check</span><span class="tile-s">Avant l’entraînement</span></span>')+
-      tile('a-lesion','creme md','<span class="tile-t">Besoin d’un avis médical&nbsp;?</span><img class="md-logo" src="'+KRY_LOGO+'" alt="Kry" loading="lazy"><span class="tile-s">Téléconsultation avec Kry</span>')+
-      tile('a-care','creme','<span class="t-ic">'+ICare+'</span><span class="t-b"><span class="tile-t">Conseils</span><span class="tile-s">La routine MatSafe</span></span>')+
-      tile('a-returns','creme','<span class="t-ic">'+IList+'</span><span class="t-b"><span class="tile-t">Suivre mes retours</span><span class="tile-s">Suivi anonyme'+(mine.length?' · '+mine.length:'')+'</span></span>');
+      tile('a-check','creme','<span class="t-ic">'+ICheck+'</span><span class="t-b"><span class="tile-t">Faire mon check</span></span>')+
+      tile('a-lesion','creme md','<span class="tile-t">Besoin d’un avis médical&nbsp;?</span><img class="md-logo" src="'+KRY_LOGO+'" alt="Kry" loading="lazy">')+
+      tile('a-care','creme','<span class="t-ic">'+ICare+'</span><span class="t-b"><span class="tile-t">Conseils</span></span>')+
+      tile('a-returns','creme','<span class="t-ic">'+IList+'</span><span class="t-b"><span class="tile-t">Suivre mes retours</span></span>');
 
     view.innerHTML=
       '<div class="home fhome bento-home">'+ heroHtml +
