@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MatSafe — Cube Fight Club</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;600&display=swap">
+<style>
+  :root{ --bg:#ECE9E2; --panel:#F7F5F0; --ink:#1C1A17; --mut:#6B655C; --line:#D8D4CB; --brand:#C0392B; }
+  @media (prefers-color-scheme:dark){ :root{ --bg:#15140F; --panel:#1F1D18; --ink:#F1EEE6; --mut:#A49E92; --line:#332F27; --brand:#E8705F; } }
+  *{box-sizing:border-box} html,body{margin:0;height:100%}
+  body{background:var(--bg);color:var(--ink);font-family:'Barlow',system-ui,sans-serif;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:max(24px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));gap:22px;text-align:center}
+  .kick{font:800 12px/1 'Barlow';letter-spacing:.18em;text-transform:uppercase;color:var(--brand)}
+  h1{font:800 clamp(40px,12vw,64px)/.95 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.01em;margin:.1em 0}
+  p.sub{color:var(--mut);max-width:34ch;margin:0 0 6px}
+  .choices{display:flex;flex-direction:column;gap:14px;width:100%;max-width:360px}
+  a.card{display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--ink);
+    background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px 22px;transition:transform .12s,border-color .12s}
+  a.card:hover{transform:translateY(-2px);border-color:var(--brand)}
+  a.card .t{font:800 20px/1.1 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.02em}
+  a.card .d{color:var(--mut);font-size:14px}
+  a.card.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+  a.card.primary .d{color:rgba(255,255,255,.85)}
+  footer{color:var(--mut);font-size:12.5px;margin-top:8px}
+</style>
+</head>
+<body>
+  <div class="kick">MatSafe · Hygiène</div>
+  <h1>Cube Fight Club</h1>
+  <p class="sub">Choisissez votre espace.</p>
+  <div class="choices">
+    <a class="card primary" href="fighter.html">
+      <span class="t">Je suis adhérent</span>
+      <span class="d">Infos hygiène du club · faire un retour · suivre mes retours</span>
+    </a>
+    <a class="card" href="club.html">
+      <span class="t">Espace Club · coachs</span>
+      <span class="d">Validations de nettoyage, planning, retours (réservé à l'équipe)</span>
+    </a>
+  </div>
+  <footer>Hygiène labellisée MatSafe</footer>
+</body>
+</html>
