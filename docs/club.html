@@ -974,7 +974,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     <section class="screen" data-screen="reglages">
       <div class="head"><div><h1>Réglages</h1><p>Votre profil, vos notifications et votre club.</p></div></div>
       <div class="card">
-        <div class="set-row"><div><div class="s-t">Équipe autorisée à valider</div><div class="s-d" id="teamNames">Simon, Léa, Kevin, Thomas</div></div><button class="btn-ghost" id="teamManage">Gérer</button></div>
+        <div class="set-row"><div><div class="s-t">Équipe autorisée à valider</div><div class="s-d" id="teamNames">Simon, François, Fabio, Thierry</div></div><button class="btn-ghost" id="teamManage">Gérer</button></div>
         <div class="set-row"><div><div class="s-t">Authentification du poste</div><div class="s-d" id="authStatus">Accès partagé — ce poste n'est pas encore activé</div></div><button class="btn-ghost" id="authManage">Activer</button></div>
       </div>
     </section>
@@ -1013,10 +1013,10 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       </div>
       <div class="sheet-q">Qui a effectué le nettoyage&nbsp;?</div>
       <div class="people" id="valPeople">
-        <button class="person" data-person="Simon"><span class="av sm a3">SE</span>Simon</button>
-        <button class="person" data-person="Léa"><span class="av sm a1">LM</span>Léa</button>
-        <button class="person" data-person="Kevin"><span class="av sm a2">KB</span>Kevin</button>
-        <button class="person" data-person="Thomas"><span class="av sm a4">TM</span>Thomas</button>
+        <button class="person" data-person="Simon"><span class="av sm a3">S</span>Simon</button>
+        <button class="person" data-person="François"><span class="av sm a1">F</span>François</button>
+        <button class="person" data-person="Fabio"><span class="av sm a2">F</span>Fabio</button>
+        <button class="person" data-person="Thierry"><span class="av sm a4">T</span>Thierry</button>
       </div>
       <button class="btn-primary wide" id="valConfirm">Confirmer le nettoyage</button>
     </div>
@@ -1068,13 +1068,34 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 </div>
 
 <!-- MODALE : aperçu Fighter d'une publication -->
-<!-- MODALE : gérer l'équipe autorisée à valider -->
+<!-- MODALE : gérer l'équipe de nettoyage -->
 <div class="modal" id="teamModal" aria-hidden="true">
+  <style>
+    #teamModal .tm-list{display:flex;flex-direction:column;gap:8px;margin:4px 0 12px}
+    #teamModal .tm-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+    #teamModal .tm-av{flex:none;width:34px;height:34px;border-radius:50%;background:#EDEAE2;color:var(--ink2);display:grid;place-items:center;font-family:var(--font-disp);font-weight:800;font-size:14px}
+    #teamModal .tm-who{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.15}
+    #teamModal .tm-nm{font-weight:600}
+    #teamModal .tm-role{font-size:12px;color:var(--ink2)}
+    #teamModal .tm-ic{flex:none;width:32px;height:32px;border-radius:9px;border:1px solid var(--line2);background:#fff;cursor:pointer;font-size:14px;line-height:1;color:var(--ink)}
+    #teamModal .tm-fixed{border-style:dashed;opacity:.85}
+    #teamModal .tm-edit .tm-ename{flex:1;min-width:0}
+    #teamModal .tm-edit .tm-erole{flex:none;width:110px}
+    #teamModal .tm-add{display:flex;gap:8px;align-items:center}
+    #teamModal .tm-add-name{flex:1;min-width:0}
+    #teamModal .tm-add-role{flex:none;width:110px}
+    #teamModal .tm-add-btn{flex:none;font-family:var(--font-disp);font-weight:800;text-transform:uppercase;letter-spacing:.04em;background:var(--brand);color:#fff;border:0;border-radius:10px;padding:11px 14px;cursor:pointer}
+  </style>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="teamModalTitle">
-    <div class="sheet-h"><h3 id="teamModalTitle">Équipe autorisée à valider</h3><button class="sheet-x" data-close><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
-    <p class="sheet-sub">Les personnes proposées lors d'une validation de nettoyage. Un nom par ligne.</p>
-    <div class="gm-field"><textarea class="ano-inp ano-ta" id="teamText" rows="6" placeholder="Un nom par ligne…"></textarea></div>
-    <button class="btn-primary wide" id="teamSave">Enregistrer</button>
+    <div class="sheet-h"><h3 id="teamModalTitle">Équipe de nettoyage</h3><button class="sheet-x" data-close><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <p class="sheet-sub">Ces personnes apparaissent sur la page de validation des tatamis.</p>
+    <div id="teamList" class="tm-list"></div>
+    <div class="tm-add">
+      <input class="ano-inp tm-add-name" id="teamAddName" placeholder="Prénom" maxlength="60">
+      <select class="ano-inp tm-add-role" id="teamAddRole"><option>Coach</option><option>Référent</option><option>Intervenant</option><option>Direction</option></select>
+      <button class="tm-add-btn" id="teamAdd">Ajouter</button>
+    </div>
+    <div id="teamNote" class="sheet-sub" style="color:var(--brand);min-height:16px;margin-top:8px"></div>
   </div>
 </div>
 
@@ -1560,6 +1581,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     redeem: redeem,
     recordValidation: recordValidation,
     callRpc: callRpc,
+    callFunction: callFunction,
     isEnrolled: isEnrolled,
     enrolledMember: enrolledMember,
     resolveZoneToken: resolveZoneToken,
@@ -1890,34 +1912,14 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
   // ===== Nettoyages validés (persistants, événements datés par date réelle) =====
   var VAL_KEY=clubKey('club_validations');
-  var TEAM_DEMO=['Simon E.','Léa M.','Kevin B.','Thomas M.'];
+  // (données de démonstration retirées — pilote en données réelles)
   function loadVals(){ try{ var r=localStorage.getItem(VAL_KEY); if(r){ var o=JSON.parse(r); if(o&&o.items&&o.v===2) return o; } }catch(_){ } return null; }
   function saveVals(){ try{ localStorage.setItem(VAL_KEY, JSON.stringify(VALS)); }catch(_){ } }
   var VALS=loadVals();
   if(!VALS){
-    // DÉMO (point 8) : on sème la SEMAINE EN COURS de façon réaliste — la plupart des
-    // créneaux terminés sont validés, en laissant le dernier « à nettoyer » (en attente)
-    // et un créneau manqué. Conservé jusqu'au pilote. Ce ne sont pas des statistiques
-    // inventées : ce sont des événements de nettoyage réels du modèle.
-    VALS={ v:2, seeded:true, demo:true, items:[] };
-    var finished=[];
-    for(var di=0; di<=TODAY_IDX; di++){
-      var day=DAYS[di], iso=isoOf(dateOfIdx(di));
-      (SCHED[day]||[]).forEach(function(c){
-        if(di===TODAY_IDX && slotEnd(c.t)>NOWM) return;    // pas encore terminé aujourd'hui
-        finished.push({iso:iso, c:c});
-      });
-    }
-    var pendingIdx=finished.length-1;                       // dernier terminé : laissé « à nettoyer »
-    var missedIdx =finished.length>=6 ? finished.length-5 : -1;  // un manqué réaliste
-    var pi=0;
-    finished.forEach(function(f, idx){
-      if(idx===pendingIdx || idx===missedIdx) return;
-      pi++;
-      VALS.items.push({ k:f.iso+'|'+f.c.t+'|'+f.c.m, iso:f.iso, time:f.c.t, disc:f.c.d,
-        mat:matClassOf(f.c.m), matLabel:matLabelOf(f.c.m), by:TEAM_DEMO[pi%TEAM_DEMO.length],
-        at:fmtMin(slotEnd(f.c.t)+20), ts:Date.now(), demo:true });
-    });
+    // Pilote : historique VIDE au départ. Il se remplit uniquement avec les vraies
+    // validations (tatami + planning) remontées du serveur. Aucune donnée fictive.
+    VALS={ v:2, seeded:true, demo:false, items:[] };
     saveVals();
   }
   var validated=Object.create(null);
@@ -2274,7 +2276,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(e.target.closest('#caReplySave')){ saveCaReply(); return; }
     if(e.target===caReplyModal){ caReplyModal.classList.remove('on'); return; }
     if(e.target.closest('#teamManage')){ openTeamModal(); return; }
-    if(e.target.closest('#teamSave')){ saveTeamModal(); return; }
     if(e.target===teamModal){ teamModal.classList.remove('on'); return; }
     if(e.target.closest('#authManage')){ openAuthModal(); return; }
     if(e.target.closest('#authEnroll')){ doEnroll(); return; }
@@ -2282,38 +2283,108 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(e.target===authModal){ authModal.classList.remove('on'); return; }
   });
 
-  // ===== Équipe autorisée à valider (modifiable ; synchro serveur best-effort) =====
-  // Pilote le sélecteur « qui a nettoyé » (validation) ET l'affichage dans Réglages.
-  // Stockée en local (instantané) ; relue/écrite au serveur si les RPC sont dispo.
-  var TEAM_KEY=clubKey('club_team');
-  var TEAM_DEFAULT=['Simon','Léa','Kevin','Thomas'];
+  // ===== Équipe de nettoyage (prénom + rôle) — source serveur : club_members via team-manage =====
+  // Pilote le sélecteur « qui a nettoyé » (validation interne) ET la page tatami (via q-context).
+  // Cache local d'objets {id,name,role} pour un rendu instantané ; la gestion (ajout/modif/suppr)
+  // passe par la fonction serveur team-manage (réservée à la direction).
+  var TEAM_KEY=clubKey('club_team_v2');
+  var TEAM_DEFAULT=[{id:null,name:'Simon',role:'Référent hygiène'},{id:null,name:'François',role:'Coach'},{id:null,name:'Fabio',role:'Coach'},{id:null,name:'Thierry',role:'Coach'}];
+  var ROLE_OPTS=['Coach','Référent','Intervenant','Direction'];
   var teamModal=document.getElementById('teamModal');
-  function loadTeam(){ try{ var r=localStorage.getItem(TEAM_KEY); if(r){ var a=JSON.parse(r); if(Array.isArray(a)){ var l=a.filter(function(n){return n&&String(n).trim();}).map(function(n){return String(n).trim();}); if(l.length) return l; } } }catch(_){ } return TEAM_DEFAULT.slice(); }
-  function saveTeam(a){ try{ localStorage.setItem(TEAM_KEY, JSON.stringify(a)); }catch(_){ } }
+  var _editId=null;
+  function loadTeam(){ try{ var r=localStorage.getItem(TEAM_KEY); if(r){ var a=JSON.parse(r); if(Array.isArray(a)) return a; } }catch(_){ } return TEAM_DEFAULT.slice(); }
+  function saveTeam(a){ try{ localStorage.setItem(TEAM_KEY, JSON.stringify(a||[])); }catch(_){ } }
+  function teamNames(){ return (loadTeam()||[]).map(function(m){ return m && m.name; }).filter(Boolean); }
   function teamInitials(n){ var p=String(n||'').trim().split(/\s+/); var s=(p[0]?p[0].charAt(0):'')+(p[1]?p[1].charAt(0):''); return (s||String(n||'?').charAt(0)||'?').toUpperCase(); }
+  function teamFromRows(rows){ return (rows||[]).map(function(m){ return {id:m.id,name:m.name,role:m.role}; }); }
   function renderTeam(){
-    var list=loadTeam();
+    var list=teamNames();
     var vp=document.getElementById('valPeople');
     if(vp){ vp.innerHTML = list.length
       ? list.map(function(n,i){ return '<button class="person" data-person="'+esc(n)+'"><span class="av sm a'+((i%4)+1)+'">'+esc(teamInitials(n))+'</span>'+esc(n)+'</button>'; }).join('')
       : '<p class="sheet-sub" style="margin:4px 0">Aucun membre — ajoutez votre équipe dans Réglages.</p>'; }
     var sd=document.getElementById('teamNames'); if(sd) sd.textContent = list.length ? list.join(', ') : 'Aucun membre';
   }
-  function openTeamModal(){ if(!teamModal) return; var t=document.getElementById('teamText'); if(t) t.value=loadTeam().join('\n'); teamModal.classList.add('on'); setTimeout(function(){ if(t) t.focus(); },60); }
-  function saveTeamModal(){
-    var t=document.getElementById('teamText'), raw=((t&&t.value)||''), seen={}, list=[];
-    raw.split('\n').forEach(function(line){ var n=line.trim(); if(!n) return; n=n.slice(0,40); var k=n.toLowerCase(); if(seen[k]) return; seen[k]=1; list.push(n); });
-    list=list.slice(0,30);
-    saveTeam(list); renderTeam();
-    if(teamModal) teamModal.classList.remove('on');
-    toast('Équipe mise à jour.');
-    try{ if(!_teamSrvDown && window.MatSafeAPI && MatSafeAPI.enabled && MatSafeAPI.setTeam){ MatSafeAPI.setTeam(list).catch(function(){ _teamSrvDown=true; }); } }catch(_){ }
+  function teamApi(payload){
+    if(!(window.MatSafeAuth && MatSafeAuth.callFunction)) return Promise.reject(new Error('no_auth'));
+    return MatSafeAuth.callFunction('team-manage', payload).then(function(res){
+      if(res && res.ok && res.body && res.body.ok) return res.body.members||[];
+      throw new Error((res && res.body && res.body.error) || ('http_'+(res&&res.status)));
+    });
   }
-  var _teamSrvDown=false;   // si les RPC d'équipe serveur ne répondent pas, on reste en local pour la session
+  function renderTeamModalList(){
+    var box=document.getElementById('teamList'); if(!box) return;
+    var objs=loadTeam()||[];
+    var html=objs.map(function(m){
+      if(_editId && m.id===_editId){
+        return '<div class="tm-row tm-edit" data-id="'+esc(m.id)+'">'
+          +'<input class="ano-inp tm-ename" value="'+esc(m.name)+'" maxlength="60">'
+          +'<select class="ano-inp tm-erole">'+ROLE_OPTS.map(function(r){ return '<option'+(r===m.role?' selected':'')+'>'+r+'</option>'; }).join('')+'</select>'
+          +'<button class="tm-ic" data-team-savrow="'+esc(m.id)+'" title="Enregistrer">✓</button>'
+          +'<button class="tm-ic" data-team-cancel="1" title="Annuler">✕</button>'
+          +'</div>';
+      }
+      return '<div class="tm-row" data-id="'+esc(m.id||'')+'">'
+        +'<span class="tm-av">'+esc(teamInitials(m.name))+'</span>'
+        +'<span class="tm-who"><span class="tm-nm">'+esc(m.name)+'</span><span class="tm-role">'+esc(m.role||'')+'</span></span>'
+        +(m.id ? ('<button class="tm-ic" data-team-edit="'+esc(m.id)+'" title="Modifier">✎</button>'
+                 +'<button class="tm-ic" data-team-del="'+esc(m.id)+'" title="Supprimer">🗑</button>') : '')
+        +'</div>';
+    }).join('');
+    html += '<div class="tm-row tm-fixed"><span class="tm-av">↪</span><span class="tm-who"><span class="tm-nm">Intervenant extérieur</span><span class="tm-role">Toujours présent · non supprimable</span></span></div>';
+    box.innerHTML=html;
+  }
+  function openTeamModal(){
+    if(!teamModal) return;
+    _editId=null; renderTeamModalList();
+    teamModal.classList.add('on');
+    var note=document.getElementById('teamNote'); if(note) note.textContent='';
+    teamApi({action:'list'}).then(function(rows){
+      saveTeam(teamFromRows(rows)); renderTeamModalList(); renderTeam();
+    }).catch(function(e){
+      var m=String(e&&e.message||''); var note=document.getElementById('teamNote');
+      if(note) note.textContent = (m==='not_enrolled'||m==='forbidden')
+        ? "Activez ce poste (Réglages) en tant que direction pour modifier l'équipe."
+        : "Hors ligne — liste en lecture seule.";
+    });
+  }
+  function teamAdd(){
+    var n=document.getElementById('teamAddName'), r=document.getElementById('teamAddRole');
+    var name=((n&&n.value)||'').trim(); if(!name){ if(n) n.focus(); return; }
+    var role=(r&&r.value)||'Coach';
+    teamApi({action:'add', name:name, role:role}).then(function(rows){
+      saveTeam(teamFromRows(rows)); if(n) n.value=''; _editId=null; renderTeamModalList(); renderTeam(); toast('Personne ajoutée.');
+    }).catch(function(){ toast("Impossible d'ajouter (poste direction requis)."); });
+  }
+  function teamDel(id){
+    if(!confirm("Retirer cette personne de l'équipe ?")) return;
+    teamApi({action:'remove', id:id}).then(function(rows){
+      saveTeam(teamFromRows(rows)); _editId=null; renderTeamModalList(); renderTeam(); toast('Personne retirée.');
+    }).catch(function(){ toast('Impossible de retirer.'); });
+  }
+  function teamSaveRow(id){
+    if(!teamModal) return;
+    var row=teamModal.querySelector('.tm-edit[data-id="'+id+'"]'); if(!row) return;
+    var name=((row.querySelector('.tm-ename')||{}).value||'').trim();
+    var role=((row.querySelector('.tm-erole')||{}).value)||'Coach';
+    if(!name) return;
+    teamApi({action:'update', id:id, name:name, role:role}).then(function(rows){
+      _editId=null; saveTeam(teamFromRows(rows)); renderTeamModalList(); renderTeam(); toast('Modifié.');
+    }).catch(function(){ toast('Impossible de modifier.'); });
+  }
+  if(teamModal){
+    teamModal.addEventListener('click', function(e){
+      var t=e.target.closest('#teamAdd,[data-team-edit],[data-team-del],[data-team-savrow],[data-team-cancel]');
+      if(!t) return;
+      if(t.id==='teamAdd'){ teamAdd(); return; }
+      if(t.hasAttribute('data-team-edit')){ _editId=t.getAttribute('data-team-edit'); renderTeamModalList(); return; }
+      if(t.hasAttribute('data-team-del')){ teamDel(t.getAttribute('data-team-del')); return; }
+      if(t.hasAttribute('data-team-savrow')){ teamSaveRow(t.getAttribute('data-team-savrow')); return; }
+      if(t.hasAttribute('data-team-cancel')){ _editId=null; renderTeamModalList(); return; }
+    });
+  }
   function refreshTeam(){
-    if(_teamSrvDown) return;
-    try{ if(!(window.MatSafeAPI && MatSafeAPI.enabled && MatSafeAPI.getTeam)) return; }catch(_){ return; }
-    MatSafeAPI.getTeam().then(function(rows){ if(Array.isArray(rows) && rows.length){ saveTeam(rows.filter(Boolean).map(function(n){return String(n);})); renderTeam(); } }).catch(function(){ _teamSrvDown=true; });
+    teamApi({action:'list'}).then(function(rows){ saveTeam(teamFromRows(rows)); renderTeam(); }).catch(function(){ /* garde le cache */ });
   }
 
   // ===== Historique multi-appareils : validé sur un poste -> visible sur tous =====
