@@ -1571,11 +1571,21 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   var _hyData=null;
   function hyRender(){
     if(!document.getElementById('hyWrap')) return;
-    var data=_hyData, now=new Date();
-    var cardsEl=document.getElementById('hyCards');
-    if(!data || !data.days || !data.days.length){ if(cardsEl) cardsEl.innerHTML='<div class="hy-empty">Les informations de nettoyage ne sont pas encore disponibles.</div>'; return; }
-    var mats=hyMats(data); if(!mats.length) mats=[''];
-    if(cardsEl) cardsEl.innerHTML=mats.map(function(m){ return hyCleanCard(m, hyEntries(data,m), now); }).join('');
+    var data=_hyData;
+    var cardsEl=document.getElementById('hyCards'); if(!cardsEl) return;
+    if(!data || !data.days){ cardsEl.innerHTML='<div class="hy-empty">Les informations de nettoyage ne sont pas encore disponibles.</div>'; return; }
+    // Zone unique « Tatami » : on affiche le dernier nettoyage validé (QR ou planning),
+    // indépendamment d'un créneau précis. Source : lastValidated (le plus récent).
+    var lv=data.lastValidated, main, dotOk=false;
+    if(lv && lv.date && lv.time){
+      var _hm=hyHhMm(lv.time);
+      if(lv.date===hyTodayIso()) main='Nettoyé à '+_hm;
+      else if(lv.date===hyYesterdayIso()) main='Nettoyé hier à '+_hm;
+      else main='Nettoyé le '+hyFullDate(lv.date)+' à '+_hm;
+      dotOk=true;
+    } else { main='Aucun nettoyage validé pour le moment'; }
+    cardsEl.innerHTML='<div class="hy-card"><div class="hy-k"><span class="hy-dot'+(dotOk?' ok':'')+'"></span>Tatami</div>'+
+      '<div class="hy-main">'+esc(main)+'</div></div>';
   }
   function hyRefresh(){ if(!(window.MatSafeAPI && MatSafeAPI.enabled && MatSafeAPI.getPublicHygiene)) return; MatSafeAPI.getPublicHygiene().then(function(d){ if(d){ _hyData=d; try{ save('matsafe_hy_cache', d); }catch(_){ } hyRender(); } }).catch(function(){}); }
   function screenHygiene(){
