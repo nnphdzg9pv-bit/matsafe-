@@ -973,7 +973,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <div class="head"><div><h1>Réglages</h1><p>Votre profil, vos notifications et votre club.</p></div></div>
       <div class="card">
         <div class="set-row"><div><div class="s-t">Équipe autorisée à valider</div><div class="s-d" id="teamNames">Simon, François, Fabio, Thierry</div></div><button class="btn-ghost" id="teamManage">Gérer</button></div>
-        <div class="set-row"><div><div class="s-t">Authentification du poste</div><div class="s-d" id="authStatus">Accès partagé — ce poste n'est pas encore activé</div></div><button class="btn-ghost" id="authManage">Activer</button></div>
+        <div class="set-row" id="authSetRow"><div><div class="s-t">Authentification du poste</div><div class="s-d" id="authStatus">Accès partagé — ce poste n'est pas encore activé</div></div><button class="btn-ghost" id="authManage">Activer</button></div>
       </div>
     </section>
 
@@ -1143,7 +1143,15 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     // JAMAIS dans ce fichier (ni dans git) : il est fourni par app/config.js (git-ignoré),
     // via MATSAFE_WRITE_SECRET. Sans secret, le Club reste en LOCAL (pas d'écriture serveur).
     // L'app ADHÉRENT (Fighter) ne charge pas config.js → ne peut rien écrire/forger.
-    secret: C.MATSAFE_WRITE_SECRET || ''   // CUTOVER : plus de secret baké — écritures via authentification uniquement
+    secret: C.MATSAFE_WRITE_SECRET || '',   // CUTOVER : plus de secret baké — écritures via authentification uniquement
+    // ===== RÉGLAGE UNIQUE DU PILOTE =====================================
+    // false = AUCUN code d'activation requis : Club fonctionne dès l'ouverture
+    //         du lien, sur n'importe quel appareil. L'accès reste limité au
+    //         club pilote côté serveur (clubs.pilot_open), via des RPC
+    //         SECURITY DEFINER et la seule clé publishable (jamais de service_role).
+    // true  = réactive l'authentification du poste (Réglages → Authentification),
+    //         comportement d'avant-pilote. (Repasser aussi clubs.pilot_open=false.)
+    requireEnrollment: (C.MATSAFE_REQUIRE_ENROLLMENT === undefined ? false : !!C.MATSAFE_REQUIRE_ENROLLMENT)
   };
   function rpc(fn, body){
     return fetch(CFG.url+'/rest/v1/rpc/'+fn, {
@@ -1157,7 +1165,11 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   function authRpc(authFn, authParams, secretFn, secretParams, emptyVal){
     function secretCall(){ if(CFG.secret) return rpc(secretFn, secretParams); return Promise.resolve(emptyVal===undefined?null:emptyVal); }
     try{
-      if(window.MatSafeAuth && MatSafeAuth.isEnrolled && MatSafeAuth.isEnrolled() && MatSafeAuth.callRpc){
+      // PILOTE (requireEnrollment=false) : voie authentifiée (session anonyme)
+      // toujours utilisée — l'accès est ouvert côté serveur pour le club pilote.
+      // Sinon : voie authentifiée seulement si le poste est enrôlé.
+      var openPilot = (CFG.requireEnrollment === false);
+      if(window.MatSafeAuth && MatSafeAuth.callRpc && (openPilot || (MatSafeAuth.isEnrolled && MatSafeAuth.isEnrolled()))){
         return MatSafeAuth.callRpc(authFn, authParams).then(function(res){
           if(res && res.ok && !(res.body && res.body.error)) return res.body;
           return secretCall();
@@ -1168,6 +1180,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   }
   window.MATSAFE_CONFIG = window.MATSAFE_CONFIG || {};
   try{ window.MATSAFE_CONFIG.slug = CFG.slug; }catch(_){ }   // exposé pour le script principal (CFG est local à ce bloc)
+  try{ window.MATSAFE_CONFIG.requireEnrollment = CFG.requireEnrollment; }catch(_){ }   // idem : réglage pilote
   window.MatSafeAPI = {
     enabled: true,
     writeReady: !!CFG.secret,   // true si le secret est présent (écritures synchronisées)
@@ -1924,9 +1937,12 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     validated=Object.create(null);
     (CLUB.validations||[]).forEach(function(r){ if(r && r.iso && r.time) validated[r.iso+'|'+String(r.time).slice(0,5)]=true; });
   }
+  // PILOTE : accès ouvert sans activation (réglage unique côté config).
+  function pilotOpen(){ try{ return (window.MATSAFE_CONFIG && window.MATSAFE_CONFIG.requireEnrollment === false); }catch(_){ return true; } }
   // Message d'état (non autorisé / erreur réseau) ; '' si tout va bien.
+  // En mode pilote, le bandeau « non autorisé » est supprimé (jamais affiché).
   function clubStateMsg(state){
-    if(state==='unauth') return 'Cet appareil n’est pas autorisé à voir les données du club. Réglages → Authentification du poste.';
+    if(state==='unauth') return pilotOpen() ? '' : 'Cet appareil n’est pas autorisé à voir les données du club. Réglages → Authentification du poste.';
     if(state==='neterror') return 'Connexion impossible, réessayez.';
     return '';
   }
@@ -2470,6 +2486,16 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   function cancelValidation(vid){
     vid=String(vid||''); if(!vid) return;
     if(!window.confirm('Annuler ce nettoyage ?')) return;
+    // PILOTE : annulation DOUCE via RPC (state -> 'voided', jamais de suppression),
+    // scopée au club pilote, puis relecture serveur.
+    if(pilotOpen() && window.MatSafeAuth && MatSafeAuth.callRpc){
+      var slug=(window.MATSAFE_CONFIG && window.MATSAFE_CONFIG.slug) || 'cube-fight-club';
+      MatSafeAuth.callRpc('cancel_validation_auth', { p_slug:slug, p_id:vid }).then(function(res){
+        if(res && res.ok && res.body && res.body.ok){ toast('Nettoyage annulé.'); try{ refreshClubData(); }catch(_){ } }
+        else { var er=(res&&res.body&&res.body.error)||('http_'+(res&&res.status)); toast('Annulation impossible ('+er+').'); }
+      }).catch(function(){ toast('Annulation impossible (réseau).'); });
+      return;
+    }
     if(!(window.MatSafeAuth && MatSafeAuth.callFunction)){ toast('Annulation indisponible : poste non authentifié.'); return; }
     MatSafeAuth.callFunction('validation-cancel', { id:vid }).then(function(res){
       if(res && res.ok && res.body && res.body.ok){ toast('Nettoyage annulé.'); try{ refreshClubData(); }catch(_){ } }
@@ -2486,6 +2512,10 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   function authMember(){ try{ return (window.MatSafeAuth && MatSafeAuth.enrolledMember && MatSafeAuth.enrolledMember()) || null; }catch(_){ return null; } }
   function loadAuthLocal(){ /* le module gère l'état ; rien à charger */ }
   function renderAuthStatus(){
+    var row=document.getElementById('authSetRow');
+    // PILOTE : on masque entièrement « Authentification du poste » dans Réglages.
+    if(pilotOpen()){ if(row) row.style.display='none'; return; }
+    if(row) row.style.display='';
     var el=document.getElementById('authStatus'), btn=document.getElementById('authManage');
     if(!el) return;
     var m=authMember();
@@ -2538,6 +2568,17 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   }
   function recordValidationServer(v, person, ref){
     function secret(){ try{ if(window.MatSafeAPI && MatSafeAPI.enabled){ MatSafeAPI.submitValidation({ zone:v.m, courseTime:v.t, courseLabel:v.disc }).catch(function(){}); } }catch(_){ } }
+    // PILOTE : enregistrement via RPC authentifiée (session anonyme), scopée au club pilote,
+    // puis relecture serveur. Pas de code d'activation requis.
+    if(pilotOpen() && window.MatSafeAuth && MatSafeAuth.callRpc){
+      var slug=(window.MATSAFE_CONFIG && window.MATSAFE_CONFIG.slug) || 'cube-fight-club';
+      try{
+        MatSafeAuth.callRpc('record_validation_auth', { p_slug:slug, p_payload:{ zone:v.m, courseLabel:v.disc, courseTime:v.t, cleanedByLabel:person, courseRef:ref } })
+          .then(function(r){ if(!(r && r.ok && r.body && r.body.ok)) secret(); try{ refreshClubData(); }catch(_){ } })
+          .catch(function(){ secret(); });
+      }catch(_){ secret(); }
+      return;
+    }
     if(authEnrolled() && window.MatSafeAuth){
       try{
         MatSafeAuth.recordValidation({ zone:v.m, courseLabel:v.disc, courseTime:v.t, cleanedByLabel:person, courseRef:ref })
