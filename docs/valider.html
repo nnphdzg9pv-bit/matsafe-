@@ -14,32 +14,22 @@
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0}
-  body{background:var(--bg);color:var(--ink);font-family:var(--body);min-height:100dvh;
-    display:flex;justify-content:center}
-  .wrap{width:100%;max-width:430px;padding:30px 22px calc(28px + env(safe-area-inset-bottom));
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);min-height:100dvh;display:flex;justify-content:center}
+  .wrap{width:100%;max-width:430px;padding:32px 22px calc(28px + env(safe-area-inset-bottom));
     display:flex;flex-direction:column;min-height:100dvh}
   .hide{display:none!important}
-  /* états centrés */
   .mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px}
-  .spin{width:40px;height:40px;border:4px solid var(--line2);border-top-color:var(--brand);border-radius:50%;
-    animation:sp 1s linear infinite;margin-bottom:12px}
+  .spin{width:40px;height:40px;border:4px solid var(--line2);border-top-color:var(--brand);border-radius:50%;animation:sp 1s linear infinite;margin-bottom:12px}
   @keyframes sp{to{transform:rotate(360deg)}}
   .muted{color:var(--mut);font-size:15px}
-  /* validation */
-  .lead{font-family:var(--disp);font-weight:700;text-transform:uppercase;letter-spacing:.14em;
-    font-size:12px;color:var(--mut);text-align:center;margin-bottom:12px}
-  .seg{display:flex;gap:11px;margin-bottom:6px}
-  .seg button{flex:1;min-height:62px;border-radius:15px;border:1.5px solid var(--line);background:var(--panel2);
-    font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.01em;
-    font-size:19px;line-height:1;color:var(--ink);cursor:pointer;display:grid;place-items:center;padding:0 6px}
-  .seg button.on{background:var(--brand);border-color:var(--brand);color:#fff}
-  .q{font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.03em;
-    font-size:20px;color:var(--ink);margin:30px 2px 16px}
+  .zone{font-family:var(--disp);font-weight:900;text-transform:uppercase;letter-spacing:.01em;
+    font-size:54px;line-height:.9;text-align:center;color:var(--ink)}
+  .zone-u{display:block;width:58px;height:5px;background:var(--brand);border-radius:999px;margin:12px auto 0}
+  .q{font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.03em;font-size:20px;color:var(--ink);margin:34px 2px 16px}
   .opts{display:flex;flex-direction:column;gap:12px}
-  .opt{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;
-    min-height:64px;padding:14px 18px;background:var(--panel2);border:1.5px solid var(--line);
-    border-radius:15px;font-family:var(--body);text-align:left;cursor:pointer}
-  .opt .lbl{font-size:18px;color:var(--ink);font-weight:500}
+  .opt{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:66px;
+    padding:15px 18px;background:var(--panel2);border:1.5px solid var(--line);border-radius:15px;font-family:var(--body);text-align:left;cursor:pointer}
+  .opt .lbl{font-size:18.5px;color:var(--ink);font-weight:500}
   .opt .lbl .role{color:var(--mut);font-weight:400}
   .opt .rad{flex:none;width:24px;height:24px;border-radius:50%;border:2px solid var(--line2);background:#fff}
   .opt.sel{border-color:var(--brand);background:var(--brandbg)}
@@ -48,11 +38,10 @@
   .opt.ext .lbl{display:flex;align-items:center;gap:11px}
   .opt.ext .pic{flex:none;width:26px;height:26px;color:var(--mut)}
   .opt.ext .pic svg{width:26px;height:26px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
-  .cta{display:flex;align-items:center;justify-content:center;width:100%;min-height:58px;margin-top:22px;
+  .cta{display:flex;align-items:center;justify-content:center;width:100%;min-height:58px;margin-top:24px;
     background:var(--brand);color:#fff;border:0;border-radius:15px;cursor:pointer;
     font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.05em;font-size:20px}
   .cta:disabled{opacity:.4;cursor:default}
-  /* confirmation */
   .check{width:132px;height:132px;border-radius:50%;background:var(--okbg);display:grid;place-items:center;margin-bottom:26px}
   .check svg{width:70px;height:70px;stroke:var(--ok);stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
   h1.done{font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.02em;font-size:34px;line-height:1;margin:0}
@@ -66,34 +55,26 @@
 <body>
 <div class="wrap">
 
-  <!-- CHARGEMENT -->
-  <div class="mid" id="s-loading">
-    <div class="spin"></div>
-    <p class="muted">Un instant…</p>
-  </div>
+  <div class="mid" id="s-loading"><div class="spin"></div><p class="muted">Un instant…</p></div>
 
-  <!-- ERREUR -->
   <div class="mid err hide" id="s-error">
     <h1 id="err-title">Connexion impossible</h1>
     <p class="muted" id="err-msg">Vérifiez votre connexion, puis réessayez.</p>
     <button class="retry" id="err-retry">Réessayer</button>
   </div>
 
-  <!-- VALIDATION -->
   <div class="hide" id="s-validate">
-    <div class="lead" id="scope-lead">Quel tatami nettoyé&nbsp;?</div>
-    <div class="seg" id="scope-seg"></div>
+    <div class="zone" id="zone-name">Tatami<span class="zone-u"></span></div>
     <div class="q">Qui a nettoyé&nbsp;?</div>
     <div class="opts" id="who-opts"></div>
     <button class="cta" id="val-go" disabled>Valider</button>
   </div>
 
-  <!-- CONFIRMATION -->
   <div class="mid hide" id="s-done">
     <div class="check"><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg></div>
     <h1 class="done">Nettoyage validé</h1>
     <div class="time" id="done-time">—</div>
-    <div class="donemat" id="done-mat"></div>
+    <div class="donemat" id="done-mat">Tatami</div>
   </div>
 
 </div>
@@ -103,13 +84,7 @@
 const CFG = {
   SUPABASE_URL:  'https://enhyrejspgjywnqgmoth.supabase.co',
   SUPABASE_ANON: 'sb_publishable_XpZfOO9EvD9REVqvYoSp4Q_bLY7-MLc',
-  TATAMIS: [
-    { name:'MAT 1', token:'f96271edff10494cbf325095d50ced74' },
-    { name:'MAT 2', token:'1d2895a7cbc84b419244e01e1801f735' },
-  ],
 };
-const ROLE = { coach:'Coach', hygiene_referent:'Référent', club_direction:'Direction', intervenant:'Intervenant' };
-
 const $ = (id)=>document.getElementById(id);
 const screens = ['s-loading','s-error','s-validate','s-done'];
 const show = (id)=>{ screens.forEach(s=>$(s).classList.add('hide')); $(id).classList.remove('hide'); };
@@ -123,27 +98,21 @@ function zoneToken(){
 }
 const TOKEN = zoneToken();
 
-/* ---------- Planning (rattachement du cours, en arrière-plan) ---------- */
-const SCHED={"Lundi":[{"t":"07:00","d":"JJB","m":"MAT 1"},{"t":"11:00","d":"MMA","m":"MAT 1"},{"t":"11:00","d":"Accès libre / Drills","m":"MAT 2"},{"t":"12:30","d":"Lutte","m":"MAT 1"},{"t":"12:30","d":"Boxe pieds-poings","m":"MAT 2"},{"t":"14:00","d":"Compétition","m":"MAT 1"},{"t":"18:00","d":"MMA","m":"MAT 1"},{"t":"18:45","d":"No Gi","m":"MAT 2"},{"t":"19:00","d":"MMA","m":"MAT 1"},{"t":"19:45","d":"Boxe anglaise","m":"MAT 2"},{"t":"20:00","d":"JJB","m":"MAT 1"}],"Mardi":[{"t":"07:00","d":"No Gi","m":"MAT 1"},{"t":"12:30","d":"JJB","m":"MAT 1"},{"t":"12:30","d":"No Gi","m":"MAT 2"},{"t":"18:00","d":"Accès libre / Drills","m":"MAT 1"},{"t":"19:00","d":"Boxe pieds-poings","m":"MAT 1"},{"t":"19:00","d":"JJB","m":"MAT 2"},{"t":"20:00","d":"No Gi","m":"MAT 1"},{"t":"20:00","d":"Boxe anglaise","m":"MAT 2"}],"Mercredi":[{"t":"07:00","d":"JJB","m":"MAT 1"},{"t":"11:00","d":"MMA","m":"MAT 1"},{"t":"11:00","d":"Accès libre / Drills","m":"MAT 2"},{"t":"12:30","d":"No Gi","m":"MAT 1"},{"t":"12:30","d":"Boxe pieds-poings","m":"MAT 2"},{"t":"14:00","d":"Compétition","m":"MAT 1"},{"t":"16:45","d":"Kids","m":"MAT 1"},{"t":"17:30","d":"Kids","m":"MAT 1"},{"t":"18:30","d":"MMA","m":"MAT 1"},{"t":"18:30","d":"No Gi","m":"MAT 2"},{"t":"19:30","d":"JJB","m":"MAT 1"},{"t":"19:30","d":"MMA","m":"MAT 2"},{"t":"20:30","d":"Compétition","m":"MAT 1"}],"Jeudi":[{"t":"07:00","d":"No Gi","m":"MAT 1"},{"t":"12:30","d":"JJB","m":"MAT 1"},{"t":"12:30","d":"No Gi","m":"MAT 2"},{"t":"17:00","d":"Lutte","m":"MAT 1"},{"t":"17:30","d":"Accès libre / Drills","m":"MAT 2"},{"t":"18:45","d":"No Gi","m":"MAT 1"},{"t":"19:00","d":"Boxe pieds-poings","m":"MAT 2"},{"t":"20:00","d":"Sparring","m":"MAT 1"},{"t":"20:00","d":"JJB","m":"MAT 2"}],"Vendredi":[{"t":"07:00","d":"JJB","m":"MAT 1"},{"t":"12:30","d":"No Gi","m":"MAT 1"},{"t":"12:30","d":"Boxe pieds-poings","m":"MAT 2"},{"t":"17:30","d":"Kids No Gi","m":"MAT 1"},{"t":"18:00","d":"JJB","m":"MAT 2"},{"t":"19:00","d":"Sparring","m":"MAT 1"},{"t":"19:00","d":"Boxe pieds-poings","m":"MAT 2"}],"Samedi":[{"t":"10:00","d":"Kids","m":"MAT 1"},{"t":"10:00","d":"JJB","m":"MAT 2"},{"t":"11:00","d":"No Gi Sparring","m":"MAT 1"},{"t":"11:00","d":"MMA","m":"MAT 2"},{"t":"12:00","d":"MMA","m":"MAT 1"},{"t":"13:15","d":"MMA Sparring","m":"MAT 1"}],"Dimanche":[{"t":"11:00","d":"No Gi","m":"MAT 1"},{"t":"11:00","d":"JJB","m":"MAT 2"},{"t":"12:00","d":"Sparring","m":"MAT 1"}]};
+/* ---------- Planning (rattachement du cours, en arrière-plan, invisible) ---------- */
+const SCHED={"Lundi":[{"t":"07:00","d":"JJB"},{"t":"11:00","d":"MMA"},{"t":"11:00","d":"Accès libre / Drills"},{"t":"12:30","d":"Lutte"},{"t":"12:30","d":"Boxe pieds-poings"},{"t":"14:00","d":"Compétition"},{"t":"18:00","d":"MMA"},{"t":"18:45","d":"No Gi"},{"t":"19:00","d":"MMA"},{"t":"19:45","d":"Boxe anglaise"},{"t":"20:00","d":"JJB"}],"Mardi":[{"t":"07:00","d":"No Gi"},{"t":"12:30","d":"JJB"},{"t":"12:30","d":"No Gi"},{"t":"18:00","d":"Accès libre / Drills"},{"t":"19:00","d":"Boxe pieds-poings"},{"t":"19:00","d":"JJB"},{"t":"20:00","d":"No Gi"},{"t":"20:00","d":"Boxe anglaise"}],"Mercredi":[{"t":"07:00","d":"JJB"},{"t":"11:00","d":"MMA"},{"t":"11:00","d":"Accès libre / Drills"},{"t":"12:30","d":"No Gi"},{"t":"12:30","d":"Boxe pieds-poings"},{"t":"14:00","d":"Compétition"},{"t":"16:45","d":"Kids"},{"t":"17:30","d":"Kids"},{"t":"18:30","d":"MMA"},{"t":"18:30","d":"No Gi"},{"t":"19:30","d":"JJB"},{"t":"19:30","d":"MMA"},{"t":"20:30","d":"Compétition"}],"Jeudi":[{"t":"07:00","d":"No Gi"},{"t":"12:30","d":"JJB"},{"t":"12:30","d":"No Gi"},{"t":"17:00","d":"Lutte"},{"t":"17:30","d":"Accès libre / Drills"},{"t":"18:45","d":"No Gi"},{"t":"19:00","d":"Boxe pieds-poings"},{"t":"20:00","d":"Sparring"},{"t":"20:00","d":"JJB"}],"Vendredi":[{"t":"07:00","d":"JJB"},{"t":"12:30","d":"No Gi"},{"t":"12:30","d":"Boxe pieds-poings"},{"t":"17:30","d":"Kids No Gi"},{"t":"18:00","d":"JJB"},{"t":"19:00","d":"Sparring"},{"t":"19:00","d":"Boxe pieds-poings"}],"Samedi":[{"t":"10:00","d":"Kids"},{"t":"10:00","d":"JJB"},{"t":"11:00","d":"No Gi Sparring"},{"t":"11:00","d":"MMA"},{"t":"12:00","d":"MMA"},{"t":"13:15","d":"MMA Sparring"}],"Dimanche":[{"t":"11:00","d":"No Gi"},{"t":"11:00","d":"JJB"},{"t":"12:00","d":"Sparring"}]};
 const DAYS=["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
 const toMin=(t)=>{const p=t.split(':');return (+p[0])*60+(+p[1]);};
-function courseForMat(matName){
+function courseNow(){
   const now=new Date(), day=DAYS[now.getDay()], nowm=now.getHours()*60+now.getMinutes();
-  const list=(SCHED[day]||[]).filter(c=>c.m===matName).map(c=>({...c,min:toMin(c.t)}));
-  const done=list.filter(c=>c.min<=nowm).sort((a,b)=>b.min-a.min);
-  const rest=list.filter(c=>c.min>nowm).sort((a,b)=>a.min-b.min);
-  const c = done[0]||null; // le cours qui vient de se terminer sur ce tatami ; sinon rien (hors cours)
-  return c ? { ref:`${day}|${c.t}|${matName}`, label:c.d, time:c.t } : { ref:null, label:null, time:null };
+  const done=(SCHED[day]||[]).map(c=>({...c,min:toMin(c.t)})).filter(c=>c.min<=nowm).sort((a,b)=>b.min-a.min);
+  const c=done[0]||null;
+  return c ? { ref:`${day}|${c.t}`, label:c.d, time:c.t } : { ref:null, label:null, time:null };
 }
 
 /* ---------- État ---------- */
-let CTX=null;            // { zone, club, members }
-let isTatami=false;      // la zone scannée est-elle un tatami ?
-let scannedMat=null;     // { name, token } si tatami
-let scope='both';        // 'both' | 'single'  (uniquement pour tatamis)
-let who=null;            // { type:'member', id, name } | { type:'external' }
+let CTX=null, who=null;
 
-/* ---------- Appels serveur ---------- */
+/* ---------- Supabase (chargé seulement hors démo) ---------- */
 let _supa=null;
 async function supa(){
   if(_supa) return _supa;
@@ -165,103 +134,66 @@ async function fn(name, payload){
 }
 
 /* ---------- Rendu ---------- */
-function matDisplay(name){ return (name||'').toUpperCase().replace(/\s+/g,' ').trim(); }
-
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 function renderValidate(){
-  // sélecteur de périmètre (tatamis uniquement)
-  const seg = $('scope-seg'); seg.innerHTML='';
-  if(isTatami){
-    $('scope-lead').classList.remove('hide');
-    const both = document.createElement('button'); both.textContent='MAT 1 + MAT 2'; both.dataset.scope='both';
-    const one  = document.createElement('button'); one.textContent=matDisplay(scannedMat.name); one.dataset.scope='single';
-    seg.append(both, one);
-    seg.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{ scope=b.dataset.scope; paintScope(); }));
-    paintScope();
-  } else {
-    $('scope-lead').classList.add('hide'); scope='single';
-  }
-  // liste "qui a nettoyé"
+  $('zone-name').firstChild.textContent = (CTX.zone && CTX.zone.name) ? CTX.zone.name : 'Tatami';
   const box = $('who-opts'); box.innerHTML='';
   (CTX.members||[]).forEach(m=>{
     const b=document.createElement('button'); b.className='opt'; b.dataset.mid=m.id;
-    const role = ROLE[m.role] || m.role || '';
-    b.innerHTML=`<span class="lbl">${esc(m.name)}${role?` <span class="role">– ${role}</span>`:''}</span><span class="rad"></span>`;
-    b.addEventListener('click',()=>pickWho({type:'member',id:m.id,name:m.name}, b));
+    const role = m.role || '';
+    b.innerHTML=`<span class="lbl">${esc(m.name)}${role?` <span class="role">– ${esc(role)}</span>`:''}</span><span class="rad"></span>`;
+    b.addEventListener('click',()=>pickWho({type:'member',id:m.id}, b));
     box.appendChild(b);
   });
-  const ext=document.createElement('button'); ext.className='opt ext'; ext.dataset.ext='1';
+  const ext=document.createElement('button'); ext.className='opt ext';
   ext.innerHTML=`<span class="lbl"><span class="pic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg></span>Intervenant extérieur</span><span class="rad"></span>`;
   ext.addEventListener('click',()=>pickWho({type:'external'}, ext));
   box.appendChild(ext);
   who=null; $('val-go').disabled=true;
   show('s-validate');
 }
-function paintScope(){ $('scope-seg').querySelectorAll('button').forEach(b=>b.classList.toggle('on', b.dataset.scope===scope)); }
 function pickWho(sel, el){
   who=sel;
   $('who-opts').querySelectorAll('.opt').forEach(o=>{ o.classList.remove('sel'); o.querySelector('.rad').innerHTML=''; });
   el.classList.add('sel'); el.querySelector('.rad').innerHTML='<svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>';
   $('val-go').disabled=false;
 }
-function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-
-/* zones à valider selon le périmètre */
-function targetZones(){
-  if(isTatami && scope==='both') return CFG.TATAMIS.slice();
-  if(isTatami) return [scannedMat];
-  return [{ name:CTX.zone.name, token:TOKEN }];
-}
 
 /* ---------- Validation ---------- */
 $('val-go').addEventListener('click', async ()=>{
   if(!who) return;
   const btn=$('val-go'); btn.disabled=true; btn.textContent='Validation…';
-  const zones=targetZones();
   try{
-    if(DEMO){
-      await new Promise(r=>setTimeout(r,250));
-      finishDone(zones, new Date());
-      return;
-    }
-    let last=null;
-    for(const z of zones){
-      const c=courseForMat(matDisplay(z.name));
-      const payload={ zoneToken:z.token, courseRef:c.ref, courseLabel:c.label, courseTime:c.time };
-      if(who.type==='external'){ payload.external=true; }
-      else { payload.validatorMemberId=who.id; }
-      const r=await fn('validation-record', payload);
-      if(!(r.ok && r.body?.ok)){
-        if(r.status===403) return fail('Non autorisé','Cette personne n’est plus dans la liste. Prévenez le gérant.');
-        return fail('Enregistrement impossible','Réessayez dans un instant.');
-      }
-      last=r.body;
-    }
-    const t=new Date(last?.validation?.validated_at||Date.now());
-    finishDone(zones, t);
-  }catch(e){
-    fail('Connexion impossible','Le nettoyage n’a pas pu être enregistré. Réessayez.');
-  }finally{ btn.textContent='Valider'; }
+    if(DEMO){ await new Promise(r=>setTimeout(r,250)); return finishDone(new Date()); }
+    const c=courseNow();
+    const payload={ zoneToken:TOKEN, courseRef:c.ref, courseLabel:c.label, courseTime:c.time };
+    if(who.type==='external') payload.external=true; else payload.validatorMemberId=who.id;
+    const r=await fn('validation-record', payload);
+    if(r.ok && r.body?.ok){
+      const t=new Date(r.body.validation?.validated_at || Date.now());
+      finishDone(t);
+    } else if(r.status===403){ fail('Non autorisé','Cette personne n’est plus dans la liste. Prévenez le gérant.'); }
+    else { fail('Enregistrement impossible','Réessayez dans un instant.'); }
+  }catch(e){ fail('Connexion impossible','Le nettoyage n’a pas pu être enregistré. Réessayez.'); }
+  finally{ btn.textContent='Valider'; }
 });
-function finishDone(zones, t){
+function finishDone(t){
   const hh=('0'+t.getHours()).slice(-2), mm=('0'+t.getMinutes()).slice(-2);
   $('done-time').textContent=`${hh}h${mm}`;
-  $('done-mat').textContent=zones.map(z=>matDisplay(z.name)).join(' + ');
+  $('done-mat').textContent=(CTX && CTX.zone && CTX.zone.name) ? CTX.zone.name : 'Tatami';
   show('s-done');
 }
 
 /* ---------- Démarrage ---------- */
 async function start(){
   show('s-loading');
-  if(!TOKEN && !DEMO){ return fail('QR invalide','Ce lien ne correspond à aucune zone. Scannez le QR collé sur le tatami.'); }
-
+  if(!TOKEN && !DEMO){ return fail('QR invalide','Ce lien ne correspond à aucune zone. Scannez le QR du tatami.'); }
   if(DEMO){
-    scannedMat = CFG.TATAMIS.find(t=>t.token===TOKEN) || CFG.TATAMIS[0];
-    isTatami=true;
-    CTX={ zone:{ name:scannedMat.name }, club:{ name:'Le Cube Fight Club' },
-      members:[{id:'1',name:'Thierry',role:'coach'},{id:'2',name:'Lucas',role:'coach'},{id:'3',name:'Rémi',role:'coach'}] };
+    CTX={ zone:{ name:'Tatami' }, members:[
+      {id:'1',name:'Simon',role:'Référent hygiène'},{id:'2',name:'Fabio',role:'Coach'},
+      {id:'3',name:'François',role:'Coach'},{id:'4',name:'Thierry',role:'Coach'}] };
     return renderValidate();
   }
-
   try{
     const s=await supa();
     let { data:{ session } }=await s.auth.getSession();
@@ -270,9 +202,6 @@ async function start(){
     if(r.status===404) return fail('Zone inconnue','Ce QR ne correspond à aucune zone active.');
     if(!r.ok || !r.body) return fail('Service indisponible','Réessayez dans un instant.');
     CTX=r.body;
-    const match=CFG.TATAMIS.find(t=>t.token===TOKEN);
-    isTatami = !!match || /tatami/i.test(CTX.zone?.type||'') || /mat/i.test(CTX.zone?.name||'');
-    scannedMat = match || { name:CTX.zone.name, token:TOKEN };
     renderValidate();
   }catch(e){ fail('Connexion impossible','Vérifiez votre connexion, puis réessayez.'); }
 }
