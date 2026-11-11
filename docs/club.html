@@ -562,6 +562,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .crate-sub:empty{display:none}
 .crate-bar{height:6px;border-radius:999px;background:var(--line);overflow:hidden;max-width:340px}
 .crate-bar>span{display:block;height:100%;background:var(--brand);border-radius:999px}
+#crate{cursor:pointer}
+.crate-list{font-size:12px;line-height:1.5;color:var(--muted);margin:7px 0 0}
+.crate-list:empty{display:none}
 .crate--empty .crate-fig,.crate--empty .crate-bar{display:none}
 .crate--empty .crate-lead{max-width:none}
 @media(max-width:620px){
@@ -782,14 +785,14 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         </div>
       </div>
 
-      <!-- Indicateur hebdo : taux de nettoyages réalisés — le chiffre fait office de jauge -->
-      <section class="crate" id="crate" aria-label="Taux de nettoyages réalisés cette semaine">
-        <div class="crate-fig"><span class="crate-pct" id="cratePct" style="--fill:0%">0%</span></div>
+      <!-- Accueil : dernier nettoyage du tatami (même enregistrement que Fighter / Historique) -->
+      <section class="crate" id="crate" role="button" tabindex="0" aria-label="Dernier nettoyage du tatami — ouvrir l'historique">
+        <div class="crate-fig"><span class="crate-pct" id="crateTime" style="--fill:100%">—</span></div>
         <div class="crate-txt">
-          <span class="crate-k">Hygiène de la semaine</span>
-          <p class="crate-lead" id="crateLead">des nettoyages réalisés cette semaine</p>
-          <p class="crate-sub" id="crateSub"></p>
-          <div class="crate-bar" aria-hidden="true"><span id="crateBar" style="width:0%"></span></div>
+          <span class="crate-k">Dernier nettoyage</span>
+          <p class="crate-lead" id="crateDay"></p>
+          <p class="crate-sub" id="crateWho"></p>
+          <p class="crate-list" id="crateList"></p>
         </div>
       </section>
 
@@ -1603,7 +1606,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(name==='retours'){ try{ renderInbox(); }catch(_){ } }
     if(name==='publications'){ try{ renderPubs(); }catch(_){ } }
     if(name==='preuves'){ try{ renderHistory(); }catch(_){ } try{ refreshServerValidations(); }catch(_){ } }
-    if(name==='accueil'){ try{ renderHomeMessages(); }catch(_){ } }
+    if(name==='accueil'){ try{ renderHomeMessages(); }catch(_){ } try{ renderCleanRate(); }catch(_){ } try{ refreshServerValidations(); }catch(_){ } }
     if(name==='reglages'){ try{ refreshTeam(); }catch(_){ } try{ renderAuthStatus(); }catch(_){ } }
     document.querySelector('.main').scrollTop = 0;
     window.scrollTo(0,0);
@@ -1951,26 +1954,48 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(done>expected) done=expected;
     return {expected:expected, done:done};
   }
+  // Accueil : carte « Dernier nettoyage » — exactement le même enregistrement que Fighter
+  // et que l'Historique (VALS.items : QR + planning, prénom choisi + heure de Paris).
+  // Un nettoyage annulé (QR supprimé) disparaît : la carte montre alors le précédent.
   function renderCleanRate(){
     var box=document.getElementById('crate'); if(!box) return;
-    var s=weekCleanStats();
-    var pctEl=document.getElementById('cratePct'),
-        lead=document.getElementById('crateLead'),
-        sub=document.getElementById('crateSub'),
-        bar=document.getElementById('crateBar');
-    if(s.expected===0){
+    var timeEl=document.getElementById('crateTime'),
+        dayEl=document.getElementById('crateDay'),
+        whoEl=document.getElementById('crateWho'),
+        listEl=document.getElementById('crateList');
+    var MOIS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+    function hhmm(a){ return String(a||'').replace(':','h'); }
+    function jourLabel(iso){
+      if(iso===isoOf(NOW)) return "Aujourd'hui";
+      var y=new Date(NOW); y.setDate(y.getDate()-1);
+      if(iso===isoOf(y)) return 'Hier';
+      var d=dateFromIso(iso);
+      return DAYS[(d.getDay()+6)%7]+' '+d.getDate()+' '+MOIS[d.getMonth()];
+    }
+    var items=(VALS && VALS.items ? VALS.items : []).filter(function(it){ return it && it.iso && it.at; });
+    items=items.slice().sort(function(a,b){ if(a.iso!==b.iso) return a.iso<b.iso?1:-1; return a.at<b.at?1:(a.at>b.at?-1:0); });
+    if(!items.length){
       box.classList.add('crate--empty');
-      if(lead) lead.textContent='Aucun nettoyage attendu cette semaine';
-      if(sub) sub.textContent='';
-      if(bar) bar.style.width='0%';
+      if(timeEl) timeEl.textContent='—';
+      if(dayEl) dayEl.textContent='Aucun nettoyage enregistré pour le moment';
+      if(whoEl) whoEl.textContent='';
+      if(listEl) listEl.textContent='';
       return;
     }
     box.classList.remove('crate--empty');
-    var pct=Math.round(s.done/s.expected*100);
-    if(pctEl){ pctEl.textContent=pct+'%'; pctEl.style.setProperty('--fill', pct+'%'); }
-    if(lead) lead.textContent='des nettoyages réalisés cette semaine';
-    if(sub) sub.textContent=s.done+' nettoyage'+(s.done>1?'s':'')+' validé'+(s.done>1?'s':'')+' sur '+s.expected+' attendu'+(s.expected>1?'s':'');
-    if(bar) bar.style.width=pct+'%';
+    var last=items[0];
+    if(timeEl){ timeEl.textContent=hhmm(last.at); timeEl.style.setProperty('--fill','100%'); }
+    if(dayEl) dayEl.textContent=jourLabel(last.iso).toUpperCase();
+    if(whoEl) whoEl.textContent=(last.matLabel||'Tatami')+' · '+(last.by||'—');
+    var todayIso=isoOf(NOW);
+    var todays=items.filter(function(it){ return it.iso===todayIso; }).sort(function(a,b){ return a.at<b.at?-1:(a.at>b.at?1:0); });
+    if(listEl){
+      if(todays.length){
+        listEl.textContent='Aujourd’hui : '+todays.map(function(it){ return (it.by||'—')+' '+hhmm(it.at); }).join(' · ');
+      } else {
+        listEl.textContent='Aucun nettoyage aujourd’hui';
+      }
+    }
   }
   function renderDay(day){
     var list = SCHED[day] || [];
@@ -2206,6 +2231,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     // Annulation d'un nettoyage validé (QR) — suppression côté serveur
     var xcv=e.target.closest('[data-cancelval]');
     if(xcv){ e.stopPropagation(); cancelValidation(xcv.getAttribute('data-cancelval')); return; }
+    // Accueil : toucher la carte « Dernier nettoyage » ouvre l'Historique
+    var crt=e.target.closest('#crate'); if(crt){ go('preuves'); return; }
     // Annulation / rétablissement d'un créneau (prioritaire sur la validation)
     var xc=e.target.closest('[data-cancel]');
     if(xc){ e.stopPropagation(); var pc=(xc.getAttribute('data-cancel')||'').split('|'); openCancel(pc[0],pc[1],pc[2],pc[3]); return; }
