@@ -749,6 +749,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .crate, .comp-card, .comp-empty, .card, .rate, .qr-card, .clients, .table-wrap, .form,
 .summary, .empty-ok, .fb, .msg, .evt, .day, .gm, .evmgr, .evrow, .srk-card,
 .pub-prev-card, .side-promo{ border-color:transparent; }
+/* Retrait de l'encart « jours de nettoyage validés » (série) en haut de l'accueil.
+   La série reste accessible via l'onglet « Série de nettoyage » du menu. */
+.head-actions .streak-hb{ display:none; }
 </style>
 </head>
 <body>
