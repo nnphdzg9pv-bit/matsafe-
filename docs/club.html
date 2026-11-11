@@ -1172,7 +1172,10 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     setReturnStatus: function(id, status, reply){ var _rp=(reply===undefined?null:reply); return authRpc('set_return_status_auth', { p_slug:CFG.slug, p_id:id, p_status:status, p_reply:_rp }, 'set_return_status', { p_slug:CFG.slug, p_id:id, p_status:status, p_reply:_rp, p_secret:CFG.secret }, null); },
     getValidations: function(){ return authRpc('get_club_validations_auth', { p_slug:CFG.slug }, 'get_club_validations', { p_slug:CFG.slug, p_secret:CFG.secret }, []); },
     getTeam: function(){ return authRpc('get_club_team_auth', { p_slug:CFG.slug }, 'get_club_team', { p_slug:CFG.slug, p_secret:CFG.secret }, null); },
-    setTeam: function(names){ return authRpc('set_club_team_auth', { p_slug:CFG.slug, p_payload:(names||[]) }, 'set_club_team', { p_slug:CFG.slug, p_payload:(names||[]), p_secret:CFG.secret }, null); }
+    setTeam: function(names){ return authRpc('set_club_team_auth', { p_slug:CFG.slug, p_payload:(names||[]) }, 'set_club_team', { p_slug:CFG.slug, p_payload:(names||[]), p_secret:CFG.secret }, null); },
+    // Accueil « Dernier nettoyage » : source PUBLIQUE, identique à Fighter, toujours fraîche
+    // (lecture directe de la base à chaque appel, sans enrôlement et sans cache local).
+    getCleanHome: function(){ return rpc('get_club_clean_home', { p_slug:CFG.slug }); }
   };
   // Indicateur d'état de synchro dans la barre latérale (garde-fou contre un envoi silencieux en local).
   try{ var _ss=document.getElementById('syncState'); if(_ss){
@@ -1600,7 +1603,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(name==='retours'){ try{ renderInbox(); }catch(_){ } }
     if(name==='publications'){ try{ renderPubs(); }catch(_){ } }
     if(name==='preuves'){ try{ renderHistory(); }catch(_){ } try{ refreshServerValidations(); }catch(_){ } }
-    if(name==='accueil'){ try{ renderHomeMessages(); }catch(_){ } try{ renderCleanRate(); }catch(_){ } try{ refreshServerValidations(); }catch(_){ } }
+    if(name==='accueil'){ try{ renderHomeMessages(); }catch(_){ } try{ refreshCleanHome(); }catch(_){ } try{ refreshServerValidations(); }catch(_){ } }
     if(name==='reglages'){ try{ refreshTeam(); }catch(_){ } try{ renderAuthStatus(); }catch(_){ } }
     document.querySelector('.main').scrollTop = 0;
     window.scrollTo(0,0);
@@ -1948,9 +1951,10 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(done>expected) done=expected;
     return {expected:expected, done:done};
   }
-  // Accueil : carte « Dernier nettoyage » — exactement le même enregistrement que Fighter
-  // et que l'Historique (VALS.items : QR + planning, prénom choisi + heure de Paris).
-  // Un nettoyage annulé (QR supprimé) disparaît : la carte montre alors le précédent.
+  // Accueil : carte « Dernier nettoyage ». Source = get_club_clean_home (PUBLIQUE, identique à
+  // Fighter), lue fraîche à chaque ouverture/retour accueil et toutes les 30 s. AUCUN cache local
+  // n'alimente la carte : un nettoyage supprimé/annulé disparaît immédiatement au prochain fetch.
+  var _clubClean = null;
   function renderCleanRate(){
     var box=document.getElementById('crate'); if(!box) return;
     var timeEl=document.getElementById('crateTime'),
@@ -1966,9 +1970,10 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       var d=dateFromIso(iso);
       return DAYS[(d.getDay()+6)%7]+' '+d.getDate()+' '+MOIS[d.getMonth()];
     }
-    var items=(VALS && VALS.items ? VALS.items : []).filter(function(it){ return it && it.iso && it.at; });
-    items=items.slice().sort(function(a,b){ if(a.iso!==b.iso) return a.iso<b.iso?1:-1; return a.at<b.at?1:(a.at>b.at?-1:0); });
-    if(!items.length){
+    var data=_clubClean||{};
+    var last=data.lastValidated||null;
+    var today=Array.isArray(data.today)?data.today:[];
+    if(!last || !last.time){
       box.classList.add('crate--empty');
       if(timeEl) timeEl.textContent='—';
       if(dayEl) dayEl.textContent='Aucun nettoyage enregistré pour le moment';
@@ -1977,19 +1982,21 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       return;
     }
     box.classList.remove('crate--empty');
-    var last=items[0];
-    if(timeEl){ timeEl.textContent=hhmm(last.at); timeEl.style.setProperty('--fill','100%'); }
-    if(dayEl) dayEl.textContent=jourLabel(last.iso).toUpperCase();
-    if(whoEl) whoEl.textContent=(last.matLabel||'Tatami')+' · '+(last.by||'—');
-    var todayIso=isoOf(NOW);
-    var todays=items.filter(function(it){ return it.iso===todayIso; }).sort(function(a,b){ return a.at<b.at?-1:(a.at>b.at?1:0); });
+    if(timeEl){ timeEl.textContent=hhmm(last.time); timeEl.style.setProperty('--fill','100%'); }
+    if(dayEl) dayEl.textContent=jourLabel(last.date).toUpperCase();
+    if(whoEl) whoEl.textContent='Tatami · '+(last.by||'—');
     if(listEl){
-      if(todays.length){
-        listEl.textContent='Aujourd’hui : '+todays.map(function(it){ return (it.by||'—')+' '+hhmm(it.at); }).join(' · ');
+      if(today.length){
+        listEl.textContent='Aujourd’hui : '+today.map(function(it){ return (it.by||'—')+' '+hhmm(it.at); }).join(' · ');
       } else {
         listEl.textContent='Aucun nettoyage aujourd’hui';
       }
     }
+  }
+  // Lecture fraîche de la base pour la carte accueil (source publique, identique à Fighter).
+  function refreshCleanHome(){
+    if(!(window.MatSafeAPI && MatSafeAPI.enabled && MatSafeAPI.getCleanHome)) return;
+    MatSafeAPI.getCleanHome().then(function(d){ _clubClean = d || {lastValidated:null, today:[]}; renderCleanRate(); }).catch(function(){});
   }
   function renderDay(day){
     var list = SCHED[day] || [];
@@ -2408,25 +2415,25 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   function canonMat(z){ var s=String(z||'').toLowerCase().replace(/\s+/g,''); if(s==='mat1') return 'MAT 1'; if(s==='mat2') return 'MAT 2'; return z; }
   function mergeServerValidations(rows){
     if(!Array.isArray(rows) || !rows.length || !VALS || !VALS.items) return;
-    var seen=Object.create(null);
-    VALS.items.forEach(function(it){ if(it && it.k) seen[normValKey(it.k)]=true; });
-    var changed=false;
-    rows.forEach(function(r){
-      if(!r || !r.iso || !r.time) return;
-      var zone=canonMat(r.zone), k=r.iso+'|'+String(r.time).slice(0,5)+'|'+zone, nk=normValKey(k);
-      if(seen[nk]) return;
-      seen[nk]=true;
-      VALS.items.push({ k:k, vid:(r.id||''), source:(r.source||''), iso:r.iso, time:String(r.time).slice(0,5), disc:r.disc||'', mat:matClassOf(zone), matLabel:matLabelOf(zone), by:(r.by||''), at:(r.at||''), ts:(r.ts||Date.now()), demo:false, fromServer:true });
-      validated[k]=true; changed=true;
+    // Réconciliation : la réponse serveur fait AUTORITÉ sur la partie « serveur » de l'historique.
+    // On remplace toutes les validations fromServer par la liste fraîche reçue (une validation
+    // supprimée/annulée disparaît donc), et on conserve les validations locales (planning) non
+    // encore représentées côté serveur. Plus de cumul : aucune donnée supprimée ne persiste.
+    var server = rows.filter(function(r){ return r && r.iso && r.time; }).map(function(r){
+      var zone=canonMat(r.zone), k=r.iso+'|'+String(r.time).slice(0,5)+'|'+zone;
+      return { k:k, vid:(r.id||''), source:(r.source||''), iso:r.iso, time:String(r.time).slice(0,5), disc:r.disc||'', mat:matClassOf(zone), matLabel:matLabelOf(zone), by:(r.by||''), at:(r.at||''), ts:(r.ts||Date.now()), demo:false, fromServer:true };
     });
-    if(changed){
-      try{ saveVals(); }catch(_){ }
-      try{ renderHistory(); }catch(_){ }
-      try{ renderWeekStrip(); }catch(_){ }
-      try{ var a=document.querySelector('#week .d.on'); if(a) renderDay(a.getAttribute('data-day')); }catch(_){ }
-      try{ renderCleanRate(); }catch(_){ }
-      try{ renderStreak(); }catch(_){ }
-    }
+    var serverKeys=Object.create(null);
+    server.forEach(function(it){ serverKeys[normValKey(it.k)]=true; });
+    var local = VALS.items.filter(function(it){ return it && !it.fromServer && !serverKeys[normValKey(it.k)]; });
+    VALS.items = local.concat(server);
+    validated=Object.create(null);
+    VALS.items.forEach(function(it){ if(it && it.k) validated[it.k]=true; });
+    try{ saveVals(); }catch(_){ }
+    try{ renderHistory(); }catch(_){ }
+    try{ renderWeekStrip(); }catch(_){ }
+    try{ var a=document.querySelector('#week .d.on'); if(a) renderDay(a.getAttribute('data-day')); }catch(_){ }
+    try{ renderStreak(); }catch(_){ }
   }
   function refreshServerValidations(){
     if(!(window.MatSafeAPI && MatSafeAPI.enabled)) return;
@@ -2442,7 +2449,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         VALS.items = VALS.items.filter(function(it){ if(it && it.vid===vid){ try{ if(it.k) delete validated[it.k]; }catch(_){ } return false; } return true; });
         try{ saveVals(); }catch(_){ }
         try{ renderHistory(); }catch(_){ }
-        try{ renderCleanRate(); }catch(_){ }
+        try{ refreshCleanHome(); }catch(_){ }
         try{ renderStreak(); }catch(_){ }
         try{ var a=document.querySelector('#week .d.on'); if(a) renderDay(a.getAttribute('data-day')); }catch(_){ }
         toast('Nettoyage annulé.');
@@ -2533,6 +2540,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   try{ renderHistory(); }catch(_){ }
   try{ refreshServerValidations(); }catch(_){ }          // historique multi-appareils (relu du serveur)
   try{ setInterval(refreshServerValidations, 30000); }catch(_){ }
+  try{ refreshCleanHome(); }catch(_){ }                  // carte accueil « Dernier nettoyage » (source publique, fraîche)
+  try{ setInterval(refreshCleanHome, 30000); }catch(_){ }
   try{ renderTeam(); }catch(_){ }                        // équipe : sélecteur de validation + Réglages
   try{ refreshTeam(); }catch(_){ }                       // équipe relue du serveur (si RPC dispo)
   try{ loadAuthLocal(); renderAuthStatus(); }catch(_){ } // authentification : état du poste (local, aucun réseau)
