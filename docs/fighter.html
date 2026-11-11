@@ -884,7 +884,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   // Libellé de statut affiché dans l'app : « Club labellisé ». Il provient de
   // CLUB_STATUS (vérifié par MatSafe côté serveur), jamais d'un paramètre du QR.
   // Si le club n'est pas labellisé, aucun badge n'est affiché (pas de faux statut).
-  function clubLabelText(){ return (CLUB_STATUS && CLUB_STATUS.labelStatus==='Labellisé') ? 'Club labellisé' : ''; }
+  function clubLabelText(){ return ''; } // Pilote : aucun statut « labellisé »/« certifié » affiché.
   function clubLabelBadge(){ var t=clubLabelText(); return t ? '<span class="mini-badge"><span class="d"></span>'+esc(t)+'</span>' : ''; }
 
   // --- Check personnel avant l'entraînement (rappel préventif, jamais envoyé) ---
