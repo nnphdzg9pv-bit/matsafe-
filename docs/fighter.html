@@ -1182,9 +1182,11 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       vdcInner='<div class="t-eb"><span class="t-k">Infos hygiène du club</span><span class="t-ar">'+IArrR+'</span></div>'+
         '<div class="t-vdc"><span class="t-vt muted">Aucune information publiée par le club pour le moment.</span></div>';
     }
+    var _hl=hyLastText();
     var tiles =
       tile('a-vdc','creme wide', vdcInner)+
-      tile('a-hygiene','creme wide','<div class="t-eb"><span class="t-k">Dernier nettoyage</span><span class="t-ar">'+IArrR+'</span></div>')+
+      tile('a-hygiene','creme wide','<div class="t-eb"><span class="t-k">Dernier nettoyage</span><span class="t-ar">'+IArrR+'</span></div>'+
+        '<div class="t-vdc"><span class="t-vt'+(_hl?'':' muted')+'" id="hyLastLine">'+esc(_hl||'En attente du premier nettoyage')+'</span></div>')+
       tile('a-feedback','creme big',
         '<span class="tile-t fb-t">Faire un retour<br>à mon club</span>'+
         '<span class="t-cta">Commencer '+IArrowR+'</span>')+
@@ -1212,6 +1214,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var _ah=document.getElementById('a-hygiene'); if(_ah) _ah.onclick=leaveHome(screenHygiene);
     startVdcCarousel();
     try{ updateMineBadge(); }catch(_){ }
+    try{ hyRefresh(); }catch(_){ }
   }
   // Défilé des messages « La vie du club » sur l'accueil (boucle, respecte reduced-motion).
   function startVdcCarousel(){
@@ -1587,7 +1590,22 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     cardsEl.innerHTML='<div class="hy-card"><div class="hy-k"><span class="hy-dot'+(dotOk?' ok':'')+'"></span>Tatami</div>'+
       '<div class="hy-main">'+esc(main)+'</div></div>';
   }
-  function hyRefresh(){ if(!(window.MatSafeAPI && MatSafeAPI.enabled && MatSafeAPI.getPublicHygiene)) return; MatSafeAPI.getPublicHygiene().then(function(d){ if(d){ _hyData=d; try{ save('matsafe_hy_cache', d); }catch(_){ } hyRender(); } }).catch(function(){}); }
+  function hyLastText(){
+    var d=_hyData;
+    if(!d){ try{ var c=load('matsafe_hy_cache'); if(c && !Array.isArray(c) && c.days) d=c; }catch(_){ } }
+    var lv=d && d.lastValidated; if(!lv || !lv.date || !lv.time) return '';
+    var _hm=hyHhMm(lv.time);
+    if(lv.date===hyTodayIso()) return 'Tatami nettoyé à '+_hm;
+    if(lv.date===hyYesterdayIso()) return 'Tatami nettoyé hier à '+_hm;
+    return 'Tatami nettoyé le '+hyFullDate(lv.date)+' à '+_hm;
+  }
+  function hyUpdateHomeTile(){
+    var el=document.getElementById('hyLastLine'); if(!el) return;
+    var t=hyLastText();
+    el.textContent = t || 'En attente du premier nettoyage';
+    if(t) el.classList.remove('muted'); else el.classList.add('muted');
+  }
+  function hyRefresh(){ if(!(window.MatSafeAPI && MatSafeAPI.enabled && MatSafeAPI.getPublicHygiene)) return; MatSafeAPI.getPublicHygiene().then(function(d){ if(d){ _hyData=d; try{ save('matsafe_hy_cache', d); }catch(_){ } hyRender(); hyUpdateHomeTile(); } }).catch(function(){}); }
   function screenHygiene(){
     try{ if(!_hyData){ var c=load('matsafe_hy_cache'); if(c && !Array.isArray(c) && c.days) _hyData=c; } }catch(_){ }
     view.innerHTML=backBtn()+
@@ -1595,7 +1613,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         '<h3 class="routine-h" style="margin-bottom:6px">Dernier nettoyage</h3>'+
         '<div class="hy-meta">'+esc(CTX.club||'Mon club')+'</div>'+
         '<div id="hyCards" class="hy-cards"></div>'+
-        '<p class="hy-note">Informations déclarées et validées par l’équipe du club. MatSafe suit le fonctionnement du club dans le cadre de son label mais ne vérifie pas physiquement chaque nettoyage.</p>'+
+        '<p class="hy-note">Informations déclarées et validées par l’équipe du club. MatSafe suit le fonctionnement du club dans le cadre du pilote MatSafe mais ne vérifie pas physiquement chaque nettoyage.</p>'+
       '</section>';
     wireBack();
     hyRender(); hyRefresh();
