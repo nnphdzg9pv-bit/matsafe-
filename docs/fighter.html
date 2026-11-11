@@ -901,7 +901,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   // --- Fiches d'entretien de l'équipement ---
   var CARE_FICHES=[
     {t:'Nettoyer son kimono ou son rashguard',
-     b:'Lavez après chaque séance, à l’envers. Le lavage à 60 °C est recommandé. Si l’étiquette ne le permet pas (textiles techniques), lavez à 30–40 °C, idéalement avec un désinfectant du linge. Séchez à l’air libre, jamais roulé en boule dans le sac.'},
+     b:'Lavez vos textiles à 60 °C (à défaut 30-40 °C avec une lessive désinfectante). Séchez à l’air libre, jamais roulé en boule dans le sac.'},
     {t:'Nettoyer et sécher ses gants',
      b:'Aérez et essuyez l’intérieur après chaque usage. Sortez-les du sac en rentrant et laissez-les sécher complètement. Un désodorisant/absorbeur d’humidité prolonge leur vie.'},
     {t:'Entretenir ses protège-tibias et protections',
@@ -1272,51 +1272,44 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
   /* --- SIGNALEMENT --- */
   function screenSignal(){
-    var st={cat:null, zone:CTX.zone||'', description:'', photo:null};
+    var TYPES=[
+      {id:'tatami',     t:'Tatami'},
+      {id:'vestiaires', t:'Vestiaires'},
+      {id:'douches',    t:'Douches / Sanitaires'},
+      {id:'autre',      t:'Autre'}
+    ];
+    var st={type:null, label:'', description:''};
     view.innerHTML=
       backBtn()+
-      '<h2 class="h2">Signaler</h2>'+
-      '<p class="sub">Un point à améliorer ? Décrivez-le simplement. Le club le vérifiera et le traitera — vous ne créez pas de non-conformité, juste une info utile.</p>'+
+      '<h2 class="h2">Faire un retour</h2>'+
+      '<p class="sub">Un point à améliorer ? Indiquez simplement de quoi il s’agit. Le club le reçoit directement. Aucune donnée personnelle n’est transmise.</p>'+
       '<div class="field"><label>De quoi s’agit-il ?</label><div class="chips" id="cats">'+
-        CATS.map(function(c){return '<button class="chip" data-c="'+c.id+'">'+esc(c.t)+'</button>';}).join('')+'</div></div>'+
-      zoneField()+
-      '<div class="field"><label>Description</label>'+
-        '<textarea id="desc" rows="4" maxlength="600" placeholder="Ex. : plus de savon au lavabo de droite dans le vestiaire."></textarea></div>'+
-      '<div class="field"><label>Photo <span class="opt">— optionnel</span></label>'+
-        '<p class="warn-note">Ne photographiez aucune personne et ne transmettez aucune information médicale ou permettant d’identifier un pratiquant.</p>'+
-        '<div class="photo" id="photo"><button class="photobtn" id="addphoto">'+ICam+' Ajouter une photo</button></div></div>'+
-      '<div class="cta"><button class="btn" id="send" disabled>Envoyer au club</button></div>';
+        TYPES.map(function(c){return '<button class="chip" data-c="'+c.id+'" data-t="'+esc(c.t)+'">'+esc(c.t)+'</button>';}).join('')+'</div></div>'+
+      '<div class="field"><label>Précision <span class="opt">— optionnel</span></label>'+
+        '<textarea id="desc" rows="4" maxlength="600" placeholder="Ex. : plus de savon au lavabo de droite."></textarea></div>'+
+      '<div class="cta"><button class="btn" id="send" disabled>Envoyer</button></div>';
     wireBack(screenFeedback);
     var send=document.getElementById('send');
-    function refresh(){send.disabled = !(st.cat && st.description.length>2);}
+    function refresh(){ send.disabled = !st.type; }
     document.getElementById('cats').querySelectorAll('.chip').forEach(function(b){
-      b.onclick=function(){document.querySelectorAll('#cats .chip').forEach(function(x){x.classList.remove('sel');}); b.classList.add('sel'); st.cat=b.dataset.c; refresh();};
+      b.onclick=function(){ document.querySelectorAll('#cats .chip').forEach(function(x){x.classList.remove('sel');}); b.classList.add('sel'); st.type=b.dataset.c; st.label=b.dataset.t; refresh(); };
     });
-    var zs=document.getElementById('zone'); if(zs) zs.onchange=function(){ st.zone=this.value; };
-    document.getElementById('desc').oninput=function(){st.description=this.value.trim(); refresh();};
-    document.getElementById('addphoto').onclick=function(){
-      pickPhoto(function(data){ if(!data){toast('Photo non ajoutée'); return;} st.photo=data; drawPhoto(); });
-    };
-    function drawPhoto(){
-      var box=document.getElementById('photo');
-      box.innerHTML='<img alt="aperçu" src="'+st.photo+'"><button class="rm" id="rmph">Retirer</button>'+
-        '<button class="photobtn" id="addphoto2">'+ICam+' Remplacer</button>';
-      document.getElementById('rmph').onclick=function(){st.photo=null; box.innerHTML='<button class="photobtn" id="addphoto">'+ICam+' Ajouter une photo</button>'; document.getElementById('addphoto').onclick=function(){pickPhoto(function(d){if(d){st.photo=d; drawPhoto();}});};};
-      document.getElementById('addphoto2').onclick=function(){pickPhoto(function(d){if(d){st.photo=d; drawPhoto();}});};
-    }
+    document.getElementById('desc').oninput=function(){ st.description=this.value.trim(); };
     send.onclick=function(){
-      var code=submit({kind:'signal', cat:st.cat, zone:st.zone, description:st.description, photo:st.photo, feeling:null, when:nowStamp()});
+      var code=submit({kind:'signal', cat:st.type, zone:st.label, description:st.description, photo:null, feeling:null, when:nowStamp()});
       screenDone('signal', code);
     };
   }
 
   /* --- CONFIRMATION --- */
-  function screenDone(){
+  function screenDone(kind){
+    var head=(kind==='signal') ? 'Merci, le club a reçu votre signalement' : 'Merci, c’est enregistré';
+    var lead=(kind==='signal') ? 'Votre retour a bien été transmis au club. Vous pouvez suivre son avancement dans « Suivre mes retours ».' : 'Votre retour part vers le club. Suivez son avancement dans « Suivre mes retours ».';
     view.innerHTML =
       '<div class="done" id="doneScreen">'+
         '<div class="ring">'+ICheck+'</div>'+
-        '<h2>Merci, c’est enregistré</h2>'+
-        '<p class="done-lead">Votre retour part vers le club. Suivez son avancement dans « Suivre mes retours ».</p>'+
+        '<h2>'+head+'</h2>'+
+        '<p class="done-lead">'+lead+'</p>'+
         '<div class="again"><button class="btn" id="tohome" style="width:auto;padding:14px 26px">Retour à l’accueil</button></div>'+
       '</div>';
     document.getElementById('tohome').onclick=screenHome;
@@ -1478,37 +1471,44 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   function screenFeedback(){
     // On touche le problème (ou on écrit un détail), puis « Envoyer ». Anonyme, sans compte.
     var IArrowR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>';
+    var TYPES=[
+      {id:'tatami',     t:'Tatami'},
+      {id:'vestiaires', t:'Vestiaires'},
+      {id:'douches',    t:'Douches / Sanitaires'},
+      {id:'autre',      t:'Autre'}
+    ];
+    var st={type:null, label:''};
     view.innerHTML=
       backBtn()+
       '<section class="contact">'+
         '<h1 class="contact-h">Faire un retour<br>à mon club</h1>'+
-        '<textarea class="contact-ta" id="avisText" maxlength="1000" placeholder="Écrivez votre retour : un problème à signaler, une remarque sur l’hygiène ou la propreté…"></textarea>'+
-        '<p class="contact-hint" id="avisHint" hidden>Pour préserver l’anonymat, n’indiquez pas de nom, de photo de visage, ni d’information médicale ou permettant d’identifier une personne.</p>'+
+        '<p style="text-align:center;font-weight:600;font-size:15px;color:var(--ink);margin:16px 0 2px">De quoi s’agit-il&nbsp;?</p>'+
+        '<div class="chips" id="fbTypes">'+
+          TYPES.map(function(c){return '<button class="chip" data-c="'+c.id+'" data-t="'+esc(c.t)+'" aria-pressed="false">'+esc(c.t)+'</button>';}).join('')+
+        '</div>'+
+        '<textarea class="contact-ta" id="avisText" maxlength="1000" placeholder="Précision (optionnel) : ex. plus de savon au lavabo de droite."></textarea>'+
+        '<p class="contact-hint">Pour préserver l’anonymat, n’indiquez pas de nom, de photo de visage, ni d’information médicale ou permettant d’identifier une personne.</p>'+
         '<button class="contact-send" id="avisSend" disabled>Envoyer '+IArrowR+'</button>'+
         '<p class="contact-note">Anonyme · sans compte</p>'+
       '</section>'+
       '<section class="fb-mine" id="fbMine"></section>';
     wireBack();
     renderMine();
-    var ta=document.getElementById('avisText'), sb=document.getElementById('avisSend'), hint=document.getElementById('avisHint');
-    var picked=null;
-    function refresh(){ sb.disabled = (picked===null && !ta.value.trim()); hint.hidden = !ta.value.trim(); }
-    view.querySelectorAll('#fbChoices .chip').forEach(function(b){
+    var ta=document.getElementById('avisText'), sb=document.getElementById('avisSend');
+    function refresh(){ sb.disabled = !st.type; }
+    view.querySelectorAll('#fbTypes .chip').forEach(function(b){
       b.onclick=function(){
-        var i=+b.getAttribute('data-i');
-        picked = (picked===i) ? null : i;
-        view.querySelectorAll('#fbChoices .chip').forEach(function(x){ var on=(+x.getAttribute('data-i')===picked); x.classList.toggle('sel',on); x.setAttribute('aria-pressed',on?'true':'false'); });
+        view.querySelectorAll('#fbTypes .chip').forEach(function(x){ x.classList.remove('sel'); x.setAttribute('aria-pressed','false'); });
+        b.classList.add('sel'); b.setAttribute('aria-pressed','true');
+        st.type=b.getAttribute('data-c'); st.label=b.getAttribute('data-t');
         refresh();
       };
     });
     ta.oninput=refresh;
     sb.onclick=function(){
-      var txt=ta.value.trim(), c=(picked!==null)?FB_CHOICES[picked]:null;
-      if(!c && !txt) return;
-      submit(c
-        ? {kind:'signal', topic:c.t, cat:c.cat, zone:CTX.zone||c.zone, description:txt||c.t, feeling:null, photo:null, when:nowStamp()}
-        : {kind:'avis', feeling:null, zone:CTX.zone||'', description:txt, cat:null, photo:null, when:nowStamp()});
-      screenDone();
+      if(!st.type) return;
+      submit({kind:'signal', topic:st.label, cat:st.type, zone:st.label, description:(ta.value.trim()||st.label), feeling:null, photo:null, when:nowStamp()});
+      screenDone('signal');
     };
   }
 
@@ -1520,7 +1520,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         '<h3 class="routine-h">La routine MatSafe</h3>'+
         '<p>Avant de monter sur le tatami, douchez-vous à l’eau et au savon et arrivez avec une tenue lavée et parfaitement sèche. Vérifiez votre peau, gardez vos ongles courts, attachez vos cheveux si besoin, retirez vos bijoux et portez des claquettes en dehors de la zone d’entraînement.</p>'+
         '<p>Après chaque séance, douchez-vous à l’eau et au savon, séchez-vous soigneusement avec une serviette personnelle et enfilez des vêtements propres.</p>'+
-        '<p>Lavez systématiquement votre gi, rashguard, short, bandes et serviette. Le lavage à 60 °C est recommandé. Si l’étiquette ne le permet pas (textiles techniques), lavez à 30–40 °C, idéalement avec un désinfectant du linge.</p>'+
+        '<p>Lavez vos textiles à 60 °C (à défaut 30-40 °C avec une lessive désinfectante).</p>'+
         '<p>Nettoyez vos gants, protections, protège-dents, gourde et sac, puis laissez tout sécher dans un endroit ventilé. Rien d’humide ne doit rester enfermé et les objets en contact avec la peau ne doivent pas être partagés.</p>'+
         '<p>Enfin, soyez attentif aux plaques, rougeurs, boutons, croûtes, démangeaisons ou écoulements. En cas de plaie non cicatrisée, de lésion suspecte, de fièvre ou de fatigue inhabituelle, ne montez pas sur le tatami et demandez un avis médical. Reprise à la résolution des symptômes ou après avis médical.</p>'+
       '</section>';
@@ -1539,7 +1539,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   function hyDateCap(iso){ if(iso===hyTodayIso()) return "Aujourd'hui"; if(iso===hyYesterdayIso()) return 'Hier'; return 'Le '+hyFullDate(iso); }
   function hyAtDt(iso,hhmm){ var d=hyDObj(iso), p=String(hhmm||'0:0').split(':'); d.setHours(+p[0]||0,+p[1]||0,0,0); return d; }
   function hyAgo(ms){ var m=Math.floor(ms/60000); if(m<1) return "à l'instant"; if(m<60) return 'il y a '+m+' min'; var h=Math.floor(m/60), mm=m%60; return 'il y a '+h+' h'+(mm?(' '+hyPad(mm)):''); }
-  function hyMatLabel(m){ var s=String(m||'').trim(); if(/^mat\s*1$/i.test(s)) return 'Tatami 1'; if(/^mat\s*2$/i.test(s)) return 'Tatami 2'; return s||'Tatami'; }
+  function hyMatLabel(m){ return 'Tatami'; }
   function hyMats(data){ var seen={}, out=[]; (data.days||[]).forEach(function(d){ (d.courses||[]).forEach(function(c){ if(c.m && !seen[c.m]){ seen[c.m]=1; out.push(c.m); } }); }); out.sort(function(a,b){return String(a).toLowerCase().localeCompare(String(b).toLowerCase());}); return out; }
   function hyEntries(data, mat){ var out=[]; (data.days||[]).forEach(function(d){ (d.courses||[]).forEach(function(c){ if(c.m===mat) out.push({iso:d.iso,t:c.t,end:c.end,cancelled:c.cancelled,validatedAt:c.validatedAt}); }); }); return out; }
   function hyCleanCard(mat, entries, now){
@@ -1551,8 +1551,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var green=fin ? (fin.validated || !pastGrace) : false;
     var main;
     if(!last){ main='Aucun nettoyage validé pour le moment'; }
-    else { var age=nowMs-last.ms; if(age<24*3600000) main='Nettoyé '+hyAgo(age); else if(last.iso===hyYesterdayIso()) main='Nettoyé hier'; else main='Nettoyé le '+hyFullDate(last.iso); }
-    var sub=last ? (hyDateCap(last.iso)+' à '+hyHhMm(last.at)+', après le cours de '+hyHhMm(last.course)) : '';
+    else { var _hm=hyHhMm(last.at); if(last.iso===todayIso) main='Nettoyé à '+_hm; else if(last.iso===hyYesterdayIso()) main='Nettoyé hier à '+_hm; else main='Nettoyé le '+hyFullDate(last.iso)+' à '+_hm; }
+    var sub=last ? (hyDateCap(last.iso)+(last.course?', après le cours de '+hyHhMm(last.course):'')) : '';
     var wait=awaiting ? ('En attente de validation après le cours de '+hyHhMm(awaiting)) : '';
     return '<div class="hy-card"><div class="hy-k"><span class="hy-dot'+(green?' ok':'')+'"></span>'+esc(hyMatLabel(mat))+'</div>'+
       '<div class="hy-main">'+esc(main)+'</div>'+

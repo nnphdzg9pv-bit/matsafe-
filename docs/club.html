@@ -422,6 +422,9 @@ tbody tr:hover{background:#F7F6F4}
 .ca-prio{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-size:10.5px;font-weight:700;margin-left:6px}
 .ca-prio.high{color:var(--brand)} .ca-prio.med{color:#C07A2E} .ca-prio.low{color:var(--muted)}
 .ca-note{font-size:13px;color:var(--ink2);background:#FAF9F7;border-left:3px solid var(--line2);padding:8px 12px;border-radius:0 6px 6px 0;margin:8px 0 4px}
+.hist-src{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.06em;font-size:9.5px;font-weight:700;color:var(--muted);margin-top:3px}
+.hist-x{margin-left:8px;border:1px solid var(--line2);background:#fff;color:var(--brand);font-family:var(--font-disp);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.04em;border-radius:999px;padding:3px 11px;cursor:pointer;vertical-align:middle}
+.hist-x:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
 .sheet-sub{font-size:13px;color:var(--ink2);line-height:1.5;margin:0 0 14px}
 /* Annulation d'un créneau */
 .cancel-note{font-size:13px;color:var(--ink2);line-height:1.5;background:#FBF5F4;border:1px solid rgba(200,63,50,.22);border-radius:12px;padding:12px 14px;margin:4px 0 18px}
@@ -898,20 +901,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         <h3>Retours reçus des adhérents <span class="inbox-count" id="inboxCount">0</span></h3>
         <p class="inbox-sub">Retours anonymes transmis depuis MatSafe Fighter. Aucune donnée personnelle n'est collectée — seul un code de suivi permet à l'adhérent de suivre l'avancement.</p>
         <div class="fb-grid" id="inboxList"></div>
-      </div>
-      <div class="block">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
-          <div><h3>Actions correctives</h3><p class="inbox-sub">Suivez les problèmes signalés par l'équipe et pilotez chaque action jusqu'à sa résolution.</p></div>
-          <button class="btn-ghost" id="caAdd">Ajouter un problème interne</button>
-        </div>
-        <div class="filters ca-filters" id="caFilters">
-          <button class="fbtn on" data-cf="open">À traiter</button>
-          <button class="fbtn" data-cf="all">Toutes</button>
-          <button class="fbtn" data-cf="fighter">Retours Fighter</button>
-          <button class="fbtn" data-cf="team">Équipe</button>
-          <button class="fbtn" data-cf="resolu">Résolues</button>
-        </div>
-        <div class="fb-grid" id="caList"></div>
       </div>
       <div class="collect">
         <h3 style="font-size:16px;font-weight:700;margin:18px 0 14px">Collecter de nouveaux retours</h3>
@@ -2149,7 +2138,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var ev=[];
     VALS.items.forEach(function(it){
       if(!it.iso) return;
-      ev.push({ iso:it.iso, time:it.time, disc:it.disc, matLabel:it.matLabel, mat:it.mat, by:it.by, at:it.at, status:'done' });
+      ev.push({ iso:it.iso, time:it.time, disc:it.disc, matLabel:it.matLabel, mat:it.mat, by:it.by, at:it.at, status:'done', vid:it.vid||'', source:it.source||'', fromServer:!!it.fromServer });
     });
     Object.keys(CANCELS).forEach(function(key){
       var c=CANCELS[key]; if(!c) return;
@@ -2171,12 +2160,14 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         '<td>'+esc(ev.at||'—')+'</td>'+
         '<td style="text-align:right"><span class="pill-st cancelled"><span class="d"></span>Annulé</span><div class="hist-reason">'+esc(ev.reason||'')+'</div></td></tr>';
     }
+    var srcLabel=(ev.source==='qr')?'QR':'Planning';
+    var cancelBtn=ev.vid?'<button class="hist-x" data-cancelval="'+esc(ev.vid)+'">Annuler</button>':'';
     return '<tr data-who="'+esc(ev.by||'')+'" data-mat="'+esc(ev.mat||'')+'" data-when="'+esc(when)+'">'+
       '<td>'+esc(dLabel(ev.iso))+'</td><td>'+esc(ev.time||'')+'</td><td>'+esc(ev.disc||'')+'</td>'+
       '<td>'+esc(ev.matLabel||'')+'</td>'+
       '<td><div class="tr-name"><span class="av sm '+avClassOf(ev.by)+'">'+esc(initialsOf(ev.by))+'</span>'+esc(ev.by||'')+'</div></td>'+
-      '<td>'+esc(ev.at||'')+'</td>'+
-      '<td style="text-align:right"><span class="pill-st done"><span class="d"></span>Validé</span></td></tr>';
+      '<td>'+esc(ev.at||'')+'<div class="hist-src">'+srcLabel+'</div></td>'+
+      '<td style="text-align:right"><span class="pill-st done"><span class="d"></span>Validé</span>'+cancelBtn+'</td></tr>';
   }
   var currentHistFilter='all';
   function renderHistory(filter){
@@ -2212,6 +2203,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
   // Interactions déléguées (nouvelles)
   document.addEventListener('click', function(e){
+    // Annulation d'un nettoyage validé (QR) — suppression côté serveur
+    var xcv=e.target.closest('[data-cancelval]');
+    if(xcv){ e.stopPropagation(); cancelValidation(xcv.getAttribute('data-cancelval')); return; }
     // Annulation / rétablissement d'un créneau (prioritaire sur la validation)
     var xc=e.target.closest('[data-cancel]');
     if(xc){ e.stopPropagation(); var pc=(xc.getAttribute('data-cancel')||'').split('|'); openCancel(pc[0],pc[1],pc[2],pc[3]); return; }
@@ -2401,7 +2395,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       var zone=canonMat(r.zone), k=r.iso+'|'+String(r.time).slice(0,5)+'|'+zone, nk=normValKey(k);
       if(seen[nk]) return;
       seen[nk]=true;
-      VALS.items.push({ k:k, iso:r.iso, time:String(r.time).slice(0,5), disc:r.disc||'', mat:matClassOf(zone), matLabel:matLabelOf(zone), by:(r.by||''), at:(r.at||''), ts:(r.ts||Date.now()), demo:false, fromServer:true });
+      VALS.items.push({ k:k, vid:(r.id||''), source:(r.source||''), iso:r.iso, time:String(r.time).slice(0,5), disc:r.disc||'', mat:matClassOf(zone), matLabel:matLabelOf(zone), by:(r.by||''), at:(r.at||''), ts:(r.ts||Date.now()), demo:false, fromServer:true });
       validated[k]=true; changed=true;
     });
     if(changed){
@@ -2416,6 +2410,26 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   function refreshServerValidations(){
     if(!(window.MatSafeAPI && MatSafeAPI.enabled)) return;
     MatSafeAPI.getValidations().then(function(rows){ mergeServerValidations(rows); }).catch(function(){});
+  }
+  // Annule (supprime) un nettoyage validé via QR : confirmation puis suppression serveur.
+  function cancelValidation(vid){
+    vid=String(vid||''); if(!vid) return;
+    if(!window.confirm('Annuler ce nettoyage ?')) return;
+    if(!(window.MatSafeAuth && MatSafeAuth.callFunction)){ toast('Annulation indisponible : poste non authentifié.'); return; }
+    MatSafeAuth.callFunction('validation-cancel', { id:vid }).then(function(res){
+      if(res && res.ok && res.body && res.body.ok){
+        VALS.items = VALS.items.filter(function(it){ if(it && it.vid===vid){ try{ if(it.k) delete validated[it.k]; }catch(_){ } return false; } return true; });
+        try{ saveVals(); }catch(_){ }
+        try{ renderHistory(); }catch(_){ }
+        try{ renderCleanRate(); }catch(_){ }
+        try{ renderStreak(); }catch(_){ }
+        try{ var a=document.querySelector('#week .d.on'); if(a) renderDay(a.getAttribute('data-day')); }catch(_){ }
+        toast('Nettoyage annulé.');
+      } else {
+        var er=(res&&res.body&&res.body.error)||('http_'+(res&&res.status));
+        toast('Annulation impossible ('+er+').');
+      }
+    }).catch(function(){ toast('Annulation impossible (réseau).'); });
   }
 
   // ===== Authentification du poste (code d'activation + membre choisi) =====
