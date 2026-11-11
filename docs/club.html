@@ -419,6 +419,8 @@ tbody tr:hover{background:#F7F6F4}
 .hist-src{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.06em;font-size:9.5px;font-weight:700;color:var(--muted);margin-top:3px}
 .hist-x{margin-left:8px;border:1px solid var(--line2);background:#fff;color:var(--brand);font-family:var(--font-disp);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.04em;border-radius:999px;padding:3px 11px;cursor:pointer;vertical-align:middle}
 .hist-x:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
+.club-banner{display:block;background:#FBECEA;border:1px solid #E4C3BE;color:#9A342A;border-radius:12px;padding:13px 16px;margin:0 0 16px;font-size:14px;font-weight:600;line-height:1.45}
+.club-banner.net{background:#FAF4E6;border-color:#E4D3A8;color:#8A6A1E}
 .sheet-sub{font-size:13px;color:var(--ink2);line-height:1.5;margin:0 0 14px}
 /* Annulation d'un créneau */
 .cancel-note{font-size:13px;color:var(--ink2);line-height:1.5;background:#FBF5F4;border:1px solid rgba(200,63,50,.22);border-radius:12px;padding:12px 14px;margin:4px 0 18px}
@@ -789,6 +791,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       </div>
 
       <!-- Accueil : dernier nettoyage du tatami (même enregistrement que Fighter / Historique) -->
+      <div id="homeBanner"></div>
       <section class="crate" id="crate" role="button" tabindex="0" aria-label="Dernier nettoyage du tatami — ouvrir l'historique">
         <div class="crate-fig"><span class="crate-pct" id="crateTime" style="--fill:100%">—</span></div>
         <div class="crate-txt">
@@ -889,6 +892,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     <!-- RETOURS ADHÉRENTS -->
     <section class="screen" data-screen="retours">
       <div class="head"><div><h1>Retours adhérents</h1><p>Retrouvez les remarques des adhérents et identifiez rapidement les points d'amélioration du club.</p></div></div>
+      <div id="retBanner"></div>
       <div class="rate rate-stats" id="retStats"></div>
 
       <!-- Prochaines échéances -> publiées sur MATSAFE Fighter -->
@@ -951,6 +955,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     <!-- HISTORIQUE -->
     <section class="screen" data-screen="preuves">
       <div class="head"><div><h1>Historique</h1><p>Retrouvez chaque nettoyage enregistré et conservez une preuve claire des actions réalisées.</p></div><button class="btn-ghost" id="histExport">Exporter (CSV)</button></div>
+      <div id="histBanner"></div>
       <div class="filters" id="histFilters">
         <button class="fbtn on" data-f="all">Aujourd'hui</button>
         <button class="fbtn" data-f="week">Cette semaine</button>
@@ -1162,6 +1167,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     return secretCall();
   }
   window.MATSAFE_CONFIG = window.MATSAFE_CONFIG || {};
+  try{ window.MATSAFE_CONFIG.slug = CFG.slug; }catch(_){ }   // exposé pour le script principal (CFG est local à ce bloc)
   window.MatSafeAPI = {
     enabled: true,
     writeReady: !!CFG.secret,   // true si le secret est présent (écritures synchronisées)
@@ -1607,13 +1613,14 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     target.classList.add('on');
     navItems.forEach(function(a){ a.classList.toggle('on', a.getAttribute('data-screen')===name); });
     var app=document.querySelector('.app'); if(app) app.classList.toggle('rail-hidden', name==='planning'||name==='serie');
-    if(name==='serie'){ try{ renderStreak(); }catch(_){ } try{ refreshServerValidations(); }catch(_){ } }
-    if(name==='planning'){ try{ refreshServerValidations(); }catch(_){ } }
+    if(name==='serie'){ try{ renderStreak(); }catch(_){ } }
     if(name==='retours'){ try{ renderInbox(); }catch(_){ } }
     if(name==='publications'){ try{ renderPubs(); }catch(_){ } }
-    if(name==='preuves'){ try{ renderHistory(); }catch(_){ } try{ refreshServerValidations(); }catch(_){ } }
-    if(name==='accueil'){ try{ renderHomeMessages(); }catch(_){ } try{ refreshCleanHome(); }catch(_){ } try{ refreshServerValidations(); }catch(_){ } }
+    if(name==='preuves'){ try{ renderHistory(); }catch(_){ } }
+    if(name==='accueil'){ try{ renderHomeMessages(); }catch(_){ } try{ renderCleanRate(); }catch(_){ } }
     if(name==='reglages'){ try{ refreshTeam(); }catch(_){ } try{ renderAuthStatus(); }catch(_){ } }
+    // Relecture SERVEUR fraîche à CHAQUE changement d'écran (nettoyages + retours).
+    if(name==='accueil'||name==='retours'||name==='preuves'||name==='planning'||name==='serie'){ try{ refreshClubData(); }catch(_){ } }
     document.querySelector('.main').scrollTop = 0;
     window.scrollTo(0,0);
   }
@@ -1625,8 +1632,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   // message, sa zone, sa date et un code de suivi, et peut faire évoluer le statut,
   // qui est renvoyé à l'adhérent via ce même code (lu côté Fighter).
   var FIGHTER_INBOX='matsafe_fighter_inbox';
-  function loadInbox(){ try{ var r=localStorage.getItem(FIGHTER_INBOX); var a=r?JSON.parse(r):[]; return Array.isArray(a)?a:[]; }catch(e){ return []; } }
-  function saveInbox(a){ try{ localStorage.setItem(FIGHTER_INBOX, JSON.stringify(a)); }catch(e){} }
+  function loadInbox(){ return (typeof CLUB!=='undefined' && CLUB && CLUB.returns) ? CLUB.returns.slice() : []; }   // SOURCE SERVEUR uniquement (get_club_returns_auth)
+  function saveInbox(a){}                                       // no-op : plus aucune persistance locale des retours
   // ----- Synchro serveur des retours adhérents (Supabase), portée du prototype -----
   function _srvRetStatus(s){ return s==='resolu'?'done':(s==='pris_en_charge'?'taken':'transmis'); }
   function _srvCatToClub(cat){ var m={hygiene:'proprete',materiel:'materiel',vestiaires:'sanitaires',sanitaires:'sanitaires',tatami:'autre',autre:'autre'}; return m[cat]||'autre'; }
@@ -1639,20 +1646,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       zone:s.zone||'', when:_retDateLabel(s.createdAt), description:s.description||'', reply:s.reply||'',
       status:st, controlStatus:_srvCtrl(st), ts:ts, takenAt:(st!=='transmis'?up:0) };
   }
-  function refreshClubReturns(){
-    if(!(window.MatSafeAPI && MatSafeAPI.enabled)) return;
-    MatSafeAPI.getClubReturns().then(function(rows){
-      if(!Array.isArray(rows)) return;
-      var list=loadInbox(), seen={}, changed=false;
-      list.forEach(function(r){ if(r){ if(r.serverId) seen[r.serverId]=r; else if(r.code) seen[r.code]=r; } });
-      rows.forEach(function(s){
-        var ex=seen[s.id], st=_srvRetStatus(s.status);
-        if(!ex){ list.unshift(mapServerReturn(s)); changed=true; return; }
-        if(ex.status!==st || (ex.reply||'')!==(s.reply||'')){ ex.status=st; ex.controlStatus=_srvCtrl(st); ex.reply=s.reply||''; ex.serverId=s.id; changed=true; }
-      });
-      if(changed){ saveInbox(list); try{ renderInbox(); }catch(_){ } try{ renderHomeMessages(); }catch(_){ } }
-    }).catch(function(){});
-  }
+  function refreshClubReturns(){ try{ refreshClubData(); }catch(_){ } }   // alias : relecture serveur complète
   function pushRetServer(code){
     try{ if(!(window.MatSafeAPI && MatSafeAPI.enabled) || !code) return;
       var r=loadInbox().filter(function(x){return x&&x.code===code;})[0];
@@ -1669,9 +1663,18 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   }
   function renderInbox(){
     var box=document.getElementById('inboxList'); if(!box) return;
-    var list=loadInbox();
     try{ updateRetoursBadge(); }catch(_){ }
-    var cnt=document.getElementById('inboxCount'); if(cnt) cnt.textContent=list.length;
+    var banner=document.getElementById('retBanner');
+    if(banner) banner.innerHTML = (CLUB.retState==='ok'||CLUB.retState==='loading') ? '' : bannerHtml(CLUB.retState);
+    var cnt=document.getElementById('inboxCount');
+    if(CLUB.retState!=='ok'){
+      if(cnt) cnt.textContent='—';
+      box.innerHTML='<div class="inbox-empty">'+(CLUB.retState==='loading'?'Chargement…':esc(clubStateMsg(CLUB.retState)))+'</div>';
+      try{ renderRetStats(); }catch(_){ }
+      return;
+    }
+    var list=loadInbox();
+    if(cnt) cnt.textContent=list.length;
     if(!list.length){
       box.innerHTML='<div class="inbox-empty">Aucun retour reçu pour le moment. Les retours envoyés par les adhérents depuis MatSafe Fighter apparaîtront ici automatiquement.</div>';
       renderRetStats();
@@ -1715,9 +1718,10 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   }
   function inboxSetStatus(code, status){
     if(!code) return;
-    var list=loadInbox(), changed=false;
-    for(var i=0;i<list.length;i++){ if(list[i] && list[i].code===code){ list[i].status=status; list[i].controlStatus=(status==='done'?'treated':(status==='taken'?'in_progress':'to_verify')); if((status==='taken'||status==='done') && !list[i].takenAt) list[i].takenAt=Date.now(); changed=true; break; } }
-    if(changed){ saveInbox(list); pushRetServer(code); renderInbox(); renderHomeMessages(); }
+    var r=(CLUB.returns||[]).filter(function(x){return x&&x.code===code;})[0];
+    var sid=(r&&r.serverId)||code;
+    if(!(window.MatSafeAPI && MatSafeAPI.setReturnStatus)) return;
+    MatSafeAPI.setReturnStatus(sid, status, (r&&r.reply)||null).then(function(){ try{ refreshClubData(); }catch(_){ } }).catch(function(){ toast('Mise à jour impossible.'); });
   }
   function inboxReply(code){ if(!code) return; openCaReply('reply', {code:code}); }
   // Accueil — bloc « Messages » : AFFICHE LES MÊMES RETOURS que l'écran « Retours adhérents »
@@ -1764,7 +1768,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   // La série = nombre de jours consécutifs (en remontant depuis aujourd'hui) avec ≥1 nettoyage
   // validé. Calculée sur les données RÉELLES (jamais codée en dur), recalculée à chaque validation.
   var STREAK={ streak:0, max:0, milestones:[7,14,30,90] };
-  function cleanDaySet(){ var byDay=Object.create(null); VALS.items.forEach(function(it){ if(it.iso) byDay[it.iso]=true; }); return byDay; }
+  function cleanDaySet(){ var byDay=Object.create(null); (CLUB.validations||[]).forEach(function(r){ if(r && r.iso) byDay[r.iso]=true; }); return byDay; }
   function computeStreak(){
     var byDay=cleanDaySet();
     var s=0, startIso=null, d=new Date(NOW); d.setHours(0,0,0,0);
@@ -1906,20 +1910,53 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   var CANCEL_REASONS={ cours:'Cours annulé', participants:'Nombre insuffisant de participants', nonutilise:'Tatami non utilisé', fermeture:'Fermeture exceptionnelle', autre:'Autre' };
   function cancelLabel(c){ if(!c) return 'Annulé'; if(c.reason==='autre' && c.reasonText) return 'Autre · '+c.reasonText; return CANCEL_REASONS[c.reason]||'Annulé'; }
 
-  // ===== Nettoyages validés (persistants, événements datés par date réelle) =====
-  var VAL_KEY=clubKey('club_validations');
-  // (données de démonstration retirées — pilote en données réelles)
-  function loadVals(){ try{ var r=localStorage.getItem(VAL_KEY); if(r){ var o=JSON.parse(r); if(o&&o.items&&o.v===2) return o; } }catch(_){ } return null; }
-  function saveVals(){ try{ localStorage.setItem(VAL_KEY, JSON.stringify(VALS)); }catch(_){ } }
-  var VALS=loadVals();
-  if(!VALS){
-    // Pilote : historique VIDE au départ. Il se remplit uniquement avec les vraies
-    // validations (tatami + planning) remontées du serveur. Aucune donnée fictive.
-    VALS={ v:2, seeded:true, demo:false, items:[] };
-    saveVals();
-  }
+  // ===== LECTURE SERVEUR UNIQUEMENT — aucune source locale/cache/démo =====
+  // L'accueil (carte Dernier nettoyage), l'Historique, les Retours, le compteur et les
+  // statuts du planning proviennent TOUS de Supabase, relus à chaque ouverture/changement
+  // d'écran. Si l'appareil n'est pas autorisé (pas de liaison active) ou si la lecture
+  // échoue, on n'affiche AUCUNE donnée : uniquement un message clair. Aucun localStorage
+  // n'est utilisé comme source de nettoyages ou de retours.
+  var CLUB = { valState:'loading', validations:[], retState:'loading', returns:[] };
+  var VALS={ v:2, items:[] };                 // conservé en mémoire pour le planning local ; JAMAIS affiché
+  function saveVals(){}                         // no-op : plus aucune persistance locale des nettoyages
   var validated=Object.create(null);
-  VALS.items.forEach(function(it){ if(it.k) validated[it.k]=true; });
+  function rebuildValidatedMap(){
+    validated=Object.create(null);
+    (CLUB.validations||[]).forEach(function(r){ if(r && r.iso && r.time) validated[r.iso+'|'+String(r.time).slice(0,5)]=true; });
+  }
+  // Message d'état (non autorisé / erreur réseau) ; '' si tout va bien.
+  function clubStateMsg(state){
+    if(state==='unauth') return 'Cet appareil n’est pas autorisé à voir les données du club. Réglages → Authentification du poste.';
+    if(state==='neterror') return 'Connexion impossible, réessayez.';
+    return '';
+  }
+  function bannerHtml(state){ var m=clubStateMsg(state); return m ? '<div class="club-banner'+(state==='neterror'?' net':'')+'">'+esc(m)+'</div>' : ''; }
+  // Appel d'une RPC authentifiée : distingue autorisé / non-autorisé / erreur réseau.
+  function clubRead(fn){
+    var A = window.MatSafeAuth;
+    if(!(A && A.callRpc)) return Promise.resolve({ state:'unauth' });
+    var slug = (window.MATSAFE_CONFIG && window.MATSAFE_CONFIG.slug) || 'cube-fight-club';
+    return A.callRpc(fn, { p_slug:slug }).then(function(res){
+      if(res && res.ok && !(res.body && res.body.error)) return { state:'ok', rows:(Array.isArray(res.body)?res.body:[]) };
+      return { state:'unauth' };
+    }).catch(function(){ return { state:'neterror' }; });
+  }
+  // Relecture complète depuis Supabase (nettoyages + retours), puis rendu.
+  function refreshClubData(){
+    clubRead('get_club_validations_auth').then(function(r){
+      CLUB.valState=r.state; CLUB.validations=(r.rows||[]);
+      rebuildValidatedMap();
+      try{ renderCleanRate(); }catch(_){ }
+      try{ renderHistory(); }catch(_){ }
+      try{ var a=document.querySelector('#week .d.on'); if(a) renderDay(a.getAttribute('data-day')); }catch(_){ }
+      try{ renderStreak(); }catch(_){ }
+    });
+    clubRead('get_club_returns_auth').then(function(r){
+      CLUB.retState=r.state; CLUB.returns=(r.rows||[]).map(mapServerReturn);
+      try{ renderInbox(); }catch(_){ }
+      try{ updateRetoursBadge(); }catch(_){ }
+    });
+  }
   var SCOL={done:'#3E8E4F',todo:'#C07A2E',late:'#C83F32',soon:'#9A9A9F',cancelled:'#9A968E'};
   // Statut d'un créneau, selon la date/heure RÉELLES :
   //  • Annulé            -> créneau non tenu (exclu du calcul)
@@ -1960,16 +1997,15 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(done>expected) done=expected;
     return {expected:expected, done:done};
   }
-  // Accueil : carte « Dernier nettoyage ». Source = get_club_clean_home (PUBLIQUE, identique à
-  // Fighter), lue fraîche à chaque ouverture/retour accueil et toutes les 30 s. AUCUN cache local
-  // n'alimente la carte : un nettoyage supprimé/annulé disparaît immédiatement au prochain fetch.
-  var _clubClean = null;
+  // Accueil : carte « Dernier nettoyage ». Source = CLUB.validations (Supabase, authentifié),
+  // relue à chaque ouverture/changement d'écran. Non autorisé / erreur => bannière, pas de donnée.
   function renderCleanRate(){
     var box=document.getElementById('crate'); if(!box) return;
     var timeEl=document.getElementById('crateTime'),
         dayEl=document.getElementById('crateDay'),
         whoEl=document.getElementById('crateWho'),
-        listEl=document.getElementById('crateList');
+        listEl=document.getElementById('crateList'),
+        banner=document.getElementById('homeBanner');
     var MOIS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
     function hhmm(a){ return String(a||'').replace(':','h'); }
     function jourLabel(iso){
@@ -1979,10 +2015,21 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       var d=dateFromIso(iso);
       return DAYS[(d.getDay()+6)%7]+' '+d.getDate()+' '+MOIS[d.getMonth()];
     }
-    var data=_clubClean||{};
-    var last=data.lastValidated||null;
-    var today=Array.isArray(data.today)?data.today:[];
-    if(!last || !last.time){
+    if(banner) banner.innerHTML = (CLUB.valState==='ok'||CLUB.valState==='loading') ? '' : bannerHtml(CLUB.valState);
+    if(CLUB.valState!=='ok'){
+      box.classList.add('crate--empty');
+      if(timeEl) timeEl.textContent='—';
+      if(dayEl) dayEl.textContent=(CLUB.valState==='loading'?'Chargement…':'—');
+      if(whoEl) whoEl.textContent='';
+      if(listEl) listEl.textContent='';
+      return;
+    }
+    var items=(CLUB.validations||[]).filter(function(r){ return r && r.iso && r.at; });
+    items=items.slice().sort(function(a,b){ if(a.iso!==b.iso) return a.iso<b.iso?1:-1; return a.at<b.at?1:(a.at>b.at?-1:0); });
+    var last=items[0]||null;
+    var todayIso=isoOf(NOW);
+    var todays=items.filter(function(r){ return r.iso===todayIso; }).sort(function(a,b){ return a.at<b.at?-1:(a.at>b.at?1:0); });
+    if(!last){
       box.classList.add('crate--empty');
       if(timeEl) timeEl.textContent='—';
       if(dayEl) dayEl.textContent='Aucun nettoyage enregistré pour le moment';
@@ -1991,21 +2038,16 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       return;
     }
     box.classList.remove('crate--empty');
-    if(timeEl){ timeEl.textContent=hhmm(last.time); timeEl.style.setProperty('--fill','100%'); }
-    if(dayEl) dayEl.textContent=jourLabel(last.date).toUpperCase();
+    if(timeEl){ timeEl.textContent=hhmm(last.at); timeEl.style.setProperty('--fill','100%'); }
+    if(dayEl) dayEl.textContent=jourLabel(last.iso).toUpperCase();
     if(whoEl) whoEl.textContent='Tatami · '+(last.by||'—');
     if(listEl){
-      if(today.length){
-        listEl.textContent='Aujourd’hui : '+today.map(function(it){ return (it.by||'—')+' '+hhmm(it.at); }).join(' · ');
+      if(todays.length){
+        listEl.textContent='Aujourd’hui : '+todays.map(function(r){ return (r.by||'—')+' '+hhmm(r.at); }).join(' · ');
       } else {
         listEl.textContent='Aucun nettoyage aujourd’hui';
       }
     }
-  }
-  // Lecture fraîche de la base pour la carte accueil (source publique, identique à Fighter).
-  function refreshCleanHome(){
-    if(!(window.MatSafeAPI && MatSafeAPI.enabled && MatSafeAPI.getCleanHome)) return;
-    MatSafeAPI.getCleanHome().then(function(d){ _clubClean = d || {lastValidated:null, today:[]}; renderCleanRate(); }).catch(function(){});
   }
   function renderDay(day){
     var list = SCHED[day] || [];
@@ -2169,20 +2211,14 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   var AVCOL=['a1','a2','a3','a4'];
   function initialsOf(name){ var p=String(name||'').trim().split(/\s+/); return (((p[0]||'')[0]||'')+((p[1]||'')[0]||'')).toUpperCase()||'—'; }
   function avClassOf(name){ var s=0,n=String(name||''); for(var i=0;i<n.length;i++) s=(s+n.charCodeAt(i))%4; return AVCOL[s]; }
+  // Historique : UNIQUEMENT les validations lues dans Supabase (get_club_validations_auth).
   function histEvents(){
     var ev=[];
-    VALS.items.forEach(function(it){
-      if(!it.iso) return;
-      ev.push({ iso:it.iso, time:it.time, disc:it.disc, matLabel:it.matLabel, mat:it.mat, by:it.by, at:it.at, status:'done', vid:it.vid||'', source:it.source||'', fromServer:!!it.fromServer });
+    (CLUB.validations||[]).forEach(function(r){
+      if(!r || !r.iso) return;
+      ev.push({ iso:r.iso, time:(r.time||''), disc:(r.disc||''), matLabel:'Tatami', mat:'', by:(r.by||''), at:(r.at||''), status:'done', vid:(r.id||''), source:(r.source||'') });
     });
-    Object.keys(CANCELS).forEach(function(key){
-      var c=CANCELS[key]; if(!c) return;
-      var p=String(key).split('|');                       // iso | heure | MAT x
-      ev.push({ iso:c.iso||p[0], time:c.time||p[1], disc:c.disc||'—',
-        matLabel:c.matLabel||matLabelOf(c.mat||p[2]), mat:c.matCls||matClassOf(c.mat||p[2]),
-        by:'', at:c.at||'', status:'cancelled', reason:cancelLabel(c) });
-    });
-    ev.sort(function(a,b){ if(a.iso!==b.iso) return a.iso<b.iso?1:-1; return toMin(b.time)-toMin(a.time); });
+    ev.sort(function(a,b){ if(a.iso!==b.iso) return a.iso<b.iso?1:-1; var at=(a.at||a.time||''), bt=(b.at||b.time||''); return at<bt?1:(at>bt?-1:0); });
     return ev;
   }
   function histRowHtml(ev){
@@ -2209,13 +2245,17 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var tb=document.getElementById('histBody'); if(!tb) return;
     if(filter) currentHistFilter=filter;
     var f=currentHistFilter;
+    var banner=document.getElementById('histBanner');
+    if(banner) banner.innerHTML = (CLUB.valState==='ok'||CLUB.valState==='loading') ? '' : bannerHtml(CLUB.valState);
+    if(CLUB.valState!=='ok'){
+      tb.innerHTML = '<tr><td colspan="7" style="color:var(--muted);padding:18px 8px">'+(CLUB.valState==='loading'?'Chargement…':esc(clubStateMsg(CLUB.valState)))+'</td></tr>';
+      return;
+    }
     var html=histEvents().filter(function(ev){
-      var when=whenOf(ev.iso), mat=ev.mat||'', who=ev.by||'';
+      var when=whenOf(ev.iso), who=ev.by||'';
       if(f==='all') return when==='today';
       if(f==='week') return when==='today'||when==='week';
       if(f==='month') return true;
-      if(f==='mat1') return mat==='mat1';
-      if(f==='mat2') return mat==='mat2';
       if(f==='me') return /simon/i.test(who);
       return true;
     }).map(histRowHtml).join('');
@@ -2294,9 +2334,12 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   function saveCaReply(){
     var ta=document.getElementById('caReplyText'), txt=((ta&&ta.value)||'').trim();
     if(caReplyTarget && caReplyTarget.code){
-      var list=loadInbox();
-      for(var i=0;i<list.length;i++){ if(list[i] && list[i].code===caReplyTarget.code){ list[i].reply=txt; if(list[i].status==='transmis') list[i].status='taken'; break; } }
-      saveInbox(list); pushRetServer(caReplyTarget.code); try{ renderInbox(); }catch(_){ } try{ renderHomeMessages(); }catch(_){ }
+      var r=(CLUB.returns||[]).filter(function(x){return x&&x.code===caReplyTarget.code;})[0];
+      var sid=(r&&r.serverId)||caReplyTarget.code;
+      var newStatus=(r && r.status==='transmis') ? 'taken' : (r?r.status:'taken');
+      if(window.MatSafeAPI && MatSafeAPI.setReturnStatus){
+        MatSafeAPI.setReturnStatus(sid, newStatus, txt).then(function(){ try{ refreshClubData(); }catch(_){ } }).catch(function(){ toast('Enregistrement impossible.'); });
+      }
       toast('Réponse enregistrée. Visible par l\'adhérent via son code.');
     }
     if(caReplyModal) caReplyModal.classList.remove('on');
@@ -2422,50 +2465,15 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   // local, sans doublon (clé iso|heure|tatami, insensible à la casse et aux espaces).
   function normValKey(k){ var p=String(k||'').split('|'); if(p.length<3) return String(k||'').toLowerCase(); return p[0]+'|'+String(p[1]).slice(0,5)+'|'+p[2].toLowerCase().replace(/\s+/g,''); }
   function canonMat(z){ var s=String(z||'').toLowerCase().replace(/\s+/g,''); if(s==='mat1') return 'MAT 1'; if(s==='mat2') return 'MAT 2'; return z; }
-  function mergeServerValidations(rows){
-    if(!Array.isArray(rows) || !rows.length || !VALS || !VALS.items) return;
-    // Réconciliation : la réponse serveur fait AUTORITÉ sur la partie « serveur » de l'historique.
-    // On remplace toutes les validations fromServer par la liste fraîche reçue (une validation
-    // supprimée/annulée disparaît donc), et on conserve les validations locales (planning) non
-    // encore représentées côté serveur. Plus de cumul : aucune donnée supprimée ne persiste.
-    var server = rows.filter(function(r){ return r && r.iso && r.time; }).map(function(r){
-      var zone=canonMat(r.zone), k=r.iso+'|'+String(r.time).slice(0,5)+'|'+zone;
-      return { k:k, vid:(r.id||''), source:(r.source||''), iso:r.iso, time:String(r.time).slice(0,5), disc:r.disc||'', mat:matClassOf(zone), matLabel:matLabelOf(zone), by:(r.by||''), at:(r.at||''), ts:(r.ts||Date.now()), demo:false, fromServer:true };
-    });
-    var serverKeys=Object.create(null);
-    server.forEach(function(it){ serverKeys[normValKey(it.k)]=true; });
-    var local = VALS.items.filter(function(it){ return it && !it.fromServer && !serverKeys[normValKey(it.k)]; });
-    VALS.items = local.concat(server);
-    validated=Object.create(null);
-    VALS.items.forEach(function(it){ if(it && it.k) validated[it.k]=true; });
-    try{ saveVals(); }catch(_){ }
-    try{ renderHistory(); }catch(_){ }
-    try{ renderWeekStrip(); }catch(_){ }
-    try{ var a=document.querySelector('#week .d.on'); if(a) renderDay(a.getAttribute('data-day')); }catch(_){ }
-    try{ renderStreak(); }catch(_){ }
-  }
-  function refreshServerValidations(){
-    if(!(window.MatSafeAPI && MatSafeAPI.enabled)) return;
-    MatSafeAPI.getValidations().then(function(rows){ mergeServerValidations(rows); }).catch(function(){});
-  }
-  // Annule (supprime) un nettoyage validé via QR : confirmation puis suppression serveur.
+  function refreshServerValidations(){ try{ refreshClubData(); }catch(_){ } }   // alias : relecture serveur complète
+  // Annule (supprime) un nettoyage validé via QR : confirmation, suppression serveur, puis relecture.
   function cancelValidation(vid){
     vid=String(vid||''); if(!vid) return;
     if(!window.confirm('Annuler ce nettoyage ?')) return;
     if(!(window.MatSafeAuth && MatSafeAuth.callFunction)){ toast('Annulation indisponible : poste non authentifié.'); return; }
     MatSafeAuth.callFunction('validation-cancel', { id:vid }).then(function(res){
-      if(res && res.ok && res.body && res.body.ok){
-        VALS.items = VALS.items.filter(function(it){ if(it && it.vid===vid){ try{ if(it.k) delete validated[it.k]; }catch(_){ } return false; } return true; });
-        try{ saveVals(); }catch(_){ }
-        try{ renderHistory(); }catch(_){ }
-        try{ refreshCleanHome(); }catch(_){ }
-        try{ renderStreak(); }catch(_){ }
-        try{ var a=document.querySelector('#week .d.on'); if(a) renderDay(a.getAttribute('data-day')); }catch(_){ }
-        toast('Nettoyage annulé.');
-      } else {
-        var er=(res&&res.body&&res.body.error)||('http_'+(res&&res.status));
-        toast('Annulation impossible ('+er+').');
-      }
+      if(res && res.ok && res.body && res.body.ok){ toast('Nettoyage annulé.'); try{ refreshClubData(); }catch(_){ } }
+      else { var er=(res&&res.body&&res.body.error)||('http_'+(res&&res.status)); toast('Annulation impossible ('+er+').'); }
     }).catch(function(){ toast('Annulation impossible (réseau).'); });
   }
 
@@ -2540,17 +2548,14 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   }
 
 
-  window.addEventListener('storage', function(e){ if(e.key===FIGHTER_INBOX){ try{ renderInbox(); }catch(_){ } try{ renderHomeMessages(); }catch(_){ } } });
-  try{ renderInbox(); }catch(_){ }
-  try{ refreshClubReturns(); }catch(_){ }                   // retours adhérents reçus du serveur (autres appareils)
-  try{ setInterval(refreshClubReturns, 15000); }catch(_){ } // interrogation périodique
   try{ pubLoadServer(); }catch(_){ }                        // infos publiées (multi-appareils), au chargement
   try{ renderHomeMessages(); }catch(_){ }
+  try{ renderCleanRate(); }catch(_){ }
   try{ renderHistory(); }catch(_){ }
-  try{ refreshServerValidations(); }catch(_){ }          // historique multi-appareils (relu du serveur)
-  try{ setInterval(refreshServerValidations, 30000); }catch(_){ }
-  try{ refreshCleanHome(); }catch(_){ }                  // carte accueil « Dernier nettoyage » (source publique, fraîche)
-  try{ setInterval(refreshCleanHome, 30000); }catch(_){ }
+  try{ renderInbox(); }catch(_){ }
+  // LECTURE SERVEUR (nettoyages + retours) au démarrage, puis toutes les 20 s. Aucune source locale.
+  try{ refreshClubData(); }catch(_){ }
+  try{ setInterval(refreshClubData, 20000); }catch(_){ }
   try{ renderTeam(); }catch(_){ }                        // équipe : sélecteur de validation + Réglages
   try{ refreshTeam(); }catch(_){ }                       // équipe relue du serveur (si RPC dispo)
   try{ loadAuthLocal(); renderAuthStatus(); }catch(_){ } // authentification : état du poste (local, aucun réseau)
