@@ -743,6 +743,12 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .srk-goal-ic{width:34px;height:40px;flex:none;display:block}
 .srk-goal p{font-size:13.5px;line-height:1.5;color:var(--ink2);margin:0}
 .srk-goal strong{color:var(--ink);font-weight:700}
+/* Retrait du liseré (encadrement) de toutes les cartes crème — partout dans le Club.
+   Les cartes restent (fond, arrondi, espacements) ; seul le bord fin devient invisible.
+   Boutons, champs, badges, pastilles et vignettes conservent leur bord. */
+.crate, .comp-card, .comp-empty, .card, .rate, .qr-card, .clients, .table-wrap, .form,
+.summary, .empty-ok, .fb, .msg, .evt, .day, .gm, .evmgr, .evrow, .srk-card,
+.pub-prev-card, .side-promo{ border-color:transparent; }
 </style>
 </head>
 <body>
