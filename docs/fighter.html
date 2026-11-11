@@ -1451,10 +1451,12 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   // Liste « Mes retours » sous le formulaire (mise à jour seule, sans effacer la saisie).
   function renderMine(){
     var mine=load(STORE);
-    var box=document.getElementById('fbMine');
-    if(box) box.innerHTML = mine.length ? '<h2 class="fb-mine-h">Mes retours</h2>'+mine.map(retCard).join('') : '';
     var box2=document.getElementById('fbMineList');
-    if(box2 && mine.length) box2.innerHTML = mine.map(retCard).join('');
+    if(box2){
+      box2.innerHTML = mine.length
+        ? mine.map(retCard).join('')
+        : '<p class="mine-empty-txt">Vous n’avez pas encore envoyé de retour depuis cet appareil. Dès que vous en enverrez un, vous suivrez ici son avancement — transmis, pris en compte, traité — et la réponse du club.</p>';
+    }
   }
   // Écran dédié « Suivre mes retours » (accessible depuis une tuile de l'accueil).
   function screenMine(){
@@ -1496,10 +1498,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         '<p class="contact-hint">Pour préserver l’anonymat, n’indiquez pas de nom, de photo de visage, ni d’information médicale ou permettant d’identifier une personne.</p>'+
         '<button class="contact-send" id="avisSend" disabled>Envoyer '+IArrowR+'</button>'+
         '<p class="contact-note">Anonyme · sans compte</p>'+
-      '</section>'+
-      '<section class="fb-mine" id="fbMine"></section>';
+      '</section>';
     wireBack();
-    renderMine();
     var ta=document.getElementById('avisText'), sb=document.getElementById('avisSend');
     function refresh(){ sb.disabled = !st.type; }
     view.querySelectorAll('#fbTypes .chip').forEach(function(b){
@@ -1681,7 +1681,12 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(!toks.length) return;
     MatSafeAPI.getRetourStatus(toks).then(function(rows){
       var by={}; (rows||[]).forEach(function(x){ by[x.token]={ status:(x.status==='resolu'?'done':(x.status==='pris_en_charge'?'taken':'transmis')), reply:x.reply||'' }; });
+      var qset={}; toks.forEach(function(t){ qset[t]=true; });   // tokens interrogés cette fois
       [STORE,INBOX].forEach(function(key){ var a=load(key), ch=false;
+        // Retrait des retours mémorisés dont le token a été interrogé mais n'existe plus en base (supprimé côté club) : on ne garde pas de carte fantôme.
+        var before=a.length;
+        a=a.filter(function(r){ return !(r && r.serverToken && qset[r.serverToken] && !by[r.serverToken]); });
+        if(a.length!==before) ch=true;
         a.forEach(function(r){ if(r && r.serverToken && by[r.serverToken]){ var s=by[r.serverToken]; if(r.status!==s.status||((r.reply||'')!==s.reply)){ r.status=s.status; r.reply=s.reply; ch=true; } } });
         if(ch) save(key,a);
       });
