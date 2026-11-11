@@ -877,14 +877,13 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     engaged:     true,              // club engagé dans la démarche MatSafe
     labelStatus: 'Inconnu',         // statut du label — DÉMO : non confirmé (aucun faux statut).
                                     // En production, ce champ viendra du serveur MatSafe.
-                                    // Passer EXACTEMENT à 'Labellisé' pour afficher « Club labellisé ».
+                                    // Pilote : badge de statut désactivé (clubLabelText renvoie '').
     lastEval:    'Juin 2026',       // dernière évaluation
     nextControl: 'Décembre 2026'    // prochain contrôle (si disponible, sinon '')
   };
-  // Libellé de statut affiché dans l'app : « Club labellisé ». Il provient de
-  // CLUB_STATUS (vérifié par MatSafe côté serveur), jamais d'un paramètre du QR.
-  // Si le club n'est pas labellisé, aucun badge n'est affiché (pas de faux statut).
-  function clubLabelText(){ return ''; } // Pilote : aucun statut « labellisé »/« certifié » affiché.
+  // Pilote : aucun badge de statut n'est affiché côté adhérent.
+  // clubLabelText renvoie toujours '' ; aucun statut issu du QR.
+  function clubLabelText(){ return ''; } // Pilote : aucun badge de statut affiché côté adhérent.
   function clubLabelBadge(){ var t=clubLabelText(); return t ? '<span class="mini-badge"><span class="d"></span>'+esc(t)+'</span>' : ''; }
 
   // --- Check personnel avant l'entraînement (rappel préventif, jamais envoyé) ---
