@@ -2342,7 +2342,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var title=document.getElementById('caReplyTitle'), sub=document.getElementById('caReplySub'), ta=document.getElementById('caReplyText'), btn=document.getElementById('caReplySave');
     var cur='';
     if(idObj.code){ loadInbox().forEach(function(r){ if(r.code===idObj.code) cur=(mode==='reply'?(r.reply||''):(r.note||'')); }); }
-    if(mode==='reply'){ if(title) title.textContent='Répondre à l\'adhérent'; if(sub) sub.textContent='Réponse publique, visible par l\'adhérent via son code anonyme. Aucune identité n\'est collectée.'; if(btn) btn.textContent='Enregistrer la réponse'; }
+    if(mode==='reply'){ if(title) title.textContent='Répondre à l\'adhérent'; if(sub) sub.textContent='Votre réponse s\'affichera directement dans MatSafe Fighter, sur le téléphone de l\'adhérent. Aucune identité n\'est collectée.'; if(btn) btn.textContent='Enregistrer la réponse'; }
     else { if(title) title.textContent='Note interne'; if(sub) sub.textContent='Visible uniquement par l\'équipe du club. Jamais affichée à l\'adhérent.'; if(btn) btn.textContent='Enregistrer la note'; }
     if(ta) ta.value=cur;
     caReplyModal.classList.add('on'); setTimeout(function(){ if(ta) ta.focus(); },60);
@@ -2356,7 +2356,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       if(window.MatSafeAPI && MatSafeAPI.setReturnStatus){
         MatSafeAPI.setReturnStatus(sid, newStatus, txt).then(function(){ try{ refreshClubData(); }catch(_){ } }).catch(function(){ toast('Enregistrement impossible.'); });
       }
-      toast('Réponse enregistrée. Visible par l\'adhérent via son code.');
+      toast('Réponse enregistrée. L\'adhérent la verra dans MatSafe Fighter.');
     }
     if(caReplyModal) caReplyModal.classList.remove('on');
   }
