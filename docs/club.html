@@ -998,7 +998,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <div class="daylist" id="dayList"></div>
     </div>
     <button class="rail-btn" data-go="planning">Tous les cours de la semaine</button>
-    <div style="margin-top:14px;text-align:center;font-size:11px;letter-spacing:.04em;color:var(--muted)">MatSafe Club · v12.11-20h</div>
+    <div style="margin-top:14px;text-align:center;font-size:11px;letter-spacing:.04em;color:var(--muted)">MatSafe Club · v12.11-22h45</div>
   </aside>
 
 </div>
@@ -1167,18 +1167,21 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   // sinon voie secret (comportement historique). emptyVal = valeur si aucun accès.
   function authRpc(authFn, authParams, secretFn, secretParams, emptyVal){
     function secretCall(){ if(CFG.secret) return rpc(secretFn, secretParams); return Promise.resolve(emptyVal===undefined?null:emptyVal); }
-    try{
-      // PILOTE (requireEnrollment=false) : voie authentifiée (session anonyme)
-      // toujours utilisée — l'accès est ouvert côté serveur pour le club pilote.
-      // Sinon : voie authentifiée seulement si le poste est enrôlé.
-      var openPilot = (CFG.requireEnrollment === false);
-      if(window.MatSafeAuth && MatSafeAuth.callRpc && (openPilot || (MatSafeAuth.isEnrolled && MatSafeAuth.isEnrolled()))){
-        return MatSafeAuth.callRpc(authFn, authParams).then(function(res){
-          if(res && res.ok && !(res.body && res.body.error)) return res.body;
-          return secretCall();
-        }).catch(function(){ return secretCall(); });
-      }
-    }catch(_){ }
+    function viaAuth(){
+      return MatSafeAuth.callRpc(authFn, authParams).then(function(res){
+        if(res && res.ok && !(res.body && res.body.error)) return res.body;
+        return secretCall();
+      }).catch(function(){ return secretCall(); });
+    }
+    // PILOTE (requireEnrollment=false) : CHEMIN D'ÉCRITURE UNIQUE (session anonyme),
+    // STRICTEMENT IDENTIQUE que le poste soit activé ou non. L'enrôlement n'est JAMAIS
+    // consulté ici : un ancien enrôlement ne peut donc rien changer au comportement.
+    if(CFG.requireEnrollment === false){
+      if(window.MatSafeAuth && MatSafeAuth.callRpc) return viaAuth();
+      return secretCall();
+    }
+    // Hors pilote (requireEnrollment=true) : enrôlé -> voie authentifiée, sinon secret.
+    try{ if(window.MatSafeAuth && MatSafeAuth.isEnrolled && MatSafeAuth.isEnrolled() && MatSafeAuth.callRpc) return viaAuth(); }catch(_){ }
     return secretCall();
   }
   window.MATSAFE_CONFIG = window.MATSAFE_CONFIG || {};
