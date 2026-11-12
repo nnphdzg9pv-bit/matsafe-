@@ -2349,16 +2349,22 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   }
   function saveCaReply(){
     var ta=document.getElementById('caReplyText'), txt=((ta&&ta.value)||'').trim();
-    if(caReplyTarget && caReplyTarget.code){
-      var r=(CLUB.returns||[]).filter(function(x){return x&&x.code===caReplyTarget.code;})[0];
-      var sid=(r&&r.serverId)||caReplyTarget.code;
-      var newStatus=(r && r.status==='transmis') ? 'taken' : (r?r.status:'taken');
-      if(window.MatSafeAPI && MatSafeAPI.setReturnStatus){
-        MatSafeAPI.setReturnStatus(sid, newStatus, txt).then(function(){ try{ refreshClubData(); }catch(_){ } }).catch(function(){ toast('Enregistrement impossible.'); });
+    if(!(caReplyTarget && caReplyTarget.code)){ if(caReplyModal) caReplyModal.classList.remove('on'); return; }
+    var r=(CLUB.returns||[]).filter(function(x){return x&&x.code===caReplyTarget.code;})[0];
+    var sid=(r&&r.serverId)||caReplyTarget.code;
+    var newStatus=(r && r.status==='transmis') ? 'taken' : (r?r.status:'taken');
+    if(!(window.MatSafeAPI && MatSafeAPI.setReturnStatus)){ toast('Enregistrement impossible — réessayez.'); return; }
+    // On ne confirme (et on ne ferme) QUE si le serveur a réellement enregistré la réponse.
+    // Sinon on garde la fenêtre ouverte pour ne pas perdre le texte et on signale l'échec.
+    MatSafeAPI.setReturnStatus(sid, newStatus, txt).then(function(res){
+      if(res && res.ok){
+        toast('Réponse enregistrée. L\'adhérent la verra dans MatSafe Fighter.');
+        if(caReplyModal) caReplyModal.classList.remove('on');
+        try{ refreshClubData(); }catch(_){ }
+      } else {
+        toast('Enregistrement impossible — vérifiez la connexion et réessayez.');
       }
-      toast('Réponse enregistrée. L\'adhérent la verra dans MatSafe Fighter.');
-    }
-    if(caReplyModal) caReplyModal.classList.remove('on');
+    }).catch(function(){ toast('Enregistrement impossible — vérifiez la connexion et réessayez.'); });
   }
   document.addEventListener('click', function(e){
     if(e.target.closest('#caReplySave')){ saveCaReply(); return; }
