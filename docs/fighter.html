@@ -817,7 +817,10 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   }
   function mapCat(rec){
     if(rec.kind==='avis') return 'hygiene';
-    var m={proprete:'hygiene',sanitaires:'sanitaires',douches:'sanitaires',materiel:'materiel',consommable:'materiel',premiers:'autre',autre:'autre'};
+    // Catégories du formulaire « Faire un retour » : enregistrées telles quelles.
+    // (compat anciens identifiants : douches/sanitaires/proprete).
+    var m={ tatami:'tatami', vestiaires:'vestiaires', douches_sanitaires:'douches_sanitaires',
+            douches:'douches_sanitaires', sanitaires:'douches_sanitaires', proprete:'autre', autre:'autre' };
     return m[rec.cat]||'autre';
   }
   function feelRating(f){ return f==='clean'?5:(f==='ok'?3:(f==='improve'?2:null)); }
@@ -1012,6 +1015,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     try{ if(window.MatSafeAPI && MatSafeAPI.logEvent) MatSafeAPI.logEvent((CTX&&CTX.code)||'', statsDeviceId(), event); }catch(_){ }
   }
   try{ logStat('open'); }catch(_){ }   // une fois par chargement de page
+  // Limiter l'effacement automatique du stockage par le navigateur (reconnaissance du
+  // téléphone + suivi des retours). Sans blocage ni effet visible si le navigateur refuse.
+  try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function(){}); }catch(_){ }
 
   // ===========================================================================
   // TÉLÉCONSULTATION — configuration centralisée (partenaire Kry).
@@ -1038,6 +1044,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
   function pad(n){return n<10?'0'+n:''+n;}
   function nowStamp(){var d=new Date();return pad(d.getDate())+'/'+pad(d.getMonth()+1)+' · '+pad(d.getHours())+':'+pad(d.getMinutes());}
+  function fmtDMY(iso){ try{ var d=new Date(iso); if(isNaN(d.getTime())) return ''; return pad(d.getDate())+'/'+pad(d.getMonth()+1); }catch(e){ return ''; } }
   function uid(){return 'f'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
   function load(k){try{return JSON.parse(localStorage.getItem(k)||'[]');}catch(e){return [];}}
   function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
@@ -1313,10 +1320,10 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   /* --- SIGNALEMENT --- */
   function screenSignal(){
     var TYPES=[
-      {id:'tatami',     t:'Tatami'},
-      {id:'vestiaires', t:'Vestiaires'},
-      {id:'douches',    t:'Douches / Sanitaires'},
-      {id:'autre',      t:'Autre'}
+      {id:'tatami',             t:'Tatami'},
+      {id:'vestiaires',         t:'Vestiaires'},
+      {id:'douches_sanitaires', t:'Douches / Sanitaires'},
+      {id:'autre',              t:'Autre'}
     ];
     var st={type:null, label:'', description:''};
     view.innerHTML=
@@ -1481,7 +1488,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       '<div class="ret-top"><span class="ret-kind">'+esc(title)+'</span><span class="ret-date">'+esc(r.when||'')+'</span></div>'+
       (detail?'<div class="ret-meta">'+esc(detail)+'</div>':'')+
       statusBlock+
-      (cur.reply?'<div class="ret-reply"><div class="k">Réponse du club</div>'+esc(cur.reply)+'</div>':'')+
+      (cur.reply?'<div class="ret-reply"><div class="k">Réponse du club'+(cur.replyAt?' · '+esc(fmtDMY(cur.replyAt)):'')+'</div>'+esc(cur.reply)+'</div>':'')+
     '</div>';
   }
   // Liste « Mes retours » sous le formulaire (mise à jour seule, sans effacer la saisie).
@@ -1516,10 +1523,10 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     // On touche le problème (ou on écrit un détail), puis « Envoyer ». Anonyme, sans compte.
     var IArrowR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>';
     var TYPES=[
-      {id:'tatami',     t:'Tatami'},
-      {id:'vestiaires', t:'Vestiaires'},
-      {id:'douches',    t:'Douches / Sanitaires'},
-      {id:'autre',      t:'Autre'}
+      {id:'tatami',             t:'Tatami'},
+      {id:'vestiaires',         t:'Vestiaires'},
+      {id:'douches_sanitaires', t:'Douches / Sanitaires'},
+      {id:'autre',              t:'Autre'}
     ];
     var st={type:null, label:''};
     view.innerHTML=
@@ -1707,23 +1714,30 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   function markRetoursSeen(){ var o={}; load(STORE).forEach(function(r){ if(r&&r.code) o[r.code]=retSig(r); }); saveSeen(o); }
   function updateMineBadge(){
     var t=document.getElementById('a-mine'); if(!t) return;
-    var n=unseenCount(), b=t.querySelector('.tile-badge');
-    if(n>0){ if(!b){ b=document.createElement('span'); b.className='tile-badge'; b.style.cssText='position:absolute;top:12px;right:14px;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#C83F32;color:#fff;font-size:12px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;line-height:1'; t.style.position='relative'; t.appendChild(b); } b.textContent=n; }
-    else if(b && b.parentNode){ b.parentNode.removeChild(b); }
+    var n=unseenCount(), b=t.querySelector('.mine-new');
+    if(n>0){
+      if(!b){ b=document.createElement('span'); b.className='mine-new';
+        b.style.cssText='display:inline-block;margin-top:8px;padding:4px 11px;border-radius:999px;background:#C83F32;color:#fff;font-size:12px;font-weight:800;line-height:1.2';
+        t.style.position='relative'; t.appendChild(b); }
+      b.textContent=n+' nouvelle'+(n>1?'s':'')+' réponse'+(n>1?'s':'');
+    } else if(b && b.parentNode){ b.parentNode.removeChild(b); }
   }
   function refreshReturnStatuses(){
     if(!(window.MatSafeAPI && MatSafeAPI.enabled)) return;
     var toks=load(STORE).map(function(r){return r&&r.serverToken;}).filter(function(t){return t&&String(t).length>=32;});
     if(!toks.length) return;
     MatSafeAPI.getRetourStatus(toks).then(function(rows){
-      var by={}; (rows||[]).forEach(function(x){ by[x.token]={ status:(x.status==='resolu'?'done':(x.status==='pris_en_charge'?'taken':'transmis')), reply:x.reply||'' }; });
+      var by={}; (rows||[]).forEach(function(x){ by[x.token]={ status:(x.status==='resolu'?'done':(x.status==='pris_en_charge'?'taken':'transmis')), reply:x.reply||'', updatedAt:(x.updatedAt||'') }; });
       var qset={}; toks.forEach(function(t){ qset[t]=true; });   // tokens interrogés cette fois
       [STORE,INBOX].forEach(function(key){ var a=load(key), ch=false;
         // Retrait des retours mémorisés dont le token a été interrogé mais n'existe plus en base (supprimé côté club) : on ne garde pas de carte fantôme.
         var before=a.length;
         a=a.filter(function(r){ return !(r && r.serverToken && qset[r.serverToken] && !by[r.serverToken]); });
         if(a.length!==before) ch=true;
-        a.forEach(function(r){ if(r && r.serverToken && by[r.serverToken]){ var s=by[r.serverToken]; if(r.status!==s.status||((r.reply||'')!==s.reply)){ r.status=s.status; r.reply=s.reply; ch=true; } } });
+        a.forEach(function(r){ if(r && r.serverToken && by[r.serverToken]){ var s=by[r.serverToken];
+          var changed=(r.status!==s.status)||((r.reply||'')!==s.reply)||(!!s.reply && !r.replyAt);
+          if(changed){ r.status=s.status; r.reply=s.reply; r.replyAt=(s.reply ? (s.updatedAt||'') : ''); ch=true; }
+        } });
         if(ch) save(key,a);
       });
       try{ renderMine(); }catch(_){ }

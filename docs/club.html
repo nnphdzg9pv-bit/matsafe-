@@ -1704,7 +1704,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         '<div class="fb-body">'+
           '<div class="fb-top"><span class="fb-name">'+esc(typ)+'</span><span class="fb-meta">'+esc(meta.join(' · '))+'</span></div>'+
           '<div class="fb-txt">«&nbsp;'+esc(r.description||'(sans message)')+'&nbsp;»</div>'+
-          '<div class="fb-code">Code de suivi anonyme&nbsp;: <code>'+esc(r.code||'—')+'</code></div>'+
           (r.reply?'<div class="fb-reply"><b>Votre réponse&nbsp;:</b> '+esc(r.reply)+'</div>':'')+
           '<div class="fb-act">'+acts+'</div>'+
         '</div>'+
