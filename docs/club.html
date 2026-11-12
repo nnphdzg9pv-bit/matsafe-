@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>MatSafe Club</title>
 <!-- Polices Barlow / Barlow Condensed embarquées plus bas (@font-face, base64) : aucune dépendance réseau externe. -->
 <style>
@@ -995,6 +998,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <div class="daylist" id="dayList"></div>
     </div>
     <button class="rail-btn" data-go="planning">Tous les cours de la semaine</button>
+    <div style="margin-top:14px;text-align:center;font-size:11px;letter-spacing:.04em;color:var(--muted)">MatSafe Club · v12.11-20h</div>
   </aside>
 
 </div>
@@ -2336,9 +2340,18 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   // l'écran « Retours adhérents » se rafraîchit automatiquement.
   // Réponse publique / note interne (remplace les fenêtres natives)
   var caReplyModal=document.getElementById('caReplyModal'), caReplyMode='reply', caReplyTarget=null;
+  // Écouteur DIRECT sur le bouton (fiable sur tous les moteurs, dont Safari/WebKit) +
+  // raccourci Cmd/Ctrl+Entrée. Le bouton est statique : on l'attache une seule fois.
+  (function(){
+    var _sb=document.getElementById('caReplySave');
+    if(_sb) _sb.addEventListener('click', function(ev){ if(ev&&ev.preventDefault) ev.preventDefault(); saveCaReply(); });
+    var _tx=document.getElementById('caReplyText');
+    if(_tx) _tx.addEventListener('keydown', function(ev){ if((ev.metaKey||ev.ctrlKey) && (ev.key==='Enter'||ev.keyCode===13)){ ev.preventDefault(); saveCaReply(); } });
+  })();
   function openCaReply(mode, idObj){
     if(!caReplyModal) return;
     caReplyMode=mode; caReplyTarget=idObj||{};
+    try{ caReplyModal.setAttribute('data-code', (idObj&&idObj.code)||''); caReplyModal.setAttribute('data-mode', mode||'reply'); }catch(_){ }
     var title=document.getElementById('caReplyTitle'), sub=document.getElementById('caReplySub'), ta=document.getElementById('caReplyText'), btn=document.getElementById('caReplySave');
     var cur='';
     if(idObj.code){ loadInbox().forEach(function(r){ if(r.code===idObj.code) cur=(mode==='reply'?(r.reply||''):(r.note||'')); }); }
@@ -2347,27 +2360,35 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(ta) ta.value=cur;
     caReplyModal.classList.add('on'); setTimeout(function(){ if(ta) ta.focus(); },60);
   }
+  var _caSaving=false;
   function saveCaReply(){
-    var ta=document.getElementById('caReplyText'), txt=((ta&&ta.value)||'').trim();
-    if(!(caReplyTarget && caReplyTarget.code)){ if(caReplyModal) caReplyModal.classList.remove('on'); return; }
-    var r=(CLUB.returns||[]).filter(function(x){return x&&x.code===caReplyTarget.code;})[0];
-    var sid=(r&&r.serverId)||caReplyTarget.code;
-    var newStatus=(r && r.status==='transmis') ? 'taken' : (r?r.status:'taken');
-    if(!(window.MatSafeAPI && MatSafeAPI.setReturnStatus)){ toast('Enregistrement impossible — réessayez.'); return; }
-    // On ne confirme (et on ne ferme) QUE si le serveur a réellement enregistré la réponse.
-    // Sinon on garde la fenêtre ouverte pour ne pas perdre le texte et on signale l'échec.
-    MatSafeAPI.setReturnStatus(sid, newStatus, txt).then(function(res){
-      if(res && res.ok){
-        toast('Réponse enregistrée. L\'adhérent la verra dans MatSafe Fighter.');
-        if(caReplyModal) caReplyModal.classList.remove('on');
-        try{ refreshClubData(); }catch(_){ }
-      } else {
-        toast('Enregistrement impossible — vérifiez la connexion et réessayez.');
-      }
-    }).catch(function(){ toast('Enregistrement impossible — vérifiez la connexion et réessayez.'); });
+    if(_caSaving) return;                       // anti double-envoi
+    try{
+      var ta=document.getElementById('caReplyText'), txt=((ta&&ta.value)||'').trim();
+      // Code cible : variable de closure, sinon attribut du DOM (robustesse inter-navigateurs, dont Safari).
+      var code=(caReplyTarget && caReplyTarget.code) || (caReplyModal && caReplyModal.getAttribute('data-code')) || '';
+      if(!code){ toast('Enregistrement impossible — rouvrez « Répondre » et réessayez.'); return; }
+      var r=(CLUB.returns||[]).filter(function(x){return x&&x.code===code;})[0];
+      var sid=(r&&r.serverId)||code;
+      var newStatus=(r && r.status==='transmis') ? 'taken' : (r?r.status:'taken');
+      if(!(window.MatSafeAPI && MatSafeAPI.setReturnStatus)){ toast('Enregistrement impossible — réessayez.'); return; }
+      // On ne confirme (et on ne ferme) QUE si le serveur a réellement enregistré la réponse.
+      // Sinon on garde la fenêtre ouverte pour ne pas perdre le texte et on signale l'échec. Jamais d'échec silencieux.
+      _caSaving=true;
+      MatSafeAPI.setReturnStatus(sid, newStatus, txt).then(function(res){
+        _caSaving=false;
+        if(res && res.ok){
+          toast('Réponse enregistrée. L\'adhérent la verra dans MatSafe Fighter.');
+          if(caReplyModal) caReplyModal.classList.remove('on');
+          try{ refreshClubData(); }catch(_){ }
+        } else {
+          toast('Enregistrement impossible — vérifiez la connexion et réessayez.');
+        }
+      }).catch(function(){ _caSaving=false; toast('Enregistrement impossible — vérifiez la connexion et réessayez.'); });
+    }catch(e){ _caSaving=false; toast('Enregistrement impossible — réessayez.'); }
   }
   document.addEventListener('click', function(e){
-    if(e.target.closest('#caReplySave')){ saveCaReply(); return; }
+    // #caReplySave : géré par un écouteur direct (voir plus haut) — pas de délégation ici.
     if(e.target===caReplyModal){ caReplyModal.classList.remove('on'); return; }
     if(e.target.closest('#teamManage')){ openTeamModal(); return; }
     if(e.target===teamModal){ teamModal.classList.remove('on'); return; }
