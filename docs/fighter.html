@@ -846,6 +846,17 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       if(rec.zone) payload.zone=String(rec.zone).slice(0,120);
       var rt=feelRating(rec.feeling); if(rt) payload.rating=rt;
       return rpc('submit_retour', { p_slug:CFG.slug, p_payload:payload });
+    },
+    // Compteur d'audience anonyme et privé : insertion via la RPC dédiée.
+    // Best-effort : jamais bloquant, erreurs ignorées silencieusement.
+    logEvent: function(clubCode, deviceId, event){
+      try{
+        return fetch(CFG.url+'/rest/v1/rpc/log_fighter_event', {
+          method:'POST', keepalive:true,
+          headers:{ 'apikey':CFG.anon, 'Authorization':'Bearer '+CFG.anon, 'Content-Type':'application/json' },
+          body: JSON.stringify({ club_code:clubCode, device_id:deviceId, event:event })
+        }).catch(function(){});
+      }catch(_){ }
     }
   };
 })();
@@ -980,6 +991,28 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   }
   var CTX=ctxFromQR();
 
+  /* --- Compteur d'audience ANONYME et PRIVÉ -------------------------------
+     device_id : identifiant aléatoire généré UNE SEULE FOIS et conservé dans
+     le localStorage de ce téléphone. Aucune donnée personnelle, pas d'IP,
+     pas de cookie tiers. L'enregistrement est best-effort : il ne bloque ni
+     ne ralentit jamais l'affichage (erreurs ignorées silencieusement). */
+  var FIGHTER_DEVICE_KEY='matsafe_fighter_device_id';
+  function statsDeviceId(){
+    try{
+      var v=localStorage.getItem(FIGHTER_DEVICE_KEY);
+      if(!v){
+        try{ v=(window.crypto && crypto.randomUUID) ? crypto.randomUUID() : null; }catch(_){ v=null; }
+        if(!v) v='d'+Date.now().toString(36)+Math.random().toString(36).slice(2,12);
+        localStorage.setItem(FIGHTER_DEVICE_KEY, v);
+      }
+      return v;
+    }catch(_){ return 'anon'; }
+  }
+  function logStat(event){
+    try{ if(window.MatSafeAPI && MatSafeAPI.logEvent) MatSafeAPI.logEvent((CTX&&CTX.code)||'', statsDeviceId(), event); }catch(_){ }
+  }
+  try{ logStat('open'); }catch(_){ }   // une fois par chargement de page
+
   // ===========================================================================
   // TÉLÉCONSULTATION — configuration centralisée (partenaire Kry).
   // >>> POUR ACTIVER : renseigner `url` ci-dessous (une seule ligne à modifier). <<<
@@ -1023,6 +1056,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     // Serveur : envoi anonyme. On conserve le jeton privé renvoyé par Supabase pour
     // relire ensuite le statut + la réponse du club (le code MS-… affiché reste inchangé).
     try{ flushRetourQueue(); }catch(_){ }   // envoi immédiat + file de réattente (hors-ligne => renvoyé automatiquement)
+    try{ logStat('retour_envoye'); }catch(_){ }   // compteur d'audience : un retour (signalement/avis) a été envoyé
     return rec.code;
   }
 
@@ -1339,7 +1373,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         (TELECONSULT.key?'<div class="routine-key">'+esc(TELECONSULT.key)+'</div>':'')+
         (TELECONSULT.coverage?'<p>'+esc(TELECONSULT.coverage)+'</p>':'')+
         (teleReady
-          ? '<a href="'+esc(TELECONSULT.url)+'" target="_blank" rel="noopener noreferrer" aria-label="Accéder à la téléconsultation Kry" style="display:block;text-decoration:none;text-align:center;margin:30px 0 8px">'+
+          ? '<a id="kryLink" href="'+esc(TELECONSULT.url)+'" target="_blank" rel="noopener noreferrer" aria-label="Accéder à la téléconsultation Kry" style="display:block;text-decoration:none;text-align:center;margin:30px 0 8px">'+
               '<img src="'+KRY_LOGO+'" alt="Kry" style="display:block;width:86%;max-width:340px;height:auto;margin:0 auto">'+
               '<span style="display:block;margin-top:14px;font-weight:600;font-size:14px;color:#17352C">Accéder à la téléconsultation ↗</span>'+
             '</a>'
@@ -1349,6 +1383,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     wireBack();
     var tb=document.getElementById('teleBtn');
     if(tb && teleReady){ tb.onclick=function(){ window.open(TELECONSULT.url,'_blank','noopener'); }; }
+    var kl=document.getElementById('kryLink');
+    if(kl){ kl.addEventListener('click', function(){ try{ logStat('kry_click'); }catch(_){ } }); }
   }
 
   /* ================= MON CHECK AVANT L'ENTRAÎNEMENT ================= */
