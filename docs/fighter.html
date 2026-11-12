@@ -1514,8 +1514,10 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     box.innerHTML = mine.length
       ? mine.map(retCard).join('')
       : '<p class="mine-empty-txt">Vous n’avez pas encore envoyé de retour depuis cet appareil. Dès que vous en enverrez un, vous suivrez ici son avancement — transmis, pris en compte, traité — et la réponse du club.</p>';
-    try{ refreshReturnStatuses(); }catch(_){ }
-    try{ markRetoursSeen(); updateMineBadge(); }catch(_){ }   // consulter le suivi = accusé de lecture
+    // Accusé de lecture : on marque « vu » tout de suite ET après la relecture serveur
+    // (si une réponse arrive juste après l'ouverture, le repère ne doit pas réapparaître).
+    try{ var _pr=refreshReturnStatuses(); if(_pr && _pr.then){ _pr.then(function(){ try{ markRetoursSeen(); updateMineBadge(); }catch(_){ } }); } }catch(_){ }
+    try{ markRetoursSeen(); updateMineBadge(); }catch(_){ }
   }
 
   /* ================= FAIRE UN RETOUR (2 touches : choix + Envoyer) ================= */
@@ -1723,10 +1725,10 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     } else if(b && b.parentNode){ b.parentNode.removeChild(b); }
   }
   function refreshReturnStatuses(){
-    if(!(window.MatSafeAPI && MatSafeAPI.enabled)) return;
+    if(!(window.MatSafeAPI && MatSafeAPI.enabled)) return Promise.resolve();
     var toks=load(STORE).map(function(r){return r&&r.serverToken;}).filter(function(t){return t&&String(t).length>=32;});
-    if(!toks.length) return;
-    MatSafeAPI.getRetourStatus(toks).then(function(rows){
+    if(!toks.length) return Promise.resolve();
+    return MatSafeAPI.getRetourStatus(toks).then(function(rows){
       var by={}; (rows||[]).forEach(function(x){ by[x.token]={ status:(x.status==='resolu'?'done':(x.status==='pris_en_charge'?'taken':'transmis')), reply:x.reply||'', updatedAt:(x.updatedAt||'') }; });
       var qset={}; toks.forEach(function(t){ qset[t]=true; });   // tokens interrogés cette fois
       [STORE,INBOX].forEach(function(key){ var a=load(key), ch=false;
