@@ -624,10 +624,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .fb .fb-code code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;color:var(--ink);background:var(--panel);border:1px solid var(--line2);border-radius:6px;padding:2px 7px}
 .fb .fb-reply{font-size:13.5px;line-height:1.5;color:var(--ink2);background:var(--panel);border-left:3px solid var(--brand);border-radius:8px;padding:9px 12px;margin:0 0 12px}
 .fb .fb-reply b{color:var(--ink)}
-/* Messages (accueil) — mêmes retours que l'écran « Retours adhérents », en défilé continu */
-.msg-vp{position:relative;overflow:hidden;height:210px;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 11%,#000 89%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 11%,#000 89%,transparent 100%)}
-.block-msg .chat{will-change:transform}
-@media(prefers-reduced-motion:reduce){.block-msg .chat{transform:none!important}}
+/* Messages (accueil) — mêmes retours que l'écran « Retours adhérents » : les 3 plus récents + lien */
+.msg-vp{position:relative}
+.msg-all{display:inline-block;margin-top:6px}
 .cm-st{margin:8px 0 0 2px}
 .cm-empty{color:var(--muted);font-size:14.5px;line-height:1.5;padding:6px 2px}
 .collect{margin-top:24px}
@@ -1759,22 +1758,23 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var chat=document.getElementById('msgChat'); if(!chat) return;
     if(chat._anim){ try{ chat._anim.cancel(); }catch(e){} chat._anim=null; }
     chat.style.transform='';
-    var list=loadInbox();
-    if(!list.length){
+    // Même source que l'écran « Retours adhérents » (serveur, mode pilote) : les 3 plus récents.
+    var all=loadInbox();
+    if(!all.length){
       chat.innerHTML='<div class="cm-empty">Aucun retour pour le moment. Les retours des adhérents (MatSafe Fighter) s’afficheront ici.</div>';
       return;
     }
+    var list=all.slice(0,3);                       // file déjà triée du plus récent au plus ancien
     chat.innerHTML=list.map(function(r){
       var typ=(r.kind==='signal')?'Signalement':'Avis d’hygiène';
       var si=inboxStInfo(r.status);
-      var meta=typ+(r.zone?' · '+esc(r.zone):'')+(r.when?' · '+esc(r.when):'');
+      var meta=typ+(r.zone?' · '+esc(r.zone):'')+(r.when?' · '+esc(r.when):'');   // catégorie · zone · date
       return '<div class="cm">'+
         '<div class="cm-meta">'+meta+'</div>'+
         '<div class="bubble">'+esc(r.description||'(sans message)')+'</div>'+
         '<div class="cm-st"><span class="pill-st '+si.cls+'"><span class="d"></span>'+si.t+'</span></div>'+
       '</div>';
-    }).join('');
-    homeMsgMarquee();
+    }).join('') + '<a class="link msg-all" data-go="retours">Voir tous les retours'+(all.length>3?' ('+all.length+')':'')+'</a>';
   }
 
   // ── Série de nettoyage (streak) ──
@@ -1970,6 +1970,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     clubRead('get_club_returns_auth').then(function(r){
       CLUB.retState=r.state; CLUB.returns=(r.rows||[]).map(mapServerReturn);
       try{ renderInbox(); }catch(_){ }
+      try{ renderHomeMessages(); }catch(_){ }   // accueil « Messages » = même source serveur que « Retours adhérents »
       try{ updateRetoursBadge(); }catch(_){ }
     });
   }
