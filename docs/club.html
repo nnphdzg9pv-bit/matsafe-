@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta name="ms-version" content="v13.14-17h46">
+<meta name="ms-version" content="v13.15-18h01">
 <title>MatSafe Club</title>
 <script>
 /* ============================================================================
@@ -20,7 +20,7 @@
    ============================================================================ */
 (function(){
   "use strict";
-  var RUNNING = 'v13.14-17h46';
+  var RUNNING = 'v13.15-18h01';
   try{ if(sessionStorage.getItem('ms_selfheal')==='1') return; }catch(_){ }
   function liveVersion(txt){
     try{ var m = txt.match(/name="ms-version"\s+content="([^"]+)"/); return (m && m[1]) ? m[1].trim() : null; }catch(_){ return null; }
@@ -1033,7 +1033,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <div class="daylist" id="dayList"></div>
     </div>
     <button class="rail-btn" data-go="planning">Tous les cours de la semaine</button>
-    <div style="margin-top:14px;text-align:center;font-size:11px;letter-spacing:.04em;color:var(--muted)">MatSafe Club · v13.14-17h46</div>
+    <div style="margin-top:14px;text-align:center;font-size:11px;letter-spacing:.04em;color:var(--muted)">MatSafe Club · v13.15-18h01</div>
   </aside>
 
 </div>
@@ -2958,8 +2958,26 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var changed=false;
     list.forEach(function(c){ if(c && !c.day){ var d=parseFrDate(c.date); if(d){ c.day=d; changed=true; } } });
     if(changed){ try{ save(); }catch(_){ } }
-    // Publie (une seule fois) celles qui ont une date mais pas encore d'identifiant serveur.
-    list.forEach(function(c){ if(c && compDayOf(c) && !c.serverId){ pushComp(c); } });
+    var todo=list.filter(function(c){ return c && compDayOf(c) && !c.serverId; });
+    if(!todo.length) return;
+    function compKey(name,day){ return String(name||'').trim().toLowerCase()+'|'+String(day||''); }
+    function finish(existing){
+      todo.forEach(function(c){
+        var k=compKey(c.name, compDayOf(c));
+        if(existing && existing[k]){ c.serverId=existing[k]; }   // déjà publiée (même nom + date) -> on l'adopte, pas de doublon
+        else { pushComp(c); }
+      });
+      try{ save(); }catch(_){ }
+    }
+    // Dé-doublonnage : on relit d'abord les compétitions déjà publiées avant d'en publier.
+    try{
+      if(window.MatSafeAPI && MatSafeAPI.getClubEvents){
+        MatSafeAPI.getClubEvents().then(function(rows){
+          var ex={}; (rows||[]).forEach(function(r){ if(r && r.kind==='Compétition'){ ex[compKey(r.name, r.date)]=r.id; } });
+          finish(ex);
+        }).catch(function(){ finish(null); });
+      } else { finish(null); }
+    }catch(_){ finish(null); }
   })();
   render();
 })();
