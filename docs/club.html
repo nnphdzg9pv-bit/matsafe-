@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta name="ms-version" content="v13.14-17h33">
+<meta name="ms-version" content="v13.14-17h46">
 <title>MatSafe Club</title>
 <script>
 /* ============================================================================
@@ -20,7 +20,7 @@
    ============================================================================ */
 (function(){
   "use strict";
-  var RUNNING = 'v13.14-17h33';
+  var RUNNING = 'v13.14-17h46';
   try{ if(sessionStorage.getItem('ms_selfheal')==='1') return; }catch(_){ }
   function liveVersion(txt){
     try{ var m = txt.match(/name="ms-version"\s+content="([^"]+)"/); return (m && m[1]) ? m[1].trim() : null; }catch(_){ return null; }
@@ -462,7 +462,7 @@ tbody tr:hover{background:#F7F6F4}
 .cancel-note{font-size:13px;color:var(--ink2);line-height:1.5;background:#FBF5F4;border:1px solid rgba(200,63,50,.22);border-radius:12px;padding:12px 14px;margin:4px 0 18px}
 .cancel-actions{display:flex;gap:10px}
 .cancel-actions .btn-ghost,.cancel-actions .btn-primary{flex:1;text-align:center;align-self:stretch}
-/* Publications (Infos hygiène du club -> Fighter) */
+/* Publications (Infos du club -> Fighter) */
 .pub-pin{display:inline-flex;align-items:center;gap:9px;font-size:13.5px;color:var(--ink);cursor:pointer;margin:2px 0 20px}
 .pub-pin input{width:16px;height:16px;accent-color:var(--brand)}
 .pub-cat{display:inline-block;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.08em;font-size:10px;font-weight:700;border:1px solid var(--line2);border-radius:999px;padding:2px 9px;color:var(--ink2)}
@@ -960,7 +960,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
     <!-- INFOS HYGIÈNE DU CLUB (publications vers MATSAFE Fighter) -->
     <section class="screen" data-screen="publications">
-      <div class="head"><div><h1>Infos hygiène du club</h1><p>Publiez des informations qui apparaissent dans « Infos hygiène du club » sur MatSafe Fighter. Distinct des compétitions et des prochaines échéances.</p></div><button class="btn-ghost" id="pubPreview">Aperçu Fighter</button></div>
+      <div class="head"><div><h1>Infos du club</h1><p>Publiez des informations qui apparaissent dans « Infos du club » sur MatSafe Fighter. Distinct des compétitions et des prochaines échéances.</p></div><button class="btn-ghost" id="pubPreview">Aperçu Fighter</button></div>
       <div class="gm">
         <div class="gm-head"><div class="msgpub-kick">Diffusion · MATSAFE Fighter</div><h2 class="evmgr-title" id="pubFormTitle">Nouvelle publication</h2></div>
         <div class="gm-form">
@@ -1033,7 +1033,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <div class="daylist" id="dayList"></div>
     </div>
     <button class="rail-btn" data-go="planning">Tous les cours de la semaine</button>
-    <div style="margin-top:14px;text-align:center;font-size:11px;letter-spacing:.04em;color:var(--muted)">MatSafe Club · v13.14-17h33</div>
+    <div style="margin-top:14px;text-align:center;font-size:11px;letter-spacing:.04em;color:var(--muted)">MatSafe Club · v13.14-17h46</div>
   </aside>
 
 </div>
@@ -1153,7 +1153,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 <div class="modal" id="pubPreviewModal" aria-hidden="true">
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pubPrevTitle">
     <div class="sheet-h"><h3 id="pubPrevTitle">Aperçu — côté adhérent (Fighter)</h3><button class="sheet-x" data-close><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
-    <p class="sheet-sub">Rendu de la publication dans « Infos hygiène du club » sur MatSafe Fighter.</p>
+    <p class="sheet-sub">Rendu de la publication dans « Infos du club » sur MatSafe Fighter.</p>
     <div id="pubPrevBody"></div>
   </div>
 </div>
@@ -2670,7 +2670,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   try{ refreshTeam(); }catch(_){ }                       // équipe relue du serveur (si RPC dispo)
   try{ loadAuthLocal(); renderAuthStatus(); }catch(_){ } // authentification : état du poste (local, aucun réseau)
 
-  // ===== Infos hygiène du club : publications vers MATSAFE Fighter =====
+  // ===== Infos du club : publications vers MATSAFE Fighter =====
   // Écrit dans matsafe_club_posts, exactement dans la forme lue par Fighter
   // (activePosts filtre selon status / published_at / expires_at / is_pinned).
   // En production : POST/PUT/DELETE vers l'API du club (même interface loadPubs/savePubs).
@@ -2799,7 +2799,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     var box=document.getElementById('pubList'); if(!box) return;
     var pubs=loadPubs();
     var cnt=document.getElementById('pubCount'); if(cnt) cnt.textContent=pubs.length;
-    if(!pubs.length){ box.innerHTML='<div class="inbox-empty">Aucune publication pour le moment. Créez-en une ci-dessus : elle apparaîtra dans « Infos hygiène du club » sur MatSafe Fighter.</div>'; return; }
+    if(!pubs.length){ box.innerHTML='<div class="inbox-empty">Aucune publication pour le moment. Créez-en une ci-dessus : elle apparaîtra dans « Infos du club » sur MatSafe Fighter.</div>'; return; }
     pubs.sort(function(a,b){ var pa=a.is_pinned?1:0,pb=b.is_pinned?1:0; if(pa!==pb) return pb-pa; return new Date(b.published_at||b.created_at)-new Date(a.published_at||a.created_at); });
     box.innerHTML=pubs.map(pubCardHtml).join('');
   }
