@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta name="ms-version" content="v13.13-15h54">
+<meta name="ms-version" content="v13.14-17h33">
 <title>MatSafe Club</title>
 <script>
 /* ============================================================================
@@ -20,7 +20,7 @@
    ============================================================================ */
 (function(){
   "use strict";
-  var RUNNING = 'v13.13-15h54';
+  var RUNNING = 'v13.14-17h33';
   try{ if(sessionStorage.getItem('ms_selfheal')==='1') return; }catch(_){ }
   function liveVersion(txt){
     try{ var m = txt.match(/name="ms-version"\s+content="([^"]+)"/); return (m && m[1]) ? m[1].trim() : null; }catch(_){ return null; }
@@ -803,7 +803,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <a data-screen="accueil" class="on"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Accueil</a>
       <a data-screen="planning"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Planning</a>
       <a data-screen="retours"><svg class="ic" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V6a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/><path d="M8 10h8M8 13h5"/></svg>Retours adhérents<span class="badge" id="retNavBadge" style="display:none">0</span></a>
-      <a data-screen="publications"><svg class="ic" viewBox="0 0 24 24"><path d="M4 4h16v12H5.2L4 17.5z"/><path d="M8 9h8M8 12h5"/></svg>Infos hygiène</a>
+      <a data-screen="publications"><svg class="ic" viewBox="0 0 24 24"><path d="M4 4h16v12H5.2L4 17.5z"/><path d="M8 9h8M8 12h5"/></svg>Infos du club</a>
       <a data-screen="serie"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3c.5 3.6 4 4.9 4 8.6a4.2 4.2 0 0 1-8.4 0c0-1.9 1-3.1 1-3.1.3 1.7 1.9 1.8 1.9.1C10.5 6.7 11 5 12 3Z"/></svg>Série de nettoyage</a>
       <a data-screen="preuves"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Historique</a>
     </nav>
@@ -1033,7 +1033,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <div class="daylist" id="dayList"></div>
     </div>
     <button class="rail-btn" data-go="planning">Tous les cours de la semaine</button>
-    <div style="margin-top:14px;text-align:center;font-size:11px;letter-spacing:.04em;color:var(--muted)">MatSafe Club · v13.13-15h54</div>
+    <div style="margin-top:14px;text-align:center;font-size:11px;letter-spacing:.04em;color:var(--muted)">MatSafe Club · v13.14-17h33</div>
   </aside>
 
 </div>
@@ -2838,9 +2838,10 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       </div>
       <div class="field"><label>Nom de la compétition</label><input id="compName" class="inp" placeholder="Ex. Open de Lyon — JJB"></div>
       <div style="display:flex;gap:10px">
-        <div class="field" style="flex:1"><label>Date</label><input id="compDate" class="inp" placeholder="Ex. 28 octobre – 1er novembre 2026"></div>
+        <div class="field" style="flex:1"><label>Date</label><input type="date" id="compDay" class="inp"></div>
         <div class="field" style="flex:1"><label>Ville / lieu <span class="opt">(facultatif)</span></label><input id="compCity" class="inp" placeholder="Ex. Lyon"></div>
       </div>
+      <div class="field"><label>Dates affichées <span class="opt">(facultatif, ex. « 28 oct – 1er nov »)</span></label><input id="compDate" class="inp" placeholder="Laisser vide = la date ci-dessus"></div>
       <div class="field"><label>Lien officiel <span class="opt">(facultatif)</span></label><input id="compLink" class="inp" placeholder="https://…"></div>
       <button type="submit" class="btn-primary wide" id="compSubmit" style="margin-top:4px">Ajouter</button>
     </form>
@@ -2859,6 +2860,33 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   var wrap=document.getElementById('compList');
   var modal=document.getElementById('compModal'), form=document.getElementById('compForm');
   var curImg=null, editId=null;
+  // ----- Dates : la compétition a une date réelle (ISO) pour l'ordre et le filtre « à venir »,
+  //       et un libellé d'affichage facultatif (ex. une période « 28 oct – 1er nov »). -----
+  var FRMO=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  var FRM={janvier:1,'février':2,fevrier:2,mars:3,avril:4,mai:5,juin:6,juillet:7,'août':8,aout:8,septembre:9,octobre:10,novembre:11,'décembre':12,decembre:12};
+  function isoToFrLabel(iso){ var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso||'')); if(!m) return ''; return parseInt(m[3],10)+' '+FRMO[parseInt(m[2],10)-1]+' '+m[1]; }
+  function parseFrDate(txt){
+    var s=String(txt||'').toLowerCase().trim(); if(!s) return '';
+    if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+    var ym=s.match(/(20\d{2})/);
+    var dm=s.match(/(\d{1,2})\s*(?:er)?\s*([a-zàâäéèêëîïôöùûüç]+)/);
+    if(!dm) return ''; var day=parseInt(dm[1],10), mon=FRM[dm[2]]; if(!mon||!day) return '';
+    var year; if(ym){ year=parseInt(ym[1],10); } else { var t=new Date(), y=t.getFullYear(), cand=new Date(y,mon-1,day), today=new Date(t.getFullYear(),t.getMonth(),t.getDate()); if(cand<today) y+=1; year=y; }
+    return year+'-'+('0'+mon).slice(-2)+'-'+('0'+day).slice(-2);
+  }
+  function compDayOf(c){ return (c&&c.day) || parseFrDate(c&&c.date) || ''; }
+  function compDisplay(c){ var t=((c&&c.date)||'').trim(); return t || isoToFrLabel(compDayOf(c)); }
+  // Publication serveur (visible côté MatSafe Fighter) : une compétition = un club_event (kind « Compétition »).
+  function pushComp(c){
+    try{
+      if(!(window.MatSafeAPI && MatSafeAPI.enabled && MatSafeAPI.submitEvent)) return;
+      var day=compDayOf(c); if(!day) return;
+      MatSafeAPI.submitEvent({ kind:'Compétition', title:c.name, date:day, city:c.city||'', link:c.link||'', img:c.img||'' }).then(function(res){
+        if(res && res.id){ c.serverId=res.id; try{ save(); }catch(_){ } }
+      }).catch(function(){});
+    }catch(_){ }
+  }
+  function unpushComp(c){ try{ if(c && c.serverId && window.MatSafeAPI && MatSafeAPI.deleteEvent){ MatSafeAPI.deleteEvent(c.serverId).catch(function(){}); } }catch(_){ } }
   function ic(p,w){ w=w||14; return '<svg viewBox="0 0 24 24" style="width:'+w+'px;height:'+w+'px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round">'+p+'</svg>'; }
   var CAL=ic('<rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/>');
   var PIN=ic('<path d="M12 21s-7-6.5-7-11a7 7 0 0 1 14 0c0 4.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/>');
@@ -2874,7 +2902,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     }
     wrap.innerHTML='<div class="comp-cards">'+list.map(function(c){
       var thumb=c.img?'<img class="comp-thumb" src="'+c.img+'" alt="">':'<div class="comp-thumb ph">'+CAL+'</div>';
-      var meta=[]; if(c.date) meta.push('<span>'+CAL+esc(c.date)+'</span>'); if(c.city) meta.push('<span>'+PIN+esc(c.city)+'</span>');
+      var meta=[]; var _dl=compDisplay(c); if(_dl) meta.push('<span>'+CAL+esc(_dl)+'</span>'); if(c.city) meta.push('<span>'+PIN+esc(c.city)+'</span>');
       var link=c.link?'<a class="comp-link" href="'+esc(c.link)+'" target="_blank" rel="noopener">Voir la compétition ↗</a>':'';
       return '<div class="comp-card">'+thumb+'<div class="comp-body"><span class="comp-tag">Compétition à venir</span><h4>'+esc(c.name)+'</h4>'+(meta.length?'<div class="comp-meta">'+meta.join('')+'</div>':'')+link+'</div><div class="comp-tools"><button class="comp-tool" data-compedit="'+c.id+'" title="Modifier">'+ED+'</button><button class="comp-tool" data-compdel="'+c.id+'" title="Supprimer">'+DEL+'</button></div></div>';
     }).join('')+'</div>';
@@ -2885,7 +2913,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     editId=id||null; var c=id?find(id):null; curImg=c?c.img||null:null;
     document.getElementById('compTitle').textContent=id?'Modifier la compétition':'Ajouter une compétition';
     document.getElementById('compName').value=c?c.name||'':'';
-    document.getElementById('compDate').value=c?(c.date||''):DEFAULT_DATE;
+    document.getElementById('compDay').value=c?compDayOf(c):'';
+    document.getElementById('compDate').value=c?(c.date||''):'';
     document.getElementById('compCity').value=c?c.city||'':'';
     document.getElementById('compLink').value=c?c.link||'':'';
     preview(curImg);
@@ -2902,20 +2931,36 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     e.preventDefault();
     var name=document.getElementById('compName').value.trim();
     if(!name){ flash('Ajoutez le nom de la compétition.'); return; }
-    var c={ id:editId||('k'+Date.now()), name:name, date:document.getElementById('compDate').value.trim(), city:document.getElementById('compCity').value.trim(), link:document.getElementById('compLink').value.trim(), img:curImg||null };
-    if(editId){ for(var i=0;i<list.length;i++){ if(list[i].id===editId){ list[i]=c; break; } } } else { list.unshift(c); }
+    var day=(document.getElementById('compDay').value||'').trim();
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(day)){ flash('Choisissez la date de la compétition.'); return; }
+    var prev=editId?find(editId):null;
+    var c={ id:editId||('k'+Date.now()), name:name, day:day, date:document.getElementById('compDate').value.trim(), city:document.getElementById('compCity').value.trim(), link:document.getElementById('compLink').value.trim(), img:curImg||null, serverId:(prev&&prev.serverId)||null };
+    if(editId){
+      // Modification : pas de RPC « update » — on retire l'ancienne publication serveur puis on republie.
+      if(prev && prev.serverId){ unpushComp(prev); c.serverId=null; }
+      for(var i=0;i<list.length;i++){ if(list[i].id===editId){ list[i]=c; break; } }
+    } else { list.unshift(c); }
     save(); render(); closeComp(); editId=null; curImg=null;
+    pushComp(c);
     flash('Compétition enregistrée.');
   });
 
   document.addEventListener('click', function(e){
     if(e.target.closest('[data-compadd]')){ openComp(null); return; }
     var ed=e.target.closest('[data-compedit]'); if(ed){ openComp(ed.getAttribute('data-compedit')); return; }
-    var dl=e.target.closest('[data-compdel]'); if(dl){ var id=dl.getAttribute('data-compdel'); if(window.confirm('Supprimer cette compétition ?')){ list=list.filter(function(x){return x.id!==id;}); save(); render(); flash('Compétition supprimée.'); } return; }
+    var dl=e.target.closest('[data-compdel]'); if(dl){ var id=dl.getAttribute('data-compdel'); if(window.confirm('Supprimer cette compétition ?')){ unpushComp(find(id)); list=list.filter(function(x){return x.id!==id;}); save(); render(); flash('Compétition supprimée.'); } return; }
     if(e.target.closest('[data-compclose]')){ closeComp(); return; }
     if(e.target===modal){ closeComp(); return; }
   });
 
+  // Migration + publication : chaque compétition locale devient un club_event (donc visible dans MatSafe Fighter).
+  (function migrateComps(){
+    var changed=false;
+    list.forEach(function(c){ if(c && !c.day){ var d=parseFrDate(c.date); if(d){ c.day=d; changed=true; } } });
+    if(changed){ try{ save(); }catch(_){ } }
+    // Publie (une seule fois) celles qui ont une date mais pas encore d'identifiant serveur.
+    list.forEach(function(c){ if(c && compDayOf(c) && !c.serverId){ pushComp(c); } });
+  })();
   render();
 })();
 </script>
@@ -2982,7 +3027,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       if(!Array.isArray(rows)) return;
       var authored=get().filter(function(e){ return e && !e._server; });
       var seen={}; authored.forEach(function(e){ if(e.serverId) seen[String(e.serverId)]=1; });
-      var mirrors=rows.filter(function(r){ return r && r.id && !seen[String(r.id)]; }).map(function(r){
+      var mirrors=rows.filter(function(r){ return r && r.id && !seen[String(r.id)] && (r.kind!=='Compétition'); }).map(function(r){
         return { id:'srv_'+r.id, serverId:r.id, kind:(r.kind||'Événement'), title:(r.name||''), iso:r.date, date:dateLabel(r.date), _server:true };
       });
       set(authored.concat(mirrors)); render();
