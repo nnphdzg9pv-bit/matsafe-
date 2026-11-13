@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta name="ms-version" content="v13.12-09h43">
+<meta name="ms-version" content="v13.13-15h54">
 <title>MatSafe Club</title>
 <script>
 /* ============================================================================
@@ -20,7 +20,7 @@
    ============================================================================ */
 (function(){
   "use strict";
-  var RUNNING = 'v13.12-09h43';
+  var RUNNING = 'v13.13-15h54';
   try{ if(sessionStorage.getItem('ms_selfheal')==='1') return; }catch(_){ }
   function liveVersion(txt){
     try{ var m = txt.match(/name="ms-version"\s+content="([^"]+)"/); return (m && m[1]) ? m[1].trim() : null; }catch(_){ return null; }
@@ -587,6 +587,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .crate-pct{display:inline-block;font-family:var(--font-disp);font-weight:900;font-size:clamp(60px,9.5vw,104px);line-height:.8;letter-spacing:-.01em;
   background:linear-gradient(to top,var(--brand) 0 var(--fill,0%),#C9C4B8 var(--fill,0%) 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+/* Heure du dernier nettoyage : rouge plein, identique au titre MatSafe Club (plus de dégradé qui l'éclaircissait). */
+#crateTime{background:none;-webkit-background-clip:border-box;background-clip:border-box;color:var(--brand);-webkit-text-fill-color:var(--brand)}
 .crate-txt{min-width:0}
 .crate-k{display:block;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.16em;font-size:11px;font-weight:700;color:var(--brand);margin-bottom:8px}
 .crate-lead{font-family:var(--font-disp);text-transform:uppercase;font-weight:800;letter-spacing:.005em;font-size:clamp(19px,2.2vw,25px);line-height:1.03;color:var(--ink);margin:0 0 9px;max-width:18ch}
@@ -1031,7 +1033,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <div class="daylist" id="dayList"></div>
     </div>
     <button class="rail-btn" data-go="planning">Tous les cours de la semaine</button>
-    <div style="margin-top:14px;text-align:center;font-size:11px;letter-spacing:.04em;color:var(--muted)">MatSafe Club · v13.12-09h43</div>
+    <div style="margin-top:14px;text-align:center;font-size:11px;letter-spacing:.04em;color:var(--muted)">MatSafe Club · v13.13-15h54</div>
   </aside>
 
 </div>
