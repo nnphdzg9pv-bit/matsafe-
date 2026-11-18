@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta name="ms-version" content="v13.17-15h36">
+<meta name="ms-version" content="v13.18-16h32">
 <title>MatSafe Club</title>
 <script>
 /* ============================================================================
@@ -20,7 +20,7 @@
    ============================================================================ */
 (function(){
   "use strict";
-  var RUNNING = 'v13.17-15h36';
+  var RUNNING = 'v13.18-16h32';
   try{ if(sessionStorage.getItem('ms_selfheal')==='1') return; }catch(_){ }
   function liveVersion(txt){
     try{ var m = txt.match(/name="ms-version"\s+content="([^"]+)"/); return (m && m[1]) ? m[1].trim() : null; }catch(_){ return null; }
@@ -797,7 +797,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
    (≥641px) n'est jamais touchée : toutes les règles ci-dessous sont dans le
    @media. La barre .mnav est masquée par défaut (donc invisible sur ordinateur).
    ============================================================================ */
-.mnav,.mnav-sheet{display:none}
+.mnav,.mnav-sheet,.hist-cards{display:none}
 @media (max-width:640px){
   body{padding:0}
   .app{max-width:none;min-height:100vh;border-radius:0;box-shadow:none;grid-template-columns:1fr}
@@ -805,11 +805,26 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   .rail{display:none}
   .main{padding:20px 16px calc(80px + env(safe-area-inset-bottom))}
   /* Blocs de l'accueil alignés sur le bord gauche du titre (pas d'inset horizontal). */
-  .main #crate,.main .comp-sec,.main .comp-empty,.main .comp-card,.main .block{padding-left:0;padding-right:0}
+  .main #crate,.main .comp-sec,.main .comp-empty,.main .comp-card,.main .block,.main .rate,.main .evmgr,.main .gm{padding-left:0;padding-right:0}
   /* Grand chiffre de l'heure : reste grand mais ne déborde jamais. */
-  #crateTime{font-size:clamp(50px,14vw,96px);max-width:100%}
+  #crateTime{font-size:clamp(64px,24vw,110px);max-width:100%}
   /* Tableaux (historique) : défilement interne plutôt que débordement de page. */
-  .main .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  /* Historique : le tableau (coupé à droite sur téléphone) est remplacé par des cartes pleine largeur. */
+  .main .table-wrap{display:none}
+  .hist-cards{display:flex;flex-direction:column;gap:10px}
+  .hist-card{background:var(--panel);border:1px solid var(--line2);border-radius:14px;padding:13px 15px;display:flex;flex-direction:column;gap:7px}
+  .hist-card.hist-cancelled{opacity:.7}
+  .hc-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .hc-date{font-family:var(--font-disp);font-weight:700;font-size:15px;color:var(--ink)}
+  .hc-disc{font-size:13.5px;color:var(--ink2)}
+  .hc-who{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:600;color:var(--ink)}
+  .hc-at{margin-left:auto;font-family:var(--font-disp);font-size:12px;font-weight:700;color:var(--muted)}
+  .hc-who.hc-muted{color:var(--muted)}
+  .hist-card .hist-x{align-self:flex-start;margin-left:0}
+  .hist-empty{color:var(--ink2);font-size:14.5px;padding:14px 2px}
+  /* Série : conteneur pleine largeur, contenu centré (plus de colonne « ordinateur »). */
+  [data-screen="serie"]{align-items:stretch}
+  .srk{width:100%}
   /* --- Barre de navigation fixe en bas (style appli) --- */
   .mnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--panel);border-top:1px solid var(--line2);padding:6px 4px calc(6px + env(safe-area-inset-bottom));justify-content:space-around;align-items:stretch;box-shadow:0 -6px 20px -14px rgba(20,20,25,.4)}
   .mnav-i{flex:1 1 0;min-width:0;min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:0;cursor:pointer;color:var(--ink2);font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.02em;font-weight:600;font-size:10px;position:relative;padding:5px 2px;border-radius:10px;-webkit-tap-highlight-color:transparent}
@@ -1038,6 +1053,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
         <thead><tr><th>Date</th><th>Cours</th><th>Discipline</th><th>Tatami</th><th>Nettoyé par</th><th>Validé à</th><th style="text-align:right">Statut</th></tr></thead>
         <tbody id="histBody"></tbody>
       </table></div>
+      <!-- Téléphone (≤640px) : liste de cartes à la place du tableau (voir CSS/JS). -->
+      <div class="hist-cards" id="histCards"></div>
     </section>
 
     <!-- REGLAGES -->
@@ -1068,7 +1085,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <div class="daylist" id="dayList"></div>
     </div>
     <button class="rail-btn" data-go="planning">Tous les cours de la semaine</button>
-    <div style="margin-top:14px;text-align:center;font-size:11px;letter-spacing:.04em;color:var(--muted)">MatSafe Club · v13.17-15h36</div>
+    <div style="margin-top:14px;text-align:center;font-size:11px;letter-spacing:.04em;color:var(--muted)">MatSafe Club · v13.18-16h32</div>
   </aside>
 
 </div>
@@ -2350,25 +2367,41 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       '<td style="text-align:right"><span class="pill-st done"><span class="d"></span>Validé</span>'+cancelBtn+'</td></tr>';
   }
   var currentHistFilter='all';
+  // Téléphone : une carte par nettoyage (le tableau est masqué ≤640px).
+  function histCardHtml(ev){
+    var cancelled=(ev.status==='cancelled');
+    var top='<div class="hc-top"><span class="hc-date">'+esc(dLabel(ev.iso))+(ev.time?' · '+esc(ev.time):'')+'</span>'+
+      (cancelled?'<span class="pill-st cancelled"><span class="d"></span>Annulé</span>':'<span class="pill-st done"><span class="d"></span>Validé</span>')+'</div>';
+    var disc='<div class="hc-disc">'+esc(ev.disc||'—')+(ev.matLabel?' · '+esc(ev.matLabel):'')+'</div>';
+    var who=cancelled
+      ? '<div class="hc-who hc-muted">—</div>'
+      : '<div class="hc-who"><span class="av sm '+avClassOf(ev.by)+'">'+esc(initialsOf(ev.by))+'</span>'+esc(ev.by||'')+(ev.at?'<span class="hc-at">'+esc(ev.at)+'</span>':'')+'</div>';
+    var cancelBtn=(!cancelled && ev.vid)?'<button class="hist-x" data-cancelval="'+esc(ev.vid)+'">Annuler</button>':'';
+    return '<div class="hist-card'+(cancelled?' hist-cancelled':'')+'">'+top+disc+who+cancelBtn+'</div>';
+  }
   function renderHistory(filter){
-    var tb=document.getElementById('histBody'); if(!tb) return;
+    var tb=document.getElementById('histBody'), cards=document.getElementById('histCards');
+    if(!tb && !cards) return;
     if(filter) currentHistFilter=filter;
     var f=currentHistFilter;
     var banner=document.getElementById('histBanner');
     if(banner) banner.innerHTML = (CLUB.valState==='ok'||CLUB.valState==='loading') ? '' : bannerHtml(CLUB.valState);
     if(CLUB.valState!=='ok'){
-      tb.innerHTML = '<tr><td colspan="7" style="color:var(--muted);padding:18px 8px">'+(CLUB.valState==='loading'?'Chargement…':esc(clubStateMsg(CLUB.valState)))+'</td></tr>';
+      var msg=(CLUB.valState==='loading'?'Chargement…':esc(clubStateMsg(CLUB.valState)));
+      if(tb) tb.innerHTML = '<tr><td colspan="7" style="color:var(--muted);padding:18px 8px">'+msg+'</td></tr>';
+      if(cards) cards.innerHTML = '<div class="hist-empty">'+msg+'</div>';
       return;
     }
-    var html=histEvents().filter(function(ev){
+    var items=histEvents().filter(function(ev){
       var when=whenOf(ev.iso), who=ev.by||'';
       if(f==='all') return when==='today';
       if(f==='week') return when==='today'||when==='week';
       if(f==='month') return true;
       if(f==='me') return /simon/i.test(who);
       return true;
-    }).map(histRowHtml).join('');
-    tb.innerHTML = html || '<tr><td colspan="7" style="color:var(--muted);padding:18px 8px">Aucun nettoyage pour ce filtre.</td></tr>';
+    });
+    if(tb) tb.innerHTML = items.map(histRowHtml).join('') || '<tr><td colspan="7" style="color:var(--muted);padding:18px 8px">Aucun nettoyage pour ce filtre.</td></tr>';
+    if(cards) cards.innerHTML = items.map(histCardHtml).join('') || '<div class="hist-empty">Aucun nettoyage pour ce filtre.</div>';
   }
   function filterHist(f){ renderHistory(f); }
   function exportHistoryCSV(){
