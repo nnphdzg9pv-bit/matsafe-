@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta name="ms-version" content="v13.18-16h32">
+<meta name="ms-version" content="v13.19-17h04">
 <title>MatSafe Club</title>
 <script>
 /* ============================================================================
@@ -20,7 +20,7 @@
    ============================================================================ */
 (function(){
   "use strict";
-  var RUNNING = 'v13.18-16h32';
+  var RUNNING = 'v13.19-17h04';
   try{ if(sessionStorage.getItem('ms_selfheal')==='1') return; }catch(_){ }
   function liveVersion(txt){
     try{ var m = txt.match(/name="ms-version"\s+content="([^"]+)"/); return (m && m[1]) ? m[1].trim() : null; }catch(_){ return null; }
@@ -800,7 +800,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .mnav,.mnav-sheet,.hist-cards{display:none}
 @media (max-width:640px){
   body{padding:0}
-  .app{max-width:none;min-height:100vh;border-radius:0;box-shadow:none;grid-template-columns:1fr}
+  /* Une seule colonne sur téléphone, y compris sur Planning/Série (classe rail-hidden,
+     sinon la grille « ordinateur » 248px rétrécit le contenu à ~60%). */
+  .app,.app.rail-hidden,.app.rail-closed{max-width:none;min-height:100vh;border-radius:0;box-shadow:none;grid-template-columns:1fr}
   .side{display:none}
   .rail{display:none}
   .main{padding:20px 16px calc(80px + env(safe-area-inset-bottom))}
@@ -1085,7 +1087,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <div class="daylist" id="dayList"></div>
     </div>
     <button class="rail-btn" data-go="planning">Tous les cours de la semaine</button>
-    <div style="margin-top:14px;text-align:center;font-size:11px;letter-spacing:.04em;color:var(--muted)">MatSafe Club · v13.18-16h32</div>
+    <div style="margin-top:14px;text-align:center;font-size:11px;letter-spacing:.04em;color:var(--muted)">MatSafe Club · v13.19-17h04</div>
   </aside>
 
 </div>
