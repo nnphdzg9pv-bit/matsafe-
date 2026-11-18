@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta name="ms-version" content="v13.16-10h29">
+<meta name="ms-version" content="v13.17-15h36">
 <title>MatSafe Club</title>
 <script>
 /* ============================================================================
@@ -20,7 +20,7 @@
    ============================================================================ */
 (function(){
   "use strict";
-  var RUNNING = 'v13.16-10h29';
+  var RUNNING = 'v13.17-15h36';
   try{ if(sessionStorage.getItem('ms_selfheal')==='1') return; }catch(_){ }
   function liveVersion(txt){
     try{ var m = txt.match(/name="ms-version"\s+content="([^"]+)"/); return (m && m[1]) ? m[1].trim() : null; }catch(_){ return null; }
@@ -1068,7 +1068,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <div class="daylist" id="dayList"></div>
     </div>
     <button class="rail-btn" data-go="planning">Tous les cours de la semaine</button>
-    <div style="margin-top:14px;text-align:center;font-size:11px;letter-spacing:.04em;color:var(--muted)">MatSafe Club · v13.16-10h29</div>
+    <div style="margin-top:14px;text-align:center;font-size:11px;letter-spacing:.04em;color:var(--muted)">MatSafe Club · v13.17-15h36</div>
   </aside>
 
 </div>
@@ -1720,7 +1720,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(name==='retours'){ try{ renderInbox(); }catch(_){ } }
     if(name==='publications'){ try{ renderPubs(); }catch(_){ } }
     if(name==='preuves'){ try{ renderHistory(); }catch(_){ } }
-    if(name==='accueil'){ try{ renderHomeMessages(); }catch(_){ } try{ renderCleanRate(); }catch(_){ } }
+    if(name==='accueil'){ try{ renderHomeMessages(); }catch(_){ } try{ renderCleanRate(); }catch(_){ } try{ if(window.__matsafeCompRefresh) window.__matsafeCompRefresh(); }catch(_){ } }
     if(name==='reglages'){ try{ refreshTeam(); }catch(_){ } try{ renderAuthStatus(); }catch(_){ } }
     // Relecture SERVEUR fraîche à CHAQUE changement d'écran (nettoyages + retours).
     if(name==='accueil'||name==='retours'||name==='preuves'||name==='planning'||name==='serie'){ try{ refreshClubData(); }catch(_){ } }
@@ -3030,6 +3030,25 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       } else { finish(null); }
     }catch(_){ finish(null); }
   })();
+
+  // ===== Lecture SERVEUR (source de vérité) : la compétition s'affiche sur TOUS les appareils =====
+  // localStorage = simple cache d'affichage, écrasé par la base à chaque chargement.
+  function compLoadServer(){
+    if(!(window.MatSafeAPI && MatSafeAPI.getClubEvents)) return;
+    MatSafeAPI.getClubEvents().then(function(rows){
+      if(!Array.isArray(rows)) return;
+      var authored=list.filter(function(c){ return c && !c._server; });           // compétitions créées sur CE poste
+      var seen={}, seenKey={};
+      authored.forEach(function(c){ if(c.serverId) seen[String(c.serverId)]=1; seenKey[(String(c.name||'').trim().toLowerCase())+'|'+compDayOf(c)]=1; });
+      var mirrors=rows.filter(function(r){ return r && r.id && r.kind==='Compétition' && !seen[String(r.id)] && !seenKey[(String(r.name||'').trim().toLowerCase())+'|'+r.date]; })
+        .map(function(r){ return { id:'srv_'+r.id, serverId:r.id, name:(r.name||''), day:r.date, date:'', city:(r.city||''), link:(r.link||''), img:(r.img||''), _server:true }; });
+      list = authored.concat(mirrors);
+      try{ save(); }catch(_){ }
+      render();
+    }).catch(function(){});
+  }
+  try{ window.__matsafeCompRefresh = compLoadServer; }catch(_){ }
+  compLoadServer();
   render();
 })();
 </script>
