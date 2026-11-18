@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta name="ms-version" content="v13.15-18h01">
+<meta name="ms-version" content="v13.16-10h29">
 <title>MatSafe Club</title>
 <script>
 /* ============================================================================
@@ -20,7 +20,7 @@
    ============================================================================ */
 (function(){
   "use strict";
-  var RUNNING = 'v13.15-18h01';
+  var RUNNING = 'v13.16-10h29';
   try{ if(sessionStorage.getItem('ms_selfheal')==='1') return; }catch(_){ }
   function liveVersion(txt){
     try{ var m = txt.match(/name="ms-version"\s+content="([^"]+)"/); return (m && m[1]) ? m[1].trim() : null; }catch(_){ return null; }
@@ -791,6 +791,41 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 /* Retrait de l'encart « jours de nettoyage validés » (série) en haut de l'accueil.
    La série reste accessible via l'onglet « Série de nettoyage » du menu. */
 .head-actions .streak-hb{ display:none; }
+
+/* ============================================================================
+   TÉLÉPHONE (≤640px) — adaptation MOBILE UNIQUEMENT. L'interface ordinateur
+   (≥641px) n'est jamais touchée : toutes les règles ci-dessous sont dans le
+   @media. La barre .mnav est masquée par défaut (donc invisible sur ordinateur).
+   ============================================================================ */
+.mnav,.mnav-sheet{display:none}
+@media (max-width:640px){
+  body{padding:0}
+  .app{max-width:none;min-height:100vh;border-radius:0;box-shadow:none;grid-template-columns:1fr}
+  .side{display:none}
+  .rail{display:none}
+  .main{padding:20px 16px calc(80px + env(safe-area-inset-bottom))}
+  /* Blocs de l'accueil alignés sur le bord gauche du titre (pas d'inset horizontal). */
+  .main #crate,.main .comp-sec,.main .comp-empty,.main .comp-card,.main .block{padding-left:0;padding-right:0}
+  /* Grand chiffre de l'heure : reste grand mais ne déborde jamais. */
+  #crateTime{font-size:clamp(50px,14vw,96px);max-width:100%}
+  /* Tableaux (historique) : défilement interne plutôt que débordement de page. */
+  .main .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  /* --- Barre de navigation fixe en bas (style appli) --- */
+  .mnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--panel);border-top:1px solid var(--line2);padding:6px 4px calc(6px + env(safe-area-inset-bottom));justify-content:space-around;align-items:stretch;box-shadow:0 -6px 20px -14px rgba(20,20,25,.4)}
+  .mnav-i{flex:1 1 0;min-width:0;min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:0;cursor:pointer;color:var(--ink2);font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.02em;font-weight:600;font-size:10px;position:relative;padding:5px 2px;border-radius:10px;-webkit-tap-highlight-color:transparent}
+  .mnav-i svg{width:23px;height:23px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .mnav-i span{line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .mnav-i.on{color:var(--brand)}
+  .mnav-i.on svg{stroke:var(--brand)}
+  .mnav-badge{position:absolute;top:1px;left:calc(50% + 7px);min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:var(--brand);color:#fff;font-family:var(--font-disp);font-size:10px;font-weight:700;line-height:16px;text-align:center}
+  .mnav-badge[hidden]{display:none}
+  /* Feuille « Plus » (Série + Historique) */
+  .mnav-sheet{display:block;position:fixed;left:12px;right:12px;bottom:calc(72px + env(safe-area-inset-bottom));z-index:61;background:var(--panel);border:1px solid var(--line2);border-radius:14px;box-shadow:0 18px 44px -18px rgba(20,20,25,.5);padding:6px}
+  .mnav-sheet[hidden]{display:none}
+  .mnav-si{display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;text-align:left;cursor:pointer;color:var(--ink);font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.04em;font-weight:600;font-size:13px;padding:14px 12px;border-radius:10px;-webkit-tap-highlight-color:transparent}
+  .mnav-si svg{width:20px;height:20px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round;flex:none}
+  .mnav-si:active{background:#ECEAE8}
+}
 </style>
 </head>
 <body>
@@ -1033,10 +1068,24 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <div class="daylist" id="dayList"></div>
     </div>
     <button class="rail-btn" data-go="planning">Tous les cours de la semaine</button>
-    <div style="margin-top:14px;text-align:center;font-size:11px;letter-spacing:.04em;color:var(--muted)">MatSafe Club · v13.15-18h01</div>
+    <div style="margin-top:14px;text-align:center;font-size:11px;letter-spacing:.04em;color:var(--muted)">MatSafe Club · v13.16-10h29</div>
   </aside>
 
 </div>
+
+<!-- Barre de navigation mobile (téléphone ≤640px uniquement ; masquée sur ordinateur). -->
+<nav class="mnav" id="mnav" aria-label="Navigation MatSafe Club">
+  <button class="mnav-i" type="button" data-go="accueil" data-mtab="accueil"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg><span>Accueil</span></button>
+  <button class="mnav-i" type="button" data-go="planning" data-mtab="planning"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg><span>Planning</span></button>
+  <button class="mnav-i" type="button" data-go="retours" data-mtab="retours"><svg viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V6a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/><path d="M8 10h8M8 13h5"/></svg><span>Retours</span><span class="mnav-badge" id="retTabBadge" hidden>0</span></button>
+  <button class="mnav-i" type="button" data-go="publications" data-mtab="publications"><svg viewBox="0 0 24 24"><path d="M4 4h16v12H5.2L4 17.5z"/><path d="M8 9h8M8 12h5"/></svg><span>Infos</span></button>
+  <button class="mnav-i mnav-more" type="button" id="mnavMore" data-mtab="more" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg><span>Plus</span></button>
+</nav>
+<div class="mnav-sheet" id="mnavSheet" hidden>
+  <button class="mnav-si" type="button" data-go="serie"><svg viewBox="0 0 24 24"><path d="M12 3c.5 3.6 4 4.9 4 8.6a4.2 4.2 0 0 1-8.4 0c0-1.9 1-3.1 1-3.1.3 1.7 1.9 1.8 1.9.1C10.5 6.7 11 5 12 3Z"/></svg>Série de nettoyage</button>
+  <button class="mnav-si" type="button" data-go="preuves"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Historique</button>
+</div>
+
 <!-- MODALE : valider le nettoyage -->
 <div class="modal" id="valModal" aria-hidden="true">
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="valTitle">
@@ -1675,6 +1724,8 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
     if(name==='reglages'){ try{ refreshTeam(); }catch(_){ } try{ renderAuthStatus(); }catch(_){ } }
     // Relecture SERVEUR fraîche à CHAQUE changement d'écran (nettoyages + retours).
     if(name==='accueil'||name==='retours'||name==='preuves'||name==='planning'||name==='serie'){ try{ refreshClubData(); }catch(_){ } }
+    // Barre mobile : met en avant l'onglet actif (serie/historique/réglages -> « Plus »).
+    try{ var _grp=({accueil:'accueil',planning:'planning',retours:'retours',publications:'publications',serie:'more',preuves:'more',reglages:'more'})[name]||''; document.querySelectorAll('#mnav [data-mtab]').forEach(function(t){ t.classList.toggle('on', t.getAttribute('data-mtab')===_grp); }); }catch(_){ }
     document.querySelector('.main').scrollTop = 0;
     window.scrollTo(0,0);
   }
@@ -1711,9 +1762,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   function inboxStInfo(s){ return INBOX_ST[s]||INBOX_ST.transmis; }
   // Pastille menu « Retours adhérents » = nombre de retours encore À TRAITER (transmis).
   function updateRetoursBadge(){
-    var b=document.getElementById('retNavBadge'); if(!b) return;
     var n=0; loadInbox().forEach(function(r){ if(r && (r.status||'transmis')==='transmis') n++; });
-    b.textContent=n; b.style.display=n?'':'none';
+    var b=document.getElementById('retNavBadge'); if(b){ b.textContent=n; b.style.display=n?'':'none'; }
+    var m=document.getElementById('retTabBadge'); if(m){ m.textContent=n; m.hidden=!n; }
   }
   function renderInbox(){
     var box=document.getElementById('inboxList'); if(!box) return;
@@ -3053,6 +3104,18 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
   }
   render();
   try{ evLoadServer(); }catch(_){ }
+})();
+</script>
+<script>
+/* Barre mobile : bouton « Plus » -> feuille Série + Historique (téléphone uniquement). */
+(function(){
+  var more=document.getElementById('mnavMore'), sheet=document.getElementById('mnavSheet');
+  if(!more||!sheet) return;
+  function closeSheet(){ sheet.hidden=true; more.classList.remove('open'); more.setAttribute('aria-expanded','false'); }
+  function openSheet(){ sheet.hidden=false; more.classList.add('open'); more.setAttribute('aria-expanded','true'); }
+  more.addEventListener('click', function(e){ e.stopPropagation(); if(sheet.hidden) openSheet(); else closeSheet(); });
+  sheet.addEventListener('click', function(e){ if(e.target.closest('[data-go]')) closeSheet(); });
+  document.addEventListener('click', function(e){ if(sheet.hidden) return; if(more.contains(e.target)||sheet.contains(e.target)) return; closeSheet(); });
 })();
 </script>
 </body>
